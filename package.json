@@ -11,6 +11,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "babel-loader": "8.1.0",
+    "bootstrap": "^5.1.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-intl": "^5.20.12",
@@ -91,6 +92,7 @@
     "@storybook/react": "^6.3.9",
     "babel-plugin-formatjs": "^10.3.9",
     "commitizen": "^4.2.4",
-    "cz-conventional-changelog": "^3.2.0"
+    "cz-conventional-changelog": "^3.2.0",
+    "sass": "^1.42.1"
   }
 }
