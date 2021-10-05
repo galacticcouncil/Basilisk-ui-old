@@ -5,9 +5,10 @@ const Color = ({ color }: { color: string }) => {
     return <div className='row justify-content-center text-center'>
         <div
             style={{
-                width: '100px',
-                height: '100px',
-                marginTop: '24px'
+                width: '150px',
+                height: '150px',
+                marginTop: '24px',
+                marginBottom: '8px'
             }}
             className={`bg-${color}`}
         ></div>

@@ -1,2 +1,6 @@
 @import '~bootstrap/scss/bootstrap.scss';
 @import './colors.module.scss';
+
+html, body {
+    font-family: 'Roboto', sans-serif;
+}
