@@ -2,17 +2,14 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.scss';
 import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
-
-export enum Locale {
-  EN = 'en'
-}
+import { Locale } from './shared/locale';
 export interface AppProps {
   locale: Locale
 }
 
 function App({ locale }: AppProps) {
   return (
-    <div className="app text-center">
+    <div className="app text-center bg-gray-1 text-green-1">
       <IntlProvider
         messages={{}}
         locale={locale}

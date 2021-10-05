@@ -1,0 +1,46 @@
+// gray
+$gray1: #424250;
+$gray2: #211F24;
+$gray3: #26282f;
+$gray4: #BDCCD4;
+
+// green
+$green1: #4FFFB0;
+
+// orange
+$orange1: #FF931E;
+
+// white
+$white1: #FFFFFF;
+
+// pink
+$pink1: #FF7BAC;
+
+$colors: (
+    "gray": ($gray1, $gray2, $gray3, $gray4),
+    "green": $green1,
+    "orange": $orange1,
+    "white": $white1,
+    "pink": $pink1
+);
+
+$colorsList: [];
+
+@each $color, $values in $colors {
+    @each $value in $values {
+        $i: index($values, $value);
+        .text-#{$color}-#{$i} {
+            color: $value;
+        }
+
+        .bg-#{$color}-#{$i} {
+            background-color: $value;
+        }
+
+        $colorsList: append($colorsList, #{$color}-#{$i});
+    }
+}
+
+:export {
+    colors: $colorsList
+}
