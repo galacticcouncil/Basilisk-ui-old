@@ -1,24 +1,42 @@
 import React from 'react';
 import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
 
-function App() {
+export enum Locale {
+  EN = 'en'
+}
+export interface AppProps {
+  locale: Locale
+}
+
+function App({ locale }: AppProps) {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+    <div className="app text-center">
+      <IntlProvider
+        messages={{}}
+        locale={locale}
+        defaultLocale='en'
+      >
         <p>
-          Edit <code>src/App.tsx</code> and save to reload.
+          <FormattedMessage
+            id='greeting'
+            description='Application wide greeting'
+            defaultMessage='Today is {ts, date, ::yyyyMMdd}'
+            values={{
+              ts: Date.now()
+            }}
+          />
+
+          <br />
+
+          <FormattedNumber
+            value={19}
+            style='currency'
+            currency='EUR'
+          />
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      </IntlProvider>
     </div>
   );
 }
