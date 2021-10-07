@@ -1,0 +1,185 @@
+@import '../../shared/shared.scss';
+
+.trade-graph {
+
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+
+    &__pair-symbols {
+        width: fit-content;
+
+        p {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 500;
+            line-height: 28px;
+            
+        }
+    }
+
+    &__type-label {
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 16px;
+        margin-left: 12px;
+    }
+
+    &__pair-full-names {
+        p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 16px;
+            margin-top: 6px;
+            display: block;
+        }
+    }
+
+    &__spot-price {
+        &__in-asset {
+            font-size: 28px;
+            font-weight: bold;
+            line-height: 28px;
+        }
+        &__breakdown {
+            font-size: 14px;
+            font-weight: bold;
+            margin-top: 6px;
+            line-height: 16px;
+            letter-spacing: 0.25px;
+
+            span {
+                margin-left: 4px;
+            }
+            
+            &__granularity {
+                opacity: 1;
+                    // TODO: revisit animations/transitions
+                transition: opacity ease-in-out 80ms;
+                position: relative;
+
+                //TODO: change indicator seems to be changing size when disabled (??)
+                &.disabled {
+                    opacity: 0.3;
+                }
+            }
+        }
+    }
+
+    &__controls {
+        margin-top: 16px;
+
+        &__granularity, &__graph-type {
+            line-height: 10px;
+
+            &__individual {
+                display: inline-block;
+                padding-right: 8px;
+                padding-left: 8px;
+                border-right: 1px solid $gray4;
+                font-size: 10px;
+                font-weight: 500;
+                line-height: 10px;
+                text-align: center;
+
+                &:first-of-type {
+                    text-align: left;
+                    padding-left: 0px;
+                }
+
+                &:last-of-type {
+                    border-right: none;
+                }
+
+                &:hover {
+                    // TODO: animations for color changes
+                    color: $white;
+                    cursor: pointer;
+                }
+
+                &.active {
+                    color: $pink1;
+                }
+
+                
+
+            }
+        }
+
+        &__graph-type {
+            &__individual {
+                &:first-of-type {
+                    text-align: right;
+                    padding-left: 8px;
+                }
+                &:last-of-type {
+                    text-align: right;
+                    padding-right: 0px;
+                }
+            }
+        }
+    }
+
+    &__chart {
+        // margin-top: 96px;
+        // margin-bottom: 32px;
+
+        &__wrapper {
+            height: 390px;
+            position: relative;
+            
+
+            &__tooltip {
+                
+                height: 90%;
+                width: 1px;
+                border-right: 1px $pink1 dashed;
+                position: absolute;
+                top: 10%;
+                z-index: 0;
+                opacity: 1;
+                pointer-events: none;
+                transition: opacity ease-in 100ms;
+
+                &__label {
+                    background: $gray3;
+                    border: 1px solid $pink1;
+                    color: $pink1;
+                    position: absolute;
+                    top: 10%;
+                    width: 200px;
+                    text-align: center;
+                    padding: 8px;
+                    font-size: 12px;
+                    font-weight: 500;
+                    transition: opacity ease-in 100ms;
+                    z-index: 1;
+                }
+            }
+        }
+        
+        &__ticks {
+            color: $gray4;
+            font-size: 12px;
+            margin-top: 32px;
+
+            .col {
+                max-height: 14px;
+                text-align: left;
+            }
+
+            span {
+                display: inline-block;
+            }
+
+            // .col:first-of-type {
+            //     text-align: left;
+            // }
+
+            // .col:last-of-type {
+            //     text-align: right;
+            // }
+
+        }
+    }
+}

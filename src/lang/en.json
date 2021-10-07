@@ -1,0 +1,15 @@
+{
+  "TradeGraph.granularity": {
+    "defaultMessage": "{granularity, select, ALL {ALL} D7 {D7} D3 {D3} H24 {24H} H12 {12H} H1 {1H} other {-}}"
+  },
+  "TradeGraph.poolTypeLabel.LBP": {
+    "defaultMessage": "LBP"
+  },
+  "TradeGraph.poolTypeLabel.XYK": {
+    "defaultMessage": "XYK"
+  },
+  "greeting": {
+    "defaultMessage": "Today is {ts, date, ::yyyyMMdd}",
+    "description": "Application wide greeting"
+  }
+}

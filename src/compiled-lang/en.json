@@ -1,0 +1,6 @@
+{
+  "TradeGraph.granularity": "{granularity, select, ALL {ALL} D7 {D7} D3 {D3} H24 {24H} H12 {12H} H1 {1H} other {-}}",
+  "TradeGraph.poolTypeLabel.LBP": "LBP",
+  "TradeGraph.poolTypeLabel.XYK": "XYK",
+  "greeting": "Today is {ts, date, ::yyyyMMdd}"
+}

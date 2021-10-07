@@ -16,12 +16,15 @@ $white1: #FFFFFF;
 // pink
 $pink1: #FF7BAC;
 
+$red1: #E63434;
+
 $colors: (
     "gray": ($gray1, $gray2, $gray3, $gray4),
     "green": $green1,
     "orange": $orange1,
     "white": $white1,
-    "pink": $pink1
+    "pink": $pink1,
+    "red": $red1
 );
 
 $colorsList: [];

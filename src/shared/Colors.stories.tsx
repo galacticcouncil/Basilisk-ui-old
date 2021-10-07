@@ -1,5 +1,5 @@
 import './shared.scss'
-import Colors from './colors.module.scss';
+import ScssColors from './colors.module.scss';
 
 const Color = ({ color }: { color: string }) => {
     return <div className='row justify-content-center text-center'>
@@ -16,8 +16,8 @@ const Color = ({ color }: { color: string }) => {
     </div>
 }
 
-export const ColorGrid = () => {
-    const colors: string[] = Colors.colors
+const ColorGrid = () => {
+    const colors: string[] = ScssColors.colors
         .replace('[', '')
         .replace(']', '')
         .split(' ');
@@ -40,3 +40,5 @@ export default {
     component: ColorGrid,
     title: 'Shared/Colors'
 }
+
+export const Colors = () => <ColorGrid/>
