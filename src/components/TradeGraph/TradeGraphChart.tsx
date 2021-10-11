@@ -1,11 +1,11 @@
 import './../../shared/shared';
-import './TradeGraph.scss';
+import './TradeGraphChart.scss';
 import { FormattedDate, FormattedMessage, FormattedNumber, FormattedTime, useIntl } from 'react-intl';
 import { BigNumber } from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { Line } from 'react-chartjs-2';
-import { times, random, first, last, find } from 'lodash';
+import { times, random, first, last, find, minBy, maxBy } from 'lodash';
 import { ChartData, ChartOptions, Chart } from 'chart.js';
 import percentageChange from 'percent-change';
 import blockHeightToDate from '../../shared/utils/blockHeightToDate';
@@ -14,6 +14,13 @@ import CountUp from 'react-countup';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import moment from 'moment';
 import { TradeGraphHeader, AssetPair, PoolType, SpotPrice, TradeGraphGranularity } from './TradeGraphHeader';
+import addHours from 'date-fns/esm/fp/addHours/index.js';
+import 'chartjs-adapter-moment';
+import addMinutes from 'date-fns/esm/fp/addMinutes/index.js';
+import { subDays, subHours } from 'date-fns/esm';
+import { differenceInHours, differenceInMinutes } from 'date-fns';
+// TODO: add typesafe definitions for colors
+import cssColors from './../../shared/colors.module.scss';
 
 type DataPoint = { x: number, y: number };
 export type HistoricalSpotPrice = SpotPrice[]
@@ -23,6 +30,8 @@ export interface onUserBrowsingGraphEvent {
 }
 export interface TradeGraphChartProps {
     historicalSpotPrice: HistoricalSpotPrice,
+    spotPrice: SpotPrice,
+    displaySpotPrice: SpotPrice,
     onUserBrowsingGraph: (event: onUserBrowsingGraphEvent) => void,
     isUserBrowsingGraph: boolean,
     granularity: TradeGraphGranularity
@@ -32,8 +41,18 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
     historicalSpotPrice,
     onUserBrowsingGraph,
     isUserBrowsingGraph,
-    granularity
+    granularity,
+    displaySpotPrice,
+    spotPrice
 }) => {
+    // extract chart context for advanced drawing (e.g. gradient)
+    const chartContainer = useRef(null);
+    const [chartCtx, setChartCtx] = useState<CanvasRenderingContext2D | null>(null);
+
+    useEffect(() => {
+        var ctx = document.getElementsByTagName("canvas")[0]?.getContext("2d");
+        setChartCtx(ctx);
+    }, [chartContainer]);
 
     const [tooltipData, setTooltipData] = useState<{
         // data point we're observing in a tooltip
@@ -73,14 +92,14 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
      */
     const tooltipHandler = useCallback(({ tooltip }: any) => {
         const visible = tooltip.opacity;
+        // TODO: get rid of this dangerous unwraping
+        const timestamp = (tooltip.dataPoints[0]?.raw as DataPoint).x;
+        const spotPrice = find(historicalSpotPrice, {
+            timestamp
+        });
 
         // if a tooltip for the current position is already shown, do nothing
-        if (tooltipData.position === tooltip.caretX && visible && isUserBrowsingGraph) return;
-
-        const blockHeight = (tooltip.dataPoints[0]?.raw as DataPoint).x;
-        const spotPrice = find(historicalSpotPrice, {
-            blockHeight: blockHeight
-        });
+        if (tooltipData.spotPrice?.timestamp === timestamp && visible && isUserBrowsingGraph) return;
 
         (visible && spotPrice)
             ? showTooltip({
@@ -88,23 +107,82 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
                 position: tooltip.caretX
             })
             : hideTooltip()
+
     }, [tooltipData.position, isUserBrowsingGraph])
 
-    const chartOptions: any = useMemo(() => ({
+    /**
+     * There is an edge case with chartMin/chartMax where the current
+     * spot price data is stale (not updating) and therefore the min-max
+     * range wont be a full 1hour, since the min will update as now-1h,
+     * but the max will stay as the latest data point (which is stale)
+     */
+    const chartXMin = useMemo(() => {
+        switch (granularity) {
+            case TradeGraphGranularity.D30:
+                return subDays(Date.now(), 30).getTime()
+
+            case TradeGraphGranularity.D7:
+                return subDays(Date.now(), 7).getTime()
+
+            case TradeGraphGranularity.H24:
+                return subHours(Date.now(), 24).getTime()
+
+            case TradeGraphGranularity.H1:
+                return subHours(Date.now(), 1).getTime()
+
+            default:
+                return subHours(Date.now(), 1).getTime()
+        }
+    }, [granularity, historicalSpotPrice]);
+
+    // if there are no historical spot price entries, do not attempt to graph the current spot price
+    historicalSpotPrice = useMemo(() => (
+        historicalSpotPrice.length 
+            ? historicalSpotPrice
+                // hide data points older than the chart granularity
+                .filter(({ timestamp }) => timestamp >= chartXMin)
+                .concat([spotPrice]) 
+            : []
+    ), [historicalSpotPrice, spotPrice, chartXMin]);
+
+    /**
+     * Chart max will be either capped by the historical spot price
+     * latest entry, or if there are no hisotircal spot prices
+     * then the max is artificially created
+     */
+    const chartXMax = useMemo(() => {
+        return historicalSpotPrice.length
+            ? last(historicalSpotPrice)?.timestamp
+            : Date.now()
+    }, [historicalSpotPrice]);
+    
+    const chartYMin = minBy(historicalSpotPrice, spotPrice => spotPrice.balance)?.balance;
+    const chartYMax = maxBy(historicalSpotPrice, spotPrice => spotPrice.balance)?.balance;
+
+    const chartOptions = useMemo<ChartOptions>(() => ({
         responsive: true,
         maintainAspectRatio: false,
+        // TODO: remove only color animations
+        animation: false,
         scales: {
             xAxis: {
                 display: false,
+                type: 'time',
+                max: chartXMax,
+                min: chartXMin
             },
             yAxis: {
                 display: false,
-
+                stacked: false,
+                min: chartYMin,
+                max: chartYMax,
             }
         },
         layout: {
             padding: {
-                top: 96 + 40
+                // TODO: extract this value from css
+                top: 96,
+                bottom: 0
             }
         },
         hover: {
@@ -123,31 +201,55 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
                 external: tooltipHandler
             },
         },
-    }), [tooltipHandler]);
+    }), [tooltipHandler, chartXMin, chartXMax, chartYMin, chartYMax, historicalSpotPrice]);
 
-    const chartLabels = useMemo(() => (
-        historicalSpotPrice.map(spotPrice => parseInt(spotPrice.timestamp))
-    ), [historicalSpotPrice]);
+    const chartLabels = useMemo(() => {
+        return [chartXMin, chartXMax];
+    }, [historicalSpotPrice, granularity]);
+    
+
+    const greenBackgroundColor = useMemo((() => {
+        var gradient = chartCtx?.createLinearGradient(0, 0, 0, 400);
+        gradient?.addColorStop(0, cssColors.green1Opacity70);   
+        gradient?.addColorStop(1, cssColors.gray2Opacity0);
+        return gradient;
+    }), [chartCtx]);
+
+    const redBackgroundColor = useMemo(() => {
+        var gradient = chartCtx?.createLinearGradient(0, 0, 0, 400);
+        gradient?.addColorStop(0, cssColors.red1Opacity70);   
+        gradient?.addColorStop(1, cssColors.gray2Opacity0);
+        return gradient;
+    }, [chartCtx]);
+
+
 
     const chartData = useMemo<ChartData>(() => ({
-        labels: chartLabels,
+        labels: [chartLabels],
         datasets: [
             {
+                label: '1',
+                yAxisID: 'yAxis',
                 data: historicalSpotPrice.map(spotPrice => ({
-                    x: spotPrice.blockHeight,
+                    x: spotPrice.timestamp,
                     y: spotPrice.balance
                 })),
-                // TODO: import from scss
-                backgroundColor: '#4FFFB0',
-                borderColor: '#4FFFB0',
-                borderWidth: 3,
-                borderJoinStyle: 'round',
+                fill: true,
+                // TODO: when not interacting with the graph, indicate in red/green
+                // if the latest spot price is <> than the last historical price visible (!)
+                // don't forget to filter out already invisible data points to avoid user confusion
+                backgroundColor: displaySpotPrice.balance >= spotPrice.balance
+                    ? greenBackgroundColor
+                    : redBackgroundColor,
+                borderColor: displaySpotPrice.balance >= spotPrice.balance
+                    ? cssColors.green1
+                    : cssColors.red1,
+                borderWidth: 2,
                 pointRadius: 0,
-                // TODO: do we want tension 0 for a sharp graph?
-                tension: 0.2
-            },
+                tension: 0.1
+            }
         ],
-    }), [historicalSpotPrice, chartLabels])
+    }), [historicalSpotPrice, chartLabels, spotPrice, displaySpotPrice, chartCtx])
 
     const formatTick = useCallback((tick: number) => {
         const tickDate = new Date(tick);
@@ -162,8 +264,9 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
         />
 
         switch (granularity) {
-            case TradeGraphGranularity.ALL:
+            case TradeGraphGranularity.D30:
                 return asDate
+
             case TradeGraphGranularity.D7:
                 return asDate
 
@@ -250,7 +353,7 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
                     >
                         {tooltipData.spotPrice?.timestamp ? (
                             //TODO: format using intl
-                            moment(new Date(parseInt(tooltipData.spotPrice.timestamp))).toISOString(true)
+                            moment(new Date(tooltipData.spotPrice.timestamp)).toISOString(true)
                         ) : <></>}
                     </div>
                 </>
@@ -263,11 +366,25 @@ export const TradeGraphChart: React.FC<TradeGraphChartProps> = ({
                 <div className="row g-0">
                     <div className="col-12">
                         <div className="trade-graph__chart__wrapper">
-                            <Line
-                                data={chartData}
-                                options={chartOptions}
-                            />
-                            {tooltip}
+                            {historicalSpotPrice.length
+                                ? (
+                                    <>
+                                        <Line
+                                            ref={chartContainer}
+                                            data={chartData}
+                                            options={chartOptions}
+                                        />
+                                        {tooltip}
+                                    </>
+                                )
+                                : (
+                                    // TODO: error state
+                                    <>
+                                        No historical data available
+                                    </>
+                                )
+                            }
+
                         </div>
                     </div>
                 </div>

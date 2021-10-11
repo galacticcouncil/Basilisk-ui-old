@@ -1,5 +1,5 @@
 import './../../shared/shared';
-import './TradeGraph.scss';
+import './TradeGraphHeader.scss';
 import { FormattedMessage, FormattedNumber, FormattedTime, useIntl } from 'react-intl';
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
@@ -36,14 +36,21 @@ export interface SpotPrice {
     blockHeight: number,
     usdBalance: number,
     asset: Asset,
-    timestamp: string
+    timestamp: number
 }
 
 export enum TradeGraphGranularity {
-    ALL = 'ALL',
+    // ALL = 'ALL',
+    D30 = 'D30',
     D7 = 'D7',
     H24 = 'H24',
     H1 = 'H1'
+}
+
+export enum TradeGraphChartTypes {
+    PRICE = 'PRICE',
+    VOLUME = 'VOLUME',
+    WEIGHTS = 'WEIGHT'
 }
 
 export interface TradeGraphHeaderProps {
@@ -53,10 +60,12 @@ export interface TradeGraphHeaderProps {
     referenceSpotPrice: SpotPrice,
     availableGranularity: TradeGraphGranularity[],
     granularity: TradeGraphGranularity,
+    availableChartTypes: TradeGraphChartTypes[],
+    chartType: TradeGraphChartTypes,
     isUserBrowsingGraph: boolean,
     displaySpotPrice: SpotPrice,
-
-    onGranularityChange: (granularity: TradeGraphGranularity) => null
+    onGranularityChange: (granularity: TradeGraphGranularity) => null,
+    onChartTypeChange: (chartType: TradeGraphChartTypes) => null
 }
 
 export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
@@ -66,26 +75,35 @@ export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
     referenceSpotPrice,
     availableGranularity,
     granularity,
+    availableChartTypes,
+    chartType,
     onGranularityChange,
+    onChartTypeChange,
     isUserBrowsingGraph,
     displaySpotPrice
 }) => {
     const intl = useIntl();
 
-    // TODO: implement graph selector
-    // const availableGraphTypes = ['PRICE', 'VOLUME', 'WEIGHTS'];
-    // const activeGraphType = 'PRICE';
-
     /**
      * Header
      */
-    const formattedGranularity = (granularity: TradeGraphGranularity) => (
+    const formatGranularity = (granularity: TradeGraphGranularity) => (
         <FormattedMessage
             id="TradeGraph.granularity.selector"
-            defaultMessage="{granularity, select, ALL {ALL} D7 {7D} D3 {3D} H24 {24H} H12 {12H} H1 {1H} other {-}}"
+            defaultMessage="{granularity, select, ALL {ALL} D30 {30D} D7 {7D} D3 {3D} H24 {24H} H12 {12H} H1 {1H} other {-}}"
             values={{ granularity: granularity }}
         />
     )
+
+    const formatChartType = (chartType: TradeGraphChartTypes) => (
+        <FormattedMessage
+            id="TradeGraph.chartType.selector"
+            defaultMessage="{chartType, select, PRICE {PRICE} VOLUME {VOLUME} WEIGHTS {WEIGHT} other {-}}"
+            values={{ chartType: chartType }}
+        />
+    )
+
+    // TODO: refactor into formatPoolType
     const poolTypeLabel = (() => {
         switch (poolType) {
             case PoolType.LBP:
@@ -156,21 +174,21 @@ export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
     };
 
     return (
-        <div className='row g-0'>
+        <div className='row g-0 trade-graph__header'>
             <div className="col-12">
                 <div className="row g-0">
                     <div className='col-6'>
 
                         <div className="row g-0 align-items-center">
                             {/* pair symbols */}
-                            <div className='col-xs-auto text-white-1 trade-graph__pair-symbols'>
+                            <div className='col-xs-auto text-white-1 trade-graph__header__pair-symbols'>
                                 <p>
                                     {`${assetPair.assetA.symbol} / ${assetPair.assetB.symbol}`}
                                 </p>
                             </div>
 
                             {/* TODO: add tooltip after the component is implemented */}
-                            <div className="col text-gray-4 trade-graph__type-label">
+                            <div className="col text-gray-4 trade-graph__header__type-label">
                                 [{poolTypeLabel}]
                             </div>
 
@@ -178,7 +196,7 @@ export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
 
                         <div className="row g-0">
                             {/* Pair full names */}
-                            <div className='text-gray-4 trade-graph__pair-full-names'>
+                            <div className='text-gray-4 trade-graph__header__pair-full-names'>
                                 <p>
                                     {`${assetPair.assetA.fullName} / ${assetPair.assetB.fullName}`}
                                 </p>
@@ -187,14 +205,14 @@ export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
 
                     </div>
                     <div className='col-6 text-end'>
-                        <div className='text-white-1 trade-graph__spot-price'>
+                        <div className='text-white-1 trade-graph__header__spot-price'>
                             <div className='row g-0'>
-                                <div className='trade-graph__spot-price__in-asset'>
+                                <div className='trade-graph__header__spot-price__in-asset'>
                                     {/* TODO: add guards for symbol length */}
                                     {/* TODO: add abbreviations for spot price */}
                                     {formattedSpotPrice} {spotPrice.asset.symbol}
                                 </div>
-                                <div className='trade-graph__spot-price__breakdown'>
+                                <div className='trade-graph__header__spot-price__breakdown'>
                                     <span className='text-gray-4'>
                                         ~{formattedUsdSpotPrice}
                                     </span>
@@ -210,56 +228,62 @@ export const TradeGraphHeader: React.FC<TradeGraphHeaderProps> = ({
                                         )
                                     </span>
 
-                                    <span className={"text-gray-4 trade-graph__spot-price__breakdown__granularity " + classNames({
+                                    <span className={"text-gray-4 trade-graph__header__spot-price__breakdown__granularity " + classNames({
                                         "disabled": isUserBrowsingGraph
                                     })}>
                                         <FormattedMessage
                                             id="TradeGraph.granularity.pastIndicator"
                                             defaultMessage="Past"
-                                        /> {" "} {formattedGranularity(granularity)}
+                                        /> {" "} {formatGranularity(granularity)}
                                     </span>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="row g-0 trade-graph__controls">
+                <div className="row g-0 trade-graph__header__controls">
+
+                    {/* graph selector */}
                     <div className="col-6">
-                        <div className="trade-graph__controls__granularity text-gray-4">
+                        <div className="trade-graph__header__controls__graph-type text-gray-4 text-start">
+
+                            {/* TODO: add translations & granularity enums & on graph type handler */}
+                            {/* for now only price chart is available */}
+                            {availableChartTypes.map((chartTypeEntry, i) => (
+                                <span 
+                                    className={classNames({
+                                        "trade-graph__header__controls__graph-type__individual": true,
+                                        'active': chartTypeEntry === chartType,
+                                        'disabled': chartTypeEntry !== chartType
+                                    })}
+                                    onClick={_ => onChartTypeChange(chartTypeEntry)}
+                                >
+                                    {formatChartType(chartTypeEntry)}
+                                </span>
+                            ))}
+
+                        </div>
+                    </div>
+
+                    {/* granularity selector */}
+                    <div className="col-6">
+                        <div className="trade-graph__header__controls__granularity text-end text-gray-4">
 
                             {availableGranularity.map((granularityEntry, i) => {
                                 return <span
                                     className={classNames({
-                                        "trade-graph__controls__granularity__individual": true,
-                                        'active': granularityEntry === granularity
+                                        "trade-graph__header__controls__granularity__individual": true,
+                                        'active': granularityEntry === granularity,
                                     })}
                                     onClick={_ => handleGranulityChange(granularityEntry)}
                                     key={i}
                                 >
-                                    {formattedGranularity(granularityEntry)}
+                                    {formatGranularity(granularityEntry)}
                                 </span>
                             })}
 
                         </div>
                     </div>
-
-                    {/* graph selector */}
-                    {/* <div className="col-6">
-                    <div className="trade-graph__controls__graph-type text-gray-4 text-end"> */}
-
-                    {/* TODO: add translations & granularity enums */}
-                    {/* {availableGraphTypes.map((graphType, i) => (
-                            <span className={classNames({
-                                "trade-graph__controls__graph-type__individual": true,
-                                'active': graphType === activeGraphType
-                            })}>
-                                {graphType}
-                            </span>
-                        ))} */}
-
-                    {/* </div>
-                </div> */}
-
 
                 </div>
             </div>

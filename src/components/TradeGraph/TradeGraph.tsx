@@ -1,5 +1,4 @@
 import './../../shared/shared';
-import './TradeGraph.scss';
 import { FormattedMessage, FormattedNumber, FormattedTime, useIntl } from 'react-intl';
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
@@ -13,14 +12,12 @@ import { usePrevious } from 'react-use';
 import CountUp from 'react-countup';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import moment from 'moment';
-import { TradeGraphHeader, AssetPair, PoolType, SpotPrice, TradeGraphGranularity } from './TradeGraphHeader';
+import { TradeGraphHeader, AssetPair, PoolType, SpotPrice, TradeGraphGranularity, TradeGraphChartTypes } from './TradeGraphHeader';
 import { onUserBrowsingGraphEvent, TradeGraphChart } from './TradeGraphChart';
 
 Chart.register(annotationPlugin);
 
-
 export type HistoricalSpotPrice = SpotPrice[]
-
 
 export interface TradeGraphProps {
     assetPair: AssetPair,
@@ -29,6 +26,8 @@ export interface TradeGraphProps {
     historicalSpotPrice: HistoricalSpotPrice,
     availableGranularity: TradeGraphGranularity[],
     granularity: TradeGraphGranularity,
+    availableChartTypes: TradeGraphChartTypes[],
+    chartType: TradeGraphChartTypes,
     onGranularityChange: (granularity: TradeGraphGranularity) => null
 }
 
@@ -36,7 +35,6 @@ export interface TradeGraphProps {
  * TODO: helper icon, time zone conversion from zulu to local,
  * loading state, error state, wrong asset pair state
  * TODO: find a new red color for percentge change indicator
- * @param param0 
  * @returns 
  */
 export const TradeGraph: React.FC<TradeGraphProps> = ({
@@ -46,20 +44,19 @@ export const TradeGraph: React.FC<TradeGraphProps> = ({
     historicalSpotPrice,
     availableGranularity,
     granularity,
+    availableChartTypes,
+    chartType,
     onGranularityChange
 }) => {
-    const intl = useIntl();
-
-    // TODO: implement graph selector
-    // const availableGraphTypes = ['PRICE', 'VOLUME', 'WEIGHTS'];
-    // const activeGraphType = 'PRICE';
-
     const [displaySpotPrice, setDisplaySpotPrice] = useState(spotPrice)
     const [isUserBrowsingGraph, setIsUserBrowsingGraph] = useState(false);
 
+    // update display spot price when the current spot price updates
+    useEffect(() => setDisplaySpotPrice(spotPrice), [spotPrice]);
+
     const referenceSpotPrice = (!isUserBrowsingGraph)
             // if the user is not browsing the graph, use the first historical entry as the reference spot price
-            ? historicalSpotPrice[0] 
+            ? first(historicalSpotPrice) || spotPrice
             // if the user is browsing the graph, use the latest/current spot price as the reference spot price
             : spotPrice;
 
@@ -90,6 +87,8 @@ export const TradeGraph: React.FC<TradeGraphProps> = ({
                         onGranularityChange={onGranularityChange}
                         isUserBrowsingGraph={isUserBrowsingGraph}
                         displaySpotPrice={displaySpotPrice}
+                        availableChartTypes={availableChartTypes}
+                        chartType={chartType}
                     />
 
                     <TradeGraphChart
@@ -97,7 +96,10 @@ export const TradeGraph: React.FC<TradeGraphProps> = ({
                         isUserBrowsingGraph={isUserBrowsingGraph}
                         onUserBrowsingGraph={handleUserBrowsingGraph}
                         granularity={granularity}
+                        displaySpotPrice={displaySpotPrice}
+                        spotPrice={spotPrice}
                     />
+
                 </div>
             </div>
         </div>

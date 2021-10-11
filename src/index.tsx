@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { Locale } from './shared/locale';
-import './shared/shared';
+import './index.scss';
 
 ReactDOM.render(
   <React.StrictMode>

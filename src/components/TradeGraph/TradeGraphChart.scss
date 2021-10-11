@@ -1,0 +1,62 @@
+@import '../../shared/shared.scss';
+
+.trade-graph {
+
+    &__chart {
+        // TODO: this needs to be linked with TradeGraphChart's chartOptions.layout.padding.top
+        margin-top: 6rem / 2;
+        // margin-bottom: 32px;
+
+        &__wrapper {
+            height: 24.375rem;
+            position: relative;
+            
+
+            &__tooltip {
+
+                $tooltipColor: $gray1;
+                
+                height: 90%;
+                width: 0.0625rem;
+                border-right: 0.0625rem $tooltipColor dashed;
+                position: absolute;
+                top: 10%;
+                z-index: 0;
+                opacity: 1;
+                pointer-events: none;
+                transition: opacity ease-in 100ms;
+
+                &__label {
+                    background: $tooltipColor;
+                    border: 0.0625rem solid $tooltipColor;
+                    color: $gray4;
+                    position: absolute;
+                    top: 10%;
+                    width: 12.5rem;
+                    text-align: center;
+                    padding: 0.5rem;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    transition: opacity ease-in 100ms;
+                    z-index: 1;
+                }
+            }
+        }
+        
+        &__ticks {
+            color: $gray4;
+            font-size: 0.75rem;
+            margin-top: 2rem;
+            user-select: none;
+
+            .col {
+                max-height: 0.875rem;
+                text-align: left;
+            }
+
+            span {
+                display: inline-block;
+            }
+        }
+    }
+}

@@ -8,7 +8,7 @@ $gray4: #BDCCD4;
 $green1: #4FFFB0;
 
 // orange
-$orange1: #FF931E;
+$orange1: #524c47;
 
 // white
 $white1: #FFFFFF;
@@ -16,7 +16,7 @@ $white1: #FFFFFF;
 // pink
 $pink1: #FF7BAC;
 
-$red1: #E63434;
+$red1: #fa4b4b;
 
 $colors: (
     "gray": ($gray1, $gray2, $gray3, $gray4),
@@ -45,5 +45,13 @@ $colorsList: [];
 }
 
 :export {
-    colors: $colorsList
+    colors: $colorsList;
+
+    gray2Opacity0: rgba($gray2, 0);
+
+    red1: $red1;
+    red1Opacity70: rgba($red1, .7);
+
+    green1: $green1;
+    green1Opacity70: rgba($green1, .7)
 }
