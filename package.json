@@ -90,7 +90,6 @@
     "@storybook/addon-essentials": "^6.3.9",
     "@storybook/addon-links": "^6.3.9",
     "@storybook/node-logger": "^6.3.9",
-    "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/preset-scss": "^1.0.3",
     "@storybook/react": "^6.3.9",
     "babel-plugin-formatjs": "^10.3.9",
