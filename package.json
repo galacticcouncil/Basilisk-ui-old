@@ -35,10 +35,11 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "FAST_REFRESH=false react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
+    "lint": "eslint",
     "commit": "git-cz",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
@@ -58,21 +59,20 @@
         "rules": {
           "import/no-anonymous-default-export": "off"
         }
+      },
+      {
+        "files": [
+          "*"
+        ],
+        "rules": {
+          "react/style-prop-object": [1, {
+            "allow": ["FormattedNumber"]
+          }]
+        }
       }
     ]
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [],
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
@@ -99,18 +99,23 @@
     "@commitlint/cli": "^13.2.0",
     "@commitlint/config-conventional": "^13.2.0",
     "@formatjs/cli": "^4.3.1",
-    "@storybook/addon-actions": "^6.3.9",
-    "@storybook/addon-essentials": "^6.3.9",
+    "@storybook/addon-actions": "^6.3.11",
+    "@storybook/addon-essentials": "^6.3.11",
     "@storybook/addon-knobs": "^6.3.1",
-    "@storybook/addon-links": "^6.3.9",
-    "@storybook/node-logger": "^6.3.9",
+    "@storybook/addon-links": "^6.3.11",
+    "@storybook/node-logger": "^6.3.11",
     "@storybook/preset-create-react-app": "^3.2.0",
-    "@storybook/react": "^6.3.9",
+    "@storybook/preset-scss": "^1.0.3",
+    "@storybook/react": "^6.3.11",
     "babel-plugin-formatjs": "^10.3.9",
     "bignumber.js": "^9.0.1",
     "chai": "^4.3.4",
     "commitizen": "^4.2.4",
+    "css-loader": "5.2.6",
     "cz-conventional-changelog": "^3.2.0",
-    "sass": "^1.42.1"
+    "node-sass": "^6.0.1",
+    "sass": "^1.42.1",
+    "sass-loader": "10.1.1",
+    "style-loader": "2.0.0"
   }
 }
