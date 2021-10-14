@@ -24,6 +24,9 @@ jobs:
         run: yarn install
 
       - name: Build project
+        run: yarn build
+
+      - name: Build Storybook
         run: yarn build-storybook --output-dir=./fix-build
 
       - name: Upload production-ready build files
