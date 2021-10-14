@@ -94,6 +94,6 @@
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.2.0",
     "sass": "^1.42.1",
-    "sass-loader": "10.1.1"
+    "browserslist": "4.6.2"
   }
 }
