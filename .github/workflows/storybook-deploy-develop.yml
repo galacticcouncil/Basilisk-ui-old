@@ -22,8 +22,8 @@ jobs:
 
       - name: Install NPM packages
         run: |
-          yarn preci
-          yarn ci
+          yarn run preci
+          yarn run ci
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
