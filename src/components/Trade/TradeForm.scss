@@ -1,0 +1,14 @@
+@import './../../shared/colors.module.scss';
+
+.trade-form {
+    background: $gray3;
+    height: 100%;
+
+    &__title {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: $white1;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+    }
+}

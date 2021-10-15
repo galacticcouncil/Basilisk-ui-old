@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
+    "@fortawesome/fontawesome-svg-core": "^1.2.36",
+    "@fortawesome/free-solid-svg-icons": "^5.15.4",
+    "@fortawesome/react-fontawesome": "^0.1.15",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -13,6 +17,7 @@
     "add-days": "^2.0.1",
     "babel-loader": "8.1.0",
     "bootstrap": "^5.1.1",
+    "bootstrap-icons": "^1.6.0",
     "chart.js": "^3.5.1",
     "chartjs-adapter-moment": "^1.0.0",
     "chartjs-plugin-annotation": "^1.0.2",
@@ -24,6 +29,7 @@
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.5",
     "react-countup": "^6.0.0",
+    "react-currency-input-field": "^3.5.1",
     "react-dom": "^17.0.2",
     "react-intl": "^5.20.12",
     "react-scripts": "4.0.3",
@@ -65,9 +71,14 @@
           "*"
         ],
         "rules": {
-          "react/style-prop-object": [1, {
-            "allow": ["FormattedNumber"]
-          }]
+          "react/style-prop-object": [
+            1,
+            {
+              "allow": [
+                "FormattedNumber"
+              ]
+            }
+          ]
         }
       }
     ]

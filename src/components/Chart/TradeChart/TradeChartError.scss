@@ -1,0 +1,22 @@
+@import '../../../shared/colors.module.scss';
+
+.trade-chart-error {
+    color: $gray4;
+    text-align: center;
+    width: 60%;
+    margin: 0 auto;
+    height: 100%;
+
+    .large {
+        font-size: 1.75rem;
+        font-weight: 500;
+        margin-top: -2.5rem;
+        line-height: 2rem;
+    }
+
+    .small {
+        margin-top: .875rem;
+        font-weight: normal;
+        font-size: .75rem;
+    }
+}

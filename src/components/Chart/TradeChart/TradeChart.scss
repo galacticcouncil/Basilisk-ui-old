@@ -1,0 +1,55 @@
+@import '../../../shared/colors.module.scss';
+
+
+$border-radius: 0.375rem;
+$chartAreaHeight: 16rem;
+$tickHeight: 3.125rem;
+$contentAreaMarginTop: 8rem;
+.trade-chart {
+    border-top-left-radius: $border-radius;
+    border-bottom-left-radius: $border-radius;
+    background: $gray2;
+
+    &__chart-wrapper {
+        position: relative;
+        &__chart-jail {
+            margin-top: $contentAreaMarginTop;
+            height: $chartAreaHeight;
+        }
+    }
+
+    &__error-wrapper {
+        // margin-top: $contentAreaMarginTop;
+        height: $chartAreaHeight + $contentAreaMarginTop + $tickHeight;
+    }
+
+    &__tooltip {
+
+        $tooltipColor: $gray1;
+        
+        height: 90%;
+        width: 0.0625rem;
+        border-right: 0.0625rem $pink1 dashed;
+        position: absolute;
+        top: 10%;
+        z-index: 0;
+        opacity: 1;
+        pointer-events: none;
+        transition: opacity ease-in 100ms;
+
+        &__label {
+            background: $tooltipColor;
+            border: 0.063rem solid $pink1;
+            color: $pink1;
+            position: absolute;
+            top: 10%;
+            width: 15rem;
+            text-align: center;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: opacity ease-in 100ms;
+            z-index: 1;
+        }
+    }
+}
