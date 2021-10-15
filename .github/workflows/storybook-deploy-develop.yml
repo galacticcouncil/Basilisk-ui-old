@@ -22,16 +22,16 @@ jobs:
 
       - name: Install NPM packages
         run: |
-          yarn run preci
-          yarn run ci
+          npm install
+          npm ci
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
 
       - name: Build project and Storybook
         run: |
-          yarn build
-          yarn build-storybook --output-dir=./develop --no-dll
+          npm run build
+          npm run build-storybook --output-dir=./develop --no-dll
         env:
           CI: false
 
