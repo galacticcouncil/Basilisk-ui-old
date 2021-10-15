@@ -6,12 +6,12 @@ import { ChartHeader } from './../ChartHeader/ChartHeader';
 import './TradeChart.scss';
 import moment from 'moment';
 import { TradeChartError, TradeChartErrorType } from './TradeChartError';
-import { find, last, random, times } from 'lodash';
+import { find, first, last, random, times } from 'lodash';
 
 // this function is absolutely hacky
 export const _getTooltipPositionCss = (tooltipPosition: number) => {
     // TODO: use a more specific selector
-    const tooltipWidth = 100;
+    const tooltipWidth = 120;
     const canvasWidth = document.getElementsByTagName('canvas')[0]?.getBoundingClientRect().width;
     if (tooltipPosition < tooltipWidth) return {
         left: 0
@@ -32,23 +32,17 @@ export const TradeChart = ({
     granularity,
     chartType,
     onChartTypeChange,
-    onGranularityChange
+    onGranularityChange,
+    primaryDataset,
 }: {
     assetPair: AssetPair,
     poolType: PoolType,
     granularity: ChartGranularity,
     chartType: ChartType,
+    primaryDataset: Dataset,
     onChartTypeChange: (chartType: ChartType) => void,
     onGranularityChange: (granularity: ChartGranularity) => void,
 }) => {
-
-    const now = Date.now();
-    const primaryDataset: Dataset = useMemo(() => times(150)
-        .map(i => ({
-            x: now + (i * 100000),
-            y: random(3000, 3100)
-        }))
-    , []);
 
     const [displayData, setDisplayData] = useState<DisplayData>({
         balance: last(primaryDataset)?.y,
@@ -63,13 +57,38 @@ export const TradeChart = ({
         }
     });
 
+    const resetDisplayData = () => {
+        setDisplayData({
+            balance: last(primaryDataset)?.y,
+            // TODO; usd value of the balance needs to be determined separately
+            // concept of a rich dataset, boil it down to x/y for the linechart
+            // and persist usd balances etc at a higher level
+            usdBalance: last(primaryDataset)?.y,
+            // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
+            asset: {
+                symbol: assetPair.assetB?.symbol,
+                fullName: assetPair.assetB?.fullName
+            }
+        })
+    }
+
+    // TODO: temporary
+    useEffect(() => {
+        resetDisplayData();
+    }, [assetPair])
+
     // TODO: set reference data based on if the user is interacting with the graph
     // if the user is not interacting with the graph, reference data should be 
     const [referenceData, setReferenceData] = useState<DisplayData | undefined>(displayData);
 
     const getTooltipPositionCss = useCallback(_getTooltipPositionCss, [])
     const [tooltipData, setTooltipData] = useState<TooltipData | undefined>(undefined);
-    const [dataTrend, setDataTrend] = useState(Trend.Positive);
+    
+    // TODO: rewrite
+    const dataTrend = (() => {
+        if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral;
+        return displayData?.balance! >= referenceData?.balance! ? Trend.Positive : Trend.Negative
+    })()
 
     // TODO: set trend based on tooltip data
     useEffect(() => {
@@ -95,7 +114,7 @@ export const TradeChart = ({
                 usdBalance: referenceData.y,
             });
         } else {
-            // setDisplayData()
+            resetDisplayData()
         }
 
     }, [setTooltipData])

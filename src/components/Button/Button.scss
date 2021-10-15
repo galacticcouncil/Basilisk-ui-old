@@ -1,0 +1,27 @@
+@import './../../shared/colors.module.scss';
+
+.button {
+    border: none;
+    outline: none;
+    padding: 0;
+    background: none;
+    user-select: none;
+
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+    width: 100%;
+
+    &--primary {
+        background: $green1;
+        &:hover {
+            background: darken($color: $green1, $amount: 5);
+        }
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}

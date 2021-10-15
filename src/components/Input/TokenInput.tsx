@@ -16,12 +16,15 @@ export const TokenInput = ({
 }: {
     asset: Asset,
     slippage?: number,
-    value: number,
-    onValueChange?: (value: number) => void
+    value: string,
+    onValueChange?: (value: string) => void
 }) => {
     
     // TODO: this is probably really bad and should be handled as a string always
-    const handleValueChange = useCallback((value: string) => onValueChange && onValueChange(parseInt(value)), []);
+    const handleValueChange = useCallback((value: string | undefined) => {
+        if (!value) value = '0';
+        onValueChange && onValueChange(value);
+    }, []);
     
     return <div className="container-fluid p-0 token-input">
         <div className="row p-0 g-0 align-items-stretch justify-content-between">
