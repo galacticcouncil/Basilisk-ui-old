@@ -31,25 +31,15 @@ jobs:
       - name: Build project and Storybook
         run: |
           npm run build
-          npm run build-storybook --output-dir=./develop --no-dll
+          npm run build-storybook --output-dir sb-build-files
         env:
           CI: false
-
-#      - name: Build project
-#        run: yarn build
-#        env:
-#          CI: false
-#
-#      - name: Build Storybook
-#        run: yarn build-storybook --output-dir=./develop
-#        env:
-#          CI: false
 
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v2
         with:
           name: build-files
-          path: ./develop
+          path: ./sb-build-files
 
 
   deploy:
@@ -63,11 +53,11 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-files
-          path: ./develop
-      - name: Deploy
+          path: ./sb-build-files
+      - name: Deploy to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_branch: storybook-gh-pages
-          publish_dir: ./develop
+          publish_dir: ./sb-build-files
           destination_dir: develop
