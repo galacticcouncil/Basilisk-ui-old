@@ -21,15 +21,17 @@ jobs:
           node-version: 14.x
 
       - name: Install NPM packages
-        run: yarn install
+        run: |
+          npm install
+          npm ci
 
-      - name: Build project
-        run: yarn build
-        env:
-          CI: false
+      - name: Update browserslist
+        run: npx browserslist@latest --update-db
 
-      - name: Build Storybook
-        run: yarn build-storybook --output-dir=./fix-build
+      - name: Build project and Storybook
+        run: |
+          npm run build
+          npm run build-storybook -- -o sb-build-files
         env:
           CI: false
 
@@ -37,11 +39,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: build-files
-          path: ./fix-build
+          path: ./sb-build-files
 
 
   deploy:
-    name: Deploy Storubook
+    name: Deploy Storybook
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -51,16 +53,17 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-files
-          path: ./fix-build
+          path: ./sb-build-files
+
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
-      - name: Deploy
+      - name: Deploy Storybook to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_branch: storybook-gh-pages
-          publish_dir: ./fix-build
+          publish_dir: ./sb-build-files
           destination_dir: ${{ steps.extract_branch.outputs.branch }}
