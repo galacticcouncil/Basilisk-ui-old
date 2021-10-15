@@ -8,7 +8,7 @@ $gray4: #BDCCD4;
 $green1: #4FFFB0;
 
 // orange
-$orange1: #524c47;
+$orange1: #ff931e;
 
 // white
 $white1: #FFFFFF;
@@ -53,5 +53,12 @@ $colorsList: [];
     red1Opacity70: rgba($red1, .7);
 
     green1: $green1;
-    green1Opacity70: rgba($green1, .7)
+    green1Opacity70: rgba($green1, .7);
+    green1Opacity33: rgba($green1, .33);
+
+    orange1: $orange1;
+    orange1Opacity70: rgba($orange1, .7);
+
+    gray1: $gray1;
+    gray2: $gray2;
 }
