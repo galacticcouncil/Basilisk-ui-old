@@ -31,7 +31,7 @@ jobs:
       - name: Build project and Storybook
         run: |
           npm run build
-          npm run build-storybook --output-dir sb-build-files
+          npm run build-storybook -- -o sb-build-files
         env:
           CI: false
 
