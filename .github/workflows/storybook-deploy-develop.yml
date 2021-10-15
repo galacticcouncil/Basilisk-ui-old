@@ -23,6 +23,9 @@ jobs:
       - name: Install NPM packages
         run: yarn install
 
+      - name: Update browserslist
+        run: npx browserslist@latest --update-db
+
       - name: Build project and Storybook
         run: |
           yarn build
