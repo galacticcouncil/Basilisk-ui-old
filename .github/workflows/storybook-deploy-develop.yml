@@ -21,7 +21,9 @@ jobs:
           node-version: 14.x
 
       - name: Install NPM packages
-        run: yarn install
+        run: |
+          yarn preci
+          yarn ci
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
@@ -29,7 +31,7 @@ jobs:
       - name: Build project and Storybook
         run: |
           yarn build
-          yarn build-storybook --output-dir=./develop
+          yarn build-storybook --output-dir=./develop --no-dll
         env:
           CI: false
 

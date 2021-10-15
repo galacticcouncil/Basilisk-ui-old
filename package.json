@@ -28,6 +28,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "commit": "git-cz",
+    "preci": "rm -fr node_modules",
+    "ci": "yarn install --frozen-lockfile",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "extract": "formatjs extract 'src/**/*.ts*' --out-file lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts"
