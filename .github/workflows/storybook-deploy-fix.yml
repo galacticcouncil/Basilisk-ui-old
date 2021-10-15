@@ -22,16 +22,15 @@ jobs:
 
       - name: Install NPM packages
         run: |
-          npm install
-          npm ci
+          yarn
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
 
       - name: Build project and Storybook
         run: |
-          npm run build
-          npm run build-storybook -- -o sb-build-files
+          yarn build
+          yarn build-storybook -- -o sb-build-files
         env:
           CI: false
 
