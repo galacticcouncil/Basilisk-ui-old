@@ -1,5 +1,5 @@
 import { StorybookWrapper } from '../../shared/StorybookWrapper';
-import { Button } from './Button';
+import { Button, ButtonKind } from './Button';
 
 
 export default {
@@ -12,7 +12,9 @@ const Template = () => {
         <div style={{
             width: '380px'
         }}>
-            <Button/>
+            <Button kind={ButtonKind.Primary}>
+                Text
+            </Button>
         </div>
     </StorybookWrapper>
 }
