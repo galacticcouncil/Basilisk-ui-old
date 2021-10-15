@@ -1,0 +1,34 @@
+{
+  "files": {
+    "0.b19ba7a5.iframe.bundle.js": "./0.b19ba7a5.iframe.bundle.js",
+    "main.css": "./static/css/main.a7e4306e.chunk.css",
+    "main.js": "./main.58c4a320.iframe.bundle.js",
+    "main.css.map": "./static/css/main.a7e4306e.chunk.css.map",
+    "runtime~main.js": "./runtime~main.eeb71360.iframe.bundle.js",
+    "vendors~main.css": "./static/css/vendors~main.474e8e68.chunk.css",
+    "vendors~main.js": "./vendors~main.c6b6c898.iframe.bundle.js",
+    "vendors~main.css.map": "./static/css/vendors~main.474e8e68.chunk.css.map",
+    "vendors~main.js.map": "./vendors~main.c6b6c898.iframe.bundle.js.map",
+    "4.229274f6.iframe.bundle.js": "./4.229274f6.iframe.bundle.js",
+    "4.229274f6.iframe.bundle.js.map": "./4.229274f6.iframe.bundle.js.map",
+    "5.64450c0d.iframe.bundle.js": "./5.64450c0d.iframe.bundle.js",
+    "6.39e8283e.iframe.bundle.js": "./6.39e8283e.iframe.bundle.js",
+    "6.39e8283e.iframe.bundle.js.map": "./6.39e8283e.iframe.bundle.js.map",
+    "7.28c7bb58.iframe.bundle.js": "./7.28c7bb58.iframe.bundle.js",
+    "4.229274f6.iframe.bundle.js.LICENSE.txt": "./4.229274f6.iframe.bundle.js.LICENSE.txt",
+    "6.39e8283e.iframe.bundle.js.LICENSE.txt": "./6.39e8283e.iframe.bundle.js.LICENSE.txt",
+    "iframe.html": "./iframe.html",
+    "static/media/ETH.svg": "./static/media/ETH.9270fc02.svg",
+    "static/media/KSM.533a90cd.svg": "./static/media/KSM.533a90cd.svg",
+    "static/media/index.scss": "./static/media/bootstrap-icons.5747cea3.woff",
+    "static/media/index.css": "./static/media/roboto-latin-900italic.cb5ad999.woff2",
+    "vendors~main.c6b6c898.iframe.bundle.js.LICENSE.txt": "./vendors~main.c6b6c898.iframe.bundle.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "runtime~main.eeb71360.iframe.bundle.js",
+    "static/css/vendors~main.474e8e68.chunk.css",
+    "vendors~main.c6b6c898.iframe.bundle.js",
+    "static/css/main.a7e4306e.chunk.css",
+    "main.58c4a320.iframe.bundle.js"
+  ]
+}
