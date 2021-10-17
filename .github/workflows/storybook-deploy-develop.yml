@@ -42,9 +42,28 @@ jobs:
           path: ./sb-build-files
 
 
-  deploy:
-    name: Deploy Storubook
+  clear_build:
+    name: Clear existing build
+    runs-on: ubuntu-latest
     needs: build
+    steps:
+      - name: Checkout storybook-gh-pages branch
+        uses: actions/checkout@v2
+        with:
+          ref: storybook-gh-pages
+
+      - name: Remove Existing build
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: develop
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+
+
+  deploy:
+    name: Deploy Storybook
+    needs: clear_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -54,6 +73,7 @@ jobs:
         with:
           name: build-files
           path: ./sb-build-files
+
       - name: Deploy to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
