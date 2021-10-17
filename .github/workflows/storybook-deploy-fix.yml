@@ -84,9 +84,9 @@ jobs:
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
+        if: steps.auto-commit-action.outputs.changes_detected == 'true'
         with:
           branch: ${{ secrets.GH_PAGES_BRANCH }}
-          skip_dirty_check: true
 
   deploy:
     name: Deploy Storybook
