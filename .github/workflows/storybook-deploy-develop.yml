@@ -52,10 +52,15 @@ jobs:
         with:
           ref: storybook-gh-pages
 
+      - name: Extract develop folder name
+        shell: bash
+        run: echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/develop"
+        id: branch_folder_name
+
       - name: Remove Existing build
         uses: JesseTG/rm@v1.0.2
         with:
-          path: develop
+          path: ${{ steps.branch_folder_name.outputs.folder_name }}
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
