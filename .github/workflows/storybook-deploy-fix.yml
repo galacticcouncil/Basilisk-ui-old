@@ -6,6 +6,8 @@ on:
   pull_request:
     branches:
       - 'fix/**'
+
+#GH_PAGES_BRANCH = storybook-gh-pages
 jobs:
   build:
     name: Build Storybook
@@ -56,7 +58,7 @@ jobs:
       - name: Checkout storybook-gh-pages branch
         uses: actions/checkout@v2
         with:
-          ref: storybook-gh-pages
+          ref: ${{ secrets.GH_PAGES_BRANCH }}
 
       - name: Download artifact (sanitize script)
         uses: actions/download-artifact@v2
@@ -82,6 +84,9 @@ jobs:
 
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ secrets.GH_PAGES_BRANCH }}
+          skip_dirty_check: true
 
   deploy:
     name: Deploy Storybook
@@ -111,6 +116,6 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          publish_branch: storybook-gh-pages
+          publish_branch: ${{ secrets.GH_PAGES_BRANCH }}
           publish_dir: ./sb-build-files
           destination_dir: ${{ steps.extract_branch.outputs.branch }}
