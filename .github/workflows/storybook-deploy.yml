@@ -6,18 +6,13 @@ on:
       - 'fix/**'
   pull_request:
     branches:
-      - develop
       - 'fix/**'
-
-#GH_PAGES_BRANCH = storybook-gh-pages
 jobs:
   build:
     name: Build Storybook
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Branch name
-        run: echo running on branch ${GITHUB_REF#refs/heads/}
 
       - name: Install Node.js
         uses: actions/setup-node@v1
@@ -68,15 +63,27 @@ jobs:
           name: sanitize-script-file
           path: ./scripts
 
+      - name: Update script file
+        shell: bash
+        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
+
       - name: Extract branch folder name
         shell: bash
         run: |
-          chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
-          echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          if [[ $GITHUB_EVENT_NAME = 'push' ]]
+          then
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
+          then
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+          else
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          fi
         id: branch_folder_name
 
       - name: Remove Existing build
         uses: JesseTG/rm@v1.0.2
+        if: ${{ success() }}
         with:
           path: ${{ steps.branch_folder_name.outputs.folder_name }}
 
@@ -109,9 +116,18 @@ jobs:
           name: sanitize-script-file
           path: ./scripts
 
-      - name: Extract branch name
+      - name: Extract branch folder name
         shell: bash
-        run: echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+        run: |
+          if [[ $GITHUB_EVENT_NAME = 'push' ]]
+          then
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
+          then
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+          else
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          fi
         id: extract_branch
 
       - name: Deploy Storybook to GH Pages
