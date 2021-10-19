@@ -1,11 +1,14 @@
-name: Build & Deploy Storybook Develop
+name: Build & Deploy Storybook (Develop, Fix)
 on:
   push:
     branches:
       - develop
+      - 'fix/**'
   pull_request:
     branches:
       - develop
+      - 'fix/**'
+
 #GH_PAGES_BRANCH = storybook-gh-pages
 jobs:
   build:
@@ -13,8 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: develop
+      - name: Branch name
+        run: echo running on branch ${GITHUB_REF#refs/heads/}
 
       - name: Install Node.js
         uses: actions/setup-node@v1
@@ -36,12 +39,18 @@ jobs:
         env:
           CI: false
 
+      - name: Upload name sanitize script file
+        uses: actions/upload-artifact@v2
+        with:
+          name: sanitize-script-file
+          path: ./scripts/gh-actions-branch-name-serialize.sh
+
+
       - name: Upload production-ready build files
         uses: actions/upload-artifact@v2
         with:
           name: build-files
           path: ./sb-build-files
-
 
   clear_build:
     name: Clear existing build
@@ -53,9 +62,17 @@ jobs:
         with:
           ref: ${{ secrets.GH_PAGES_BRANCH }}
 
-      - name: Extract develop folder name
+      - name: Download artifact (sanitize script)
+        uses: actions/download-artifact@v2
+        with:
+          name: sanitize-script-file
+          path: ./scripts
+
+      - name: Extract branch folder name
         shell: bash
-        run: echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/develop"
+        run: |
+          chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
+          echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
         id: branch_folder_name
 
       - name: Remove Existing build
@@ -63,12 +80,15 @@ jobs:
         with:
           path: ${{ steps.branch_folder_name.outputs.folder_name }}
 
+      - name: Remove redundant files from the current branch
+        shell: bash
+        run: rm -r ./scripts
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         if: steps.auto-commit-action.outputs.changes_detected == 'true'
         with:
           branch: ${{ secrets.GH_PAGES_BRANCH }}
-
 
   deploy:
     name: Deploy Storybook
@@ -77,16 +97,27 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download artifact
+      - name: Download artifact (build files)
         uses: actions/download-artifact@v2
         with:
           name: build-files
           path: ./sb-build-files
 
-      - name: Deploy to GH Pages
+      - name: Download artifact (sanitize script)
+        uses: actions/download-artifact@v2
+        with:
+          name: sanitize-script-file
+          path: ./scripts
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+        id: extract_branch
+
+      - name: Deploy Storybook to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           publish_branch: ${{ secrets.GH_PAGES_BRANCH }}
           publish_dir: ./sb-build-files
-          destination_dir: develop
+          destination_dir: ${{ steps.extract_branch.outputs.branch }}
