@@ -39,6 +39,33 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
+
+## Deployment
+
+GitHub Actions Workflow is configured for deployment of UI application and Storybooks
+at the same time. Each branch `develop|feat|fix/**` deploys to appropriate folder in `app-builds-gh-pages` branch. 
+Branch folder contains 2 sub-folders: `app` and `storybook` for UI app and Storybook builds
+accordingly.
+
+App UI builds and Storybooks are hosted in GitHub Pages.
+
+For access to the builds you can use these paths:
+- **UI app** - `https://galacticcouncil.github.io/basilisk-ui/<folder_name>/<subfolder_name?>/app`
+- **Storybook build** - `https://galacticcouncil.github.io/basilisk-ui/<folder_name>/<subfolder_name?>/storybook`
+
+Deployment triggers: 
+```yaml
+push:
+    branches:
+        - develop
+        - 'fix/**'
+        - 'feat/**'
+pull_request:
+    branches:
+        - 'fix/**'
+        - 'feat/**'
+```
+
 ## Learn More
 
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
