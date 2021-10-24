@@ -1,0 +1,19 @@
+type Config {
+    nodeUrl: String!,
+    processorUrl: String!
+}
+
+type PolkadotJsExtension {
+    isAvailable: Boolean!
+}
+
+type PolkadotJsExtensionAccount {
+    alias: String!,
+    network: String!,
+    isSelected: Boolean!,
+    address: String!
+}
+
+extend type Query {
+    config: Config!
+}
