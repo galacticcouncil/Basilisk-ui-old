@@ -27,6 +27,7 @@ export type PolkadotJsExtensionAccount = {
   __typename?: 'PolkadotJsExtensionAccount';
   address: Scalars['String'];
   alias: Scalars['String'];
+  id: Scalars['String'];
   isSelected: Scalars['Boolean'];
   network: Scalars['String'];
 };

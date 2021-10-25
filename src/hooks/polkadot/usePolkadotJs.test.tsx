@@ -22,5 +22,5 @@ test('configures a polkadot instance', async () => {
     await waitForNextUpdate({
         timeout
     });
-    expect(result.current instanceof ApiPromise).toBeTruthy();
+    expect(result.current.apiInstance instanceof ApiPromise).toBeTruthy();
 });

@@ -8,6 +8,7 @@ type PolkadotJsExtension {
 }
 
 type PolkadotJsExtensionAccount {
+    id: String!,
     alias: String!,
     network: String!,
     isSelected: Boolean!,

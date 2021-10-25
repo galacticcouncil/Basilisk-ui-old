@@ -24,7 +24,7 @@ test('provides a preconfigured apollo client', () => {
 test('has all the required local resolvers', () => {
     // TODO: can this be typed better?
     const resolvers = (client() as any).localState.resolvers.Query;
-    const expectedResolvers = ['config'];
+    const expectedResolvers = ['config', 'polkadotExtension', 'polkadotExtensionAccounts'];
     
     expectedResolvers.map(resolver => 
         expect(has(resolvers, resolver))

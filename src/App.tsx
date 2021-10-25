@@ -5,11 +5,12 @@ import './App.scss';
 import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
 import { Locale } from './misc/locale';
 import { useApollo } from './hooks/apollo/useApollo';
-import { ApolloProvider, LazyQueryHookOptions, useReactiveVar, QueryResult, QueryTuple } from '@apollo/client'
+import { ApolloProvider, LazyQueryHookOptions, useReactiveVar, QueryResult, QueryTuple, useApolloClient } from '@apollo/client'
 import { useGetConfigQuery } from './hooks/config/useConfigQueries';
-import { useGetPolkadotExtensionAccountsLazyQuery, useGetPolkadotExtensionAccountsQuery } from './hooks/polkadot/usePolkadotJsExtensionAccountsQueries';
+import { GetPolkadotExtensionAccountsQueryResponse, GET_POLKADOT_EXTENSION_ACCOUNTS, useEvictPolkadotExtensionAccount, useGetPolkadotExtensionAccountsLazyQuery, useGetPolkadotExtensionAccountsQuery } from './hooks/polkadot/usePolkadotJsExtensionAccountsQueries';
 import { useEffect } from 'react';
 import constate from 'constate';
+import { useCallback } from 'react';
 export interface AppProps {
   locale: Locale
 }
@@ -38,19 +39,28 @@ const [LazyAccountsProvider, useContextualAccountsLazyQuery] = contextualLazyQue
 
 export const Test = () => {
   const [fetch, { data, refetch, loading, networkStatus}] = useContextualAccountsLazyQuery();
+  const evict = useEvictPolkadotExtensionAccount();
+
+  useEffect(() => {
+    fetch();
+  }, []);
 
   return <>
     <h1>Accounts</h1>
     <button onClick={_ => fetch && fetch()}>fetch</button>
     <button onClick={_ => refetch && refetch()}>refetch</button>
+    
     <p>Network status: {networkStatus}</p>
     <p>Loading: {loading ? 'true' : 'false'}</p>
     {true
       ? (
         <div>
           <p>Extension available {data?.polkadotExtension?.isAvailable ? 'true' : 'false'}</p>
-          {data?.polkadotExtensionAccounts.map((account, i) => {
-            return <p key={i}>{account.alias}</p>
+          {data?.polkadotExtensionAccounts?.map((account, i) => {
+            return <>
+              <p key={i}>{account.alias}</p>
+              <button onClick={_ => evict(account.id)}>evict</button>
+            </>
           })}
           
         </div>
