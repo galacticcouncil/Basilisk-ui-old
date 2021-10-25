@@ -1,8 +1,8 @@
-import { StorybookWrapper } from '../shared/StorybookWrapper';
+import { StorybookWrapper } from '../misc/StorybookWrapper';
 import { TradePage } from './TradePage';
 import cssColors from './../shared/colors.module.scss';
-import ETHIcon from './../icons/assets/ETH.svg';
-import KSMIcon from './../icons/assets/KSM.svg';
+import ETHIcon from './../misc/icons/assets/ETH.svg';
+import KSMIcon from './../misc/icons/assets/KSM.svg';
 
 export default {
     title: 'Pages/Trade/TradePage',

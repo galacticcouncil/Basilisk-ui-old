@@ -1,8 +1,8 @@
 import { IntlProvider } from "react-intl"
 import { Locale } from "./locale"
-import enMessages from './../lang/en.json'
+import enMessages from '../lang/en.json'
 import './../index.scss';
-import './../shared/shared';
+import './shared';
 
 export const StorybookWrapper = ({children}: any) => {
     return <IntlProvider

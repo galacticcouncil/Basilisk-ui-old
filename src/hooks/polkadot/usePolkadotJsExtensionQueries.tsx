@@ -6,7 +6,7 @@ import {
     web3Accounts,
     web3Enable,
 } from '@polkadot/extension-dapp';
-import { dedupeResolver } from './usePolkadotJsExtensionAccountsQueries';
+import { dedupeResolver } from '../apollo/dedupeResolver';
 
 /**
  * Query for fetching the availability of the PolkadotJs extension
@@ -23,19 +23,17 @@ export interface GetPolkadotExtensionQueryResponse {
     polkadotExtension: PolkadotJsExtension
 }
 
+const { dedupedResolver } = dedupeResolver(async () => {
+    const extensions = await web3Enable('basilisk-ui');
+    return {
+        isAvailable: extensions.length > 0
+    }
+});
+
 /**
  * Apollo resolver that checks if a PolkadotJs extension is available/installed
  * TODO: provide a standalone query for the extension availability
  */
-export const usePolkadotJsExtensionResolver = () => {
-    const resolver = useMemo(() => ({
-        polkadotExtension: dedupeResolver(async () => {
-            const extensions = await web3Enable('basilisk-ui');
-            return {
-                isAvailable: extensions.length > 0
-            }
-        })
-    }), []);
-
-    return resolver;
-}
+export const usePolkadotJsExtensionResolver = () => ({
+    polkadotExtension: dedupedResolver
+})

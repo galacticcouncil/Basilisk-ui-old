@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Locale } from './shared/locale';
+import { Locale } from './misc/locale';
 import './index.scss';
 
 ReactDOM.render(

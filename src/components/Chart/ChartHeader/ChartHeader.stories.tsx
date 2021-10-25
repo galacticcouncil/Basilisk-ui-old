@@ -1,4 +1,4 @@
-import { StorybookWrapper } from '../../../shared/StorybookWrapper';
+import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { ChartGranularity, ChartType, PoolType } from '../shared';
 import { ChartHeader } from './ChartHeader';
 import cssColors from './../../../shared/colors.module.scss'

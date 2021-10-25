@@ -1,7 +1,7 @@
 import { addMinutes } from 'date-fns/esm';
 import subMinutes from 'date-fns/subMinutes';
 import { random, times } from 'lodash';
-import { StorybookWrapper } from './../../../shared/StorybookWrapper';
+import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { ChartTicks } from './ChartTicks';
 import { ChartGranularity } from './../shared';
 import cssColors from './../../../shared/colors.module.scss'

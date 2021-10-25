@@ -1,4 +1,4 @@
-import { StorybookWrapper } from '../../shared/StorybookWrapper';
+import { StorybookWrapper } from '../../misc/StorybookWrapper';
 import { TokenInput } from './TokenInput';
 import ETHIcon from './../../icons/assets/ETH.svg';
 

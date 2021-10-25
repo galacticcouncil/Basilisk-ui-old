@@ -2,7 +2,7 @@ import { defaultConfig, useConfig } from '../config/useConfig'
 import { useMemo, useState } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers, makeVar } from '@apollo/client';
 import { useConfigResolver } from '../config/useConfigQueries';
-import { usePolkadotJsExtensionResolver } from '../polkadot/usePolkadotJsExtension';
+import { usePolkadotJsExtensionResolver } from '../polkadot/usePolkadotJsExtensionQueries';
 import { usePolkadotExtensionAccountsResolver } from '../polkadot/usePolkadotJsExtensionAccountsQueries';
 
 /**

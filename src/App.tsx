@@ -3,32 +3,61 @@ import { useState } from 'react';
 import logo from './logo.svg';
 import './App.scss';
 import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
-import { Locale } from './shared/locale';
+import { Locale } from './misc/locale';
 import { useApollo } from './hooks/apollo/useApollo';
-import { ApolloProvider } from '@apollo/client'
+import { ApolloProvider, LazyQueryHookOptions, useReactiveVar, QueryResult, QueryTuple } from '@apollo/client'
 import { useGetConfigQuery } from './hooks/config/useConfigQueries';
-import { useGetPolkadotExtensionAccountsQuery } from './hooks/polkadot/usePolkadotJsExtensionAccountsQueries';
+import { useGetPolkadotExtensionAccountsLazyQuery, useGetPolkadotExtensionAccountsQuery } from './hooks/polkadot/usePolkadotJsExtensionAccountsQueries';
+import { useEffect } from 'react';
+import constate from 'constate';
 export interface AppProps {
   locale: Locale
 }
 
-export const Test = () => {
-  const polkadotExtensionAccountsQuery = useGetPolkadotExtensionAccountsQuery();
+export const contextualQuery = <TData, TArgs>(queryHook: () => QueryResult<TData, TArgs>) => constate(queryHook);
+export const contextualLazyQuery = <TData, TArgs>(queryHook: () => QueryTuple<TData, TArgs>) => constate(queryHook);
 
-  const fetchMore = async () => {
-    polkadotExtensionAccountsQuery.fetchMore({});
-  }
+
+const [AccountsProvider, useContextualAccountsQuery] = contextualQuery(() => {
+  return useGetPolkadotExtensionAccountsQuery({
+    // fetchPolicy: 'no-cache',
+    // TODO: shall we make this a default for all our queries for consistency?
+    notifyOnNetworkStatusChange: true,
+  });
+})
+
+// this acts as 'a service' sharing the query between components that want to use it
+// this is important in order for the components to share the loading status, not only the data from the apollo cache
+const [LazyAccountsProvider, useContextualAccountsLazyQuery] = contextualLazyQuery(() => {
+  return useGetPolkadotExtensionAccountsLazyQuery({
+    // fetchPolicy: 'no-cache',
+    // TODO: shall we make this a default for all our queries for consistency?
+    notifyOnNetworkStatusChange: true,
+  });
+})
+
+export const Test = () => {
+  const [fetch, { data, refetch, loading, networkStatus}] = useContextualAccountsLazyQuery();
 
   return <>
     <h1>Accounts</h1>
-    <p>Extension available {polkadotExtensionAccountsQuery.data?.polkadotExtension?.isAvailable ? 'true' : 'false'}</p>
-    <p>Loading: {polkadotExtensionAccountsQuery.loading ? 'true' : 'false'}</p>
-    <div>
-      {polkadotExtensionAccountsQuery.data?.polkadotExtensionAccounts.map(account => {
-        return <p>{account.alias}</p>
-      })}
-      <button onClick={_ => fetchMore()}>refetch</button>
-    </div>
+    <button onClick={_ => fetch && fetch()}>fetch</button>
+    <button onClick={_ => refetch && refetch()}>refetch</button>
+    <p>Network status: {networkStatus}</p>
+    <p>Loading: {loading ? 'true' : 'false'}</p>
+    {true
+      ? (
+        <div>
+          <p>Extension available {data?.polkadotExtension?.isAvailable ? 'true' : 'false'}</p>
+          {data?.polkadotExtensionAccounts.map((account, i) => {
+            return <p key={i}>{account.alias}</p>
+          })}
+          
+        </div>
+      )
+      : <></>
+    }
+     
   </>
 }
 
@@ -38,8 +67,10 @@ export const App = ({ locale }: AppProps) => {
 
   return (
     <ApolloProvider client={client}>
-      {content.map(c => c)}
-      <button onClick={_ => setContent(content.concat([<Test/>]))}>Add test</button>
+      <LazyAccountsProvider>
+        {content.map((c,i) => <div key={i}>{c}</div>)}
+        <button onClick={_ => setContent(content.concat([<Test />]))}>Add test</button>
+      </LazyAccountsProvider>
     </ApolloProvider>
   );
 }
