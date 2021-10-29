@@ -1,8 +1,8 @@
-import { useApollo } from '../apollo/useApollo';
+import { useApollo } from '../../../useApollo';
 import { ApolloClient, NormalizedCacheObject, HttpLink, gql, ApolloProvider, useQuery } from '@apollo/client';
 import { RenderHookResult, Renderer, renderHook } from '@testing-library/react-hooks';
-import { Config, defaultConfig } from '../config/useConfig';
-import { useGetConfigQuery } from '../config/useConfigQueries';
+import { Config, defaultConfig } from '../../../../config/useConfig';
+import { useGetConfigQuery } from '../../../../config/useConfigQueries';
 import { act } from '@testing-library/react';
 import { umask } from 'process';
 import { useGetPolkadotExtensionAccountsQuery } from './usePolkadotJsExtensionAccountsQueries';

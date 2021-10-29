@@ -18,6 +18,17 @@ export type Config = {
   processorUrl: Scalars['String'];
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  setActivePolkadotJsExtensionAccount?: Maybe<Scalars['ID']>;
+  unsetActivePolkadotJsExtensionAccount?: Maybe<Scalars['ID']>;
+};
+
+
+export type MutationSetActivePolkadotJsExtensionAccountArgs = {
+  id: Scalars['ID'];
+};
+
 export type PolkadotJsExtension = {
   __typename?: 'PolkadotJsExtension';
   isAvailable: Scalars['Boolean'];
@@ -26,10 +37,10 @@ export type PolkadotJsExtension = {
 export type PolkadotJsExtensionAccount = {
   __typename?: 'PolkadotJsExtensionAccount';
   address: Scalars['String'];
-  alias: Scalars['String'];
+  alias?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   isSelected: Scalars['Boolean'];
-  network: Scalars['String'];
+  network?: Maybe<Scalars['String']>;
 };
 
 export type Query = {

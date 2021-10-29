@@ -9,12 +9,18 @@ type PolkadotJsExtension {
 
 type PolkadotJsExtensionAccount {
     id: String!,
-    alias: String!,
-    network: String!,
+    alias: String,
+    network: String,
     isSelected: Boolean!,
     address: String!
 }
 
 extend type Query {
     config: Config!
+}
+
+extend type Mutation {
+    # TODO: break down the schema into fragments
+    setActivePolkadotJsExtensionAccount(id: ID!): ID
+    unsetActivePolkadotJsExtensionAccount: ID
 }

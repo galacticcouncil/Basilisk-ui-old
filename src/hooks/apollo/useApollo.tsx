@@ -1,21 +1,24 @@
 import { defaultConfig, useConfig } from '../config/useConfig'
 import { useMemo, useState } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers, makeVar } from '@apollo/client';
-import { useConfigResolver } from '../config/useConfigQueries';
-import { usePolkadotJsExtensionResolver } from '../polkadot/usePolkadotJsExtensionQueries';
-import { usePolkadotExtensionAccountsResolver } from '../polkadot/usePolkadotJsExtensionAccountsQueries';
+import { useConfigQueryResolver } from '../config/useConfigQueries';
+import { usePolkadotJsExtensionQueryResolvers } from './polkadotJs/extension/usePolkadotJsExtensionQueries';
+import { usePolkadotJsExtensionAccountsMutationResolvers } from './polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsMutations';
+import { usePolkadotJsExtensionAccountsQueryResolvers } from './polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsQueries';
 
 /**
  * Add all local gql resolvers here
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-    const isQueryRunning = makeVar(false);
     return {
         Query: {
-            ...useConfigResolver(),
-            ...usePolkadotJsExtensionResolver(),
-            ...usePolkadotExtensionAccountsResolver(),
+            ...useConfigQueryResolver(),
+            ...usePolkadotJsExtensionQueryResolvers(),
+            ...usePolkadotJsExtensionAccountsQueryResolvers(),
+        },
+        Mutation: {
+            ...usePolkadotJsExtensionAccountsMutationResolvers()
         }
     }
 };

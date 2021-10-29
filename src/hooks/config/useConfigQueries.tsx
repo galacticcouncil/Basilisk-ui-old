@@ -27,7 +27,7 @@ export const useGetConfigQuery = () => useQuery<GetConfigQueryResponse>(GET_CONF
  * Apollo resolver observing the reactive config var,
  * always returning the latest config (mirroring local storage)
  */
-export const useConfigResolver = () => {
+export const useConfigQueryResolver = () => {
     const { config } = useConfig();
     const resolver = useMemo(() => ({
         config: () => config
