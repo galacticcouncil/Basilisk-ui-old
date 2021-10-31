@@ -12,38 +12,36 @@ export type Scalars = {
   Float: number;
 };
 
+export type Account = {
+  __typename?: 'Account';
+  balances: Array<Balance>;
+  id: Scalars['String'];
+  isActive: Scalars['Boolean'];
+  name?: Maybe<Scalars['String']>;
+};
+
+export type Balance = {
+  __typename?: 'Balance';
+  assetId: Scalars['String'];
+  balance: Scalars['String'];
+};
+
 export type Config = {
   __typename?: 'Config';
   nodeUrl: Scalars['String'];
   processorUrl: Scalars['String'];
 };
 
-export type Mutation = {
-  __typename?: 'Mutation';
-  setActivePolkadotJsExtensionAccount?: Maybe<Scalars['ID']>;
-  unsetActivePolkadotJsExtensionAccount?: Maybe<Scalars['ID']>;
-};
-
-
-export type MutationSetActivePolkadotJsExtensionAccountArgs = {
-  id: Scalars['ID'];
-};
-
-export type PolkadotJsExtension = {
-  __typename?: 'PolkadotJsExtension';
-  isAvailable: Scalars['Boolean'];
-};
-
-export type PolkadotJsExtensionAccount = {
-  __typename?: 'PolkadotJsExtensionAccount';
-  address: Scalars['String'];
-  alias?: Maybe<Scalars['String']>;
+export type LastBlock = {
+  __typename?: 'LastBlock';
   id: Scalars['String'];
-  isSelected: Scalars['Boolean'];
-  network?: Maybe<Scalars['String']>;
+  number?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
-  config: Config;
+  _empty?: Maybe<Scalars['String']>;
+  account?: Maybe<Account>;
+  accounts: Array<Account>;
+  lastBlock?: Maybe<LastBlock>;
 };

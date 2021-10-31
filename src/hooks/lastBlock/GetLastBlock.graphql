@@ -1,0 +1,5 @@
+query GetLastBlock {
+    lastBlock @client {
+        number
+    }
+}

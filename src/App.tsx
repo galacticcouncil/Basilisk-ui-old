@@ -1,88 +1,95 @@
-import React from 'react';
-import { useState } from 'react';
-import logo from './logo.svg';
 import './App.scss';
-import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl';
-import { Locale } from './misc/locale';
-import { useApollo } from './hooks/apollo/useApollo';
-import { ApolloProvider, LazyQueryHookOptions, useReactiveVar, QueryResult, QueryTuple, useApolloClient } from '@apollo/client'
-import { useGetConfigQuery } from './hooks/config/useConfigQueries';
-import { GetPolkadotExtensionAccountsQueryResponse, GET_POLKADOT_EXTENSION_ACCOUNTS, LazyPolkadotJsExtensionAccountsProvider, useContextualGetActivePolkadotExtensionAccountLazyQuery, useContextualPolkadotJsExtensionAccountsLazyQuery } from './hooks/apollo/polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsQueries';
-import { useSetActivePolkadotExtensionAccountMutation, useUnsetActivePolkadotExtensionAccountMutation } from './hooks/apollo/polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsMutations';
-import { useEffect } from 'react';
-import constate from 'constate';
-import { useCallback } from 'react';
-import { PolkadotJsExtensionAccount } from './generated/graphql';
-import { usePersistActivePolkadotJsAccount } from './hooks/polkadotJs/extension/accounts/usePersistActivePolkadotJsAccount';
-export interface AppProps {
-  locale: Locale
+import { MultiProvider } from './containers/MultiProvider';
+import { Account, LastBlock } from './generated/graphql';
+import { useGetAccountsQuery } from './hooks/accounts/useGetAccountsQuery';
+import { useGetActiveAccountQuery } from './hooks/accounts/useGetActiveAccountQuery';
+import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccountMutation';
+import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
+import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
+
+export const AccountDisplay = ({ account, lastBlock }: { account?: Account, lastBlock?: LastBlock }) => {
+  const [setActiveAccount] = useSetActiveAccountMutation({ id: account?.id })
+
+  return <div>
+    <span>{account?.__typename}</span>
+    <p>Last block: {lastBlock?.number}</p>
+    <p>{account?.id}</p>
+    <p>{account?.name}</p>
+    <p>Active: {account?.isActive ? 'true' : 'false'}</p>
+    <div>
+      <p>Balances:</p>
+      {account?.balances.map((balance, i) => (
+        <p key={i}>{balance.assetId}: {balance.balance}</p>
+      ))}
+    </div>
+    <button onClick={_ => setActiveAccount()}>Set active</button>
+    <p>-------</p>
+  </div>
 }
 
-export const Account = ({ account }: { account: PolkadotJsExtensionAccount }) => {
-  const [select] = useSetActivePolkadotExtensionAccountMutation({ id: account.id })
-
+export const ActiveAccount = () => {
+  const { data, loading, refetch, networkStatus, error } = useGetActiveAccountQuery();
+  if (error) {
+    console.error(error);
+  }
   return <>
-    <p>-----</p>
-    <p>{account.alias}</p>
-    <p>{account.id}</p>
-    <p>{account.network}</p>
-    <p>Selected: {account.isSelected ? 'true' : 'false'}</p>
-    <button onClick={_ => select()}>select</button>
-  </>
-}
-
-export const Test = () => {
-  const [fetch, { data, refetch, loading, networkStatus }] = useContextualPolkadotJsExtensionAccountsLazyQuery();
-  const [unset] = useUnsetActivePolkadotExtensionAccountMutation();
-  // const [activePolkadotJsAccount] = usePersistActivePolkadotJsAccount();
-  const [fetchActiveAccount, { data: activePolkadotJsAccount }] = useContextualGetActivePolkadotExtensionAccountLazyQuery()
-
-  useEffect(() => {
-    fetch();
-    fetchActiveAccount();
-  }, []);
-
-  useEffect(() => console.log('test data changed'), [data?.polkadotExtensionAccounts]);
-
-  return <>
-    <h1>Accounts</h1>
-    <button onClick={_ => fetch && fetch()}>fetch</button>
-    <button onClick={_ => refetch && refetch()}>refetch</button>
-    <button onClick={_ => unset && unset()}>unset</button>
-
-    <p>Active: {activePolkadotJsAccount?.id}</p>
-
-    <p>Network status: {networkStatus}</p>
+    <h4>Active</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
-    {true
-      ? (
-        <div>
-          <p>Extension available {data?.polkadotExtension?.isAvailable ? 'true' : 'false'}</p>
-          {data?.polkadotExtensionAccounts?.map((account, i) => {
-            return <div key={i}>
-              <Account account={account}/>
-            </div>
-          })}
-
-        </div>
-      )
-      : <></>
-    }
-
+    <p>Network status: {networkStatus}</p>
+    <button onClick={_ => refetch && refetch()}>refetch</button>
+    <AccountDisplay account={data?.account} lastBlock={data?.lastBlock}/>
   </>
 }
 
-export const App = ({ locale }: AppProps) => {
-  const client = useApollo();
-  const [content, setContent] = useState([<Test />, <Test />])
+export const Accounts = () => {
+  const { data, loading, refetch, networkStatus, error } = useGetAccountsQuery();
+  error && console.error(error)
+  return <>
+    <h4>Accounts</h4>
+    <p>Loading: {loading ? 'true' : 'false'}</p>
+    <p>Network status: {networkStatus}</p>
+    <button onClick={_ => refetch && refetch()}>refetch</button>
+    {/* <p>Error: {error}</p> */}
+    {data?.accounts?.map((account, i) => (
+      <div key={i}>
+        <AccountDisplay account={account} lastBlock={data.lastBlock}/>
+      </div>
+    ))}
+  </>
+}
 
+export const LastBlockDisplay = () => {
+  const { data, loading } = useLastBlockQuery();
+
+  return <div>
+    <h4>Last block</h4>
+    <p>Block: {data?.lastBlock.number}</p>
+    <p>Loading: {loading ? 'true' : 'false'}</p>
+  </div>
+}
+
+export const Page = () => {
+  const { loading } = usePolkadotJsContext();
+
+return <>
+    {loading
+      ? (
+        <p>Loading...</p>
+      )
+      : (<>
+        <LastBlockDisplay />
+        <ActiveAccount />
+        {/* <Accounts /> */}
+      </>)
+    }
+  </>
+}
+
+export const App = () => {
   return (
-    <ApolloProvider client={client}>
-      <LazyPolkadotJsExtensionAccountsProvider>
-        {content.map((c, i) => <div key={i}>{c}</div>)}
-        <button onClick={_ => setContent(content.concat([<Test />]))}>Add test</button>
-      </LazyPolkadotJsExtensionAccountsProvider>
-    </ApolloProvider>
+    <MultiProvider>
+      <Page />
+    </MultiProvider>
   );
 }
 

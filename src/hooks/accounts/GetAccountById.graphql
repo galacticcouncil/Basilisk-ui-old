@@ -1,0 +1,7 @@
+#import "./accountFields.fragment.graphql"
+
+query GetAccountById($id: String!) {
+    account: accounts(id: $id) @client {
+        ...accountFields
+    }
+}

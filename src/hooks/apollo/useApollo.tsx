@@ -1,45 +1,52 @@
-import { defaultConfig, useConfig } from '../config/useConfig'
-import { useMemo, useState } from 'react';
-import { ApolloClient, InMemoryCache, Resolvers, makeVar } from '@apollo/client';
-import { useConfigQueryResolver } from '../config/useConfigQueries';
-import { usePolkadotJsExtensionQueryResolvers } from './polkadotJs/extension/usePolkadotJsExtensionQueries';
-import { usePolkadotJsExtensionAccountsMutationResolvers } from './polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsMutations';
-import { usePolkadotJsExtensionAccountsQueryResolvers } from './polkadotJs/extension/accounts/usePolkadotJsExtensionAccountsQueries';
+import { useEffect, useMemo } from 'react';
+import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache, Resolvers,  } from '@apollo/client';
+import { useAccountsQueryResolvers } from '../accounts/useAccountsQueryResolvers';
+import { loader } from 'graphql.macro';
+import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
+import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 
 /**
  * Add all local gql resolvers here
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
+    const { Query: AccountsQueryResolver, Account } = useAccountsQueryResolvers();
     return {
         Query: {
-            ...useConfigQueryResolver(),
-            ...usePolkadotJsExtensionQueryResolvers(),
-            ...usePolkadotJsExtensionAccountsQueryResolvers(),
+            ...AccountsQueryResolver,
         },
         Mutation: {
-            ...usePolkadotJsExtensionAccountsMutationResolvers()
-        }
+            ...useAccountsMutationResolvers()
+        },
+        Account
     }
 };
+
+export const typeDefs = loader('./../../schema.graphql');
+
 
 /**
  * Recreates the apollo client instance each time the config changes
  * @returns 
  */
 export const useConfigureApolloClient = () => {
-    const { config } = useConfig();
     const resolvers = useResolvers();
-
     const cache =  new InMemoryCache();
-    const client = useMemo(() => new ApolloClient({
-        uri: config.processorUrl,
-        cache,
-        // TODO: don't connect in production
-        connectToDevTools: true,
-        queryDeduplication: true,
-        resolvers
-    }), [config.processorUrl]);
+
+    const client = useMemo(() => {
+        return new ApolloClient({
+            uri: '/graphql',
+            cache,
+            // TODO: don't connect in production
+            connectToDevTools: true,
+            queryDeduplication: true,
+            resolvers,
+            typeDefs,
+        })
+    }, []);
+    
+    useRefetchWithNewBlock(client);
     
     return client;
 };

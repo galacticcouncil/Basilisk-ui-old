@@ -1,0 +1,11 @@
+#import "./accountFields.fragment.graphql"
+
+query GetActiveAccount {
+    lastBlock @client {
+        number
+    },
+    
+    account: accounts(isActive: true) @client {
+        ...accountFields
+    } 
+}

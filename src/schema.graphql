@@ -1,26 +1,13 @@
+#import './hooks/accounts/Accounts.graphql'
+#import './hooks/lastBlock/LastBlock.graphql'
+
 type Config {
     nodeUrl: String!,
     processorUrl: String!
 }
 
-type PolkadotJsExtension {
-    isAvailable: Boolean!
-}
-
-type PolkadotJsExtensionAccount {
-    id: String!,
-    alias: String,
-    network: String,
-    isSelected: Boolean!,
-    address: String!
-}
-
 extend type Query {
-    config: Config!
-}
-
-extend type Mutation {
-    # TODO: break down the schema into fragments
-    setActivePolkadotJsExtensionAccount(id: ID!): ID
-    unsetActivePolkadotJsExtensionAccount: ID
+    # just a placeholder to make the codegen not complain about
+    # root query not being defined
+    _empty: String
 }
