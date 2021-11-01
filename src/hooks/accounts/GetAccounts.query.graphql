@@ -1,0 +1,10 @@
+#import "./AccountFields.fragment.graphql"
+#import "./../lastBlock/LastBlock.fragment.graphql"
+
+query GetAccounts {
+    ...LastBlock,
+    
+    accounts @client {
+        ...AccountFields
+    }
+}

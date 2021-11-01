@@ -3,7 +3,7 @@ import { loader } from 'graphql.macro';
 import { Account } from '../../generated/graphql';
 import { GET_ACTIVE_ACCOUNT } from './useGetActiveAccountQuery';
 
-export const SET_ACTIVE_ACCOUNT = loader('./SetActiveAccount.graphql');
+export const SET_ACTIVE_ACCOUNT = loader('./SetActiveAccount.mutation.graphql');
 export interface SetActiveAccountMutationResponse {
     account: Account
 }

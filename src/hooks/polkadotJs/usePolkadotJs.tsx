@@ -3,6 +3,7 @@ import { ProviderInterface } from '@polkadot/rpc-provider/types'
 import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';
 import typesConfig from './typesConfig';
+import { usePersistentConfig } from '../config/usePersistentConfig';
 
 
 
@@ -13,14 +14,11 @@ import typesConfig from './typesConfig';
  * then re-create the PolkadotJs instance
  */
 export const useConfigurePolkadotJs = () => {
+  const [{ nodeUrl }] = usePersistentConfig();
   const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(undefined);
   const loading = useMemo(() => apiInstance ? false : true, [apiInstance]);
 
-  // TODO: figure out why config.nodeUrl above triggers an update twice
-  const provider = useMemo(() => (
-    new WsProvider('ws://localhost:9988')
-  ), []);
-
+  const provider = useMemo(() => new WsProvider(nodeUrl), [nodeUrl]);
 
   // (re-)Create the PolkadotJS instance, when the provider updates.
   useEffect(() => {

@@ -5,6 +5,7 @@ import { loader } from 'graphql.macro';
 import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
+import { usePersistentConfig } from '../config/usePersistentConfig';
 
 /**
  * Add all local gql resolvers here
@@ -33,10 +34,11 @@ export const typeDefs = loader('./../../schema.graphql');
 export const useConfigureApolloClient = () => {
     const resolvers = useResolvers();
     const cache =  new InMemoryCache();
+    const [{ processorUrl }] = usePersistentConfig();
 
     const client = useMemo(() => {
         return new ApolloClient({
-            uri: '/graphql',
+            uri: processorUrl,
             cache,
             // TODO: don't connect in production
             connectToDevTools: true,
@@ -44,7 +46,7 @@ export const useConfigureApolloClient = () => {
             resolvers,
             typeDefs,
         })
-    }, []);
+    }, [processorUrl]);
     
     useRefetchWithNewBlock(client);
     

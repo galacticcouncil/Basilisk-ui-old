@@ -1,0 +1,6 @@
+fragment LastBlock on LastBlock {
+    lastBlock @client {
+        __typename,
+        number
+    }
+}

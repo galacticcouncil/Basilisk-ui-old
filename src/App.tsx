@@ -37,7 +37,7 @@ export const ActiveAccount = () => {
     <p>Loading: {loading ? 'true' : 'false'}</p>
     <p>Network status: {networkStatus}</p>
     <button onClick={_ => refetch && refetch()}>refetch</button>
-    <AccountDisplay account={data?.account} lastBlock={data?.lastBlock}/>
+    <AccountDisplay account={data?.account} lastBlock={data?.lastBlock} />
   </>
 }
 
@@ -52,7 +52,7 @@ export const Accounts = () => {
     {/* <p>Error: {error}</p> */}
     {data?.accounts?.map((account, i) => (
       <div key={i}>
-        <AccountDisplay account={account} lastBlock={data.lastBlock}/>
+        <AccountDisplay account={account} lastBlock={data.lastBlock} />
       </div>
     ))}
   </>
@@ -71,7 +71,7 @@ export const LastBlockDisplay = () => {
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
-return <>
+  return <>
     {loading
       ? (
         <p>Loading...</p>
@@ -79,7 +79,7 @@ return <>
       : (<>
         <LastBlockDisplay />
         <ActiveAccount />
-        {/* <Accounts /> */}
+        <Accounts />
       </>)
     }
   </>

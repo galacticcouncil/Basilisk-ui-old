@@ -40,6 +40,7 @@ export const useAccountsQueryResolvers = () => {
             _obj,
             args: AccountsQueryResolverArgs | undefined,
         ) => {            
+            console.log('resolving accounts')
             await web3Enable('basilisk-ui');
             const accounts = (await web3Accounts())
                 .map(account => {
