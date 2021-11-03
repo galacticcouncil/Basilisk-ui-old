@@ -9,6 +9,8 @@
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
+    "@open-web3/orml-type-definitions": "^1.0.1",
+    "@open-web3/orml-types": "^1.0.1",
     "@polkadot/api": "^6.4.2",
     "@polkadot/extension-dapp": "^0.40.3",
     "@testing-library/jest-dom": "^5.11.4",

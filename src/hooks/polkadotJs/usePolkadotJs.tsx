@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';
 import typesConfig from './typesConfig';
 import { usePersistentConfig } from '../config/usePersistentConfig';
+import { types as ormlTypes, typesAlias as ormlTypesAlias } from '@open-web3/orml-type-definitions'
 
 
 
@@ -17,8 +18,20 @@ export const useConfigurePolkadotJs = () => {
   const [{ nodeUrl }] = usePersistentConfig();
   const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(undefined);
   const loading = useMemo(() => apiInstance ? false : true, [apiInstance]);
-
   const provider = useMemo(() => new WsProvider(nodeUrl), [nodeUrl]);
+
+  const types = useMemo(() => ({
+    ...typesConfig.types[0],
+    ...ormlTypes,
+  }), []);
+
+  const typesAlias = useMemo(() => ({
+    ...typesConfig.alias,
+    ...ormlTypesAlias
+  }), []);
+  
+  console.log('types', types);
+  console.log('typesAlias', typesAlias);
 
   // (re-)Create the PolkadotJS instance, when the provider updates.
   useEffect(() => {
@@ -26,8 +39,8 @@ export const useConfigurePolkadotJs = () => {
       setApiInstance(undefined);
       const api = await ApiPromise.create({
         provider,
-        types: typesConfig.types[0],
-        typesAlias: typesConfig.alias
+        types,
+        typesAlias
       });
       await api.isReady;
       setApiInstance(api);

@@ -6,6 +6,7 @@ import { useGetActiveAccountQuery } from './hooks/accounts/useGetActiveAccountQu
 import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccountMutation';
 import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
 import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
+import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmountMutation';
 
 export const AccountDisplay = ({ account, lastBlock }: { account?: Account, lastBlock?: LastBlock }) => {
   const [setActiveAccount] = useSetActiveAccountMutation({ id: account?.id })
@@ -29,14 +30,22 @@ export const AccountDisplay = ({ account, lastBlock }: { account?: Account, last
 
 export const ActiveAccount = () => {
   const { data, loading, refetch, networkStatus, error } = useGetActiveAccountQuery();
+  const [claimVestedAmount] = useClaimVestedAmountMutation({
+    address: data?.account.id
+  });
+  
   if (error) {
     console.error(error);
   }
+
+  console.log('active', data);
+
   return <>
     <h4>Active</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
     <p>Network status: {networkStatus}</p>
     <button onClick={_ => refetch && refetch()}>refetch</button>
+    <button onClick={_ => claimVestedAmount()}>claim</button>
     <AccountDisplay account={data?.account} lastBlock={data?.lastBlock} />
   </>
 }
@@ -77,7 +86,7 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
-        <LastBlockDisplay />
+        {/* <LastBlockDisplay /> */}
         <ActiveAccount />
         <Accounts />
       </>)

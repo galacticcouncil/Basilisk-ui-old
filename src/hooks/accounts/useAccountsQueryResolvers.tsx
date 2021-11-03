@@ -8,10 +8,12 @@ import { GetAccountByIdQueryResponse, GetAccountByIdQueryVariables, GET_ACCOUNT_
 import { GetAccountsQueryResponse, GET_ACCOUNTS } from './useGetAccountsQuery';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import { useVestingScheduleQueryResolvers } from '../vesting/useVestingScheduleQueryResolvers';
 
 export interface AccountsQueryResolverArgs extends GetAccountByIdQueryVariables {
     isActive: boolean
 }
+
 export const __typename = 'Account';
 
 export const isActiveFromCache = (cache: ApolloCache<NormalizedCacheObject>, id: string) => {
@@ -74,7 +76,8 @@ export const useAccountsQueryResolvers = () => {
             accounts
         },
         Account: {
-            ...useBalanceQueryResolvers()
+            ...useBalanceQueryResolvers(),
+            ...useVestingScheduleQueryResolvers()
         }
     }
 }

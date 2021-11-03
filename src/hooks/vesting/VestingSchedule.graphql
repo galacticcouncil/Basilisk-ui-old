@@ -1,0 +1,13 @@
+# https://github.com/open-web3-stack/open-runtime-module-library/blob/master/vesting/src/lib.rs#L11
+type VestingSchedule {
+    # total locked amoount left to eventually be claimed
+    remainingVestingAmount: String,
+    # since this block
+    start: String,
+    # every `period` blocks
+    period: String,
+    # for number of periods
+    periodCount: String,
+    # claimable amount per period
+    perPeriod: String
+}

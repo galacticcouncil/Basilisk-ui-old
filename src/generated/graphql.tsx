@@ -18,6 +18,7 @@ export type Account = {
   id: Scalars['String'];
   isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
+  vestingSchedule?: Maybe<Array<VestingSchedule>>;
 };
 
 export type Balance = {
@@ -28,6 +29,7 @@ export type Balance = {
 
 export type Config = {
   __typename?: 'Config';
+  appName: Scalars['String'];
   nodeUrl: Scalars['String'];
   processorUrl: Scalars['String'];
 };
@@ -43,5 +45,15 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
+  config?: Maybe<Config>;
   lastBlock?: Maybe<LastBlock>;
+};
+
+export type VestingSchedule = {
+  __typename?: 'VestingSchedule';
+  perPeriod?: Maybe<Scalars['String']>;
+  period?: Maybe<Scalars['String']>;
+  periodCount?: Maybe<Scalars['String']>;
+  remainingVestingBalance?: Maybe<Scalars['String']>;
+  start?: Maybe<Scalars['String']>;
 };

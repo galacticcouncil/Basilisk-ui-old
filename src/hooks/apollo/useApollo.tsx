@@ -6,6 +6,7 @@ import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationRes
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
+import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -18,7 +19,8 @@ export const useResolvers: () => Resolvers = () => {
             ...AccountsQueryResolver,
         },
         Mutation: {
-            ...useAccountsMutationResolvers()
+            ...useAccountsMutationResolvers(),
+            ...useVestingMutationResolvers()
         },
         Account
     }

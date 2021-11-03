@@ -21,9 +21,12 @@ export const useGetBalancesByAddress = () => {
 
         // TODO: write type definitions for `query.tokens`
         const assetBalances = await apiInstance.query.tokens.accounts.entries(address);
+        console.log('balances', assetBalances);
+
         assetBalances?.forEach(assetBalanceTuple => {
             const assetIdTuple = assetBalanceTuple[0].toHuman() as string[];
             const assetId = assetIdTuple[1];
+
             const balance = apiInstance?.createType(
                 assetBalanceDataType,
                 assetBalanceTuple[1]

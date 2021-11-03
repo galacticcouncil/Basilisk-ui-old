@@ -3,3 +3,7 @@ type Config {
     processorUrl: String!,
     appName: String!
 }
+
+extend type Query {
+    config: Config
+}
