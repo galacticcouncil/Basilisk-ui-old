@@ -2,7 +2,7 @@ import { ChartData, ChartDataset, ChartOptions, TooltipModel } from 'chart.js';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Line } from 'react-chartjs-2'
 import 'chartjs-adapter-moment';
-import cssColors from './../../../shared/colors.module.scss';
+import cssColors from './../../../misc/colors.module.scss';
 import './LineChart.scss';
 import { first, orderBy } from 'lodash';
 
@@ -235,7 +235,8 @@ export const LineChart = ({
         <Line
             ref={chartContainer}
             data={chartData}
-            options={chartOptions}
+            // TODO: after updating the yarn.lock the types here are broken, fix it
+            options={chartOptions as any}
         />
     </div>
 }

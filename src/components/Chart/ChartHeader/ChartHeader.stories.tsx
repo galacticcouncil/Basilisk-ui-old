@@ -1,7 +1,7 @@
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { ChartGranularity, ChartType, PoolType } from '../shared';
 import { ChartHeader } from './ChartHeader';
-import cssColors from './../../../shared/colors.module.scss'
+import cssColors from './../../../misc/colors.module.scss'
 
 export default {
     title: 'Components/Chart/ChartHeader',

@@ -1,6 +1,6 @@
 import { StorybookWrapper } from '../misc/StorybookWrapper';
 import { TradePage } from './TradePage';
-import cssColors from './../shared/colors.module.scss';
+import cssColors from './../misc/colors.module.scss';
 import ETHIcon from './../misc/icons/assets/ETH.svg';
 import KSMIcon from './../misc/icons/assets/KSM.svg';
 

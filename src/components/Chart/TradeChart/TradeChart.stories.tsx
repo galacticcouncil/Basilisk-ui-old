@@ -1,6 +1,6 @@
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { TradeChart } from './TradeChart';
-import cssColors from './../../../shared/colors.module.scss'
+import cssColors from './../../../misc/colors.module.scss'
 import { ChartGranularity, ChartType, PoolType } from '../shared';
 
 export default {

@@ -1,6 +1,6 @@
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
 import { TokenInput } from './TokenInput';
-import ETHIcon from './../../icons/assets/ETH.svg';
+import ETHIcon from './../../misc/icons/assets/ETH.svg';
 
 console.log('icon', ETHIcon);
 

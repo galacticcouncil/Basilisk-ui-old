@@ -5418,7 +5418,7 @@
 
 "@vue/shared@3.2.19":
   version "3.2.19"
-  resolved "https://registry.npmjs.org/@vue/shared/-/shared-3.2.19.tgz"
+  resolved "https://registry.npmjs.org/@vue/misc/-/shared-3.2.19.tgz"
   integrity sha512-Knqhx7WieLdVgwCAZgTVrDCXZ50uItuecLh9JdLC8O+a5ayaSyIQYveUK3hCRNC7ws5zalHmZwfdLMGaS8r4Ew==
 
 "@webassemblyjs/ast@1.9.0":

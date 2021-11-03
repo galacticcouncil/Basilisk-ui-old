@@ -3,7 +3,7 @@ import { subHours } from 'date-fns/esm';
 import { random, times } from 'lodash';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { LineChart } from './LineChart';
-import cssColors from './../../../shared/colors.module.scss'
+import cssColors from './../../../misc/colors.module.scss'
 
 const now = Date.now();
 const hourAgo = subMinutes(now, 60);
