@@ -1,10 +1,6 @@
 #import './hooks/accounts/Accounts.graphql'
 #import './hooks/lastBlock/LastBlock.graphql'
-
-type Config {
-    nodeUrl: String!,
-    processorUrl: String!
-}
+#import './hooks/config/Config.graphql'
 
 extend type Query {
     # just a placeholder to make the codegen not complain about

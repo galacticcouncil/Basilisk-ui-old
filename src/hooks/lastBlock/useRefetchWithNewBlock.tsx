@@ -34,7 +34,7 @@ export const useRefetchWithNewBlock = (client: ApolloClient<NormalizedCacheObjec
             query: GET_LAST_BLOCK
         });
 
-        if (!lastBlockData?.lastBlock.number) {
+        if (!lastBlockData?.lastBlock?.number) {
             // received the first real lastBlockNumber, don't refetch just yet
             writeLastBlock(client.cache, {
                 __typename,
