@@ -1,0 +1,19 @@
+@import '../../../misc/colors.module.scss';
+
+.chart-ticks {
+    // color: $gray4;
+    color: gray;
+    font-size: 0.75rem;
+    margin-top: 2rem;
+    max-height: 1.125rem;
+    user-select: none;
+
+    .col {
+        max-height: 0.875rem;
+        text-align: left;
+    }
+
+    span {
+        display: inline-block;
+    }
+}

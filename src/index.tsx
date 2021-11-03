@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { Locale } from './shared/locale';
-import './shared/shared';
+import './index.scss';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App locale={Locale.EN}/>
-  </React.StrictMode>,
+  // TODO: figure out a way to enable react strict mode
+  // without triggering duplicate graphql queries
+  // https://github.com/apollographql/react-apollo/issues/3906#issuecomment-636604835
+  // <React.StrictMode>
+    <App/>,
+  // </React.StrictMode>,
   document.getElementById('root')
 );
 

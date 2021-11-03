@@ -1,0 +1,17 @@
+#import "./../balances/Balance.graphql"
+
+type Account {
+    id: String!,
+    name: String,
+    isActive: Boolean!,
+    balances: [Balance!]!
+}
+
+extend type Query {
+    accounts: [Account!]!
+    account: Account
+}
+
+extend type Mutation {
+    setActiveAccount: Account
+}

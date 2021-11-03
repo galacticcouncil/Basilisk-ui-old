@@ -1,0 +1,9 @@
+#import './hooks/accounts/Accounts.graphql'
+#import './hooks/lastBlock/LastBlock.graphql'
+#import './hooks/config/Config.graphql'
+
+extend type Query {
+    # just a placeholder to make the codegen not complain about
+    # root query not being defined
+    _empty: String
+}
