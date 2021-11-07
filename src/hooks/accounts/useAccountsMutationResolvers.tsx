@@ -4,12 +4,16 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import { GetAccountsQueryResponse, GET_ACCOUNTS } from './useGetAccountsQuery';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 import { SetActiveAccountMutationVariables } from './useSetActiveAccountMutation'
+import log from 'loglevel';
 
-export const useResolverToRef = (resolver: Resolver) => {
+export const useResolverToRef = (resolver: Resolver, name?: string) => {
     const resolverRef = useRef(resolver);
     useEffect(() => { resolverRef.current = resolver }, [resolver]);
 
     return function resolverFromRef() {
+        // TODO is there a better way to debug resolvers? Since the function name
+        // is not visible in the apollo error
+        log.debug('Running resolver', name);
         return resolverRef.current.apply(undefined, arguments as any);
     }
 }
@@ -18,7 +22,7 @@ export const useAccountsMutationResolvers = () => {
     const [_persistedActiveAccount, setPersistedActiveAccount] = usePersistActiveAccount();
     const setActiveAccount: Resolver = useResolverToRef(
         useCallback(async (
-            obj,
+            _obj,
             args: SetActiveAccountMutationVariables,
             context?: { cache?: ApolloCache<NormalizedCacheObject> }
         ) => {
@@ -50,7 +54,8 @@ export const useAccountsMutationResolvers = () => {
             // TODO: find a better way to wait until the local storage changes are
             // propagated to the resolverRef
             await (new Promise(resolve => setTimeout(resolve, 0)));
-        }, [setPersistedActiveAccount])
+        }, [setPersistedActiveAccount]),
+        'setActiveAccount'
     )
 
     return {

@@ -34,6 +34,7 @@
     "gql": "^1.1.2",
     "graphql.macro": "^1.4.2",
     "lodash": "^4.17.21",
+    "loglevel": "^1.7.1",
     "moment": "^2.29.1",
     "percent-change": "^1.0.1",
     "react": "^17.0.2",
@@ -68,7 +69,8 @@
     "build-storybook": "build-storybook -s public",
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "codegen": "graphql-codegen --config codegen.yml",
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql"
   },
   "eslintConfig": {
     "extends": [

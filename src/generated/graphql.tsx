@@ -18,7 +18,7 @@ export type Account = {
   id: Scalars['String'];
   isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
-  vestingSchedule?: Maybe<Array<VestingSchedule>>;
+  vestingSchedule: VestingSchedule;
 };
 
 export type Balance = {
@@ -54,6 +54,6 @@ export type VestingSchedule = {
   perPeriod?: Maybe<Scalars['String']>;
   period?: Maybe<Scalars['String']>;
   periodCount?: Maybe<Scalars['String']>;
-  remainingVestingBalance?: Maybe<Scalars['String']>;
+  remainingVestingAmount?: Maybe<Scalars['String']>;
   start?: Maybe<Scalars['String']>;
 };

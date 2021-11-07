@@ -9,7 +9,8 @@ export const useVestingScheduleQueryResolvers = () => {
         useCallback(
             async (account: Account) => await getVestingScheduleByAddress(account.id), 
             [getVestingScheduleByAddress]
-        )
+        ),
+        'vestingSchedule'
     );
 
     return {

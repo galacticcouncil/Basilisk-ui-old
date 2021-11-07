@@ -4,14 +4,12 @@ import { Account } from '../../generated/graphql';
 import { GET_ACTIVE_ACCOUNT } from './useGetActiveAccountQuery';
 
 export const SET_ACTIVE_ACCOUNT = loader('./SetActiveAccount.mutation.graphql');
-export interface SetActiveAccountMutationResponse {
-    account: Account
-}
+
 export interface SetActiveAccountMutationVariables {
     id: string | undefined
 }
 
-export const useSetActiveAccountMutation = (variables: SetActiveAccountMutationVariables) => useMutation<SetActiveAccountMutationResponse, SetActiveAccountMutationVariables>(
+export const useSetActiveAccountMutation = (variables: SetActiveAccountMutationVariables) => useMutation<void, SetActiveAccountMutationVariables>(
     SET_ACTIVE_ACCOUNT,
     {
         variables,

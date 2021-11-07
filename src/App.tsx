@@ -1,14 +1,18 @@
 import './App.scss';
 import { MultiProvider } from './containers/MultiProvider';
-import { Account, LastBlock } from './generated/graphql';
+import { Account, LastBlock, Maybe } from './generated/graphql';
 import { useGetAccountsQuery } from './hooks/accounts/useGetAccountsQuery';
 import { useGetActiveAccountQuery } from './hooks/accounts/useGetActiveAccountQuery';
 import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccountMutation';
 import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
 import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
 import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmountMutation';
+import { useApolloNetworkStatus } from './hooks/apollo/useApollo';
+import log from 'loglevel';
 
-export const AccountDisplay = ({ account, lastBlock }: { account?: Account, lastBlock?: LastBlock }) => {
+log.setLevel('info');
+
+export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account> | undefined, lastBlock: Maybe<LastBlock> | undefined}) => {
   const [setActiveAccount] = useSetActiveAccountMutation({ id: account?.id })
 
   return <div>
@@ -17,6 +21,15 @@ export const AccountDisplay = ({ account, lastBlock }: { account?: Account, last
     <p>{account?.id}</p>
     <p>{account?.name}</p>
     <p>Active: {account?.isActive ? 'true' : 'false'}</p>
+
+    {account?.vestingSchedule
+      ? 
+        <>
+          <p>Vesting schedule start: {account.vestingSchedule.start}</p>
+        </>
+      : <></>
+    }
+
     <div>
       <p>Balances:</p>
       {account?.balances.map((balance, i) => (
@@ -30,19 +43,16 @@ export const AccountDisplay = ({ account, lastBlock }: { account?: Account, last
 
 export const ActiveAccount = () => {
   const { data, loading, refetch, networkStatus, error } = useGetActiveAccountQuery();
-  const [claimVestedAmount] = useClaimVestedAmountMutation({
-    address: data?.account.id
+  const [claimVestedAmount, { loading: claimLoading, error: claimError }] = useClaimVestedAmountMutation({
+    address: data?.account?.id
   });
-  
-  if (error) {
-    console.error(error);
-  }
 
-  console.log('active', data);
+  console.log('active account error', claimError)
 
   return <>
     <h4>Active</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
+    <p>Claim loading: {claimLoading ? 'true' : 'false'}</p>
     <p>Network status: {networkStatus}</p>
     <button onClick={_ => refetch && refetch()}>refetch</button>
     <button onClick={_ => claimVestedAmount()}>claim</button>
@@ -51,8 +61,7 @@ export const ActiveAccount = () => {
 }
 
 export const Accounts = () => {
-  const { data, loading, refetch, networkStatus, error } = useGetAccountsQuery();
-  error && console.error(error)
+  const { data, loading, refetch, networkStatus } = useGetAccountsQuery();
   return <>
     <h4>Accounts</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
@@ -72,13 +81,15 @@ export const LastBlockDisplay = () => {
 
   return <div>
     <h4>Last block</h4>
-    <p>Block: {data?.lastBlock.number}</p>
+    <p>Block: {data?.lastBlock?.number}</p>
     <p>Loading: {loading ? 'true' : 'false'}</p>
   </div>
 }
 
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
+  const e = useApolloNetworkStatus();
+  console.log('e', e);
 
   return <>
     {loading
@@ -86,9 +97,9 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
-        {/* <LastBlockDisplay /> */}
+        <LastBlockDisplay />
         <ActiveAccount />
-        <Accounts />
+        {/* <Accounts /> */}
       </>)
     }
   </>

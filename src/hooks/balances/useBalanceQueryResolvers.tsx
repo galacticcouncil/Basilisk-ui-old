@@ -6,7 +6,8 @@ import { useGetBalancesByAddress } from './useGetBalancesByAddress';
 export const useBalanceQueryResolvers = () => {
     const getBalancesByAddress = useGetBalancesByAddress();
     const balances = useResolverToRef(
-        useCallback(async (account: Account) => await getBalancesByAddress(account.id), [getBalancesByAddress])
+        useCallback(async (account: Account) => await getBalancesByAddress(account.id), [getBalancesByAddress]),
+        'balances'
     );
 
     return {

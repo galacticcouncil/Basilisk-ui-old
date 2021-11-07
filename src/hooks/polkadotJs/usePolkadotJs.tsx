@@ -29,9 +29,6 @@ export const useConfigurePolkadotJs = () => {
     ...typesConfig.alias,
     ...ormlTypesAlias
   }), []);
-  
-  console.log('types', types);
-  console.log('typesAlias', typesAlias);
 
   // (re-)Create the PolkadotJS instance, when the provider updates.
   useEffect(() => {

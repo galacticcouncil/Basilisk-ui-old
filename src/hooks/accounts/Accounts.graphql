@@ -1,14 +1,12 @@
 #import "./../balances/Balance.graphql"
 #import './../vesting/VestingSchedule.graphql'
-#import './GetActiveAccount.query.graphql'
-#import './GetAccounts.query.graphql'
 
 type Account {
     id: String!,
     name: String,
     isActive: Boolean!,
     balances: [Balance!]!,
-    vestingSchedule: [VestingSchedule!]
+    vestingSchedule: VestingSchedule!
 }
 
 extend type Query {

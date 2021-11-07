@@ -1,7 +1,6 @@
 #import "./AccountFields.fragment.graphql"
 #import "./../vesting/VestingScheduleFields.fragment.graphql"
 
-
 query GetActiveAccount {
     lastBlock @client { 
         number 
@@ -11,8 +10,8 @@ query GetActiveAccount {
         ...AccountFields,
         vestingSchedule {
             # figure out why this fragment doesnt work
-            # ...VestingScheduleFields
-            remainingVestingBalance,
+            # ...VestingScheduleFields,
+            remainingVestingAmount,
             start,
             period,
             periodCount,

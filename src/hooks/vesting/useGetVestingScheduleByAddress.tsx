@@ -24,20 +24,21 @@ export const useGetVestingScheduleByAddress = () => {
             ) as Vec<VestingScheduleOf>
         );
 
-        const lockedVestingBalance = find(
+        const lockedVestingAmount = find(
             apiInstance.createType(
                 vestingBalanceDataType,
                 await apiInstance.query.balances.locks(address)
             ),
-            lockedVestingBalance => (
-                lockedVestingBalance.id.eq(vestingBalanceLockId)
+            lockedAmount => (
+                lockedAmount.id.eq(vestingBalanceLockId)
             )
         );
         
         // TODO: are we sure this really conforms with the graphql VestingSchedule type
         // in all conditions?
         return {
-            remainingVestingAmount: lockedVestingBalance?.amount.toString(),
+            // TODO: add a claimableAmount (https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26)
+            remainingVestingAmount: lockedVestingAmount?.amount.toString(),
             start: vestingSchedule?.start.toString(),
             period: vestingSchedule?.period.toString(),
             periodCount: vestingSchedule?.periodCount.toString(),

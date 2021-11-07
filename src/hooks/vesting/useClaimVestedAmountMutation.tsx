@@ -12,5 +12,8 @@ export interface ClaimVestedAmountMutationVariables {
 // no need to refetch queries, active account will refetch with every new block anyways
 export const useClaimVestedAmountMutation = (variables: ClaimVestedAmountMutationVariables) => useMutation<ClaimVestedAmountMutationResponse, ClaimVestedAmountMutationVariables>(
     CLAIM_VESTED_AMOUNT,
-    { variables }
+    { 
+        variables,
+        notifyOnNetworkStatusChange: true,
+    }
 )

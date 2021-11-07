@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache, Resolvers,  } from '@apollo/client';
+import { ApolloClient, ApolloLink, createHttpLink, from, InMemoryCache, Resolvers,  } from '@apollo/client';
 import { useAccountsQueryResolvers } from '../accounts/useAccountsQueryResolvers';
 import { loader } from 'graphql.macro';
 import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
@@ -7,6 +7,9 @@ import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
+import { createNetworkStatusNotifier } from 'react-apollo-network-status';
+import { onError } from "@apollo/client/link/error";
+
 
 /**
  * Add all local gql resolvers here
@@ -28,6 +31,7 @@ export const useResolvers: () => Resolvers = () => {
 
 export const typeDefs = loader('./../../schema.graphql');
 
+export const { link, useApolloNetworkStatus } = createNetworkStatusNotifier();
 
 /**
  * Recreates the apollo client instance each time the config changes
@@ -47,6 +51,7 @@ export const useConfigureApolloClient = () => {
             queryDeduplication: true,
             resolvers,
             typeDefs,
+            link: link.concat(createHttpLink())
         })
     }, [processorUrl]);
     
