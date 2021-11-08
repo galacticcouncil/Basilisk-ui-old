@@ -8,15 +8,17 @@ import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
+export interface TradeFormProps {
+    assetPair: AssetPair,
+    spotPrice: number,
+    onAssetPairSwitch: () => void
+}
+
 export const TradeForm = ({
     assetPair,
     spotPrice,
     onAssetPairSwitch,
-}: {
-    assetPair: AssetPair,
-    spotPrice: number,
-    onAssetPairSwitch: () => void
-}) => {
+}: TradeFormProps) => {
     const [tradeForm, setTradeForm] = useState({
         assetA: { value: '0' },
         assetB: { value: '0' }
