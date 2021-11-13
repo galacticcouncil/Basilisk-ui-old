@@ -1,24 +1,29 @@
-import classNames from 'classnames'
-import './Button.scss'
+import classNames from 'classnames';
+import './Button.scss';
 
 export enum ButtonKind {
-    Primary = 'Primary'
+  Primary = 'Primary',
+  Default = 'Default',
 }
 
 export const Button = ({
-    // TODO: default should not be primary
-    kind = ButtonKind.Primary,
-    children
+  kind = ButtonKind.Default,
+  children,
 }: {
-    kind: ButtonKind,
-    // TODO: just use text instead?
-    children: string
+  kind: ButtonKind;
+  // TODO: just use text instead?
+  children: string;
 }) => {
-    return <button 
-        className={"button " + classNames({
-            "button--primary": kind == ButtonKind.Primary
-        })}
+  return (
+    <button
+      className={
+        'button ' +
+        classNames({
+          'button--primary': kind === ButtonKind.Primary,
+        })
+      }
     >
-        {children}
+      {children}
     </button>
-}
+  );
+};

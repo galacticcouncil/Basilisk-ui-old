@@ -28,7 +28,7 @@ export default {
                 fullName: 'Karura US Dollar'
             }
         },
-        wrapperWidth: '760px'
+
     }
 }
 

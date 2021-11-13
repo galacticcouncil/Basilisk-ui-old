@@ -5,6 +5,7 @@ import { AssetPair, ChartGranularity, ChartType, DisplayData, PoolType } from '.
 import percentageChange from 'percent-change';
 import './ChartHeader.scss'
 import classNames from 'classnames';
+import { FormattedBalance } from '../../FormattedBalance/FormattedBalance';
 
 const horizontalBar = '―';
 
@@ -104,40 +105,16 @@ export const ChartHeader = ({
                         <div className='text-white-1 chart-header__data'>
                             <div className='row g-0'>
                                 <div className='chart-header__data__in-asset'>
-                                    {/* TODO: add guards for symbol length */}
-                                    {/* TODO: add abbreviations for spot price */}
-                                    {displayData.balance
-                                        ? (
-                                            <>
-                                                <FormattedNumber
-                                                    value={displayData.balance}
-                                                    style='decimal'
-                                                    // notation={determineNotation(displayData.balance)}
-                                                    minimumFractionDigits={2}
-                                                    maximumFractionDigits={2}
-                                                />
-                                                {' '}
-                                            </>
-                                        )
-                                        : `${horizontalBar} `}
-
-                                    {displayData.asset.symbol}
+                                    <FormattedBalance
+                                        balance={displayData.usdBalance}
+                                        symbol={displayData.asset.symbol}
+                                    />
                                 </div>
                                 <div className='chart-header__data__breakdown'>
-                                    <span className='text-gray-4'>
-                                        {displayData.usdBalance
-                                            ? (
-                                                <FormattedNumber
-                                                    value={displayData.usdBalance}
-                                                    style='currency'
-                                                    currency='USD'
-                                                    // notation={determineNotation(displayData.usdBalance)}
-                                                    minimumFractionDigits={2}
-                                                    maximumFractionDigits={2}
-                                                />
-                                            )
-                                            : `$ ${horizontalBar}`}
-                                    </span>
+                                    <FormattedBalance
+                                        balance={displayData.usdBalance}
+                                        symbol='USD'
+                                    />
 
                                     <span className={classNames({
                                         "text-green-1": dataTrend === Trend.Positive,

@@ -32,7 +32,7 @@ export enum PoolType {
 // Display data is not in the {x,y} format, since it solely represents
 // an amount in a given asset
 export interface DisplayData {
-    balance: number | undefined,
-    usdBalance: number | undefined,
+    balance: string | undefined,
+    usdBalance: string | undefined,
     asset: Asset
 }

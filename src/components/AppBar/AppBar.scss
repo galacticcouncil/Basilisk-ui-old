@@ -1,0 +1,37 @@
+@import './../../misc/colors.module.scss';
+
+.app-bar {
+    color: $white1;
+    display: flex;
+    width: 380px;
+    padding-left: 0.7em;
+    background-color: $gray5;
+    vertical-align: middle;
+
+    >div {
+        padding: 0.5em;
+    }
+
+    & .app-bar-help {
+
+    }
+
+    & .app-bar-notifications {
+        
+    }
+
+    & .app-bar-balance {
+        
+    }
+
+    & .app-bar-account {
+        & .account-name {
+            height: 1em;
+            max-width: 130px;
+        }
+    }
+
+    & .app-bar-settings {
+        
+    }
+}

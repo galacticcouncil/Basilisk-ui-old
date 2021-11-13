@@ -32,7 +32,6 @@ const Template = (args: any) => {
             background: 'linear-gradient(90deg, rgba(66,66,80,1) 61%, rgba(55,55,65,1) 100%)',
             paddingTop: '64px',
             paddingBottom: '64px',
-            height: '100vh'
         }}>
             <TradePage {...args}/>
         </div>

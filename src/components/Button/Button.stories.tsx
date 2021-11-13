@@ -15,6 +15,10 @@ const Template = () => {
             <Button kind={ButtonKind.Primary}>
                 click here
             </Button>
+
+            <Button kind={ButtonKind.Default}>
+                click here
+            </Button>
         </div>
     </StorybookWrapper>
 }
