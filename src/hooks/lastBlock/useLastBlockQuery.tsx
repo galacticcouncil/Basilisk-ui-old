@@ -3,7 +3,7 @@ import { loader } from 'graphql.macro';
 import { LastBlock, Query } from '../../generated/graphql';
 
 
-export const GET_LAST_BLOCK = loader('./GetLastBlock.query.graphql');
+export const GET_LAST_BLOCK = loader('./graphql/GetLastBlock.query.graphql');
 export interface GetLastBlockQueryResponse {
     lastBlock: Query['lastBlock']
 }

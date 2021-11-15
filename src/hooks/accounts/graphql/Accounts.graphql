@@ -1,5 +1,5 @@
-#import "./../balances/Balance.graphql"
-#import './../vesting/VestingSchedule.graphql'
+#import "./../../balances/graphql/Balance.graphql"
+#import './../../vesting/graphql/VestingSchedule.graphql'
 
 type Account {
     id: String!,

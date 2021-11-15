@@ -1,0 +1,3 @@
+mutation TransferBalance($from: String!, $to: String!, $currencyId: String!, $amount: String) {
+    transferBalance(from: $from, to: $to, currencyId: $currencyId, amount: $amount) @client
+}

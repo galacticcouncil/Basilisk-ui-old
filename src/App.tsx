@@ -7,20 +7,45 @@ import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccoun
 import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
 import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
 import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmountMutation';
-import { useApolloNetworkStatus } from './hooks/apollo/useApollo';
 import log from 'loglevel';
+import { useTransferBalanceMutation } from './hooks/balances/useTransferBalanceMutation';
+import { useEstimateTransferBalance } from './hooks/balances/useBalanceMutationResolvers';
+import { useCallback, useEffect, useMemo } from 'react';
+import { useContextualGetExtensionLazyQuery } from './hooks/polkadotJs/useGetExtensionQuery';
+import { useGetConfigQuery } from './hooks/config/useGetConfigQuery';
+import { usePrevious } from 'react-use';
+import { isEqual } from 'lodash';
+import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
 
 log.setLevel('info');
 
 export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account> | undefined, lastBlock: Maybe<LastBlock> | undefined}) => {
   const [setActiveAccount] = useSetActiveAccountMutation({ id: account?.id })
+  const [claimVestedAmount, { loading: claimLoading, error: claimError }] = useClaimVestedAmountMutation();
+  const transferBalanceVariables = {
+    from: account?.id,
+    to: 'bXi1Xh8UZvKUFCezgut35kv7U7ss3mK2BnEj3rdEen1tkaSoy',
+    currencyId: '0',
+    amount: '123456'
+  };
+  const [transferBalance, { loading: transferLoading, error: errorLoading }] = useTransferBalanceMutation(transferBalanceVariables);
+  const { paymentInfo, estimatePaymentInfo } = useEstimateTransferBalance(transferBalanceVariables);
+
+  useEffect(() => {
+    estimatePaymentInfo();
+  }, [lastBlock?.number])
 
   return <div>
     <span>{account?.__typename}</span>
     <p>Last block: {lastBlock?.number}</p>
     <p>{account?.id}</p>
     <p>{account?.name}</p>
+    <p>Claim loading: {claimLoading ? 'true' : 'false'}</p>
+    <button onClick={_ => claimVestedAmount()}>claim</button>
+    <button onClick={_ => transferBalance()}>transfer</button>
+    <p>Transfer estimate: {paymentInfo?.partialFee.toHuman()}</p>
     <p>Active: {account?.isActive ? 'true' : 'false'}</p>
+
 
     {account?.vestingSchedule
       ? 
@@ -43,21 +68,14 @@ export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account
 
 export const ActiveAccount = () => {
   const { data, loading, refetch, networkStatus, error } = useGetActiveAccountQuery();
-  const [claimVestedAmount, { loading: claimLoading, error: claimError }] = useClaimVestedAmountMutation({
-    address: data?.account?.id
-  });
 
-  console.log('active account error', claimError)
-
-  return <>
-    <h4>Active</h4>
+  return <div className="active-account">
+    <h4 className="active-account__heading">Active</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
-    <p>Claim loading: {claimLoading ? 'true' : 'false'}</p>
     <p>Network status: {networkStatus}</p>
     <button onClick={_ => refetch && refetch()}>refetch</button>
-    <button onClick={_ => claimVestedAmount()}>claim</button>
     <AccountDisplay account={data?.account} lastBlock={data?.lastBlock} />
-  </>
+  </div>
 }
 
 export const Accounts = () => {
@@ -86,10 +104,27 @@ export const LastBlockDisplay = () => {
   </div>
 }
 
+export const ExtensionConnector = () => {
+  const [getExtension, { data }] = useContextualGetExtensionLazyQuery();
+  return <button onClick={_ => getExtension()}>Connect extension</button>
+}
+
+export const ConfigDisplay = () => {
+  const { data, error, refetch } = useGetConfigQuery();
+  const feePaymentAsset = data?.config?.feePaymentAsset === '0' ? '1' : '0'
+
+  
+  if (error) console.error(error);
+
+  return <div>
+    <p>App name: {data?.config?.appName}</p>
+    <p>Fee payment asset: {data?.config?.feePaymentAsset}</p>
+    <button onClick={_ => setConfig()}>set config</button>
+  </div>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
-  const e = useApolloNetworkStatus();
-  console.log('e', e);
 
   return <>
     {loading
@@ -97,8 +132,10 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
-        <LastBlockDisplay />
-        <ActiveAccount />
+        <ExtensionConnector />
+        {/* <ConfigDisplay /> */}
+        {/* <LastBlockDisplay /> */}
+        {/* <ActiveAccount /> */}
         {/* <Accounts /> */}
       </>)
     }

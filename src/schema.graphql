@@ -1,7 +1,9 @@
-#import './hooks/accounts/Accounts.graphql'
-#import './hooks/lastBlock/LastBlock.graphql'
-#import './hooks/config/Config.graphql'
-#import './hooks/vesting/VestingSchedule.graphql'
+#import './hooks/accounts/graphql/Accounts.graphql'
+#import './hooks/lastBlock/graphql/LastBlock.graphql'
+#import './hooks/config/graphql/Config.graphql'
+#import './hooks/vesting/graphql/VestingSchedule.graphql'
+#import './hooks/polkadotJs/graphql/Extension.graphql'
+#import './hooks/feePaymentAssets/graphql/FeePaymentAssets.graphql'
 
 extend type Query {
     # just a placeholder to make the codegen not complain about

@@ -9,6 +9,7 @@ export const useGetBalancesByAddress = () => {
     const { apiInstance, loading } = usePolkadotJsContext()
 
     const getBalancesByAddress = useCallback(async (address: string) => {
+        console.log('getting balance', address);
         if (!apiInstance) return;
 
         const balances: Balance[] = [];

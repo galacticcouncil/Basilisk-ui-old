@@ -1,9 +1,10 @@
 type Config {
     nodeUrl: String!,
     processorUrl: String!,
-    appName: String!
+    appName: String!,
+    feePaymentAsset: String
 }
 
 extend type Query {
-    config: Config
+    config: Config!
 }

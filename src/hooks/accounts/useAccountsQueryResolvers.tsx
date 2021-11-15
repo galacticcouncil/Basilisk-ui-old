@@ -24,6 +24,7 @@ export const useAccountsQueryResolvers = () => {
             _obj,
             args: AccountsQueryResolverArgs | undefined,
         ) => {          
+            // we must call enable here as well, not just when checking the extension availability
             await web3Enable('basilisk-ui');
             const accounts = (await web3Accounts())
                 .map(account => {

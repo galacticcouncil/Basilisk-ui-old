@@ -6,6 +6,8 @@ import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutati
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
 import { DispatchError } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
+import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/useGetActiveAccountQuery';
 
 /**
  * Run an async function and handle the thrown errors
@@ -15,8 +17,8 @@ import log from 'loglevel';
  * @param errorHandlers 
  * @returns 
  */
-type resolve = (result?: any) => void;
-type reject = (error?: any) => void;
+export type resolve = (result?: any) => void;
+export type reject = (error?: any) => void;
 export const withGracefulErrors = async (
     fn: (resolve: resolve, reject: reject) => Promise<any>,
     errorHandlers: ((error: any) => void)[]
@@ -52,12 +54,12 @@ export const gracefulExtensionCancelationErrorHandler = (e: any) => {
     return e;
 }
 
-export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({ 
-    status, 
-    dispatchError 
-}: { 
-    status: ExtrinsicStatus, 
-    dispatchError?: DispatchError 
+export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
+    status,
+    dispatchError
+}: {
+    status: ExtrinsicStatus,
+    dispatchError?: DispatchError
 }) => {
     console.log('status', status);
     if (status.isFinalized) log.info('operation finalized')
@@ -65,10 +67,10 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
         if (dispatchError?.isModule) {
-            return log.info('claim unsuccessful');
+            return log.info('operation unsuccessful', dispatchError);
         }
 
-        return log.info('claim successful');
+        return log.info('operation successful');
     }
 
     // if the operation has been broadcast, finish the mutation
@@ -82,27 +84,37 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
     }
 };
 
+export const noAccountSelectedError = 'No Account selected';
+export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet';
+
 export const useVestingMutationResolvers = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
 
     const claimVestedAmount = useResolverToRef(
         useCallback(async (
             _obj,
-            { address }: ClaimVestedAmountMutationVariables
+            variables: ClaimVestedAmountMutationVariables,
+            { cache }: { cache: ApolloCache<NormalizedCacheObject> }
         ) => {
-            // TODO: error handling?
-            if (!address) return;
-            if (loading || !apiInstance) return;
+            const address = variables?.address
+                ? variables.address
+                : cache.readQuery<GetActiveAccountQueryResponse>({
+                    query: GET_ACTIVE_ACCOUNT
+                })?.account?.id;
 
-            // TODO: why does this not return a tx hash?
+            // TODO: error handling?
+            if (!address) throw new Error(noAccountSelectedError);
+            if (loading || !apiInstance) throw new Error(polkadotJsNotReadyYetError);
+
+            // // TODO: why does this not return a tx hash?
             return await withGracefulErrors(async (resolve, reject) => {
                 const { signer } = await web3FromAddress(address);
                 await apiInstance.tx.vesting.claim()
-                        .signAndSend(
-                            address,
-                            { signer },
-                            vestingClaimHandler(resolve, reject)
-                        )
+                    .signAndSend(
+                        address,
+                        { signer },
+                        vestingClaimHandler(resolve, reject)
+                    )
             }, [
                 gracefulExtensionCancelationErrorHandler
             ])

@@ -45,6 +45,7 @@ export const useAccountsMutationResolvers = () => {
                 })
                 : setPersistedActiveAccount(undefined)
             
+            //TODO: return the data to be mutated from the mutation instead
             context?.cache?.writeQuery<GetAccountsQueryResponse>({
                 query: GET_ACCOUNTS,
                 data: { accounts, lastBlock: accountsData.lastBlock }

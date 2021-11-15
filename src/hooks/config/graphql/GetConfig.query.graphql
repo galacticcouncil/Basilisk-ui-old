@@ -1,0 +1,12 @@
+query GetConfig {
+    lastBlock @client {
+        number
+    },
+
+    config @client {
+        nodeUrl,
+        processorUrl,
+        appName,
+        feePaymentAsset,
+    }
+}

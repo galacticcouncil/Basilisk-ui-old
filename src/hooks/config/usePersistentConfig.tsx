@@ -2,7 +2,7 @@ import createPersistedState from 'use-persisted-state';
 import { Config } from '../../generated/graphql';
 
 const key = 'basilisk-config';
-const defaultValue = {
+export const defaultConfigValue = {
     nodeUrl: 'ws://localhost:9988',
     processorUrl: '/graphql',
     appName: 'basilisk-ui'
@@ -10,4 +10,4 @@ const defaultValue = {
 
 // TODO: write apollo integration for querying and mutating the config
 const usePersistedConfig = createPersistedState(key)
-export const usePersistentConfig = () => usePersistedConfig<Config>(defaultValue);
+export const usePersistentConfig = () => usePersistedConfig<Config>(defaultConfigValue);
