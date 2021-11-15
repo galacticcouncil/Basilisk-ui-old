@@ -3,6 +3,7 @@ import { FeePaymentAsset } from '../../generated/graphql';
 import { useResolverToRef } from '../accounts/useAccountsMutationResolvers'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 
+export const __typename: FeePaymentAsset['__typename'] = 'FeePaymentAsset';
 export const useFeePaymentAssetsQueryResolvers = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
     const feePaymentAssets = useResolverToRef(
@@ -11,14 +12,18 @@ export const useFeePaymentAssetsQueryResolvers = () => {
 
             const acceptedCurrencies = await apiInstance.query.multiTransactionPayment.acceptedCurrencies.entries()
             const feePaymentAssets: FeePaymentAsset[] = acceptedCurrencies.map((acceptedCurrency) => {
+                const assetId = (acceptedCurrency[0].toHuman() as string[])[0];
                 return {
                     // TODO: is there a safer type way to do this?
-                    assetId: (acceptedCurrency[0].toHuman() as string[])[0],
+                    // TODO: maybe? combine this with known asset data
+                    __typename,
+                    id: assetId,
+                    assetId: assetId,
                     fallbackPrice: acceptedCurrency[1].toString()
                 }
             })
             
-            console.log('feePaymentAssets', feePaymentAssets);
+            return feePaymentAssets;
         }, [apiInstance, loading])
     );
 
