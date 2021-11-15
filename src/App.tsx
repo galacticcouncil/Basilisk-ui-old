@@ -80,7 +80,8 @@ export const ActiveAccount = () => {
 }
 
 export const Accounts = () => {
-  const { data, loading, refetch, networkStatus } = useGetAccountsQuery();
+  const { data, loading, refetch, networkStatus, error } = useGetAccountsQuery();
+  error && console.error(error);
   return <>
     <h4>Accounts</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
@@ -135,10 +136,10 @@ export const ConfigDisplay = () => {
 
 export const FeePaymentAssets = () => {
   const { data, loading, error } = useGetFeePaymentAssetsQuery();
-  console.log('FeePaymentAssets', data, loading, error);
+
   return <>
     {data?.feePaymentAssets?.map((feePaymentAsset) => {
-      return <div>
+      return <div key={feePaymentAsset.assetId}>
         {feePaymentAsset.assetId} / {feePaymentAsset.fallbackPrice}
       </div>
     })}
@@ -154,13 +155,12 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
-        <FeePaymentAssets />
-
+        {/* <FeePaymentAssets /> */}
         {/* <ExtensionConnector /> */}
         {/* <ConfigDisplay /> */}
         {/* <LastBlockDisplay /> */}
         {/* <ActiveAccount /> */}
-        {/* <Accounts /> */}
+        <Accounts />
       </>)
     }
   </>
