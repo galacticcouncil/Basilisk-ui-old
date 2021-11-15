@@ -1,6 +1,6 @@
 import { ApolloProvider, useApolloClient } from '@apollo/client';
 import React from 'react';
-import { GetActiveAccountQueryProvider } from '../hooks/accounts/useGetActiveAccountQuery';
+import { GetActiveAccountQueryProvider } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { useConfigureApolloClient } from '../hooks/apollo/useApollo';
 import { LastBlockNumberProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber';
 import { GetExtensionQueryProvider } from '../hooks/polkadotJs/useGetExtensionQuery';

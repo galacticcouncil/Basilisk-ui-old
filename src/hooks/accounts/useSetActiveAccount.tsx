@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject, useApolloClient } from '@apollo/client';
 import { find } from 'lodash';
 import { useCallback } from 'react';
-import { GetAccountsQueryResponse, GET_ACCOUNTS } from './useGetAccountsQuery';
+import { GetAccountsQueryResponse, GET_ACCOUNTS } from './queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 
 export const useSetActiveAccount = () => {
@@ -21,7 +21,7 @@ export const useSetActiveAccount = () => {
             .map(account => ({
                 ...account,
                 isActive: account.id === address ? true : false
-            }));
+            }))
         
         const activeAccount = find(accounts, { isActive: true });
         activeAccount

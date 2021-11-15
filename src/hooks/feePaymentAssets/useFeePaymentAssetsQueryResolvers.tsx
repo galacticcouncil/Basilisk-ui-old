@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { FeePaymentAsset } from '../../generated/graphql';
-import { useResolverToRef } from '../accounts/useAccountsMutationResolvers'
+import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 
 export const __typename: FeePaymentAsset['__typename'] = 'FeePaymentAsset';

@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { ApolloClient, createHttpLink, from, InMemoryCache, Resolvers,  } from '@apollo/client';
-import { useAccountsQueryResolvers } from '../accounts/useAccountsQueryResolvers';
+import { useAccountsQueryResolvers } from '../accounts/resolvers/useAccountsQueryResolvers';
 import { loader } from 'graphql.macro';
-import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
+import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';

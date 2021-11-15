@@ -1,6 +1,6 @@
 import { web3Enable } from '@polkadot/extension-dapp';
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/useAccountsMutationResolvers'
+import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
 
 export const __typename = 'Extension';
 export const id = __typename;

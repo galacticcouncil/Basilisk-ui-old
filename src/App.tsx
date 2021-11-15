@@ -1,9 +1,9 @@
 import './App.scss';
 import { MultiProvider } from './containers/MultiProvider';
 import { Account, LastBlock, Maybe } from './generated/graphql';
-import { useGetAccountsQuery } from './hooks/accounts/useGetAccountsQuery';
-import { useGetActiveAccountQuery } from './hooks/accounts/useGetActiveAccountQuery';
-import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccountMutation';
+import { useGetAccountsQuery } from './hooks/accounts/queries/useGetAccountsQuery';
+import { useGetActiveAccountQuery } from './hooks/accounts/queries/useGetActiveAccountQuery';
+import { useSetActiveAccountMutation } from './hooks/accounts/mutations/useSetActiveAccountMutation';
 import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
 import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
 import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmountMutation';
