@@ -1,9 +1,9 @@
 import './App.scss';
 import { MultiProvider } from './containers/MultiProvider';
 import { Account, LastBlock, Maybe } from './generated/graphql';
-import { useGetAccountsQuery } from './hooks/accounts/useGetAccountsQuery';
-import { useGetActiveAccountQuery } from './hooks/accounts/useGetActiveAccountQuery';
-import { useSetActiveAccountMutation } from './hooks/accounts/useSetActiveAccountMutation';
+import { useGetAccountsQuery } from './hooks/accounts/queries/useGetAccountsQuery';
+import { useGetActiveAccountQuery } from './hooks/accounts/queries/useGetActiveAccountQuery';
+import { useSetActiveAccountMutation } from './hooks/accounts/mutations/useSetActiveAccountMutation';
 import { usePolkadotJsContext } from './hooks/polkadotJs/usePolkadotJs';
 import { useLastBlockQuery } from './hooks/lastBlock/useLastBlockQuery';
 import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmountMutation';
@@ -16,6 +16,7 @@ import { useGetConfigQuery } from './hooks/config/useGetConfigQuery';
 import { usePrevious } from 'react-use';
 import { isEqual } from 'lodash';
 import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
+import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeePaymentAssetsQuery';
 
 log.setLevel('info');
 
@@ -79,7 +80,8 @@ export const ActiveAccount = () => {
 }
 
 export const Accounts = () => {
-  const { data, loading, refetch, networkStatus } = useGetAccountsQuery();
+  const { data, loading, refetch, networkStatus, error } = useGetAccountsQuery();
+  error && console.error(error);
   return <>
     <h4>Accounts</h4>
     <p>Loading: {loading ? 'true' : 'false'}</p>
@@ -132,6 +134,18 @@ export const ConfigDisplay = () => {
   </div>
 }
 
+export const FeePaymentAssets = () => {
+  const { data, loading, error } = useGetFeePaymentAssetsQuery();
+
+  return <>
+    {data?.feePaymentAssets?.map((feePaymentAsset) => {
+      return <div key={feePaymentAsset.assetId}>
+        {feePaymentAsset.assetId} / {feePaymentAsset.fallbackPrice}
+      </div>
+    })}
+  </>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
@@ -141,10 +155,11 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
+        {/* <FeePaymentAssets /> */}
         {/* <ExtensionConnector /> */}
-        <ConfigDisplay />
+        {/* <ConfigDisplay /> */}
         {/* <LastBlockDisplay /> */}
-        <ActiveAccount />
+        {/* <ActiveAccount /> */}
         <Accounts />
       </>)
     }

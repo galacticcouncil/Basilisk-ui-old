@@ -2,10 +2,11 @@ import { useApolloClient, useQuery } from '@apollo/client';
 import constate from 'constate';
 import { loader } from 'graphql.macro'
 import { useEffect } from 'react';
-import { Account, LastBlock, Query } from '../../generated/graphql';
-import { GET_CONFIG } from '../config/useGetConfigQuery';
+import { Account, LastBlock, Query } from '../../../generated/graphql';
+import { GET_CONFIG } from '../../config/useGetConfigQuery';
 
-export const GET_ACTIVE_ACCOUNT = loader('./graphql/GetActiveAccount.query.graphql');
+export const GET_ACTIVE_ACCOUNT = loader('./../graphql/GetActiveAccount.query.graphql');
+
 export interface GetActiveAccountQueryResponse {
     account: Query['account'],
     lastBlock: Query['lastBlock'],

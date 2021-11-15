@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/useAccountsMutationResolvers'
+import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
@@ -7,7 +7,7 @@ import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
 import { DispatchError } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/useGetActiveAccountQuery';
+import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
 
 /**
  * Run an async function and handle the thrown errors

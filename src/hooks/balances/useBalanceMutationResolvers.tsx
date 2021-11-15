@@ -1,6 +1,6 @@
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useResolverToRef } from '../accounts/useAccountsMutationResolvers';
+import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { gracefulExtensionCancelationErrorHandler, polkadotJsNotReadyYetError, reject, resolve, withGracefulErrors } from '../vesting/useVestingMutationResolvers';
 import { TransferBalanceMutationVariables } from './useTransferBalanceMutation';

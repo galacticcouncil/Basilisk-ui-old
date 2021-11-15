@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { ApolloClient, createHttpLink, from, InMemoryCache, Resolvers,  } from '@apollo/client';
-import { useAccountsQueryResolvers } from '../accounts/useAccountsQueryResolvers';
+import { useAccountsQueryResolvers } from '../accounts/resolvers/useAccountsQueryResolvers';
 import { loader } from 'graphql.macro';
-import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
+import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
@@ -11,6 +11,7 @@ import { useBalanceMutationResolvers } from '../balances/useBalanceMutationResol
 import { useExtensionQueryResolvers } from '../polkadotJs/useExtensionQueryResolvers';
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
+import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -22,7 +23,8 @@ export const useResolvers: () => Resolvers = () => {
         Query: {
             ...AccountsQueryResolver,
             ...useExtensionQueryResolvers(),
-            ...useConfigQueryResolvers()
+            ...useConfigQueryResolvers(),
+            ...useFeePaymentAssetsQueryResolvers(),
         },
         Mutation: {
             ...useAccountsMutationResolvers(),

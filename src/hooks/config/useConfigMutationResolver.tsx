@@ -1,8 +1,8 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/useAccountsMutationResolvers'
-import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/useGetActiveAccountQuery';
+import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
+import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { gracefulExtensionCancelationErrorHandler, reject, resolve, vestingClaimHandler, withGracefulErrors } from '../vesting/useVestingMutationResolvers';
 import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig';
