@@ -111,8 +111,17 @@ export const ExtensionConnector = () => {
 
 export const ConfigDisplay = () => {
   const { data, error, refetch } = useGetConfigQuery();
+  const [setConfigMutation] = useSetConfigMutation();
   const feePaymentAsset = data?.config?.feePaymentAsset === '0' ? '1' : '0'
 
+  const setConfig = useCallback(() => data?.config ? setConfigMutation({
+    variables: {
+      config: {
+        ...data.config,
+        feePaymentAsset
+      }
+    }
+  }): null, [data]);
   
   if (error) console.error(error);
 
@@ -132,11 +141,11 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
-        <ExtensionConnector />
-        {/* <ConfigDisplay /> */}
+        {/* <ExtensionConnector /> */}
+        <ConfigDisplay />
         {/* <LastBlockDisplay /> */}
-        {/* <ActiveAccount /> */}
-        {/* <Accounts /> */}
+        <ActiveAccount />
+        <Accounts />
       </>)
     }
   </>

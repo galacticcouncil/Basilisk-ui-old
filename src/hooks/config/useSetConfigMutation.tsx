@@ -9,8 +9,7 @@ export interface SetConfigMutationVariables {
     config: Config | undefined
 }
 
-export const useSetConfigMutation = (variables: SetConfigMutationVariables, onCompleted?: () => void) => useMutation<unknown, SetConfigMutationVariables>(SET_CONFIG, {
-    variables,
+export const useSetConfigMutation = (onCompleted?: () => void) => useMutation<unknown, SetConfigMutationVariables>(SET_CONFIG, {
     refetchQueries: [GET_CONFIG],
     onCompleted
 });
