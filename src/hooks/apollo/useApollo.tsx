@@ -11,6 +11,7 @@ import { useBalanceMutationResolvers } from '../balances/useBalanceMutationResol
 import { useExtensionQueryResolvers } from '../polkadotJs/useExtensionQueryResolvers';
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
+import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -22,7 +23,8 @@ export const useResolvers: () => Resolvers = () => {
         Query: {
             ...AccountsQueryResolver,
             ...useExtensionQueryResolvers(),
-            ...useConfigQueryResolvers()
+            ...useConfigQueryResolvers(),
+            ...useFeePaymentAssetsQueryResolvers(),
         },
         Mutation: {
             ...useAccountsMutationResolvers(),

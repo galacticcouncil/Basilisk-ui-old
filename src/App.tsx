@@ -16,6 +16,7 @@ import { useGetConfigQuery } from './hooks/config/useGetConfigQuery';
 import { usePrevious } from 'react-use';
 import { isEqual } from 'lodash';
 import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
+import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeePaymentAssetsQuery';
 
 log.setLevel('info');
 
@@ -132,6 +133,18 @@ export const ConfigDisplay = () => {
   </div>
 }
 
+export const FeePaymentAssets = () => {
+  const { data, loading, error } = useGetFeePaymentAssetsQuery();
+  console.log('FeePaymentAssets', data, loading, error);
+  return <>
+    {data?.feePaymentAssets?.map((feePaymentAsset) => {
+      return <div>
+        {feePaymentAsset.assetId} / {feePaymentAsset.fallbackPrice}
+      </div>
+    })}
+  </>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
@@ -141,11 +154,13 @@ export const Page = () => {
         <p>Loading...</p>
       )
       : (<>
+        <FeePaymentAssets />
+
         {/* <ExtensionConnector /> */}
-        <ConfigDisplay />
+        {/* <ConfigDisplay /> */}
         {/* <LastBlockDisplay /> */}
-        <ActiveAccount />
-        <Accounts />
+        {/* <ActiveAccount /> */}
+        {/* <Accounts /> */}
       </>)
     }
   </>

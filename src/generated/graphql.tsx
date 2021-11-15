@@ -46,11 +46,6 @@ export type FeePaymentAsset = {
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
-export type FeePaymentAssets = {
-  __typename?: 'FeePaymentAssets';
-  assets?: Maybe<Array<FeePaymentAsset>>;
-};
-
 export type LastBlock = {
   __typename?: 'LastBlock';
   id: Scalars['String'];
@@ -64,7 +59,7 @@ export type Query = {
   accounts: Array<Account>;
   config: Config;
   extension: Extension;
-  feePaymentAssets?: Maybe<FeePaymentAssets>;
+  feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
 };
 
