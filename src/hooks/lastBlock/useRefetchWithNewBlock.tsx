@@ -46,7 +46,6 @@ export const useRefetchWithNewBlock = (client: ApolloClient<NormalizedCacheObjec
             // refetch queries that depend on the lastBlockNumber
             client.refetchQueries({
                 updateCache(cache) {
-                    
                     writeLastBlock(cache, {
                         __typename,
                         id,

@@ -18,6 +18,7 @@ export type Account = {
   id: Scalars['String'];
   isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
+  vestingSchedule: VestingSchedule;
 };
 
 export type Balance = {
@@ -28,8 +29,26 @@ export type Balance = {
 
 export type Config = {
   __typename?: 'Config';
+  appName: Scalars['String'];
+  feePaymentAsset?: Maybe<Scalars['String']>;
   nodeUrl: Scalars['String'];
   processorUrl: Scalars['String'];
+};
+
+export type Extension = {
+  __typename?: 'Extension';
+  isAvailable?: Maybe<Scalars['Boolean']>;
+};
+
+export type FeePaymentAsset = {
+  __typename?: 'FeePaymentAsset';
+  assetId?: Maybe<Scalars['String']>;
+  fallbackPrice?: Maybe<Scalars['String']>;
+};
+
+export type FeePaymentAssets = {
+  __typename?: 'FeePaymentAssets';
+  assets?: Maybe<Array<FeePaymentAsset>>;
 };
 
 export type LastBlock = {
@@ -43,5 +62,17 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
+  config: Config;
+  extension: Extension;
+  feePaymentAssets?: Maybe<FeePaymentAssets>;
   lastBlock?: Maybe<LastBlock>;
+};
+
+export type VestingSchedule = {
+  __typename?: 'VestingSchedule';
+  perPeriod?: Maybe<Scalars['String']>;
+  period?: Maybe<Scalars['String']>;
+  periodCount?: Maybe<Scalars['String']>;
+  remainingVestingAmount?: Maybe<Scalars['String']>;
+  start?: Maybe<Scalars['String']>;
 };

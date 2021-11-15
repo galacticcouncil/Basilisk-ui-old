@@ -9,6 +9,7 @@ export const useGetBalancesByAddress = () => {
     const { apiInstance, loading } = usePolkadotJsContext()
 
     const getBalancesByAddress = useCallback(async (address: string) => {
+        console.log('getting balance', address);
         if (!apiInstance) return;
 
         const balances: Balance[] = [];
@@ -21,9 +22,11 @@ export const useGetBalancesByAddress = () => {
 
         // TODO: write type definitions for `query.tokens`
         const assetBalances = await apiInstance.query.tokens.accounts.entries(address);
+
         assetBalances?.forEach(assetBalanceTuple => {
             const assetIdTuple = assetBalanceTuple[0].toHuman() as string[];
             const assetId = assetIdTuple[1];
+
             const balance = apiInstance?.createType(
                 assetBalanceDataType,
                 assetBalanceTuple[1]

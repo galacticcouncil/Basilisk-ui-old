@@ -4,32 +4,16 @@ import { find } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
 import { useResolverToRef } from './useAccountsMutationResolvers';
-import { GetAccountByIdQueryResponse, GetAccountByIdQueryVariables, GET_ACCOUNT_BY_ID } from './useGetAccountByIdQuery';
 import { GetAccountsQueryResponse, GET_ACCOUNTS } from './useGetAccountsQuery';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+import { useVestingScheduleQueryResolvers } from '../vesting/useVestingScheduleQueryResolvers';
 
-export interface AccountsQueryResolverArgs extends GetAccountByIdQueryVariables {
+export interface AccountsQueryResolverArgs {
     isActive: boolean
 }
+
 export const __typename = 'Account';
-
-export const isActiveFromCache = (cache: ApolloCache<NormalizedCacheObject>, id: string) => {
-    const accountData = cache.readQuery<GetAccountByIdQueryResponse>({
-        query: GET_ACCOUNT_BY_ID,
-        variables: { id }
-    });
-
-    return accountData?.account.isActive
-}
-
-export const accountsFromCache = (cache: ApolloCache<NormalizedCacheObject>) => {
-    const accountsData = cache.readQuery<GetAccountsQueryResponse>({
-        query: GET_ACCOUNTS,
-    });
-
-    return accountsData?.accounts;
-}
 
 export const basiliskAddressPrefix = 10041;
 export const useAccountsQueryResolvers = () => {
@@ -39,7 +23,8 @@ export const useAccountsQueryResolvers = () => {
         useCallback(async (
             _obj,
             args: AccountsQueryResolverArgs | undefined,
-        ) => {            
+        ) => {          
+            // we must call enable here as well, not just when checking the extension availability
             await web3Enable('basilisk-ui');
             const accounts = (await web3Accounts())
                 .map(account => {
@@ -55,18 +40,15 @@ export const useAccountsQueryResolvers = () => {
                     ...account,
                     isActive: persistedActiveAccount?.id == account.id,
                 }))
-            
-            if (args?.id) {
-                return find(accounts, { id: args.id });
-            }
-    
+
             if (args?.isActive) {
                 const account = find(accounts, { isActive: args.isActive })
                 return account;
             }
 
             return accounts;
-        }, [persistedActiveAccount])
+        }, [persistedActiveAccount]),
+        'accounts'
     )
 
     return {
@@ -74,7 +56,8 @@ export const useAccountsQueryResolvers = () => {
             accounts
         },
         Account: {
-            ...useBalanceQueryResolvers()
+            ...useBalanceQueryResolvers(),
+            ...useVestingScheduleQueryResolvers()
         }
     }
 }

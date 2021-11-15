@@ -1,11 +1,16 @@
-import { useEffect, useMemo } from 'react';
-import { ApolloClient, ApolloLink, createHttpLink, InMemoryCache, Resolvers,  } from '@apollo/client';
+import { useMemo } from 'react';
+import { ApolloClient, createHttpLink, from, InMemoryCache, Resolvers,  } from '@apollo/client';
 import { useAccountsQueryResolvers } from '../accounts/useAccountsQueryResolvers';
 import { loader } from 'graphql.macro';
 import { useAccountsMutationResolvers } from '../accounts/useAccountsMutationResolvers';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
+import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
+
+import { useBalanceMutationResolvers } from '../balances/useBalanceMutationResolvers';
+import { useExtensionQueryResolvers } from '../polkadotJs/useExtensionQueryResolvers';
+import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
+import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 
 /**
  * Add all local gql resolvers here
@@ -16,16 +21,20 @@ export const useResolvers: () => Resolvers = () => {
     return {
         Query: {
             ...AccountsQueryResolver,
+            ...useExtensionQueryResolvers(),
+            ...useConfigQueryResolvers()
         },
         Mutation: {
-            ...useAccountsMutationResolvers()
+            ...useAccountsMutationResolvers(),
+            ...useVestingMutationResolvers(),
+            ...useBalanceMutationResolvers(),
+            ...useConfigMutationResolvers()
         },
         Account
     }
 };
 
 export const typeDefs = loader('./../../schema.graphql');
-
 
 /**
  * Recreates the apollo client instance each time the config changes
@@ -34,6 +43,8 @@ export const typeDefs = loader('./../../schema.graphql');
 export const useConfigureApolloClient = () => {
     const resolvers = useResolvers();
     const cache =  new InMemoryCache();
+    // can't get the config from a query before we setup apollo
+    // therefore we get it from the local storage instead
     const [{ processorUrl }] = usePersistentConfig();
 
     const client = useMemo(() => {

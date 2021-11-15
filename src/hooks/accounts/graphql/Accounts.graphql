@@ -1,10 +1,12 @@
-#import "./../balances/Balance.graphql"
+#import "./../../balances/graphql/Balance.graphql"
+#import './../../vesting/graphql/VestingSchedule.graphql'
 
 type Account {
     id: String!,
     name: String,
     isActive: Boolean!,
-    balances: [Balance!]!
+    balances: [Balance!]!,
+    vestingSchedule: VestingSchedule!
 }
 
 extend type Query {

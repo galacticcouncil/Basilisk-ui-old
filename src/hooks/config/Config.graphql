@@ -1,5 +1,0 @@
-type Config {
-    nodeUrl: String!,
-    processorUrl: String!,
-    appName: String!
-}
