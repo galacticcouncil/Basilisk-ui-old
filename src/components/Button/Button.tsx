@@ -5,18 +5,20 @@ export enum ButtonKind {
     Primary = 'Primary'
 }
 
+export interface ButtonProps {
+    children: string
+    kind?: ButtonKind
+    onClick?: () => void
+}
+
 export const Button = ({
     // TODO: default should not be primary
     kind = ButtonKind.Primary,
     children
-}: {
-    kind: ButtonKind,
-    // TODO: just use text instead?
-    children: string
-}) => {
+}: ButtonProps) => {
     return <button 
         className={"button " + classNames({
-            "button--primary": kind == ButtonKind.Primary
+            "button--primary": kind === ButtonKind.Primary
         })}
     >
         {children}
