@@ -10,7 +10,7 @@ export interface AccountsQueryResolverArgs {
 
 export const __typename = 'Account';
 
-export const useGetAccountsResolver = () => {
+export const useGetAccountsQueryResolver = () => {
     const [persistedActiveAccount] = usePersistActiveAccount();
     const getAccounts = useGetAccounts();
 

@@ -17,6 +17,7 @@ import { usePrevious } from 'react-use';
 import { isEqual } from 'lodash';
 import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
 import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeePaymentAssetsQuery';
+import { useGetPoolsQuery } from './hooks/pools/queries/useGetPoolsQuery';
 
 log.setLevel('info');
 
@@ -146,6 +147,13 @@ export const FeePaymentAssets = () => {
   </>
 }
 
+export const PoolList = () => {
+  const { data, loading, error } = useGetPoolsQuery();
+  error && console.error(error);
+  console.log('pools', data);
+  return <></>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
@@ -160,7 +168,8 @@ export const Page = () => {
         {/* <ConfigDisplay /> */}
         {/* <LastBlockDisplay /> */}
         {/* <ActiveAccount /> */}
-        <Accounts />
+        {/* <Accounts /> */}
+        <PoolList />
       </>)
     }
   </>

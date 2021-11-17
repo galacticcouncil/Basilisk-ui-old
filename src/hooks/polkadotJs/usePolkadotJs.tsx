@@ -1,4 +1,4 @@
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, WsProvider, HttpProvider } from '@polkadot/api';
 import { ProviderInterface } from '@polkadot/rpc-provider/types'
 import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';

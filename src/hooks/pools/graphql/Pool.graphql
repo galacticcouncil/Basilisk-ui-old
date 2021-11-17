@@ -1,0 +1,33 @@
+enum PoolType {
+    LBP
+    XYK
+}
+
+# figure out how to create a union between two types
+# that extend an interface, apparently this isnt possible as of now
+# 
+# interface Pool {
+#     poolType: PoolType!,
+#     assetAId: String!,
+#     assetBId: String!,
+#     assetABalance: String!,
+#     assetBBalance: String!,
+# }
+
+type LBPPool {
+    id: String!,
+    assetAId: String!,
+    assetBId: String!,
+}
+
+type XYKPool {
+    id: String!,
+    assetAId: String!,
+    assetBId: String!,
+}
+
+union Pool = LBPPool | XYKPool
+
+extend type Query {
+    pools: [Pool!]
+}

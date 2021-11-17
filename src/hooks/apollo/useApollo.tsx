@@ -12,6 +12,8 @@ import { useExtensionQueryResolvers } from '../polkadotJs/useExtensionQueryResol
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
+import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
+import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -19,12 +21,15 @@ import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePay
  */
 export const useResolvers: () => Resolvers = () => {
     const { Query: AccountsQueryResolver, Account } = useAccountsQueryResolvers();
+    const { Query: PoolsQueryResolver, XYKPool, LBPPool } = usePoolsQueryResolver()
     return {
         Query: {
             ...AccountsQueryResolver,
             ...useExtensionQueryResolvers(),
             ...useConfigQueryResolvers(),
             ...useFeePaymentAssetsQueryResolvers(),
+            ...useBalanceQueryResolvers(),
+            ...PoolsQueryResolver,
         },
         Mutation: {
             ...useAccountsMutationResolvers(),
@@ -32,7 +37,9 @@ export const useResolvers: () => Resolvers = () => {
             ...useBalanceMutationResolvers(),
             ...useConfigMutationResolvers()
         },
-        Account
+        Account,
+        XYKPool,
+        LBPPool
     }
 };
 

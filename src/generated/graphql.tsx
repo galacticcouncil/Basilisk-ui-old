@@ -46,11 +46,20 @@ export type FeePaymentAsset = {
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
+export type LbpPool = {
+  __typename?: 'LBPPool';
+  assetAId: Scalars['String'];
+  assetBId: Scalars['String'];
+  id: Scalars['String'];
+};
+
 export type LastBlock = {
   __typename?: 'LastBlock';
   id: Scalars['String'];
   number?: Maybe<Scalars['String']>;
 };
+
+export type Pool = LbpPool | XykPool;
 
 export type Query = {
   __typename?: 'Query';
@@ -61,6 +70,7 @@ export type Query = {
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
+  pools?: Maybe<Array<Pool>>;
 };
 
 export type VestingSchedule = {
@@ -70,4 +80,11 @@ export type VestingSchedule = {
   periodCount?: Maybe<Scalars['String']>;
   remainingVestingAmount?: Maybe<Scalars['String']>;
   start?: Maybe<Scalars['String']>;
+};
+
+export type XykPool = {
+  __typename?: 'XYKPool';
+  assetAId: Scalars['String'];
+  assetBId: Scalars['String'];
+  id: Scalars['String'];
 };
