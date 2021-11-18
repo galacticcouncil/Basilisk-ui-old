@@ -5,8 +5,8 @@ import { mapToPool } from './useGetXykPools';
 export const useGetXykPool = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
 
-    return useCallback(async (poolId: string) => {
-        if (!apiInstance || loading) return;
+    return useCallback(async (poolId?: string) => {
+        if (!apiInstance || loading || !poolId) return;
 
         return mapToPool(apiInstance)([
             poolId,

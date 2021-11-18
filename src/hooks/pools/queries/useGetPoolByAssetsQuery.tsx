@@ -6,15 +6,18 @@ import { GetPoolsQueryResponse } from './useGetPoolsQuery';
 export const GET_POOL_BY_ASSETS = loader('./../graphql/GetPoolByAssets.query.graphql');
 
 export interface GetPoolByAssetsQueryVariables {
-    assetAId: string,
-    assetBId: string,
+    assetAId?: string,
+    assetBId?: string,
 }
 
 export interface GetPoolQueryResponse {
     pool: Pool
 }
 
-export const useGetPoolByAssetsQuery = (variables: GetPoolByAssetsQueryVariables) => useQuery<GetPoolsQueryResponse>(
+export const useGetPoolByAssetsQuery = (variables: GetPoolByAssetsQueryVariables) => useQuery<GetPoolQueryResponse>(
     GET_POOL_BY_ASSETS, 
-    { variables }
+    { 
+        variables,
+        notifyOnNetworkStatusChange: true,
+    }
 );

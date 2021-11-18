@@ -54,26 +54,32 @@ export const useGetPoolsQueryResolver = () => {
             _obj,
             args?: PoolQueryResolverArgs,
         ) => {
+            console.log('getting pools', args?.assetIds);
+
             if (!apiInstance || loading) return;
 
             // use the provided poolId
             let poolId = args?.poolId;
+            let poolIds: PoolIds = {
+                lbpPoolId: poolId,
+                xykPoolId: poolId
+            };
 
             // if we're querying by assetIds, find the poolIds via RPC
             if (args?.assetIds) {
-                const { lbpPoolId, xykPoolId } = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
-                // XYK pool takes precedence over the lbp pool with the same assets
-                // TODO: add a filter option for a combination of assetIDs and a pool type
-                poolId = xykPoolId ? xykPoolId : lbpPoolId;
+                poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
             }
 
             // if the poolId is specified, try resolving with a single pool
-            if (poolId) {
-                let lbpPool = await getLbpPool(poolId);
-                let xykPool = await getXykPool(poolId);
-            
-                if (xykPool?.id === defaultXykPoolId) xykPool = undefined;
-                if (lbpPool?.id === defaultLbpPoolId) lbpPool = undefined;
+            if (poolIds.xykPoolId || poolIds.lbpPoolId) {
+                let lbpPool = await getLbpPool(poolIds.lbpPoolId);
+                let xykPool = await getXykPool(poolIds.xykPoolId);
+                
+                // if the assets are matching, its a default value which means the pool was not found
+                if (xykPool?.assetAId === xykPool?.assetBId) xykPool = undefined;
+                if (lbpPool?.assetAId === lbpPool?.assetBId) lbpPool = undefined;
+
+                console.log('found pool', xykPool, lbpPool)
 
                 // TODO: which pool should have priority if both types exist for the same assets?
                 const pool = xykPool || lbpPool;

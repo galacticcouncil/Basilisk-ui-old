@@ -1,6 +1,6 @@
 import './App.scss';
 import { MultiProvider } from './containers/MultiProvider';
-import { Account, LastBlock, Maybe } from './generated/graphql';
+import { Account, LastBlock, Maybe, Pool } from './generated/graphql';
 import { useGetAccountsQuery } from './hooks/accounts/queries/useGetAccountsQuery';
 import { useGetActiveAccountQuery } from './hooks/accounts/queries/useGetActiveAccountQuery';
 import { useSetActiveAccountMutation } from './hooks/accounts/mutations/useSetActiveAccountMutation';
@@ -10,7 +10,7 @@ import { useClaimVestedAmountMutation } from './hooks/vesting/useClaimVestedAmou
 import log from 'loglevel';
 import { useTransferBalanceMutation } from './hooks/balances/useTransferBalanceMutation';
 import { useEstimateTransferBalance } from './hooks/balances/useBalanceMutationResolvers';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useContextualGetExtensionLazyQuery } from './hooks/polkadotJs/useGetExtensionQuery';
 import { useGetConfigQuery } from './hooks/config/useGetConfigQuery';
 import { usePrevious } from 'react-use';
@@ -20,10 +20,11 @@ import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeeP
 import { useGetPoolsQuery } from './hooks/pools/queries/useGetPoolsQuery';
 import { useGetPoolByAssetsQuery } from './hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useGetAssetsQuery } from './hooks/assets/queries/useGetAssetsQuery';
+import { useForm } from 'react-hook-form';
 
 log.setLevel('info');
 
-export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account> | undefined, lastBlock: Maybe<LastBlock> | undefined}) => {
+export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account> | undefined, lastBlock: Maybe<LastBlock> | undefined }) => {
   const [setActiveAccount] = useSetActiveAccountMutation({ id: account?.id })
   const [claimVestedAmount, { loading: claimLoading, error: claimError }] = useClaimVestedAmountMutation();
   const transferBalanceVariables = {
@@ -52,10 +53,10 @@ export const AccountDisplay = ({ account, lastBlock }: { account?: Maybe<Account
 
 
     {account?.vestingSchedule
-      ? 
-        <>
-          <p>Vesting schedule start: {account.vestingSchedule.start}</p>
-        </>
+      ?
+      <>
+        <p>Vesting schedule start: {account.vestingSchedule.start}</p>
+      </>
       : <></>
     }
 
@@ -126,8 +127,8 @@ export const ConfigDisplay = () => {
         feePaymentAsset
       }
     }
-  }): null, [data]);
-  
+  }) : null, [data]);
+
   if (error) console.error(error);
 
   return <div>
@@ -166,6 +167,145 @@ export const AssetList = () => {
   return <></>
 }
 
+export const TradeForm = ({
+  onAssetIdsChange,
+  pool
+}: {
+  onAssetIdsChange: (assetAId: string, assetBId: string) => void,
+  pool?: Pool
+}) => {
+  const { register, handleSubmit, watch, formState: { errors }, getValues, setValue, trigger, reset } = useForm<any, any>({
+    defaultValues: {
+      assetAId: '0',
+      assetBId: '1',
+      assetAAmount: '0',
+      assetBAmount: '0'
+    }
+  });
+
+  const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+
+  // should actually use the network status instead
+  const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
+
+  const [assetAId, assetAAmount] = watch(['assetAId', 'assetAAmount']);
+  const [assetBId, assetBAmount] = watch(['assetBId', 'assetBAmount']);
+
+  useEffect(() => { setTradeType('buy') }, [assetAId, assetAAmount]);
+  useEffect(() => { setTradeType('sell') }, [assetBId, assetBAmount]);
+
+  console.log('pool', pool);
+
+  useEffect(() => {
+    onAssetIdsChange(assetAId, assetBId);
+  }, [assetAId, assetBId]);
+
+  const onSubmit = (data: any) => console.log('submitted yay', data);
+
+  const assetOptions = useCallback((withoutAssetId: string | undefined) => {
+    return <>
+      {assetsData
+        ?.assets
+        .filter(asset => asset.id !== withoutAssetId)
+        .map(asset => (
+          <option key={asset.id} value={`${asset.id}`}>{asset.id}</option>
+        ))
+      }
+    </>
+  }, [assetsData]);
+
+  console.log('form errors', errors);
+
+  return <div>
+    {assetsLoading
+      ? <h1>Loading assets...</h1>
+      : (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <div>
+              <p>Trade type: {tradeType}</p>
+              
+              {!pool 
+                ? <p>Pool does not exist</p> 
+                : <p>Pool type: {pool?.__typename}</p>
+              }
+            </div>
+            <div>
+              <label>Asset A:</label>
+              <select
+                {...register('assetAId', {
+                  required: true
+                })}
+              >
+                {assetOptions(getValues('assetBId'))}
+              </select>
+            </div>
+            <div>
+              <div>
+                <input
+                  type="text"
+                  width={100}
+                  {...register('assetAAmount', {
+                    required: true
+                  })}
+                />
+              </div>
+            </div>
+          </div>
+          <div>
+            <label>Asset B:</label>
+            <select
+              {...register('assetBId', {
+                required: true
+              })}
+            >
+              {assetOptions(getValues('assetAId'))}
+            </select>
+          </div>
+          <div>
+            <input
+              type="text"
+              width={100}
+              {...register('assetBAmount', {
+                required: true
+              })}
+            />
+          </div>
+          <button type='submit'>Trade</button>
+        </form>
+      )
+    }
+  </div>
+}
+
+export const TradePage = () => {
+  const { loading } = usePolkadotJsContext();
+  const [assetIds, setAssetIds] = useState<{
+    assetAId: undefined | string, 
+    assetBId: undefined | string
+  }>({
+    assetAId: undefined,
+    assetBId: undefined
+  })
+  
+  const { data: poolData, networkStatus } = useGetPoolByAssetsQuery(assetIds);
+
+
+  const handleAssetIdsChange = (assetAId: string, assetBId: string) => {
+    console.log('assets changed');
+    setAssetIds({
+      assetAId, assetBId
+    })
+  }
+
+  return <div>
+    {loading
+      ? <h1>Connecting to the node...</h1>
+      : <TradeForm onAssetIdsChange={handleAssetIdsChange} pool={poolData?.pool}/>
+    }
+  </div>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
@@ -191,7 +331,7 @@ export const Page = () => {
 export const App = () => {
   return (
     <MultiProvider>
-      <Page />
+      <TradePage />
     </MultiProvider>
   );
 }
