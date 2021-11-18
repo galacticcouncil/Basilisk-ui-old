@@ -19,6 +19,7 @@ import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
 import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeePaymentAssetsQuery';
 import { useGetPoolsQuery } from './hooks/pools/queries/useGetPoolsQuery';
 import { useGetPoolByAssetsQuery } from './hooks/pools/queries/useGetPoolByAssetsQuery';
+import { useGetAssetsQuery } from './hooks/assets/queries/useGetAssetsQuery';
 
 log.setLevel('info');
 
@@ -158,6 +159,13 @@ export const PoolList = () => {
   return <></>
 }
 
+export const AssetList = () => {
+  const { data, error } = useGetAssetsQuery();
+  error && console.error(error);
+  console.log('assets', data);
+  return <></>
+}
+
 export const Page = () => {
   const { loading } = usePolkadotJsContext();
 
@@ -173,7 +181,8 @@ export const Page = () => {
         {/* <LastBlockDisplay /> */}
         {/* <ActiveAccount /> */}
         {/* <Accounts /> */}
-        <PoolList />
+        {/* <PoolList /> */}
+        <AssetList />
       </>)
     }
   </>

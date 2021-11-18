@@ -14,6 +14,7 @@ import { useConfigMutationResolvers } from '../config/useConfigMutationResolver'
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
+import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -30,6 +31,7 @@ export const useResolvers: () => Resolvers = () => {
             ...useFeePaymentAssetsQueryResolvers(),
             ...useBalanceQueryResolvers(),
             ...PoolsQueryResolver,
+            ...useAssetsQueryResolvers(),
         },
         Mutation: {
             ...useAccountsMutationResolvers(),

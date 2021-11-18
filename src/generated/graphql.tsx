@@ -21,6 +21,11 @@ export type Account = {
   vestingSchedule: VestingSchedule;
 };
 
+export type Asset = {
+  __typename?: 'Asset';
+  id: Scalars['String'];
+};
+
 export type Balance = {
   __typename?: 'Balance';
   assetId: Scalars['String'];
@@ -66,6 +71,7 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
+  assets?: Maybe<Array<Asset>>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;

@@ -5,6 +5,7 @@
 #import './hooks/polkadotJs/graphql/Extension.graphql'
 #import './hooks/feePaymentAssets/graphql/FeePaymentAssets.graphql'
 #import './hooks/pools/graphql/Pool.graphql'
+#import './hooks/assets/graphql/Asset.graphql'
 
 extend type Query {
     # just a placeholder to make the codegen not complain about
