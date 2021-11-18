@@ -1,0 +1,20 @@
+import { useQuery } from '@apollo/client';
+import { loader } from 'graphql.macro';
+import { Pool } from '../../../generated/graphql';
+import { GetPoolsQueryResponse } from './useGetPoolsQuery';
+
+export const GET_POOL_BY_ASSETS = loader('./../graphql/GetPoolByAssets.query.graphql');
+
+export interface GetPoolByAssetsQueryVariables {
+    assetAId: string,
+    assetBId: string,
+}
+
+export interface GetPoolQueryResponse {
+    pool: Pool
+}
+
+export const useGetPoolByAssetsQuery = (variables: GetPoolByAssetsQueryVariables) => useQuery<GetPoolsQueryResponse>(
+    GET_POOL_BY_ASSETS, 
+    { variables }
+);

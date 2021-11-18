@@ -1,31 +1,46 @@
 import { useCallback } from 'react';
 import { XykPool } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import type { StorageKey } from '@polkadot/types';
+import type { AnyTuple, Codec } from '@polkadot/types/types';
+import { ApiPromise } from '@polkadot/api';
 
 export type PoolAssets = string[];
 export const poolAssetsDataType = '(u32, u32)';
 
+export const mapToPoolId = ([storageKey, codec]: [StorageKey<AnyTuple>, Codec]): [string, Codec] => {
+    const id = (storageKey.toHuman() as string[])[0];
+    return [id, codec];
+}
+
+export const mapToPool = (apiInstance: ApiPromise) => ([id, codec]: [string, Codec]) => {
+    const poolAssets = apiInstance.createType(
+        poolAssetsDataType,
+        codec
+    ).toHuman() as PoolAssets;
+
+    return {
+        id,
+        assetAId: poolAssets[0],
+        assetBId: poolAssets[1],
+    } as XykPool
+}
+
 export const useGetXykPools = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
 
-    return useCallback(async () => {
+    return useCallback(async (poolId?: string, assetIds?: string[]) => {
         if (!apiInstance || loading) return [];
 
+        if (poolId) {
+            return [(await apiInstance.query.xyk.poolAssets(poolId))]
+                .map(pool => [poolId, pool] as [string, Codec])
+                .map(mapToPool(apiInstance))
+        }
+    
         return (await apiInstance.query.xyk.poolAssets.entries())
-            .map(pool => {
-                console.log('pool', pool);
-                const id = (pool[0].toHuman() as string[])[0];
-                const poolAssets = apiInstance.createType(
-                    poolAssetsDataType,
-                    pool[1]
-                ).toHuman() as PoolAssets;
-
-                return {
-                    id,
-                    assetAId: poolAssets[0],
-                    assetBId: poolAssets[1],
-                } as XykPool
-            }) || []
+            .map(mapToPoolId)  
+            .map(mapToPool(apiInstance)) || []
     }, [
         apiInstance,
         loading

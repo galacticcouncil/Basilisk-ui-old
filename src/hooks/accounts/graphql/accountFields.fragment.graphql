@@ -3,5 +3,8 @@ fragment AccountFields on Account {
     id,
     name,
     isActive,
-    balances
+    balances {
+        assetId,
+        balance
+    }
 }

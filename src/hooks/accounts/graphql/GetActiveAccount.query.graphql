@@ -1,6 +1,7 @@
 #import "./AccountFields.fragment.graphql"
 #import "./../../vesting/graphql/VestingScheduleFields.fragment.graphql"
 
+# TODO: fetch only balances for the active fee payment asset
 query GetActiveAccount {
     lastBlock @client { 
         number 

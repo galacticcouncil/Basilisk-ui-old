@@ -18,6 +18,7 @@ import { isEqual } from 'lodash';
 import { useSetConfigMutation } from './hooks/config/useSetConfigMutation';
 import { useGetFeePaymentAssetsQuery } from './hooks/feePaymentAssets/useGetFeePaymentAssetsQuery';
 import { useGetPoolsQuery } from './hooks/pools/queries/useGetPoolsQuery';
+import { useGetPoolByAssetsQuery } from './hooks/pools/queries/useGetPoolByAssetsQuery';
 
 log.setLevel('info');
 
@@ -148,9 +149,12 @@ export const FeePaymentAssets = () => {
 }
 
 export const PoolList = () => {
-  const { data, loading, error } = useGetPoolsQuery();
+  const { data, loading, error } = useGetPoolByAssetsQuery({
+    assetAId: '0',
+    assetBId: '1',
+  });
   error && console.error(error);
-  console.log('pools', data);
+  console.log('pool', data);
   return <></>
 }
 

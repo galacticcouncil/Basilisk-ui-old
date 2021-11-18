@@ -8,6 +8,4 @@ query GetPools {
             balance
         }
     }
-
-    
 }
