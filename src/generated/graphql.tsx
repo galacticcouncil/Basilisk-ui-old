@@ -70,6 +70,7 @@ export type Pool = LbpPool | XykPool;
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  _tradeType?: Maybe<TradeType>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
   assets?: Maybe<Array<Asset>>;
@@ -79,6 +80,11 @@ export type Query = {
   lastBlock?: Maybe<LastBlock>;
   pools?: Maybe<Array<Pool>>;
 };
+
+export enum TradeType {
+  Buy = 'Buy',
+  Sell = 'Sell'
+}
 
 export type VestingSchedule = {
   __typename?: 'VestingSchedule';

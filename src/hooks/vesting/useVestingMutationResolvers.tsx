@@ -8,6 +8,7 @@ import { DispatchError } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
+import { ApiPromise } from '@polkadot/api';
 
 /**
  * Run an async function and handle the thrown errors
@@ -27,6 +28,7 @@ export const withGracefulErrors = async (
         try {
             resolve(await fn(resolve, reject));
         } catch (e: any) {
+            console.log('e', e);
             e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
             // rejecting this promise with an error instead of throwing an error
             // is necessary to reflect the apollo resolver loading state correctly
@@ -54,7 +56,7 @@ export const gracefulExtensionCancelationErrorHandler = (e: any) => {
     return e;
 }
 
-export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
+export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstance?: ApiPromise) => ({
     status,
     dispatchError
 }: {
@@ -66,7 +68,11 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
         if (dispatchError?.isModule) {
-            return log.info('operation unsuccessful', dispatchError);
+            return log.info('operation unsuccessful',
+                !apiInstance
+                    ? dispatchError
+                    : apiInstance.registry.findMetaError(dispatchError.asModule)
+            );
         }
 
         return log.info('operation successful');

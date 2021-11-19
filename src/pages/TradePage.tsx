@@ -1,9 +1,14 @@
-import { isEqual, nth } from 'lodash';
-import { useCallback, useEffect, useState } from 'react';
-import { Pool } from '../generated/graphql';
+import { first, isEqual, nth } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Pool, TradeType } from '../generated/graphql';
 import { useGetAssetsQuery } from '../hooks/assets/queries/useGetAssetsQuery';
 import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useForm } from 'react-hook-form';
+import { useSubmitTradeMutation } from '../hooks/pools/mutations/useSubmitTradeMutation';
+import { PoolType } from '../components/Chart/shared';
+import { usePolkadotJsContext } from '../hooks/polkadotJs/usePolkadotJs';
+import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
+import { Event } from '@polkadot/types/interfaces';
 
 export const TradeForm = ({
     onAssetIdsChange,
@@ -19,7 +24,86 @@ export const TradeForm = ({
         }
     });
 
-    const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+    const { data: activeAccountData } = useGetActiveAccountQuery();
+    console.log('active account data', activeAccountData);
+
+    // TODO: extract hook
+    const [wasm, setWasm] = useState<any>();
+    useEffect(() => {
+        (async () => {
+            setWasm(await import('hydra-dx-wasm/build/xyk/bundler'))
+        })();
+    }, []);
+
+    const calculatedAssetAAmount = useMemo(() => {
+        const assetABalance = first(
+            pool?.balances
+                ?.filter(balance => balance.assetId === getValues('assetAId'))
+        )?.balance
+
+        const assetBBalance = first(
+            pool?.balances
+                ?.filter(balance => balance.assetId === getValues('assetBId'))
+        )?.balance
+
+        if (!assetABalance || !assetBBalance || !wasm) return;
+        
+        return wasm.calculate_in_given_out(
+            assetABalance,
+            assetBBalance,
+            getValues('assetBAmount')
+        );
+    }, [getValues, wasm, pool, getValues('assetBAmount')]);
+
+    useEffect(() => {
+        setValue('assetAAmount', calculatedAssetAAmount);
+    }, [calculatedAssetAAmount]);
+
+    const { apiInstance, loading } = usePolkadotJsContext();
+
+    const isForActiveAccount = useCallback((accountId: string) => {
+        console.log('isRelevant?', accountId, activeAccountData)
+        return accountId === activeAccountData?.account?.id;
+    }, [activeAccountData])
+
+    const subscribeToEvents = useCallback(() => {
+        if (!apiInstance || loading) return;
+
+        apiInstance.query.system.events((events) => {
+            const relevantEvents: Event[] = [];
+            // filter out events for our account
+            events.forEach(({ event }) => {
+                const eventId = `${event.section}.${event.method}`;
+                console.log('eventId', eventId);
+                if (eventId === 'exchange.IntentionResolveErrorEvent') {
+                    const accountId = event.data[0];
+                    if (isForActiveAccount(accountId.toHuman() as string)) {
+                        relevantEvents.push(event);
+                    }
+                }
+            });
+
+            console.log('relevant events', relevantEvents)
+            relevantEvents.forEach(event => {
+                const eventId = `${event.section}.${event.method}`;
+                console.log(eventId);
+                if (eventId === 'exchange.IntentionResolveErrorEvent') {
+                    console.error('oops, something went wrong with your trade');
+                    console.log('event data', event.data);
+                }
+            })
+        })
+    }, [isForActiveAccount, apiInstance, loading])
+
+    
+    useEffect(() => {
+        if (activeAccountData) return;
+        subscribeToEvents()
+    }, [activeAccountData]);
+
+    const [submitTrade, { loading: submitTradeLoading }] = useSubmitTradeMutation();
+
+    const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell);
 
     // should actually use the network status instead
     const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
@@ -27,8 +111,12 @@ export const TradeForm = ({
     const [assetAId, assetAAmount] = watch(['assetAId', 'assetAAmount']);
     const [assetBId, assetBAmount] = watch(['assetBId', 'assetBAmount']);
 
-    useEffect(() => { setTradeType('buy') }, [assetAId, assetAAmount]);
-    useEffect(() => { setTradeType('sell') }, [assetBId, assetBAmount]);
+    // useEffect(() => { setTradeType(TradeType.Sell) }, [assetAId, assetAAmount]);
+    // useEffect(() => { setTradeType(TradeType.Buy) }, [assetBId, assetBAmount]);
+
+    const onAssetAAmountInput = () => setTradeType(TradeType.Sell)
+    const onAssetBAmountInput = () => setTradeType(TradeType.Buy)
+
 
     useEffect(() => {
         onAssetIdsChange(assetAId, assetBId);
@@ -40,7 +128,18 @@ export const TradeForm = ({
         setValue('assetBId', '1');
     }, [assetsLoading])
 
-    const onSubmit = (data: any) => console.log('submitted yay', data);
+    const onSubmit = (data: any) => {
+        submitTrade({
+            variables: {
+                assetAId: data.assetAId,
+                assetBId: data.assetBId,
+                assetAAmount: data.assetAAmount,
+                assetBAmount: data.assetBAmount,
+                tradeType,
+                poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
+            }
+        })
+    }
 
     const assetOptions = useCallback((withoutAssetId: string | undefined) => {
         return <>
@@ -87,6 +186,7 @@ export const TradeForm = ({
                             {...register('assetAAmount', {
                                 required: true
                             })}
+                            onInput={onAssetAAmountInput}
                         />
                     </div>
                 </div>
@@ -113,6 +213,7 @@ export const TradeForm = ({
                     {...register('assetBAmount', {
                         required: true
                     })}
+                    onInput={onAssetBAmountInput}
                 />
             </div>
             <button 
@@ -120,6 +221,7 @@ export const TradeForm = ({
                 style={{
                     width: '100%',
                 }}
+                disabled={submitTradeLoading}
             >Trade</button>
 
             <br /><br />
@@ -131,8 +233,8 @@ export const TradeForm = ({
                         ? <b>Pool does not exist</b>
                         : <div>
                             <p><b>Pool type:</b> {pool?.__typename}</p>
-                            <p><b>Liquidity {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
-                            <p><b>Liquidity {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>
+                            <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
+                            <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>
                             <p><b>Spot price:</b> TODO</p>
                         </div>
                     }
@@ -164,7 +266,7 @@ export const TradePage = () => {
 
         {loading
             ? <i>[TradePage] Loading pools...</i>
-            : <i>[TradePage] Eveyrything are up to date</i>
+            : <i>[TradePage] Pools are up to date</i>
         }
 
         <br/><br/>

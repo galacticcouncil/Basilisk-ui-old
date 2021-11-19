@@ -5,6 +5,11 @@ enum PoolType {
     XYK
 }
 
+enum TradeType {
+    Buy,
+    Sell
+}
+
 # figure out how to create a union between two types
 # that extend an interface, apparently this isnt possible as of now
 # 
@@ -34,4 +39,7 @@ union Pool = LBPPool | XYKPool
 
 extend type Query {
     pools: [Pool!]
+    # Just to make sure TradeType makes it through the codegen
+    # otherwise it'd be ignored
+    _tradeType: TradeType
 }

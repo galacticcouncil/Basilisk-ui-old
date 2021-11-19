@@ -1,9 +1,10 @@
 mutation SubmitTrade(
     $assetAId: String!, 
     $assetBId: String!,
-    $tradeType: String!
     $assetAAmount: String!,
-    $assetBAmount: String!
+    $assetBAmount: String!,
+    $poolType: PoolType,
+    $tradeType: TradeType
 ) {
     submitTrade(
         assetAId: $assetAId
@@ -11,5 +12,5 @@ mutation SubmitTrade(
         tradeType: $tradeType,
         assetAAmount: $assetAAmount,
         assetBAmount: $assetBAmount
-    )
+    ) @client
 }

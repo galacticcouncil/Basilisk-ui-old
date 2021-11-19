@@ -15,6 +15,7 @@ import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePay
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
+import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -37,7 +38,8 @@ export const useResolvers: () => Resolvers = () => {
             ...useAccountsMutationResolvers(),
             ...useVestingMutationResolvers(),
             ...useBalanceMutationResolvers(),
-            ...useConfigMutationResolvers()
+            ...useConfigMutationResolvers(),
+            ...usePoolsMutationResolvers()
         },
         Account,
         XYKPool,
