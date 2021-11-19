@@ -1,0 +1,15 @@
+mutation SubmitTrade(
+    $assetAId: String!, 
+    $assetBId: String!,
+    $tradeType: String!
+    $assetAAmount: String!,
+    $assetBAmount: String!
+) {
+    submitTrade(
+        assetAId: $assetAId
+        assetBId: $assetBId,
+        tradeType: $tradeType,
+        assetAAmount: $assetAAmount,
+        assetBAmount: $assetBAmount
+    )
+}

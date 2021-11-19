@@ -61,7 +61,6 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
     status: ExtrinsicStatus,
     dispatchError?: DispatchError
 }) => {
-    console.log('status', status);
     if (status.isFinalized) log.info('operation finalized')
 
     // TODO: handle status via the action log / notification stack

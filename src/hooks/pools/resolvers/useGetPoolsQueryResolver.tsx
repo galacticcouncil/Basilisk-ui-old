@@ -54,8 +54,6 @@ export const useGetPoolsQueryResolver = () => {
             _obj,
             args?: PoolQueryResolverArgs,
         ) => {
-            console.log('getting pools', args?.assetIds);
-
             if (!apiInstance || loading) return;
 
             // use the provided poolId
@@ -78,8 +76,6 @@ export const useGetPoolsQueryResolver = () => {
                 // if the assets are matching, its a default value which means the pool was not found
                 if (xykPool?.assetAId === xykPool?.assetBId) xykPool = undefined;
                 if (lbpPool?.assetAId === lbpPool?.assetBId) lbpPool = undefined;
-
-                console.log('found pool', xykPool, lbpPool)
 
                 // TODO: which pool should have priority if both types exist for the same assets?
                 const pool = xykPool || lbpPool;

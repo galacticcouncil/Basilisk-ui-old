@@ -1,4 +1,8 @@
 query GetPoolByAssets($assetAId: String!, $assetBId: String!) {
+    lastBlock @client {
+        number
+    }
+    
     pool: pools(assetIds: [$assetAId, $assetBId]) @client {
         id,
         assetAId,

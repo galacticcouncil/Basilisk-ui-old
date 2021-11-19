@@ -1,3 +1,5 @@
+#import './../../balances/graphql/Balance.graphql'
+
 enum PoolType {
     LBP
     XYK
@@ -18,12 +20,14 @@ type LBPPool {
     id: String!,
     assetAId: String!,
     assetBId: String!,
+    balances: [Balance!]
 }
 
 type XYKPool {
     id: String!,
     assetAId: String!,
     assetBId: String!,
+    balances: [Balance!]
 }
 
 union Pool = LBPPool | XYKPool

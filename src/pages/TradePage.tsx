@@ -1,70 +1,177 @@
-import { last, random, times } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
-import { Dataset } from '../components/Chart/LineChart/LineChart';
-import { AssetPair, ChartGranularity, ChartType, PoolType } from '../components/Chart/shared';
-import { TradeChart } from '../components/Chart/TradeChart/TradeChart'
-import { TradeForm } from '../components/Trade/TradeForm'
+import { isEqual, nth } from 'lodash';
+import { useCallback, useEffect, useState } from 'react';
+import { Pool } from '../generated/graphql';
+import { useGetAssetsQuery } from '../hooks/assets/queries/useGetAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
+import { useForm } from 'react-hook-form';
 
-
-
-// assetPair,
-// poolType,
-// granularity,
-// chartType,
-// onChartTypeChange,
-// onGranularityChange
-
-export const TradePage = ({
-    assetPair,
+export const TradeForm = ({
+    onAssetIdsChange,
+    pool
 }: {
-    assetPair: AssetPair,
+    onAssetIdsChange: (assetAId: string, assetBId: string) => void,
+    pool?: Pool
 }) => {
+    const { register, handleSubmit, watch, formState: { errors }, getValues, setValue, trigger, reset } = useForm<any, any>({
+        defaultValues: {
+            assetAAmount: '0',
+            assetBAmount: '0'
+        }
+    });
 
-    const [_assetPair, setAssetPair] = useState(assetPair);
+    const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+
+    // should actually use the network status instead
+    const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
+
+    const [assetAId, assetAAmount] = watch(['assetAId', 'assetAAmount']);
+    const [assetBId, assetBAmount] = watch(['assetBId', 'assetBAmount']);
+
+    useEffect(() => { setTradeType('buy') }, [assetAId, assetAAmount]);
+    useEffect(() => { setTradeType('sell') }, [assetBId, assetBAmount]);
+
     useEffect(() => {
-        setAssetPair(assetPair)
-    }, [assetPair]);
+        onAssetIdsChange(assetAId, assetBId);
+    }, [assetAId, assetBId]);
 
-    const poolType = PoolType.XYK;
-    const chartType = ChartType.PRICE;
-    const granularity = ChartGranularity.H1;
-    const onChartTypeChange = () => {};
-    const onGranularityChange = () => {};
-    const handleAssetPairSwitch = () => {
-        setAssetPair({
-            assetA: _assetPair.assetB!,
-            assetB: _assetPair.assetA
-        })
+    useEffect(() => {
+        if (assetsLoading) return;
+        setValue('assetAId', '0');
+        setValue('assetBId', '1');
+    }, [assetsLoading])
+
+    const onSubmit = (data: any) => console.log('submitted yay', data);
+
+    const assetOptions = useCallback((withoutAssetId: string | undefined) => {
+        return <>
+            {assetsData
+                ?.assets
+                .filter(asset => asset.id !== withoutAssetId)
+                .map(asset => (
+                    <option key={asset.id} value={`${asset.id}`}>{asset.id}</option>
+                ))
+            }
+        </>
+    }, [assetsData]);
+
+    return <div>
+        {assetsLoading
+            ? <i>[TradeForm] Loading assets...</i>
+            : <i>[TradeForm] Everything is up to date</i>
+        }
+        
+        <br/><br/>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+            <div>
+                <div>
+                    <label><b>Asset A: </b></label>
+                    <select
+                        {...register('assetAId', {
+                            required: true
+                        })}
+                    >
+                        {assetOptions(getValues('assetBId'))}
+                    </select>
+                </div>
+                <div>
+                    <div>
+                        <input
+                            type="text"
+                            width={100}
+                            style={{
+                                width: '100%',
+                                marginTop: '12px',
+                                marginBottom: '24px'
+                            }}
+                            {...register('assetAAmount', {
+                                required: true
+                            })}
+                        />
+                    </div>
+                </div>
+            </div>
+            <div>
+                <label><b>Asset B: </b></label>
+                <select
+                    {...register('assetBId', {
+                        required: true
+                    })}
+                >
+                    {assetOptions(getValues('assetAId'))}
+                </select>
+            </div>
+            <div>
+                <input
+                    type="text"
+                    width={100}
+                    style={{
+                        width: '100%',
+                        marginTop: '12px',
+                        marginBottom: '24px'
+                    }}
+                    {...register('assetBAmount', {
+                        required: true
+                    })}
+                />
+            </div>
+            <button 
+                type='submit'
+                style={{
+                    width: '100%',
+                }}
+            >Trade</button>
+
+            <br /><br />
+
+            <div>
+                <p><b>Trade type:</b> {tradeType}</p>
+                <div>
+                    {!pool
+                        ? <b>Pool does not exist</b>
+                        : <div>
+                            <p><b>Pool type:</b> {pool?.__typename}</p>
+                            <p><b>Liquidity {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
+                            <p><b>Liquidity {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>
+                            <p><b>Spot price:</b> TODO</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </form>
+    </div>
+}
+
+export const TradePage = () => {
+    const [assetIds, setAssetIds] = useState<{
+        assetAId: undefined | string,
+        assetBId: undefined | string
+    }>({
+        assetAId: undefined,
+        assetBId: undefined
+    })
+
+    const { data: poolData, loading } = useGetPoolByAssetsQuery(assetIds);
+
+    const handleAssetIdsChange = (assetAId: string, assetBId: string) => {
+        const newIds = { assetAId, assetBId };
+        if (isEqual(assetIds, newIds)) return;
+        setAssetIds(newIds)
     }
 
-    const now = Date.now();
-    const primaryDataset: Dataset = useMemo(() => times(60)
-        .map(i => ({
-            x: now + (i * 100000),
-            y: random(3000, 3100) / (assetPair.assetA.symbol === 'BSX' ? 2 : 1)
-        }))
-    , [assetPair]);
+    return <div>
+        <h1>Trade</h1>
 
-    return <div className="container">
-        <div className="row g-0">
-            <div className="col-8">
-                <TradeChart
-                    assetPair={_assetPair}
-                    poolType={poolType}
-                    granularity={granularity}
-                    chartType={chartType}
-                    primaryDataset={primaryDataset}
-                    onChartTypeChange={onChartTypeChange}
-                    onGranularityChange={onGranularityChange}
-                />
-            </div>
-            <div className="col-4">
-                <TradeForm 
-                    assetPair={_assetPair}
-                    onAssetPairSwitch={handleAssetPairSwitch}
-                    spotPrice={0.5}
-                />
-            </div>
-        </div>
+        {loading
+            ? <i>[TradePage] Loading pools...</i>
+            : <i>[TradePage] Eveyrything are up to date</i>
+        }
+
+        <br/><br/>
+
+        <TradeForm 
+            onAssetIdsChange={handleAssetIdsChange} 
+            pool={poolData?.pool}
+        />
     </div>
 }

@@ -9,7 +9,6 @@ export interface GetPoolByAssetsQueryVariables {
     assetAId?: string,
     assetBId?: string,
 }
-
 export interface GetPoolQueryResponse {
     pool: Pool
 }

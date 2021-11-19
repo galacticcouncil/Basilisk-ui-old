@@ -55,6 +55,7 @@ export type LbpPool = {
   __typename?: 'LBPPool';
   assetAId: Scalars['String'];
   assetBId: Scalars['String'];
+  balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
 };
 
@@ -92,5 +93,6 @@ export type XykPool = {
   __typename?: 'XYKPool';
   assetAId: Scalars['String'];
   assetBId: Scalars['String'];
+  balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
 };
