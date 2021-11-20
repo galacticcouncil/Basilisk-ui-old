@@ -23,6 +23,10 @@ export const useGetAccountsQueryResolver = () => {
                 persistedActiveAccount?.id,
                 args?.isActive,
             );
+
+            // if no results were found, return undefined/null
+            // this is useful when un-setting the active account
+            if (!accounts) return accounts;
     
             return isArray(accounts)
                 ? accounts.map(account => ({

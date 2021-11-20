@@ -1,5 +1,5 @@
 import { first, isEqual, nth } from 'lodash';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pool, TradeType } from '../generated/graphql';
 import { useGetAssetsQuery } from '../hooks/assets/queries/useGetAssetsQuery';
 import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
@@ -35,6 +35,26 @@ export const TradeForm = ({
         })();
     }, []);
 
+    const spotPriceAmount = useMemo(() => {
+        const assetABalance = first(
+            pool?.balances
+                ?.filter(balance => balance.assetId === getValues('assetAId'))
+        )?.balance
+
+        const assetBBalance = first(
+            pool?.balances
+                ?.filter(balance => balance.assetId === getValues('assetBId'))
+        )?.balance
+
+        if (!assetABalance || !assetBBalance || !wasm) return;
+
+        return wasm.get_spot_price(
+            assetABalance,
+            assetBBalance,
+            '1000000000000'
+        );
+    }, [wasm, pool])
+
     const calculatedAssetAAmount = useMemo(() => {
         const assetABalance = first(
             pool?.balances
@@ -61,9 +81,14 @@ export const TradeForm = ({
 
     const { apiInstance, loading } = usePolkadotJsContext();
 
-    const isForActiveAccount = useCallback((accountId: string) => {
-        console.log('isRelevant?', accountId, activeAccountData)
-        return accountId === activeAccountData?.account?.id;
+    
+
+    const isForActiveAccount = useRef<any>();
+
+    useEffect(() => {
+        isForActiveAccount.current = (address: string) => {
+            return address === activeAccountData?.account?.id;
+        }
     }, [activeAccountData])
 
     const subscribeToEvents = useCallback(() => {
@@ -75,9 +100,12 @@ export const TradeForm = ({
             events.forEach(({ event }) => {
                 const eventId = `${event.section}.${event.method}`;
                 console.log('eventId', eventId);
+                if (eventId === 'system.ExtrinsicFailed') {
+                    console.log('system.ExtrinsicFailed', event.data);
+                }
                 if (eventId === 'exchange.IntentionResolveErrorEvent') {
                     const accountId = event.data[0];
-                    if (isForActiveAccount(accountId.toHuman() as string)) {
+                    if (isForActiveAccount && isForActiveAccount.current(accountId.toHuman() as string)) {
                         relevantEvents.push(event);
                     }
                 }
@@ -93,7 +121,7 @@ export const TradeForm = ({
                 }
             })
         })
-    }, [isForActiveAccount, apiInstance, loading])
+    }, [apiInstance, loading])
 
     
     useEffect(() => {
@@ -114,7 +142,9 @@ export const TradeForm = ({
     // useEffect(() => { setTradeType(TradeType.Sell) }, [assetAId, assetAAmount]);
     // useEffect(() => { setTradeType(TradeType.Buy) }, [assetBId, assetBAmount]);
 
-    const onAssetAAmountInput = () => setTradeType(TradeType.Sell)
+    const onAssetAAmountInput = () => {
+        // setTradeType(TradeType.Sell)
+    }
     const onAssetBAmountInput = () => setTradeType(TradeType.Buy)
 
 
@@ -129,6 +159,14 @@ export const TradeForm = ({
     }, [assetsLoading])
 
     const onSubmit = (data: any) => {
+        console.log('submitting trade', {
+            assetAId: data.assetAId,
+            assetBId: data.assetBId,
+            assetAAmount: data.assetAAmount,
+            assetBAmount: data.assetBAmount,
+            tradeType,
+            poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
+        });
         submitTrade({
             variables: {
                 assetAId: data.assetAId,
@@ -164,7 +202,7 @@ export const TradeForm = ({
         <form onSubmit={handleSubmit(onSubmit)}>
             <div>
                 <div>
-                    <label><b>Asset A: </b></label>
+                    <label><b>(Pay with) Asset A: </b></label>
                     <select
                         {...register('assetAId', {
                             required: true
@@ -192,7 +230,7 @@ export const TradeForm = ({
                 </div>
             </div>
             <div>
-                <label><b>Asset B: </b></label>
+                <label><b>(You get) Asset B: </b></label>
                 <select
                     {...register('assetBId', {
                         required: true
@@ -235,7 +273,7 @@ export const TradeForm = ({
                             <p><b>Pool type:</b> {pool?.__typename}</p>
                             <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
                             <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>
-                            <p><b>Spot price:</b> TODO</p>
+                            <p><b>Spot price:</b> {spotPriceAmount}</p>
                         </div>
                     }
                 </div>

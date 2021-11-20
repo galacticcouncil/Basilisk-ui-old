@@ -3,9 +3,11 @@ import { Account } from '../../generated/graphql';
 import createPersistedState from 'use-persisted-state';
 
 export const key = 'basilisk-active-account';
-export const defaultValue = undefined;
+export const defaultValue = {
+    id: undefined
+};
 export interface PersistedAccount {
-    id: string
+    id: string | undefined
 }
 
 // we're not using react-use/useLocalStorage since i couldn't figure out

@@ -32,7 +32,7 @@ export const useBuyXyk = () => {
 
             const { signer } = await web3FromAddress(address);
 
-            await apiInstance.tx.exchange.buy(
+            const txHash = await apiInstance.tx.exchange.buy(
                 assetBuy,
                 assetSell,
                 amountBuy,
@@ -44,6 +44,8 @@ export const useBuyXyk = () => {
                     { signer },
                     xykBuyHandler(resolve, reject, apiInstance)
                 )
+
+            console.log('txHash', txHash);
         }, [
             gracefulExtensionCancelationErrorHandler
         ])

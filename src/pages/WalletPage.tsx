@@ -1,6 +1,8 @@
-import { Account as AccountModel} from '../generated/graphql';
+import { useMemo } from 'react';
+import { Account as AccountModel } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery'
+import { useGetExtensionQuery } from '../hooks/polkadotJs/useGetExtensionQuery';
 
 export const Account = ({ account }: { account?: AccountModel }) => {
     // TODO: you can get the loading state of the mutation here as well
@@ -8,6 +10,10 @@ export const Account = ({ account }: { account?: AccountModel }) => {
     // in order to share the loading state accross multiple mutation hook calls
     const [setActiveAccount] = useSetActiveAccountMutation({
         id: account?.id
+    });
+
+    const [unsetActiveAccount] = useSetActiveAccountMutation({
+        id: undefined
     });
 
     return (
@@ -24,7 +30,7 @@ export const Account = ({ account }: { account?: AccountModel }) => {
                 }
             </h3>
             <p>
-                <b>Address:</b> 
+                <b>Address:</b>
                 {account?.id}
             </p>
             <div>
@@ -36,18 +42,22 @@ export const Account = ({ account }: { account?: AccountModel }) => {
                     </p>
                 ))}
             </div>
-            <button 
-                disabled={account?.isActive}
-                onClick={_ => setActiveAccount()}
+            <button
+                onClick={_ => account?.isActive ? unsetActiveAccount() : setActiveAccount()}
             >
-                    Set active
+                {account?.isActive ? 'Unset active' : 'Set active'}
             </button>
         </div>
     )
 }
 
 export const WalletPage = () => {
-    const { data, loading } = useGetAccountsQuery();
+    const { data: accountsData, loading: accountsLoading } = useGetAccountsQuery();
+    const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
+
+    const loading = useMemo(() => {
+        return accountsLoading || extensionLoading;
+    }, [accountsLoading, extensionLoading])
 
     return <div style={{
         textAlign: 'left'
@@ -59,15 +69,20 @@ export const WalletPage = () => {
             : <i>[WalletPage] Everything is up to date</i>
         }
 
-        <br/><br/>
+        <br /><br />
 
-        <div>
-            {data?.accounts.map((account, i) => (
-                <Account
-                    key={i}
-                    account={account}
-                />
-            ))}
-        </div>
+        {extensionData?.extension.isAvailable
+            ? (
+                <div>
+                    {accountsData?.accounts.map((account, i) => (
+                        <Account
+                            key={i}
+                            account={account}
+                        />
+                    ))}
+                </div>
+            )
+            : <p>Extension unavailable</p>
+        }
     </div>
 }

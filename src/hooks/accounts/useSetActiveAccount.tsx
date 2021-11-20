@@ -24,11 +24,10 @@ export const useSetActiveAccount = () => {
             }))
         
         const activeAccount = find(accounts, { isActive: true });
-        activeAccount
-            ? setPersistedActiveAccount({
-                id: activeAccount.id
-            })
-            : setPersistedActiveAccount(undefined)
+        console.log("found active account", activeAccount);
+        setPersistedActiveAccount({
+            id: activeAccount?.id
+        })
         
         //TODO: return the data to be mutated from the mutation instead
         client.cache?.writeQuery<GetAccountsQueryResponse>({
@@ -40,6 +39,8 @@ export const useSetActiveAccount = () => {
         // TODO: find a better way to wait until the local storage changes are
         // propagated to the resolverRef
         await (new Promise(resolve => setTimeout(resolve, 0)));
+
+        return accounts;
     }, [ 
         setPersistedActiveAccount
     ])

@@ -10,6 +10,7 @@ mutation SubmitTrade(
         assetAId: $assetAId
         assetBId: $assetBId,
         tradeType: $tradeType,
+        poolType: $poolType,
         assetAAmount: $assetAAmount,
         assetBAmount: $assetBAmount
     ) @client

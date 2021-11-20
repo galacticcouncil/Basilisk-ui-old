@@ -4,17 +4,21 @@ import { Link } from 'react-router-dom';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { nativeAssetId } from '../hooks/balances/useGetBalancesByAddress';
 import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery';
+import { useGetExtensionQuery } from '../hooks/polkadotJs/useGetExtensionQuery';
 export const AppBar = () => {
     // TODO: there is no loading state for last block
     // since its populated in the cache manually
     const { data: lastBlockData } = useLastBlockQuery();
-    const { data: activeAccountData } = useGetActiveAccountQuery();
+    const { data: activeAccountData, loading: activeAccountLoading } = useGetActiveAccountQuery();
+    const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
+
+    console.log('active account data', activeAccountData, activeAccountLoading);
 
     // TODO: should probably be showing the fee payment asset here
     const nativeAssetBalance = useMemo(() => (
         first(
             activeAccountData?.account?.balances
-                .filter(balance => balance.assetId === nativeAssetId)
+                ?.filter(balance => balance.assetId === nativeAssetId)
         )?.balance
     ), [activeAccountData])
 
@@ -47,17 +51,42 @@ export const AppBar = () => {
                     {' | '}
                     <span>
                         <b>Active account: </b>
-                        {activeAccountData?.account?.name
+                        {extensionLoading
                             ? (
-                                <>
-                                    <span>
-                                        {activeAccountData?.account?.name}
-                                        {' | '}
-                                        {nativeAssetBalance} BSX
-                                    </span>
-                                </>
+                                'loading...'
                             )
-                            : 'loading...'
+                            : (
+                                extensionData?.extension.isAvailable
+                                    ? (
+                                        <>
+                                            {activeAccountLoading
+                                                ? (
+                                                    'loading...'
+                                                )
+                                                : (
+                                                    activeAccountData?.account?.name
+                                                        ? (
+                                                            <>
+                                                                <span>
+                                                                    {activeAccountData?.account?.name}
+                                                                    {' | '}
+                                                                    {nativeAssetBalance} BSX
+                                                                </span>
+                                                            </>
+                                                        )
+                                                        : (
+                                                            <Link to='/wallet'>
+                                                                select an account
+                                                            </Link>
+                                                        )
+                                                )
+                                            }
+                                        </>
+                                    )
+                                    : (
+                                        <span>Extension unavailable</span>
+                                    )
+                            )
                         }
                     </span>
                 </div>

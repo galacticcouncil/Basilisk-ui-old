@@ -17,6 +17,7 @@ export const useGetActiveAccountQuery = () => {
     const client = useApolloClient();
     const result = useQuery<GetActiveAccountQueryResponse>(GET_ACTIVE_ACCOUNT, {
         notifyOnNetworkStatusChange: true,
+        refetchWritePolicy: 'overwrite'
     });
 
     // when the active account updates, refetch the config

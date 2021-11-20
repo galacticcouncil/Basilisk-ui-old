@@ -4,7 +4,7 @@ import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
-import { DispatchError } from '@polkadot/types/interfaces/system';
+import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
@@ -58,12 +58,19 @@ export const gracefulExtensionCancelationErrorHandler = (e: any) => {
 
 export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstance?: ApiPromise) => ({
     status,
+    events = [],
     dispatchError
 }: {
     status: ExtrinsicStatus,
+    events: EventRecord[],
     dispatchError?: DispatchError
 }) => {
     if (status.isFinalized) log.info('operation finalized')
+
+    // TODO: extract intention registred for exchange buy/sell
+    events.forEach(({ event: { data, method, section }, phase }) => {
+        console.log('event handler', phase.toString(), `: ${section}.${method}`, data.toString());
+      });
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
@@ -80,7 +87,7 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstanc
 
     // if the operation has been broadcast, finish the mutation
     if (status.isBroadcast) {
-        log.info('transaction has been broadcast');
+        log.info('transaction has been broadcast', status.hash.toHuman());
         return resolve();
     }
     if (dispatchError) {
