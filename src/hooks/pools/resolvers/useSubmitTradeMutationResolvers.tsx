@@ -6,10 +6,12 @@ import { Maybe, TradeType } from '../../../generated/graphql';
 import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers'
 import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation';
 import { useBuyXyk } from '../useBuyXyk'
+import { useSellXyk } from '../useSellXyk';
 
 
 export const useSubmitTradeMutationResolver = () => {
     const buyXyk = useBuyXyk();
+    const sellXyk = useSellXyk();
 
     return useResolverToRef(
         useCallback(async (
@@ -26,25 +28,16 @@ export const useSubmitTradeMutationResolver = () => {
                     args.assetBAmount,
                     `${(parseInt(args.assetAAmount) * 1.3)}`
                 );
-                
-                // TODO: wait for the intention id and return it so it can be observed
-                // cache.writeQuery({
-                //     query: gql`
-                //         query GetIntentionIds {
-                //             intentions {
-                //                 id
-                //                 test
-                //             }
-                //         }
-                //     `,
-                //     data: {
-                //         intentions: [{
-                //             __typename: 'Intention',
-                //             id: 1,
-                //             test: 5
-                //         }]
-                //     }
-                // })
+            }
+
+            if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Sell) {
+                return await sellXyk(
+                    cache,
+                    args.assetAId,
+                    args.assetBId,
+                    args.assetAAmount,
+                    `${(parseInt(args.assetBAmount) * 1.3)}`
+                );
             }
 
             throw new Error('We dont support this trade type yet');

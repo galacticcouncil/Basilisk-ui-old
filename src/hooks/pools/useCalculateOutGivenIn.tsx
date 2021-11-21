@@ -2,21 +2,21 @@ import { Pool } from '../../generated/graphql';
 import { useMathContext } from '../math/useMath'
 import { getAssetBalance } from './useSpotPrice';
 
-export const useCalculateInGivenOut = (
+export const useCalculateOutGivenIn = (
     pool?: Pool,
     assetAId?: string,
     assetBId?: string,
-    assetBBalanceInput?: string,
+    assetABalanceInput?: string,
 ) => {
     const { math } = useMathContext();
     const assetABalance = getAssetBalance(pool, assetAId)
     const assetBBalance = getAssetBalance(pool, assetBId)
 
-    if (!assetABalance || !assetBBalance || !math || !assetBBalanceInput) return;
+    if (!assetABalance || !assetBBalance || !math || !assetABalanceInput) return;
 
-    return math?.calculate_in_given_out(
-        assetBBalance,
+    return math?.calculate_out_given_in(
         assetABalance,
-        assetBBalanceInput,
+        assetBBalance,
+        assetABalanceInput,
     )
 }

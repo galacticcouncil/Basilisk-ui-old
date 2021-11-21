@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 // TODO: figure out how to extract types from the wasm type definitions
 export interface HydraDxMath {
     get_spot_price: (a: string, b: string, c: string) => string | undefined,
-    calculate_in_given_out: (a: string, b: string, c: string) => string | undefined
+    calculate_in_given_out: (a: string, b: string, c: string) => string | undefined,
+    calculate_out_given_in: (a: string, b: string, c: string) => string | undefined
 }
 
 /**
