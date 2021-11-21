@@ -12,8 +12,6 @@ export const AppBar = () => {
     const { data: activeAccountData, loading: activeAccountLoading } = useGetActiveAccountQuery();
     const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
 
-    console.log('active account data', activeAccountData, activeAccountLoading);
-
     // TODO: should probably be showing the fee payment asset here
     const nativeAssetBalance = useMemo(() => (
         first(
@@ -43,8 +41,8 @@ export const AppBar = () => {
                 <div>
                     <span>
                         <b>Last block: </b>
-                        {lastBlockData?.lastBlock?.number
-                            ? `#${lastBlockData?.lastBlock?.number}`
+                        {lastBlockData?.lastBlock?.parachainBlockNumber
+                            ? `#${lastBlockData?.lastBlock?.parachainBlockNumber} / #${lastBlockData?.lastBlock?.relaychainBlockNumber}`
                             : 'loading...'
                         }
                     </span>

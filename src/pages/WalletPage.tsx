@@ -74,7 +74,7 @@ export const WalletPage = () => {
         {extensionData?.extension.isAvailable
             ? (
                 <div>
-                    {accountsData?.accounts.map((account, i) => (
+                    {accountsData?.accounts?.map((account, i) => (
                         <Account
                             key={i}
                             account={account}

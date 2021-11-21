@@ -18,34 +18,33 @@ export const useSubmitTradeMutationResolver = () => {
             { cache }: { cache: ApolloCache<NormalizedCacheObject> }
         ) => {
             if (!args) return
-            console.log('args', args);
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Buy) {
-                await buyXyk(
+                return await buyXyk(
                     cache,
-                    args.assetAId,
                     args.assetBId,
-                    args.assetAAmount,
-                    args.assetBAmount
+                    args.assetAId,
+                    args.assetBAmount,
+                    `${(parseInt(args.assetAAmount) * 1.3)}`
                 );
                 
                 // TODO: wait for the intention id and return it so it can be observed
-                cache.writeQuery({
-                    query: gql`
-                        query GetIntentionIds {
-                            intentions {
-                                id
-                                test
-                            }
-                        }
-                    `,
-                    data: {
-                        intentions: [{
-                            __typename: 'Intention',
-                            id: 1,
-                            test: 5
-                        }]
-                    }
-                })
+                // cache.writeQuery({
+                //     query: gql`
+                //         query GetIntentionIds {
+                //             intentions {
+                //                 id
+                //                 test
+                //             }
+                //         }
+                //     `,
+                //     data: {
+                //         intentions: [{
+                //             __typename: 'Intention',
+                //             id: 1,
+                //             test: 5
+                //         }]
+                //     }
+                // })
             }
 
             throw new Error('We dont support this trade type yet');

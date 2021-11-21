@@ -21,18 +21,19 @@ export const useBuyXyk = () => {
         amountBuy: string,
         maxSold: string,
     ) => {
-        if (!apiInstance || loading) return console.log('not buying', loading, apiInstance);
-        console.log('buying xyk')
+        if (!apiInstance || loading) return;
+
         await withGracefulErrors(async (resolve, reject) => {
             const address = cache.readQuery<GetActiveAccountQueryResponse>({
                 query: GET_ACTIVE_ACCOUNT
             })?.account?.id;
 
-            if (!address) return reject();
+            // TODO: extract this error
+            if (!address) return reject(new Error('No active account found!'));
 
             const { signer } = await web3FromAddress(address);
 
-            const txHash = await apiInstance.tx.exchange.buy(
+            await apiInstance.tx.exchange.buy(
                 assetBuy,
                 assetSell,
                 amountBuy,
@@ -44,8 +45,6 @@ export const useBuyXyk = () => {
                     { signer },
                     xykBuyHandler(resolve, reject, apiInstance)
                 )
-
-            console.log('txHash', txHash);
         }, [
             gracefulExtensionCancelationErrorHandler
         ])

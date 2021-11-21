@@ -28,7 +28,7 @@ export const withGracefulErrors = async (
         try {
             resolve(await fn(resolve, reject));
         } catch (e: any) {
-            console.log('e', e);
+            console.log('graceful error', e);
             e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
             // rejecting this promise with an error instead of throwing an error
             // is necessary to reflect the apollo resolver loading state correctly
@@ -70,7 +70,7 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstanc
     // TODO: extract intention registred for exchange buy/sell
     events.forEach(({ event: { data, method, section }, phase }) => {
         console.log('event handler', phase.toString(), `: ${section}.${method}`, data.toString());
-      });
+    });
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
@@ -92,7 +92,7 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstanc
     }
     if (dispatchError) {
         log.error('There was a dispatch error', dispatchError);
-        return reject();
+        return reject('Dispatch error');
     }
 };
 

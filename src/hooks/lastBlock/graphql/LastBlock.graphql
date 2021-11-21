@@ -1,7 +1,8 @@
 type LastBlock {
     id: String!
     # yes, this is correct
-    number: String
+    parachainBlockNumber: String,
+    relaychainBlockNumber: String,
 }
 
 extend type Query {

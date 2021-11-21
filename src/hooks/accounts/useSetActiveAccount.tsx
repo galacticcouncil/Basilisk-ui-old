@@ -24,7 +24,6 @@ export const useSetActiveAccount = () => {
             }))
         
         const activeAccount = find(accounts, { isActive: true });
-        console.log("found active account", activeAccount);
         setPersistedActiveAccount({
             id: activeAccount?.id
         })

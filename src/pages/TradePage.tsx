@@ -9,6 +9,10 @@ import { PoolType } from '../components/Chart/shared';
 import { usePolkadotJsContext } from '../hooks/polkadotJs/usePolkadotJs';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { Event } from '@polkadot/types/interfaces';
+import BN from 'bn.js';
+import { useMathContext } from '../hooks/math/useMath';
+import { useSpotPrice } from '../hooks/pools/useSpotPrice';
+import { useCalculateInGivenOut } from '../hooks/pools/useCalculateInGivenOut';
 
 export const TradeForm = ({
     onAssetIdsChange,
@@ -17,71 +21,36 @@ export const TradeForm = ({
     onAssetIdsChange: (assetAId: string, assetBId: string) => void,
     pool?: Pool
 }) => {
+    const { math } = useMathContext();
+    
     const { register, handleSubmit, watch, formState: { errors }, getValues, setValue, trigger, reset } = useForm<any, any>({
         defaultValues: {
             assetAAmount: '0',
             assetBAmount: '0'
         }
     });
+    
 
     const { data: activeAccountData } = useGetActiveAccountQuery();
-    console.log('active account data', activeAccountData);
 
-    // TODO: extract hook
-    const [wasm, setWasm] = useState<any>();
-    useEffect(() => {
-        (async () => {
-            setWasm(await import('hydra-dx-wasm/build/xyk/bundler'))
-        })();
-    }, []);
+    const spotPriceAmount = useSpotPrice(
+        pool,
+        getValues('assetAId'),
+        getValues('assetBId')
+    );
 
-    const spotPriceAmount = useMemo(() => {
-        const assetABalance = first(
-            pool?.balances
-                ?.filter(balance => balance.assetId === getValues('assetAId'))
-        )?.balance
-
-        const assetBBalance = first(
-            pool?.balances
-                ?.filter(balance => balance.assetId === getValues('assetBId'))
-        )?.balance
-
-        if (!assetABalance || !assetBBalance || !wasm) return;
-
-        return wasm.get_spot_price(
-            assetABalance,
-            assetBBalance,
-            '1000000000000'
-        );
-    }, [wasm, pool])
-
-    const calculatedAssetAAmount = useMemo(() => {
-        const assetABalance = first(
-            pool?.balances
-                ?.filter(balance => balance.assetId === getValues('assetAId'))
-        )?.balance
-
-        const assetBBalance = first(
-            pool?.balances
-                ?.filter(balance => balance.assetId === getValues('assetBId'))
-        )?.balance
-
-        if (!assetABalance || !assetBBalance || !wasm) return;
-        
-        return wasm.calculate_in_given_out(
-            assetABalance,
-            assetBBalance,
-            getValues('assetBAmount')
-        );
-    }, [getValues, wasm, pool, getValues('assetBAmount')]);
+    const calculatedAssetAAmount = useCalculateInGivenOut(
+        pool,
+        getValues('assetAId'),
+        getValues('assetBId'),
+        getValues('assetBAmount')
+    )
 
     useEffect(() => {
         setValue('assetAAmount', calculatedAssetAAmount);
     }, [calculatedAssetAAmount]);
 
     const { apiInstance, loading } = usePolkadotJsContext();
-
-    
 
     const isForActiveAccount = useRef<any>();
 
@@ -91,18 +60,17 @@ export const TradeForm = ({
         }
     }, [activeAccountData])
 
+    // this means we're manually filtering ALL the on chain events
+    // TODO figure out how to query only for relevant events
     const subscribeToEvents = useCallback(() => {
         if (!apiInstance || loading) return;
 
         apiInstance.query.system.events((events) => {
             const relevantEvents: Event[] = [];
+            
             // filter out events for our account
             events.forEach(({ event }) => {
                 const eventId = `${event.section}.${event.method}`;
-                console.log('eventId', eventId);
-                if (eventId === 'system.ExtrinsicFailed') {
-                    console.log('system.ExtrinsicFailed', event.data);
-                }
                 if (eventId === 'exchange.IntentionResolveErrorEvent') {
                     const accountId = event.data[0];
                     if (isForActiveAccount && isForActiveAccount.current(accountId.toHuman() as string)) {
@@ -111,13 +79,16 @@ export const TradeForm = ({
                 }
             });
 
-            console.log('relevant events', relevantEvents)
             relevantEvents.forEach(event => {
                 const eventId = `${event.section}.${event.method}`;
-                console.log(eventId);
+                // console.log(eventId);
                 if (eventId === 'exchange.IntentionResolveErrorEvent') {
                     console.error('oops, something went wrong with your trade');
-                    console.log('event data', event.data);
+                    console.log('event data', (event.data[4].toHuman() as any));
+                    // console.log('error', apiInstance.registry.findMetaError({
+                    //     index: new BN('31'),
+                    //     error: new BN('8')
+                    // }))
                 }
             })
         })
@@ -126,7 +97,7 @@ export const TradeForm = ({
     
     useEffect(() => {
         if (activeAccountData) return;
-        subscribeToEvents()
+        // subscribeToEvents()
     }, [activeAccountData]);
 
     const [submitTrade, { loading: submitTradeLoading }] = useSubmitTradeMutation();
@@ -135,23 +106,17 @@ export const TradeForm = ({
 
     // should actually use the network status instead
     const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
+    const [assetAId] = watch(['assetAId', 'assetAAmount']);
+    const [assetBId] = watch(['assetBId', 'assetBAmount']);
 
-    const [assetAId, assetAAmount] = watch(['assetAId', 'assetAAmount']);
-    const [assetBId, assetBAmount] = watch(['assetBId', 'assetBAmount']);
-
-    // useEffect(() => { setTradeType(TradeType.Sell) }, [assetAId, assetAAmount]);
-    // useEffect(() => { setTradeType(TradeType.Buy) }, [assetBId, assetBAmount]);
-
-    const onAssetAAmountInput = () => {
-        // setTradeType(TradeType.Sell)
-    }
+    const onAssetAAmountInput = () => setTradeType(TradeType.Sell)
     const onAssetBAmountInput = () => setTradeType(TradeType.Buy)
 
+    // when the user selects a new asset pair, notify the parent
+    useEffect(() => { onAssetIdsChange(assetAId, assetBId) }, [assetAId, assetBId]);
 
-    useEffect(() => {
-        onAssetIdsChange(assetAId, assetBId);
-    }, [assetAId, assetBId]);
-
+    // TODO add default assets as props via router query params
+    // set default assets on the trade page
     useEffect(() => {
         if (assetsLoading) return;
         setValue('assetAId', '0');
@@ -167,6 +132,7 @@ export const TradeForm = ({
             tradeType,
             poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
         });
+
         submitTrade({
             variables: {
                 assetAId: data.assetAId,
@@ -270,6 +236,7 @@ export const TradeForm = ({
                     {!pool
                         ? <b>Pool does not exist</b>
                         : <div>
+                            <p><b>Pool Id:</b> {pool?.id}</p>
                             <p><b>Pool type:</b> {pool?.__typename}</p>
                             <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
                             <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>

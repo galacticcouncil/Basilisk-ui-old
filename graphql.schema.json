@@ -411,7 +411,19 @@
             "deprecationReason": null
           },
           {
-            "name": "number",
+            "name": "parachainBlockNumber",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "relaychainBlockNumber",
             "description": null,
             "args": [],
             "type": {

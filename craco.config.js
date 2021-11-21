@@ -1,7 +1,5 @@
 const { addBeforeLoader, loaderByName } = require('@craco/craco');
 
-console.log('using craco')
-
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
