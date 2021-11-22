@@ -15,7 +15,7 @@ on:
 jobs:
   build:
     name: Build UI app and Storybook
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
 
       - uses: actions/checkout@v2
@@ -60,7 +60,7 @@ jobs:
 
   clear_build:
     name: Clear existing build
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     needs: build
     steps:
       - name: Checkout
@@ -129,7 +129,7 @@ jobs:
     name: Deploy new builds
     if: ${{ always() && needs.build.result=='success' }}
     needs: [build, clear_build]
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v2
 
