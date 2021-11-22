@@ -1,0 +1,4 @@
+type Balance {
+    assetId: String!,
+    balance: String!
+}

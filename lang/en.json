@@ -1,6 +1,0 @@
-{
-  "greeting": {
-    "defaultMessage": "Today is {ts, date, ::yyyyMMdd}",
-    "description": "Application wide greeting"
-  }
-}

@@ -1,0 +1,9 @@
+type LastBlock {
+    id: String!
+    # yes, this is correct
+    number: String
+}
+
+extend type Query {
+    lastBlock: LastBlock
+}

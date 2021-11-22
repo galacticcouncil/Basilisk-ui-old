@@ -1,0 +1,6 @@
+query GetFeePaymentAssets {
+    feePaymentAssets @client {
+        assetId,
+        fallbackPrice
+    }
+}

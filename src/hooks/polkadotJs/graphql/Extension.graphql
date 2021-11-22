@@ -1,0 +1,7 @@
+type Extension {
+    isAvailable: Boolean
+}
+
+extend type Query {
+    extension: Extension!
+}

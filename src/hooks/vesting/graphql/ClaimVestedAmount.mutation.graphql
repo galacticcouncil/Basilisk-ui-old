@@ -1,0 +1,3 @@
+mutation ClaimVestedAmount($address: String!) {
+    claimVestedAmount(address: $address) @client
+}

@@ -1,0 +1,21 @@
+#import "./AccountFields.fragment.graphql"
+#import "./../../vesting/graphql/VestingScheduleFields.fragment.graphql"
+
+query GetActiveAccount {
+    lastBlock @client { 
+        number 
+    }
+    
+    account: accounts(isActive: true) @client {
+        ...AccountFields,
+        vestingSchedule {
+            # figure out why this fragment doesnt work
+            # ...VestingScheduleFields,
+            remainingVestingAmount,
+            start,
+            period,
+            periodCount,
+            perPeriod
+        }
+    } 
+}

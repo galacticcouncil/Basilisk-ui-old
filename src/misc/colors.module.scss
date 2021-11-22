@@ -1,0 +1,66 @@
+// gray
+$gray1: #424250;
+$gray2: #211F24;
+$gray3: #26282f;
+$gray4: #BDCCD4;
+$gray5: #3b3a49;
+$gray6: #abb4c1;
+
+// green
+$green1: #4FFFB0;
+
+// orange
+$orange1: #ff931e;
+
+// white
+$white1: #FFFFFF;
+
+// pink
+$pink1: #FF7BAC;
+
+$red1: #fa4b4b;
+
+$colors: (
+    "gray": ($gray1, $gray2, $gray3, $gray4),
+    "green": $green1,
+    "orange": $orange1,
+    "white": $white1,
+    "pink": $pink1,
+    "red": $red1
+);
+
+$colorsList: [];
+
+@each $color, $values in $colors {
+    @each $value in $values {
+        $i: index($values, $value);
+        .text-#{$color}-#{$i} {
+            color: $value;
+        }
+
+        .bg-#{$color}-#{$i} {
+            background-color: $value;
+        }
+
+        $colorsList: append($colorsList, #{$color}-#{$i});
+    }
+}
+
+:export {
+    colors: $colorsList;
+
+    gray2Opacity0: rgba($gray2, 0);
+
+    red1: $red1;
+    red1Opacity70: rgba($red1, .7);
+
+    green1: $green1;
+    green1Opacity70: rgba($green1, .7);
+    green1Opacity33: rgba($green1, .33);
+
+    orange1: $orange1;
+    orange1Opacity70: rgba($orange1, .7);
+
+    gray1: $gray1;
+    gray2: $gray2;
+}
