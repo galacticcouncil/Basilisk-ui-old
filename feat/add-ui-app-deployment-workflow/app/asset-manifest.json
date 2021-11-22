@@ -1,26 +1,26 @@
 {
   "files": {
-    "main.css": "./static/css/main.af9fdf88.chunk.css",
-    "main.js": "./static/js/main.817c36f9.chunk.js",
-    "main.js.map": "./static/js/main.817c36f9.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.4b26413b.js",
-    "runtime-main.js.map": "./static/js/runtime-main.4b26413b.js.map",
-    "static/css/2.65aa3b33.chunk.css": "./static/css/2.65aa3b33.chunk.css",
-    "static/js/2.09ac355d.chunk.js": "./static/js/2.09ac355d.chunk.js",
-    "static/js/2.09ac355d.chunk.js.map": "./static/js/2.09ac355d.chunk.js.map",
-    "static/js/3.4d7509c3.chunk.js": "./static/js/3.4d7509c3.chunk.js",
-    "static/js/3.4d7509c3.chunk.js.map": "./static/js/3.4d7509c3.chunk.js.map",
+    "main.css": "./static/css/main.c5a1c5b3.chunk.css",
+    "main.js": "./static/js/main.4223f937.chunk.js",
+    "main.js.map": "./static/js/main.4223f937.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.a08f983e.js",
+    "runtime-main.js.map": "./static/js/runtime-main.a08f983e.js.map",
+    "static/css/2.7151948f.chunk.css": "./static/css/2.7151948f.chunk.css",
+    "static/js/2.9a07601c.chunk.js": "./static/js/2.9a07601c.chunk.js",
+    "static/js/2.9a07601c.chunk.js.map": "./static/js/2.9a07601c.chunk.js.map",
+    "static/js/3.8ce6723c.chunk.js": "./static/js/3.8ce6723c.chunk.js",
+    "static/js/3.8ce6723c.chunk.js.map": "./static/js/3.8ce6723c.chunk.js.map",
     "index.html": "./index.html",
-    "static/css/2.65aa3b33.chunk.css.map": "./static/css/2.65aa3b33.chunk.css.map",
-    "static/css/main.af9fdf88.chunk.css.map": "./static/css/main.af9fdf88.chunk.css.map",
-    "static/js/2.09ac355d.chunk.js.LICENSE.txt": "./static/js/2.09ac355d.chunk.js.LICENSE.txt",
-    "static/media/index.css": "./static/media/roboto-latin-900italic.cb5ad999.woff2"
+    "static/css/2.7151948f.chunk.css.map": "./static/css/2.7151948f.chunk.css.map",
+    "static/css/main.c5a1c5b3.chunk.css.map": "./static/css/main.c5a1c5b3.chunk.css.map",
+    "static/js/2.9a07601c.chunk.js.LICENSE.txt": "./static/js/2.9a07601c.chunk.js.LICENSE.txt",
+    "static/media/index.scss": "./static/media/bootstrap-icons.ea6f3dfe.woff"
   },
   "entrypoints": [
-    "static/js/runtime-main.4b26413b.js",
-    "static/css/2.65aa3b33.chunk.css",
-    "static/js/2.09ac355d.chunk.js",
-    "static/css/main.af9fdf88.chunk.css",
-    "static/js/main.817c36f9.chunk.js"
+    "static/js/runtime-main.a08f983e.js",
+    "static/css/2.7151948f.chunk.css",
+    "static/js/2.9a07601c.chunk.js",
+    "static/css/main.c5a1c5b3.chunk.css",
+    "static/js/main.4223f937.chunk.js"
   ]
 }
