@@ -11,9 +11,11 @@ import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActive
 import { Event } from '@polkadot/types/interfaces';
 import BN from 'bn.js';
 import { useMathContext } from '../hooks/math/useMath';
-import { useSpotPrice } from '../hooks/pools/useSpotPrice';
+import { getAssetBalance, useSpotPrice } from '../hooks/pools/useSpotPrice';
 import { useCalculateInGivenOut } from '../hooks/pools/useCalculateInGivenOut';
 import { useCalculateOutGivenIn } from '../hooks/pools/useCalculateOutGivenIn';
+import { useFromPrecision12 } from '../hooks/math/useFromPrecision';
+import { toPrecision12 } from '../hooks/math/useToPrecision';
 
 export const TradeForm = ({
     onAssetIdsChange,
@@ -51,32 +53,48 @@ export const TradeForm = ({
         setValue('assetBId', '1');
     }, [assetsLoading])
 
-    // spot price calcualted both ways
-    const spotPriceAmountAtoB = useSpotPrice(
-        pool,
-        getValues('assetAId'),
-        getValues('assetBId')
+    const liquidityAssetA = useFromPrecision12(
+        getAssetBalance(pool, pool?.assetAId)
     );
 
-    const spotPriceAmountBtoA = useSpotPrice(
-        pool,
-        getValues('assetBId'),
-        getValues('assetAId')
+    const liquidityAssetB = useFromPrecision12(
+        getAssetBalance(pool, pool?.assetBId)
     );
+
+    // spot price calcualted both ways
+    const spotPriceAmountAtoB = useFromPrecision12(
+        useSpotPrice(
+            pool,
+            getValues('assetAId'),
+            getValues('assetBId')
+        )
+    );
+
+    const spotPriceAmountBtoA = useFromPrecision12(
+        useSpotPrice(
+            pool,
+            getValues('assetBId'),
+            getValues('assetAId')
+        )
+    )
 
     // calculated amounts depending on if the user is interacting as buy/sell
-    const calculatedAssetAAmount = useCalculateInGivenOut(
-        pool,
-        getValues('assetAId'),
-        getValues('assetBId'),
-        getValues('assetBAmount')
+    const calculatedAssetAAmount = useFromPrecision12(
+        useCalculateInGivenOut(
+            pool,
+            getValues('assetAId'),
+            getValues('assetBId'),
+            toPrecision12(getValues('assetBAmount'))
+        )
     );
 
-    const calculatedAssetBAmount = useCalculateOutGivenIn(
-        pool,
-        getValues('assetAId'),
-        getValues('assetBId'),
-        getValues('assetAAmount')
+    const calculatedAssetBAmount = useFromPrecision12(
+        useCalculateOutGivenIn(
+            pool,
+            getValues('assetAId'),
+            getValues('assetBId'),
+            toPrecision12(getValues('assetAAmount'))
+        )
     )
 
     useEffect(() => {
@@ -87,16 +105,19 @@ export const TradeForm = ({
         calculatedAssetBAmount
     ]);
 
-    const onSubmit = (data: any) => submitTrade({
-        variables: {
-            assetAId: data.assetAId,
-            assetBId: data.assetBId,
-            assetAAmount: data.assetAAmount,
-            assetBAmount: data.assetBAmount,
-            tradeType,
-            poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
-        }
-    })
+    const onSubmit = (data: any) => {
+        console.log('submit trade');
+        submitTrade({
+            variables: {
+                assetAId: data.assetAId,
+                assetBId: data.assetBId,
+                assetAAmount: toPrecision12(data.assetAAmount)!,
+                assetBAmount: toPrecision12(data.assetBAmount)!,
+                tradeType,
+                poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
+            }
+        })
+    }
 
     // show all the asset options
     const assetOptions = useCallback((withoutAssetId: string | undefined) => {
@@ -192,8 +213,8 @@ export const TradeForm = ({
                         : <div>
                             <p><b>Pool Id:</b> {pool?.id}</p>
                             <p><b>Pool type:</b> {pool?.__typename}</p>
-                            <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {nth(pool?.balances, 0)?.balance}</p>
-                            <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {nth(pool?.balances, 1)?.balance}</p>
+                            <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {liquidityAssetA}</p>
+                            <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {liquidityAssetB}</p>
                             <p><b>Spot price A/B:</b> {spotPriceAmountAtoB}</p>
                             <p><b>Spot price B/A:</b> {spotPriceAmountBtoA}</p>
                         </div>

@@ -1,6 +1,0 @@
-fragment VestingScheduleFields on VestingSchedule {
-    start,
-    # period,
-    # periodCount,
-    # perPeriod
-}

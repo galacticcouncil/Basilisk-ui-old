@@ -1,4 +1,4 @@
-import { ApolloClient, NormalizedCacheObject, useApolloClient } from '@apollo/client';
+import { ApolloCache, ApolloClient, NormalizedCacheObject, useApolloClient } from '@apollo/client';
 import { find } from 'lodash';
 import { useCallback } from 'react';
 import { GetAccountsQueryResponse, GET_ACCOUNTS } from './queries/useGetAccountsQuery';
@@ -8,12 +8,14 @@ export const useSetActiveAccount = () => {
     const [_persistedActiveAccount, setPersistedActiveAccount] = usePersistActiveAccount();
 
     return useCallback(async (
-        client: ApolloClient<NormalizedCacheObject>,
+        cache: ApolloCache<NormalizedCacheObject>,
         address: string | undefined
     ) => {
-        const accountsData = client.cache?.readQuery<GetAccountsQueryResponse>({
+        const accountsData = cache?.readQuery<GetAccountsQueryResponse>({
             query: GET_ACCOUNTS,
         });
+
+        console.log('accountsData', accountsData);
 
         if (!accountsData?.accounts) return;
 
@@ -27,9 +29,11 @@ export const useSetActiveAccount = () => {
         setPersistedActiveAccount({
             id: activeAccount?.id
         })
+
+        console.log('new active accounts', accounts, accountsData.lastBlock);
         
         //TODO: return the data to be mutated from the mutation instead
-        client.cache?.writeQuery<GetAccountsQueryResponse>({
+        cache?.writeQuery<GetAccountsQueryResponse>({
             query: GET_ACCOUNTS,
             data: { accounts, lastBlock: accountsData.lastBlock }
         });

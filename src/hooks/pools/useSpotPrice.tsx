@@ -22,8 +22,6 @@ export const useSpotPrice = (
         const assetABalance = getAssetBalance(pool, assetAId)
         const assetBBalance = getAssetBalance(pool, assetBId)
 
-        console.log('asset balances', assetABalance, assetBBalance, math);
-
         if (!assetABalance || !assetBBalance || !math) return;
 
         return math.get_spot_price(

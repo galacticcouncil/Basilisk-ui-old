@@ -19,6 +19,7 @@ export const useSubmitTradeMutationResolver = () => {
             args: Maybe<SubmitTradeMutationVariables>,
             { cache }: { cache: ApolloCache<NormalizedCacheObject> }
         ) => {
+            console.log('args', args);
             if (!args) return
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Buy) {
                 return await buyXyk(
@@ -31,6 +32,7 @@ export const useSubmitTradeMutationResolver = () => {
             }
 
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Sell) {
+                console.log('selling')
                 return await sellXyk(
                     cache,
                     args.assetAId,

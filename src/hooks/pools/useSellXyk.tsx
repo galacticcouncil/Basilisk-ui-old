@@ -47,5 +47,5 @@ export const useSellXyk = () => {
         }, [
             gracefulExtensionCancelationErrorHandler
         ]);
-    }, [])
+    }, [apiInstance, loading])
 }

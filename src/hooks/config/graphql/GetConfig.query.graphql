@@ -1,6 +1,6 @@
 query GetConfig {
     lastBlock @client {
-        number
+        parachainBlockNumber
     },
 
     config @client {
