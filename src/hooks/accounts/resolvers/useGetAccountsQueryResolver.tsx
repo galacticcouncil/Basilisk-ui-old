@@ -27,8 +27,7 @@ export const useGetAccountsQueryResolver = () => {
             // if no results were found, return undefined/null
             // this is useful when un-setting the active account
             if (!accounts) {
-                console.log('no accounts');
-                return accounts
+                return null;
             };
     
             return isArray(accounts)

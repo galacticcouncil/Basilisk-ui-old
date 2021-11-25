@@ -5,27 +5,21 @@ import { LbpPool } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import type { Codec } from '@polkadot/types/types';
 import { mapToPoolId } from './useGetXykPools';
-export interface AssetPair {
-    asset_in: string,
-    asset_out: string
-}
 
+export type AssetPair = string[];
 export interface PoolData {
     assets: AssetPair
 }
 
-export const poolDataType = 'Pool';
-
 export const mapToPool = (apiInstance: ApiPromise) => ([id, codec]: [string, Codec]) => {
-    const poolData = apiInstance.createType(
-        poolDataType,
-        codec
-    ).toHuman() as unknown as PoolData;
+    const poolData = codec.toHuman() as unknown as PoolData;
+    
+    if (!poolData) return;
 
     return {
         id,
-        assetAId: poolData.assets.asset_in,
-        assetBId: poolData.assets.asset_out,
+        assetAId: poolData.assets[0],
+        assetBId: poolData.assets[1],
     } as LbpPool
 }
 

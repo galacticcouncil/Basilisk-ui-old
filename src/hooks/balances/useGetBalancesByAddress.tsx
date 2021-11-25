@@ -9,8 +9,8 @@ export const assetBalanceDataType = 'AccountData';
 export const useGetBalancesByAddress = () => {
     const { apiInstance, loading } = usePolkadotJsContext()
 
-    const getBalancesByAddress = useCallback(async (address: string, assetIds?: string[]) => {
-        if (!apiInstance) return;
+    const getBalancesByAddress = useCallback(async (address?: string, assetIds?: string[]) => {
+        if (!apiInstance || !address) return;
 
         const balances: Balance[] = [];
         

@@ -11,8 +11,8 @@ export const useSetActiveAccountMutationResolver = () => {
         useCallback(async (
             _obj,
             args: SetActiveAccountMutationVariables,
-            { cache }: { cache: ApolloCache<NormalizedCacheObject> }
-        ) => setActiveAccount(cache, args.id), [setActiveAccount]),
+            { client }: { client: ApolloClient<NormalizedCacheObject> }
+        ) => setActiveAccount(client, args.id), [setActiveAccount]),
         'setActiveAccount'
     )
 }

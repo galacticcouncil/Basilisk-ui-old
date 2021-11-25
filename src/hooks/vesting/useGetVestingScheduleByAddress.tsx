@@ -12,8 +12,8 @@ export const vestingScheduleDataType = 'Vec<VestingScheduleOf>';
 export const useGetVestingScheduleByAddress = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
 
-    const getVestingScheduleByAddress = useCallback(async (address: string) => {
-        if (!apiInstance) return;
+    const getVestingScheduleByAddress = useCallback(async (address?: string) => {
+        if (!apiInstance || !address) return;
 
         // TODO: instead of multiple .createType calls, use the following
         // https://github.com/AcalaNetwork/acala.js/blob/9634e2291f1723a84980b3087c55573763c8e82e/packages/sdk-core/src/functions/getSubscribeOrAtQuery.ts#L4

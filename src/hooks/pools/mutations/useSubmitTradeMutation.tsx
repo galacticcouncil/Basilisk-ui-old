@@ -11,7 +11,8 @@ export interface SubmitTradeMutationVariables {
     assetAAmount: string,
     assetBAmount: string,
     poolType: PoolType,
-    tradeType: TradeType
+    tradeType: TradeType,
+    amountWithSlippage: string
 }
 
 export const useSubmitTradeMutation = () => useMutation<void, SubmitTradeMutationVariables>(

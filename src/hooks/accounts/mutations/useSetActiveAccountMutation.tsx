@@ -13,6 +13,8 @@ export const useSetActiveAccountMutation = (variables: SetActiveAccountMutationV
     {
         variables,
         refetchQueries: [
+            // TODO: figure out why do we need to refetch active account manually,
+            // while all accounts query gets updated automatically
             GET_ACTIVE_ACCOUNT
         ]
     }

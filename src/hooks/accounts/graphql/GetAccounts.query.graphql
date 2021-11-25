@@ -1,7 +1,8 @@
 
 query GetAccounts {
     lastBlock @client {
-        parachainBlockNumber
+        parachainBlockNumber,
+        relaychainBlockNumber
     }
     
     accounts @client {

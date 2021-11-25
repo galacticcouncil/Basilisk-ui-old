@@ -74,6 +74,7 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstanc
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
+        console.log('is in block', status.createdAtHash?.toString());
         if (dispatchError?.isModule) {
             return log.info('operation unsuccessful',
                 !apiInstance

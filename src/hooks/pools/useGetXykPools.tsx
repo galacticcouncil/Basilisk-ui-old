@@ -14,10 +14,9 @@ export const mapToPoolId = ([storageKey, codec]: [StorageKey<AnyTuple>, Codec]):
 }
 
 export const mapToPool = (apiInstance: ApiPromise) => ([id, codec]: [string, Codec]) => {
-    const poolAssets = apiInstance.createType(
-        poolAssetsDataType,
-        codec
-    ).toHuman() as PoolAssets;
+    const poolAssets = codec.toHuman() as PoolAssets;
+
+    if (!poolAssets) return;
 
     return {
         id,

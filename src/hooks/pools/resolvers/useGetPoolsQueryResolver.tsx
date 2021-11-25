@@ -36,6 +36,8 @@ export const getPoolIdsByAssetIds = async (apiInstance: ApiPromise, assetIds: st
         assetIds[0], assetIds[1]
     )).toHuman();
 
+    console.log('getPoolIdsByAssetIds', lbpPoolId, xykPoolId);
+
     return {
         lbpPoolId,
         xykPoolId
@@ -68,11 +70,16 @@ export const useGetPoolsQueryResolver = () => {
                 poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
             }
 
+            console.log('poolIds', poolIds);
+
             // if the poolId is specified, try resolving with a single pool
             if (poolIds.xykPoolId || poolIds.lbpPoolId) {
+                console.log('fetching pools');
                 let lbpPool = await getLbpPool(poolIds.lbpPoolId);
                 let xykPool = await getXykPool(poolIds.xykPoolId);
                 
+                console.log('pools', lbpPool);
+
                 // if the assets are matching, its a default value which means the pool was not found
                 if (xykPool?.assetAId === xykPool?.assetBId) xykPool = undefined;
                 if (lbpPool?.assetAId === lbpPool?.assetBId) lbpPool = undefined;
@@ -80,7 +87,7 @@ export const useGetPoolsQueryResolver = () => {
                 // TODO: which pool should have priority if both types exist for the same assets?
                 const pool = xykPool || lbpPool;
         
-                return ({
+                return pool && ({
                     ...pool,
                     __typename: xykPool 
                         ? 'XYKPool' as XykPool['__typename']

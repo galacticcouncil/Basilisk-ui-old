@@ -1,4 +1,5 @@
 import { ApolloCache, ApolloClient, NormalizedCacheObject, useApolloClient } from '@apollo/client';
+import { gql } from 'graphql.macro';
 import { find } from 'lodash';
 import { useCallback } from 'react';
 import { GetAccountsQueryResponse, GET_ACCOUNTS } from './queries/useGetAccountsQuery';
@@ -8,10 +9,10 @@ export const useSetActiveAccount = () => {
     const [_persistedActiveAccount, setPersistedActiveAccount] = usePersistActiveAccount();
 
     return useCallback(async (
-        cache: ApolloCache<NormalizedCacheObject>,
+        client: ApolloClient<NormalizedCacheObject>,
         address: string | undefined
     ) => {
-        const accountsData = cache?.readQuery<GetAccountsQueryResponse>({
+        const accountsData = client.cache?.readQuery<GetAccountsQueryResponse>({
             query: GET_ACCOUNTS,
         });
 
@@ -29,13 +30,23 @@ export const useSetActiveAccount = () => {
         setPersistedActiveAccount({
             id: activeAccount?.id
         })
-
-        console.log('new active accounts', accounts, accountsData.lastBlock);
         
-        //TODO: return the data to be mutated from the mutation instead
-        cache?.writeQuery<GetAccountsQueryResponse>({
-            query: GET_ACCOUNTS,
-            data: { accounts, lastBlock: accountsData.lastBlock }
+        // TODO: return the data to be mutated from the mutation instead
+        // client.cache?.writeQuery<GetAccountsQueryResponse>({
+        //     query: GET_ACCOUNTS,
+        //     data: { accounts, lastBlock: accountsData.lastBlock }
+        // });
+
+        accounts.forEach(account => {
+            client.cache.modify({
+                id: client.cache.identify({
+                    __typename: account.__typename,
+                    id: account.id
+                }),
+                fields: {
+                    isActive: _ => account.isActive
+                }
+            })
         });
 
         // wait for the local storage changes before finishing the mutation

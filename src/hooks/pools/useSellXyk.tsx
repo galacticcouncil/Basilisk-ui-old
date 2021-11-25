@@ -23,6 +23,10 @@ export const useSellXyk = () => {
     ) => {
         if (!apiInstance || loading) return;
 
+        console.log('sellXyk', {
+            assetSell, assetBuy, amountSell, minBought
+        })
+
         await withGracefulErrors(async (resolve, reject) => {
             const address = cache.readQuery<GetActiveAccountQueryResponse>({
                 query: GET_ACTIVE_ACCOUNT
@@ -32,7 +36,7 @@ export const useSellXyk = () => {
 
             const { signer } = await web3FromAddress(address);
 
-            await apiInstance.tx.exchange.buy(
+            await apiInstance.tx.xyk.sell(
                 assetSell,
                 assetBuy,
                 amountSell,

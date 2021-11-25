@@ -1,4 +1,5 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
+import BigNumber from 'bignumber.js';
 import { gql } from 'graphql.macro';
 import { useCallback } from 'react'
 import { PoolType } from '../../../components/Chart/shared';
@@ -8,6 +9,30 @@ import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutatio
 import { useBuyXyk } from '../useBuyXyk'
 import { useSellXyk } from '../useSellXyk';
 
+// this is for buy, for sell we need to use minus, not plus
+export const applyAllowedSlippage = (
+    amount: string, 
+    allowedSlippage: string,
+    tradeType: TradeType
+) => {
+    let slippageAmount = new BigNumber(amount)
+        .multipliedBy(
+            new BigNumber(allowedSlippage)
+                .dividedBy(100)
+        )
+
+    const amountBN = new BigNumber(amount);
+    
+    const amountWithSlippage = tradeType === TradeType.Buy
+            // if you're buying an exact amount,
+            // you must be willing to pay more
+            ? amountBN.plus(slippageAmount)
+            // if you're selling an exact amount,
+            // you should be willing to receive less
+            : amountBN.minus(slippageAmount)
+    
+    return amountWithSlippage.toFixed(0);
+}
 
 export const useSubmitTradeMutationResolver = () => {
     const buyXyk = useBuyXyk();
@@ -19,7 +44,6 @@ export const useSubmitTradeMutationResolver = () => {
             args: Maybe<SubmitTradeMutationVariables>,
             { cache }: { cache: ApolloCache<NormalizedCacheObject> }
         ) => {
-            console.log('args', args);
             if (!args) return
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Buy) {
                 return await buyXyk(
@@ -27,18 +51,17 @@ export const useSubmitTradeMutationResolver = () => {
                     args.assetBId,
                     args.assetAId,
                     args.assetBAmount,
-                    `${(parseInt(args.assetAAmount) * 1.3)}`
+                    args.amountWithSlippage,
                 );
             }
 
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Sell) {
-                console.log('selling')
                 return await sellXyk(
                     cache,
                     args.assetAId,
                     args.assetBId,
                     args.assetAAmount,
-                    `${(parseInt(args.assetBAmount) * 1.3)}`
+                    args.amountWithSlippage,
                 );
             }
 

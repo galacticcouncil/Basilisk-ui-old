@@ -15,8 +15,8 @@ export const useCalculateInGivenOut = (
     if (!assetABalance || !assetBBalance || !math || !assetBBalanceInput) return;
 
     return math?.calculate_in_given_out(
-        assetABalance,
-        assetBBalance,
-        assetBBalanceInput,
+        assetABalance, // out_reserve
+        assetBBalance, // in_reserve
+        assetBBalanceInput, // amount_out
     );
 }

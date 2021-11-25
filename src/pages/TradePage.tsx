@@ -1,50 +1,125 @@
-import { first, isEqual, nth } from 'lodash';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { isEqual, nth } from 'lodash';
+import { useCallback, useEffect, useState } from 'react';
 import { Pool, TradeType } from '../generated/graphql';
 import { useGetAssetsQuery } from '../hooks/assets/queries/useGetAssetsQuery';
 import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { useSubmitTradeMutation } from '../hooks/pools/mutations/useSubmitTradeMutation';
 import { PoolType } from '../components/Chart/shared';
-import { usePolkadotJsContext } from '../hooks/polkadotJs/usePolkadotJs';
-import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
-import { Event } from '@polkadot/types/interfaces';
-import BN from 'bn.js';
-import { useMathContext } from '../hooks/math/useMath';
-import { getAssetBalance, useSpotPrice } from '../hooks/pools/useSpotPrice';
 import { useCalculateInGivenOut } from '../hooks/pools/useCalculateInGivenOut';
 import { useCalculateOutGivenIn } from '../hooks/pools/useCalculateOutGivenIn';
-import { useFromPrecision12 } from '../hooks/math/useFromPrecision';
+import { fromPrecision12, useFromPrecision12 } from '../hooks/math/useFromPrecision';
 import { toPrecision12 } from '../hooks/math/useToPrecision';
+import { usePool } from '../hooks/pools/usePool';
+import { useSlippage } from '../hooks/pools/useSlippage';
+import { applyAllowedSlippage } from '../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
 
-export const TradeForm = ({
-    onAssetIdsChange,
-    pool
-}: {
-    onAssetIdsChange: (assetAId: string, assetBId: string) => void,
-    pool?: Pool
-}) => {
-    const [submitTrade, { loading: submitTradeLoading }] = useSubmitTradeMutation();
+/**
+ * Maintain which tradeType is currently active based on
+ * which input have been interacted with last.
+ * @returns 
+ */
+export const useTradeType = () => {
     const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell);
 
-    const { register, handleSubmit, watch, formState: { errors }, getValues, setValue, trigger, reset } = useForm<any, any>({
-        defaultValues: {
-            assetAAmount: '0',
-            assetBAmount: '0'
-        }
-    });
-
-    // should actually use the network status instead
-    const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
-    const [assetAId] = watch(['assetAId', 'assetAAmount']);
-    const [assetBId] = watch(['assetBId', 'assetBAmount']);
-
+    // when the asset amount inputs are manually updated, change the trade type accordingly
     const onAssetAAmountInput = () => setTradeType(TradeType.Sell)
     const onAssetBAmountInput = () => setTradeType(TradeType.Buy)
+
+    return {
+        tradeType,
+        onAssetAAmountInput,
+        onAssetBAmountInput
+    }
+}
+
+/**
+ * Fetch available assets and watch the form for assetId updates.
+ * If any form assets update, notify the parent via the callback.
+ * 
+ * TODO: maybe decouple the onAssetIdsChange logic to a separate hook?
+ * @param onAssetIdsChange 
+ * @param watch 
+ * @returns 
+ */
+export const useAssets = (onAssetIdsChange: onAssetsIdsChange, watch: any) => {
+    // should actually use the network status instead
+    const { data: assets, loading } = useGetAssetsQuery();
+    const [assetAId] = watch(['assetAId', 'assetAAmount']);
+    const [assetBId] = watch(['assetBId', 'assetBAmount']);
 
     // when the user selects a new asset pair, notify the parent
     useEffect(() => { onAssetIdsChange(assetAId, assetBId) }, [assetAId, assetBId]);
 
+    return {
+        assets,
+        loading,
+        assetAId,
+        assetBId
+    }
+}
+
+/**
+ * Construct the trade form with appropriate defaults, including
+ * the form submit behaviour.
+ * 
+ * @param pool
+ * @param tradeType 
+ * @returns 
+ */
+export const useTradeForm = (
+    pool?: Pool,
+    tradeType?: TradeType
+) => {
+    // gql mutation for sending executing pool trades
+    const [submitTrade] = useSubmitTradeMutation();
+    // TODO: form value types
+    const form = useForm<any, any>({
+        defaultValues: {
+            assetAAmount: '0',
+            assetBAmount: '0',
+            allowedSlippage: '5'
+        }
+    });
+    
+    /**
+     * When the form is submitted, submit a trade constructed
+     * from the available pool/form/tradeType data.
+     * @param data 
+     * @returns 
+     */
+    const handleSubmit = (data: any, amountWithSlippage?: string) => {
+
+        if (!pool || !tradeType || !amountWithSlippage) return;
+        submitTrade({
+            variables: {
+                assetAId: data.assetAId,
+                assetBId: data.assetBId,
+                assetAAmount: toPrecision12(data.assetAAmount)!,
+                assetBAmount: toPrecision12(data.assetBAmount)!,
+                amountWithSlippage,
+                tradeType,
+                poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
+            }
+        })
+    }
+
+    return {
+        form,
+        handleSubmit: handleSubmit
+    }
+}
+
+/**
+ * After the assets are done loading, set default form values for assetIds
+ * 
+ * TODO: this will be done at a higher level (router or such), where the query 
+ * parameters are parsed (poolId, assetA, assetB, tradeType)
+ * 
+ * @param assetsLoading
+ * @param setValue 
+ */
+export const useDefaultFormAssets = (assetsLoading?: boolean, setValue?: any) => {
     // TODO add default assets as props via router query params
     // set default assets on the trade page
     useEffect(() => {
@@ -52,77 +127,93 @@ export const TradeForm = ({
         setValue('assetAId', '0');
         setValue('assetBId', '1');
     }, [assetsLoading])
+}
 
-    const liquidityAssetA = useFromPrecision12(
-        getAssetBalance(pool, pool?.assetAId)
-    );
-
-    const liquidityAssetB = useFromPrecision12(
-        getAssetBalance(pool, pool?.assetBId)
-    );
-
-    // spot price calcualted both ways
-    const spotPriceAmountAtoB = useFromPrecision12(
-        useSpotPrice(
-            pool,
-            getValues('assetAId'),
-            getValues('assetBId')
-        )
-    );
-
-    const spotPriceAmountBtoA = useFromPrecision12(
-        useSpotPrice(
-            pool,
-            getValues('assetBId'),
-            getValues('assetAId')
-        )
-    )
-
+/**
+ * Set form amounts for asset A or B depending on the current trade type
+ * @param pool 
+ * @param tradeType 
+ * @param param2 
+ */
+export const useCalculatedAssetAmounts = (
+    form: UseFormReturn,
+    pool?: Pool,
+    tradeType?: TradeType,
+) => {
     // calculated amounts depending on if the user is interacting as buy/sell
-    const calculatedAssetAAmount = useFromPrecision12(
-        useCalculateInGivenOut(
-            pool,
-            getValues('assetAId'),
-            getValues('assetBId'),
-            toPrecision12(getValues('assetBAmount'))
-        )
-    );
-
-    const calculatedAssetBAmount = useFromPrecision12(
-        useCalculateOutGivenIn(
-            pool,
-            getValues('assetAId'),
-            getValues('assetBId'),
-            toPrecision12(getValues('assetAAmount'))
-        )
+    const calculatedAssetAAmount = useCalculateInGivenOut(
+        pool,
+        form.getValues('assetAId'),
+        form.getValues('assetBId'),
+        toPrecision12(form.getValues('assetBAmount'))
+    )
+    
+    const calculatedAssetBAmount = useCalculateOutGivenIn(
+        pool,
+        form.getValues('assetAId'),
+        form.getValues('assetBId'), 
+        toPrecision12(form.getValues('assetAAmount')) // 1
     )
 
     useEffect(() => {
-        if (tradeType === TradeType.Buy) setValue('assetAAmount', calculatedAssetAAmount);
-        if (tradeType === TradeType.Sell) setValue('assetBAmount', calculatedAssetBAmount);
+        if (tradeType === TradeType.Buy) form.setValue('assetAAmount', fromPrecision12(calculatedAssetAAmount));
+        if (tradeType === TradeType.Sell) form.setValue('assetBAmount', fromPrecision12(calculatedAssetBAmount));
     }, [
         calculatedAssetAAmount,
         calculatedAssetBAmount
     ]);
 
-    const onSubmit = (data: any) => {
-        console.log('submit trade');
-        submitTrade({
-            variables: {
-                assetAId: data.assetAId,
-                assetBId: data.assetBId,
-                assetAAmount: toPrecision12(data.assetAAmount)!,
-                assetBAmount: toPrecision12(data.assetBAmount)!,
-                tradeType,
-                poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
-            }
-        })
+    return {
+        calculatedAssetAAmount,
+        calculatedAssetBAmount
+    }
+}
+
+export type onAssetsIdsChange = (assetAId: string, assetBId: string) => void;
+
+export const TradeForm = ({
+    onAssetIdsChange,
+    pool
+}: {
+    onAssetIdsChange: onAssetsIdsChange
+    pool?: Pool
+}) => {
+    const { tradeType, onAssetAAmountInput, onAssetBAmountInput } = useTradeType();
+    const { form, handleSubmit } = useTradeForm(pool, tradeType);
+    const { register, watch, getValues, setValue } = form;
+    const { assets, loading: assetsLoading, assetAId, assetBId } = useAssets(onAssetIdsChange, watch);
+
+    useDefaultFormAssets(assetsLoading, setValue)
+
+    const { liquidity, spotPrice } = usePool(pool, assetAId, assetBId);
+    const { calculatedAssetAAmount, calculatedAssetBAmount } = useCalculatedAssetAmounts(form, pool, tradeType);
+
+    const slippageBuy = useSlippage(
+        spotPrice.aToB,
+        calculatedAssetAAmount,
+        calculatedAssetBAmount
+    )
+
+    const slippageSell = useSlippage(
+        spotPrice.bToA,
+        calculatedAssetBAmount,
+        calculatedAssetAAmount
+    )
+
+    const handleSubmitWithSlippage = (data: any) => {
+        if (!slippageBuy?.spotPriceAmount || !slippageSell?.spotPriceAmount) return;
+
+        const amountWithSlippage = tradeType === TradeType.Buy
+            ? applyAllowedSlippage(slippageBuy?.spotPriceAmount, data.allowedSlippage, tradeType)
+            : applyAllowedSlippage(slippageSell?.spotPriceAmount, data.allowedSlippage, tradeType)
+    
+        return handleSubmit(data, amountWithSlippage);
     }
 
     // show all the asset options
     const assetOptions = useCallback((withoutAssetId: string | undefined) => {
         return <>
-            {assetsData
+            {assets
                 ?.assets
                 .filter(asset => asset.id !== withoutAssetId)
                 .map(asset => (
@@ -130,7 +221,7 @@ export const TradeForm = ({
                 ))
             }
         </>
-    }, [assetsData]);
+    }, [assets]);
 
     return <div>
         {assetsLoading
@@ -140,7 +231,7 @@ export const TradeForm = ({
 
         <br /><br />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(handleSubmitWithSlippage)}>
             <div>
                 <div>
                     <label><b>(Pay with) Asset A: </b></label>
@@ -195,12 +286,28 @@ export const TradeForm = ({
                     onInput={onAssetBAmountInput}
                 />
             </div>
+            <div>
+                <label><b>(%) Slippage: </b></label>
+            </div>
+            <div>
+                <input
+                    type="text"
+                    width={100}
+                    style={{
+                        width: '100%',
+                        marginTop: '12px',
+                        marginBottom: '24px'
+                    }}
+                    {...register('allowedSlippage', {
+                        required: true
+                    })}
+                />
+            </div>
             <button
                 type='submit'
                 style={{
                     width: '100%',
                 }}
-                disabled={submitTradeLoading}
             >Trade</button>
 
             <br /><br />
@@ -213,10 +320,21 @@ export const TradeForm = ({
                         : <div>
                             <p><b>Pool Id:</b> {pool?.id}</p>
                             <p><b>Pool type:</b> {pool?.__typename}</p>
-                            <p><b>Liquidity Asset {nth(pool?.balances, 0)?.assetId}:</b> {liquidityAssetA}</p>
-                            <p><b>Liquidity Asset {nth(pool?.balances, 1)?.assetId}:</b> {liquidityAssetB}</p>
-                            <p><b>Spot price A/B:</b> {spotPriceAmountAtoB}</p>
-                            <p><b>Spot price B/A:</b> {spotPriceAmountBtoA}</p>
+                            <p><b>Liquidity Asset A:</b> {fromPrecision12(liquidity.assetA.balance)}</p>
+                            <p><b>Liquidity Asset B:</b> {fromPrecision12(liquidity.assetB.balance)}</p>
+                            <p><b>Spot prices:</b>
+                                <br/>
+                                <span>1 B = {fromPrecision12(spotPrice.aToB)} A</span>
+                                <br/>
+                                <span>1 A = {fromPrecision12(spotPrice.bToA)} B</span>
+                            </p>
+                            <p>
+                                <b>Slippage ({tradeType}): </b> 
+                                {tradeType === TradeType.Buy
+                                    ? slippageBuy ? `${slippageBuy.percentualSlippage}% / ${fromPrecision12(slippageBuy.spotPriceAmount)}` : '-'
+                                    : slippageSell ? `${slippageSell.percentualSlippage}% / ${fromPrecision12(slippageSell.spotPriceAmount)}` : '-'
+                                }
+                            </p>
                         </div>
                     }
                 </div>
@@ -234,7 +352,8 @@ export const TradePage = () => {
         assetBId: undefined
     })
 
-    const { data: poolData, loading } = useGetPoolByAssetsQuery(assetIds);
+    const { data: poolData, loading, error } = useGetPoolByAssetsQuery(assetIds);
+    error && console.error(error);
 
     const handleAssetIdsChange = (assetAId: string, assetBId: string) => {
         const newIds = { assetAId, assetBId };

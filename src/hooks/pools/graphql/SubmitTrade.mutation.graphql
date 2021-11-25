@@ -3,6 +3,7 @@ mutation SubmitTrade(
     $assetBId: String!,
     $assetAAmount: String!,
     $assetBAmount: String!,
+    $amountWithSlippage: String!,
     $poolType: PoolType,
     $tradeType: TradeType
 ) {
@@ -12,6 +13,7 @@ mutation SubmitTrade(
         tradeType: $tradeType,
         poolType: $poolType,
         assetAAmount: $assetAAmount,
-        assetBAmount: $assetBAmount
+        assetBAmount: $assetBAmount,
+        amountWithSlippage: $amountWithSlippage
     ) @client
 }

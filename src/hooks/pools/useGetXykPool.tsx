@@ -8,6 +8,8 @@ export const useGetXykPool = () => {
     return useCallback(async (poolId?: string) => {
         if (!apiInstance || loading || !poolId) return;
 
+        console.log('useGetXykPool', poolId);
+
         return mapToPool(apiInstance)([
             poolId,
             await apiInstance.query.xyk.poolAssets(poolId)

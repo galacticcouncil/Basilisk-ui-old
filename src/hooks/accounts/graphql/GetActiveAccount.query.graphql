@@ -1,7 +1,8 @@
 # TODO: fetch only balances for the active fee payment asset
 query GetActiveAccount {
     lastBlock @client { 
-        parachainBlockNumber 
+        parachainBlockNumber,
+        relaychainBlockNumber,
     }
     
     account: accounts(isActive: true) @client {

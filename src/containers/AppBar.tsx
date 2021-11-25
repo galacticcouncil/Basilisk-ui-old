@@ -11,7 +11,7 @@ export const AppBar = () => {
     const { data: lastBlockData } = useLastBlockQuery();
     const { data: activeAccountData, loading: activeAccountLoading } = useGetActiveAccountQuery();
     const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
-
+    
     // TODO: should probably be showing the fee payment asset here
     const nativeAssetBalance = useMemo(() => (
         first(

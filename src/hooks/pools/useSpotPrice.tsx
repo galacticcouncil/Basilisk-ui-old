@@ -9,6 +9,11 @@ export const getAssetBalance = (pool?: Pool, assetId?: string) => (
             ?.filter(balance => balance.assetId === assetId)
     )?.balance
 )
+
+export const useAssetBalance = (pool?: Pool, assetId?: string) => (
+    useMemo(() => getAssetBalance(pool, assetId), [pool, assetId])
+)
+
 // export const oneWithPrecision = '1000000000000'; // 10^12 doesnt work, use 10^9 instead
 export const oneWithPrecision = '1000000000000'; // 10^12 doesnt work, use 10^9 instead
 export const useSpotPrice = (
