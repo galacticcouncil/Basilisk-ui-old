@@ -39,7 +39,7 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     let value = Math.abs(balance);
 
     // get digits count - works correctly only for positive values
-    let length = Math.log(value) * Math.LOG10E + 1 ;
+    let length = Math.log(value) * Math.LOG10E + 1 | 0 ;
 
     // Work out precision
     let precision = Math.pow(10, balancePrecision);
@@ -49,9 +49,9 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
 
     let [scaleQ, scaleR] = divmod(length - balancePrecision, 3);
 
-    if (scaleQ > units.length) {
+    if ((scaleQ > units.length) || ( scaleQ === units.length && scaleR > 0)) {
         // Bigger than supported
-        let [q, ] = divmod(balanceQ, Math.pow(1000, 4));
+        let [q, ] = divmod(balanceQ, Math.pow(1000, units.length - 1));
         return `${neg}${q}T`;
     }else if (balanceQ === 0 ){
         // Balance is less than 1
