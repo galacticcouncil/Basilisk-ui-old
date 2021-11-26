@@ -1,4 +1,4 @@
-import {formatBalance} from './formatBalance';
+import {formatBalance, formatBalanceAlternative} from './formatBalance';
 
 describe('Balance Formatter', () => {
     describe('Precision 12', () => {
@@ -58,6 +58,7 @@ describe('Balance Formatter', () => {
             let precision = 12;
             let decimals = 2;
             expect(formatBalance(value, precision, decimals)).toBe(expected)
+            expect(formatBalanceAlternative(value, precision, decimals)).toBe(expected)
         });
     });
 });

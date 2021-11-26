@@ -38,6 +38,69 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     let neg = balance < 0 ? '-' : '';
     let value = Math.abs(balance);
 
+    // Work out precision
+    let precision = Math.pow(10, balancePrecision);
+
+    // Split into balance quotient and balance remainder
+    let [balanceQ, balanceFrac] = divmod(value,precision);
+
+    let unit = '';
+    let amount: string | number = '';
+    let fracAmount = '';
+
+    if (balanceQ === 0 )
+    {
+        // Balance is less than 1
+        // Let's handle this separately
+        // Print the whole number for now
+
+        amount = eToNumber( balanceFrac / precision);
+    }else {
+        let frac = 0;
+        for (let u of units) {
+
+            let unitVal;
+            [balanceQ, unitVal] = divmod(balanceQ, 1000);
+
+            if ( balanceQ > 0){
+                frac = unitVal;
+                continue;
+            }
+
+            unit = u;
+            amount = unitVal;
+            break;
+        }
+
+        if ( balanceQ > 0){
+            amount = balanceQ * 1000 + frac ;
+            unit =  units[units.length - 1];
+            frac = 0;
+        }
+
+        if ( frac > 0 && decimals > 0 ){
+            let f = Math.floor(frac / Math.pow(10, 3 - decimals));
+            fracAmount= `,${f}`;
+        }
+    }
+
+    return `${neg}${amount}${fracAmount}${unit}`;
+}
+
+export const formatBalanceAlternative = (balance: number, balancePrecision: number, outputDecimals: number) => {
+
+    const units = ['', 'K', 'M', 'B', 'T'] // Perhaps this could be configurable
+    const decimals = Math.min(outputDecimals, 3); // support for max 3 output decimals for now
+
+    // Shortcut for 0
+    if ( balance === 0 ){
+        return "0";
+    }
+
+    // Let's work with positive numbers only
+    let neg = balance < 0 ? '-' : '';
+    let value = Math.abs(balance);
+
     // get digits count - works correctly only for positive values
     let digits = Math.log(value) * Math.LOG10E + 1 | 0 ;
 
