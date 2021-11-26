@@ -14,6 +14,12 @@ export const useCalculateOutGivenIn = (
 
     if (!assetABalance || !assetBBalance || !math || !assetABalanceInput) return;
 
+    console.log('calculate_out_given_in', {
+        assetABalance, // in_reserve
+        assetBBalance, // out_reserve
+        assetABalanceInput, // amount_in
+    })
+
     return math?.calculate_out_given_in(
         assetABalance, // in_reserve
         assetBBalance, // out_reserve

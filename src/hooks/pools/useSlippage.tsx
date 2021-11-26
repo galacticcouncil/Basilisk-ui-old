@@ -21,6 +21,14 @@ export const calculateSlippage = (
         assetAAmount
     );
 
+    console.log('calculateSlippage', {
+        spotPrice,
+        assetAAmount,
+        assetBAmount,
+        spotPriceAmount,
+        resultPercentageChange
+    });
+
     if (!resultPercentageChange || resultPercentageChange.isNaN()) return;
 
     // TODO: don't use this for every bignumber call

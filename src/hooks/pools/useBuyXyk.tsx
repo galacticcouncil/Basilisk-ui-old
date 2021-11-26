@@ -16,10 +16,10 @@ export const useBuyXyk = () => {
 
     return useCallback(async (
         cache: ApolloCache<NormalizedCacheObject>,
-        assetBuy: string,
-        assetSell: string,
-        amountBuy: string,
-        maxSold: string,
+        assetBuy: string, // 1
+        assetSell: string, // 49.7 + 0.2% = 49.9
+        amountBuy: string, // 99
+        maxSold: string, // 49.5 + 0.5%
     ) => {
         if (!apiInstance || loading) return;
 
