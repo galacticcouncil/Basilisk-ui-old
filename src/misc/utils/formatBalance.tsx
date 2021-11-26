@@ -45,7 +45,7 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     let [balanceQ, balanceFrac] = divmod(value,precision);
 
     let unit = '';
-    let amount: string | number = '';
+    let amount: string | number = 0;
     let fracAmount = '';
 
     if (balanceQ === 0 )
@@ -57,23 +57,17 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
         amount = eToNumber( balanceFrac / precision);
     }else {
         let frac = 0;
-        for (let u of units) {
+        let idx = 0;
 
-            let unitVal;
-            [balanceQ, unitVal] = divmod(balanceQ, 1000);
-
-            if ( balanceQ > 0){
-                frac = unitVal;
-                continue;
-            }
-
-            unit = u;
-            amount = unitVal;
-            break;
+        while ( balanceQ > 0 && idx < units.length){
+            frac = amount;
+            [balanceQ, amount] = divmod(balanceQ, 1000);
+            unit = units[idx];
+            idx++;
         }
 
         if ( balanceQ > 0){
-            amount = balanceQ * 1000 + frac ;
+            amount = balanceQ * 1000 + amount;
             unit =  units[units.length - 1];
             frac = 0;
         }
