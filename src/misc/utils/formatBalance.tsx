@@ -67,12 +67,11 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
         }
 
         if ( balanceQ > 0){
+            // Bigger than supported
+            // Display the rest with the last unit - no decimals in this case
             amount = balanceQ * 1000 + amount;
-            unit =  units[units.length - 1];
-            frac = 0;
         }
-
-        if ( frac > 0 && decimals > 0 ){
+        else if ( frac > 0 && decimals > 0 ){
             let f = Math.floor(frac / Math.pow(10, 3 - decimals));
             fracAmount= `,${f}`;
         }
@@ -113,6 +112,7 @@ export const formatBalanceAlternative = (balance: number, balancePrecision: numb
 
     if ((scaleQ > units.length) || ( scaleQ === units.length && scaleR > 0)) {
         // Bigger than supported
+        // Display the rest with the last unit
 
         [amount, ] = divmod(balanceQ, Math.pow(1000, units.length - 1));
         unit = units[units.length - 1];
