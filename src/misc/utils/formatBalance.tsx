@@ -1,7 +1,7 @@
 
-const divmod = (divident: number, divider: number) => {
-    let quotient = Math.floor(divident / divider);
-    let remainder = divident % divider;
+const divmod = (dividend: number, divider: number) => {
+    let quotient = Math.floor(dividend / divider);
+    let remainder = dividend % divider;
     return [quotient, remainder];
 }
 
@@ -19,7 +19,7 @@ const eToNumber = (num: any) => {
         L   = pos - w.length, s = "" + BigInt(w);
     w   = exp >= 0 ? (L >= 0 ? s + "0".repeat(L) : r()) : (pos <= 0 ? "0" + dot + "0".repeat(Math.abs(pos)) + s : r());
     L= w.split(dot); // @ts-ignore
-    if ( (L[0]===0 && L[1]===0) || (+w===0 && +s===0) ) w = 0; //** added 9/10/2021
+    if ( (L[0]===0 && L[1]===0) || (+w===0 && +s===0) ) w = 0;
     return sign + w;
     function r() {return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)}
 }
@@ -39,7 +39,7 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     let value = Math.abs(balance);
 
     // get digits count - works correctly only for positive values
-    let length = Math.log(value) * Math.LOG10E + 1 | 0 ;
+    let digits = Math.log(value) * Math.LOG10E + 1 | 0 ;
 
     // Work out precision
     let precision = Math.pow(10, balancePrecision);
@@ -47,50 +47,43 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     // Split into balance quotient and balance remainder
     let [balanceQ, balanceFrac] = divmod(value,precision);
 
-    let [scaleQ, scaleR] = divmod(length - balancePrecision, 3);
+    // Figure out how many parts there are
+    let [scaleQ, scaleR] = divmod(Math.abs(digits - balancePrecision), 3);
+
+    let unit = '';
+    let amount: string | number = '';
+    let frac_amount = '';
 
     if ((scaleQ > units.length) || ( scaleQ === units.length && scaleR > 0)) {
         // Bigger than supported
-        let [q, ] = divmod(balanceQ, Math.pow(1000, units.length - 1));
-        return `${neg}${q}T`;
+
+        [amount, ] = divmod(balanceQ, Math.pow(1000, units.length - 1));
+        unit = units[units.length - 1];
     }else if (balanceQ === 0 ){
         // Balance is less than 1
         // Let's handle this separately
         // Print the whole number for now
-        return `${neg}${(eToNumber(balanceFrac / precision))}`
+
+        amount = eToNumber( balanceFrac / precision);
+        unit = ''
     }
     else {
-        let unit = '';
-        let amount = 0;
-        let frac_amount = '';
-
         if (scaleQ === 0 || (scaleQ === 1 && scaleR === 0)) {
+            // Handle hundreds
             unit = units[0];
             amount = balanceQ;
         } else {
-            if (scaleR > 0) {
-                unit = units[scaleQ];
-                let y = Math.pow(1000, scaleQ);
-                amount = Math.floor(balanceQ / y);
-
-                if (decimals > 0) {
-                    let f = balanceQ % y;
-                    let fp = Math.floor(f / Math.pow(1000, scaleQ- 1))
-                    let fpp = Math.floor(fp / Math.pow(10, 3 - decimals));
-                    frac_amount = `,${fpp}`
-                }
-            } else {
-                unit = units[scaleQ - 1];
-                let y = Math.pow(1000, scaleQ - 1);
-                amount = Math.floor(balanceQ / Math.pow(1000, scaleQ - 1));
-                if (decimals > 0) {
-                    let f = balanceQ % y;
-                    let fp = Math.floor(f / Math.pow(1000, scaleQ - 2))
-                    let fpp = Math.floor(fp / Math.pow(10, 3 - decimals));
-                    frac_amount = `,${fpp}`
-                }
+            let previous = scaleR === 0 ? 1 : 0;
+            unit = units[scaleQ - previous];
+            let frac;
+            [amount, frac] = divmod(balanceQ , Math.pow(1000, scaleQ - previous));
+            if (decimals > 0) {
+                let fp = Math.floor(frac / Math.pow(1000, scaleQ - 1 - previous))
+                let fpp = Math.floor(fp / Math.pow(10, 3 - decimals));
+                frac_amount = `,${fpp}`
             }
         }
-        return `${neg}${amount}${frac_amount}${unit}`
     }
+    // Construct the displayed value
+    return `${neg}${amount}${frac_amount}${unit}`
 }

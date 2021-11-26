@@ -1,4 +1,3 @@
-import blockHeightToDate, { blockTimeKusama } from './blockHeightToDate';
 import {formatBalance} from './formatBalance';
 
 describe('Balance Formatter', () => {
@@ -21,7 +20,7 @@ describe('Balance Formatter', () => {
                 [1000000000000, "1"],
                 [1123456789012, "1"], // TODO: probably add few decimals from frac part
                 [11123456789012, "11"], //TODO: decimals from frac part
-                [123123456789012, "123"], //tODO: decimals too
+                [123123456789012, "123"], //TODO: decimals too
                 // Thousands
                 [4123123456789012, "4,12K"],
                 [4123123456789012, "4,12K"],
