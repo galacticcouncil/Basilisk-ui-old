@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { isNaN } from 'lodash';
 import { useMemo } from 'react';
+import { TradeType } from '../../generated/graphql';
 import { fromPrecision12 } from '../math/useFromPrecision';
 import { percentageChange } from '../math/usePercentageChange';
 import { toPrecision12 } from '../math/useToPrecision';
@@ -20,14 +21,6 @@ export const calculateSlippage = (
         spotPriceAmount,
         assetAAmount
     );
-
-    console.log('calculateSlippage', {
-        spotPrice,
-        assetAAmount,
-        assetBAmount,
-        spotPriceAmount,
-        resultPercentageChange
-    });
 
     if (!resultPercentageChange || resultPercentageChange.isNaN()) return;
 
@@ -54,13 +47,18 @@ export const calculateSlippage = (
  * @returns 
  */
 export const useSlippage = (
-    spotPrice?: string,
+    tradeType: TradeType,
+    spotPrice: {
+        aToB?: string,
+        bToA?: string
+    },
     assetAAmount?: string,
-    assetBAmount?: string
-) => (
-    useMemo(() => {
-        if (!spotPrice || !assetAAmount || !assetBAmount) return;
-        return calculateSlippage(spotPrice, assetAAmount, assetBAmount);
-        // TODO: figure out dependencies
-    }, [spotPrice, assetBAmount])
-)
+    assetBAmount?: string,
+) => {
+    if (!spotPrice.aToB || !spotPrice.bToA || !assetAAmount || !assetBAmount) return;
+    return calculateSlippage.apply(null,
+        tradeType === TradeType.Buy
+            ? [spotPrice.aToB, assetAAmount, assetBAmount]
+            : [spotPrice.bToA, assetBAmount, assetAAmount]
+    )
+}

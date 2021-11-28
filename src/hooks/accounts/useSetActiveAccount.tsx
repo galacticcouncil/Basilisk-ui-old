@@ -16,8 +16,6 @@ export const useSetActiveAccount = () => {
             query: GET_ACCOUNTS,
         });
 
-        console.log('accountsData', accountsData);
-
         if (!accountsData?.accounts) return;
 
         const accounts = accountsData.accounts

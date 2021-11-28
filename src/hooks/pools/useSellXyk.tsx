@@ -23,10 +23,6 @@ export const useSellXyk = () => {
     ) => {
         if (!apiInstance || loading) return;
 
-        console.log('sellXyk', {
-            assetSell, assetBuy, amountSell, minBought
-        })
-
         await withGracefulErrors(async (resolve, reject) => {
             const address = cache.readQuery<GetActiveAccountQueryResponse>({
                 query: GET_ACTIVE_ACCOUNT

@@ -34,6 +34,26 @@ export const applyAllowedSlippage = (
     return amountWithSlippage.toFixed(0);
 }
 
+export const applyTradeFee = (
+    amount: string,
+    // TODO: get this from constants
+    tradeFee: string = '0.002', // 0.2% default
+    tradeType: TradeType
+) => {
+    let fee = new BigNumber(amount)
+        .multipliedBy(
+            new BigNumber(tradeFee)
+        )
+
+    const amountBN = new BigNumber(amount);
+    
+    const amountWithFee = tradeType === TradeType.Buy
+            ? amountBN.plus(fee)
+            : amountBN.minus(fee);
+            
+    return amountWithFee.toFixed(0);
+}
+
 export const useSubmitTradeMutationResolver = () => {
     const buyXyk = useBuyXyk();
     const sellXyk = useSellXyk();

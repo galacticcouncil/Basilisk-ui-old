@@ -12,7 +12,8 @@ import { fromPrecision12, useFromPrecision12 } from '../hooks/math/useFromPrecis
 import { toPrecision12 } from '../hooks/math/useToPrecision';
 import { usePool } from '../hooks/pools/usePool';
 import { useSlippage } from '../hooks/pools/useSlippage';
-import { applyAllowedSlippage } from '../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
+import { applyAllowedSlippage, applyTradeFee } from '../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
+import { AnyNaptrRecord } from 'dns';
 
 /**
  * Maintain which tradeType is currently active based on
@@ -78,7 +79,10 @@ export const useTradeForm = (
         defaultValues: {
             assetAAmount: '0',
             assetBAmount: '0',
-            allowedSlippage: '5'
+            allowedSlippage: '5',
+            // we're making the amount after slippage part of the form as a 'hidden field'
+            // to make carrying over the value easier
+            amountWithSlippage: undefined
         }
     });
     
@@ -88,16 +92,16 @@ export const useTradeForm = (
      * @param data 
      * @returns 
      */
-    const handleSubmit = (data: any, amountWithSlippage?: string) => {
+    const handleSubmit = (data: any) => {
+        if (!pool || !tradeType) return;
 
-        if (!pool || !tradeType || !amountWithSlippage) return;
         submitTrade({
             variables: {
                 assetAId: data.assetAId,
                 assetBId: data.assetBId,
                 assetAAmount: toPrecision12(data.assetAAmount)!,
                 assetBAmount: toPrecision12(data.assetBAmount)!,
-                amountWithSlippage,
+                amountWithSlippage: data.amountWithSlippage,
                 tradeType,
                 poolType: pool?.__typename === 'XYKPool' ? PoolType.XYK : PoolType.LBP
             }
@@ -141,19 +145,27 @@ export const useCalculatedAssetAmounts = (
     tradeType?: TradeType,
 ) => {
     // calculated amounts depending on if the user is interacting as buy/sell
-    const calculatedAssetAAmount = useCalculateInGivenOut(
+    const { 
+        inGivenOutWithFee: calculatedAssetAAmount, 
+        inGivenOut: calculatedAssetAAmountWithoutFee 
+    } = useCalculateInGivenOut(
         pool,
         form.getValues('assetAId'),
         form.getValues('assetBId'),
-        toPrecision12(form.getValues('assetBAmount'))
-    )
+        toPrecision12(form.getValues('assetBAmount')),
+        tradeType,
+    ) || {}
     
-    const calculatedAssetBAmount = useCalculateOutGivenIn(
+    const { 
+        outGivenInWithFee: calculatedAssetBAmount, 
+        outGivenIn: calculatedAssetBAmountWithoutFee
+    } = useCalculateOutGivenIn(
         pool,
         form.getValues('assetAId'),
         form.getValues('assetBId'), 
-        toPrecision12(form.getValues('assetAAmount')) // 1
-    )
+        toPrecision12(form.getValues('assetAAmount')), // 1
+        tradeType 
+    ) || {}
 
     useEffect(() => {
         if (tradeType === TradeType.Buy) form.setValue('assetAAmount', fromPrecision12(calculatedAssetAAmount));
@@ -165,8 +177,39 @@ export const useCalculatedAssetAmounts = (
 
     return {
         calculatedAssetAAmount,
-        calculatedAssetBAmount
+        calculatedAssetAAmountWithoutFee,
+        calculatedAssetBAmount,
+        calculatedAssetBAmountWithoutFee
     }
+}
+
+/**
+ * 
+ * @param form 
+ * @param slippage 
+ * @param tradeType 
+ */
+export const useApplyAllowedSlippage = (
+    form: UseFormReturn<any, any>, 
+    slippage: any,
+    tradeType: TradeType
+) => {
+    useEffect(() => {
+        if (!slippage?.spotPriceAmount) return;
+        
+        // TODO: handle a NaN case
+        form.setValue('amountWithSlippage',
+            applyAllowedSlippage(
+                slippage?.spotPriceAmount, 
+                form.getValues('allowedSlippage'), 
+                tradeType
+            )
+        );
+
+    }, [
+        form.watch(['allowedSlippage']),
+        slippage?.spotPriceAmount
+    ]);
 }
 
 export type onAssetsIdsChange = (assetAId: string, assetBId: string) => void;
@@ -186,30 +229,22 @@ export const TradeForm = ({
     useDefaultFormAssets(assetsLoading, setValue)
 
     const { liquidity, spotPrice } = usePool(pool, assetAId, assetBId);
-    const { calculatedAssetAAmount, calculatedAssetBAmount } = useCalculatedAssetAmounts(form, pool, tradeType);
+    const { 
+        calculatedAssetAAmount,
+        calculatedAssetAAmountWithoutFee,
+        calculatedAssetBAmount,
+        calculatedAssetBAmountWithoutFee
+    } = useCalculatedAssetAmounts(form, pool, tradeType);
 
-    const slippageBuy = useSlippage(
-        spotPrice.aToB,
+    const slippage = useSlippage(
+        tradeType,
+        spotPrice,
         calculatedAssetAAmount,
         calculatedAssetBAmount
     )
-
-    const slippageSell = useSlippage(
-        spotPrice.bToA,
-        calculatedAssetBAmount,
-        calculatedAssetAAmount
-    )
-
-    const handleSubmitWithSlippage = (data: any) => {
-        if (!slippageBuy?.spotPriceAmount || !slippageSell?.spotPriceAmount) return;
-
-        const amountWithSlippage = tradeType === TradeType.Buy
-            ? applyAllowedSlippage(slippageBuy?.spotPriceAmount, data.allowedSlippage, tradeType)
-            : applyAllowedSlippage(slippageSell?.spotPriceAmount, data.allowedSlippage, tradeType)
     
-        return handleSubmit(data, amountWithSlippage);
-    }
-
+    useApplyAllowedSlippage(form, slippage, tradeType)
+    
     // show all the asset options
     const assetOptions = useCallback((withoutAssetId: string | undefined) => {
         return <>
@@ -231,7 +266,7 @@ export const TradeForm = ({
 
         <br /><br />
 
-        <form onSubmit={form.handleSubmit(handleSubmitWithSlippage)}>
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
             <div>
                 <div>
                     <label><b>(Pay with) Asset A: </b></label>
@@ -330,10 +365,19 @@ export const TradeForm = ({
                             </p>
                             <p>
                                 <b>Slippage ({tradeType}): </b> 
-                                {tradeType === TradeType.Buy
-                                    ? slippageBuy ? `${slippageBuy.percentualSlippage}% / ${fromPrecision12(slippageBuy.spotPriceAmount)}` : '-'
-                                    : slippageSell ? `${slippageSell.percentualSlippage}% / ${fromPrecision12(slippageSell.spotPriceAmount)}` : '-'
+                                {slippage 
+                                    ? `${slippage.percentualSlippage}% / ${fromPrecision12(slippage.spotPriceAmount)}`
+                                    : '-'
                                 }
+                            </p>
+                            <p>
+                                <b>Calculated amount with slippage: </b> 
+                                {fromPrecision12(form.getValues('amountWithSlippage'))}
+                            </p>
+
+                            <p>
+                                <b>Calculated amount without fee (A/B): </b> 
+                                {`${fromPrecision12(calculatedAssetAAmountWithoutFee)} / ${fromPrecision12(calculatedAssetBAmountWithoutFee)}`}
                             </p>
                         </div>
                     }

@@ -36,8 +36,6 @@ export const getPoolIdsByAssetIds = async (apiInstance: ApiPromise, assetIds: st
         assetIds[0], assetIds[1]
     )).toHuman();
 
-    console.log('getPoolIdsByAssetIds', lbpPoolId, xykPoolId);
-
     return {
         lbpPoolId,
         xykPoolId
@@ -69,8 +67,6 @@ export const useGetPoolsQueryResolver = () => {
             if (args?.assetIds) {
                 poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
             }
-
-            console.log('poolIds', poolIds);
 
             // if the poolId is specified, try resolving with a single pool
             if (poolIds.xykPoolId || poolIds.lbpPoolId) {
