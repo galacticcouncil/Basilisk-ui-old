@@ -45,7 +45,7 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
     let [balanceQ, balanceFrac] = divmod(value,precision);
 
     let unit = '';
-    let amount: string | number = 0;
+    let amount: string | number = balanceFrac / Math.pow(10, balancePrecision - 3);
     let fracAmount = '';
 
     if (balanceQ === 0 )
@@ -125,20 +125,23 @@ export const formatBalanceAlternative = (balance: number, balancePrecision: numb
         unit = ''
     }
     else {
+        let frac = 0;
         if (scaleQ === 0 || (scaleQ === 1 && scaleR === 0)) {
             // Handle hundreds
             unit = units[0];
             amount = balanceQ;
+            frac = balanceFrac / Math.pow(10, balancePrecision - 3);
         } else {
             let previous = scaleR === 0 ? 1 : 0;
             unit = units[scaleQ - previous];
-            let frac;
-            [amount, frac] = divmod(balanceQ , Math.pow(1000, scaleQ - previous));
-            if (decimals > 0) {
-                let fp = Math.floor(frac / Math.pow(1000, scaleQ - 1 - previous))
-                let fpp = Math.floor(fp / Math.pow(10, 3 - decimals));
-                frac_amount = `,${fpp}`
-            }
+            let fp;
+            [amount, fp] = divmod(balanceQ, Math.pow(1000, scaleQ - previous));
+            frac = Math.floor(fp / Math.pow(1000, scaleQ - 1 - previous))
+        }
+
+        if (frac > 9 && decimals > 0) {
+            let fpp = Math.floor(frac  / Math.pow(10, 3 - decimals));
+            frac_amount = `,${fpp}`
         }
     }
     // Construct the displayed value
