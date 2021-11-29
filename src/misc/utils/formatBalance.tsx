@@ -122,7 +122,6 @@ export const formatBalanceAlternative = (balance: number, balancePrecision: numb
         // Print the whole number for now
 
         amount = eToNumber( balanceFrac / precision);
-        unit = ''
     }
     else {
         let frac = 0;
@@ -139,7 +138,7 @@ export const formatBalanceAlternative = (balance: number, balancePrecision: numb
             frac = Math.floor(fp / Math.pow(1000, scaleQ - 1 - previous))
         }
 
-        if (frac > 9 && decimals > 0) {
+        if (frac > 0 && decimals > 0) {
             let fpp = Math.floor(frac  / Math.pow(10, 3 - decimals));
             frac_amount = `,${fpp}`
         }
