@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Dataset } from '../components/Chart/LineChart/LineChart';
 import { AssetPair, ChartGranularity, ChartType, PoolType } from '../components/Chart/shared';
 import { TradeChart } from '../components/Chart/TradeChart/TradeChart'
-import { TradeForm } from '../components/Trade/TradeForm'
+import { TradeForm } from '../components/Trade/TradeForm_old'
 
 // assetPair,
 // poolType,
