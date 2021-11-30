@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { isNaN } from 'lodash';
 import { useMemo } from 'react';
-import { TradeType } from '../../generated/graphql';
-import { fromPrecision12 } from '../math/useFromPrecision';
-import { percentageChange } from '../math/usePercentageChange';
-import { toPrecision12 } from '../math/useToPrecision';
+import { TradeType } from '../../../generated/graphql';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import { percentageChange } from '../../../hooks/math/usePercentageChange';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 
 export const calculateSlippage = (
     spotPrice: string,
@@ -48,17 +48,17 @@ export const calculateSlippage = (
  */
 export const useSlippage = (
     tradeType: TradeType,
-    spotPrice: {
+    spotPrice?: {
         aToB?: string,
         bToA?: string
     },
     assetAAmount?: string,
     assetBAmount?: string,
 ) => {
-    if (!spotPrice.aToB || !spotPrice.bToA || !assetAAmount || !assetBAmount) return;
+    if (!spotPrice?.aToB || !spotPrice?.bToA || !assetAAmount || !assetBAmount) return;
     return calculateSlippage.apply(null,
         tradeType === TradeType.Buy
-            ? [spotPrice.aToB, assetAAmount, assetBAmount]
-            : [spotPrice.bToA, assetBAmount, assetAAmount]
+            ? [spotPrice.bToA, assetAAmount, assetBAmount]
+            : [spotPrice.aToB, assetBAmount, assetAAmount]
     )
 }

@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Router } from './containers/Router';
 import { PageContainer } from './containers/PageContainer';
 
-log.setLevel('info');
+log.setLevel('debug');
 
 export const App = () => {
   return (
