@@ -1,4 +1,4 @@
-import {formatBalance, formatBalanceAlternative} from './formatBalance';
+import {formatBalance} from './formatBalance';
 
 describe('Balance Formatter', () => {
     describe('Precision 12', () => {
@@ -54,11 +54,11 @@ describe('Balance Formatter', () => {
                 [340282366920938463463374607431768211450, "340282366920938T"],
             ]
         )
-        ("should convert balance to correct form", (value,expected) => {
+        ("should convert balance to correct form", (value, expected) => {
             let precision = 12;
             let decimals = 2;
             expect(formatBalance(value, precision, decimals)).toBe(expected)
-            expect(formatBalanceAlternative(value, precision, decimals)).toBe(expected)
+
         });
 
         it.each([
@@ -112,11 +112,11 @@ describe('Balance Formatter', () => {
                 [340282366920938463463374607431768211450, "340282366920938T"],
             ]
         )
-        ("should convert balance with 3 decimals", (value,expected) => {
+        ("should convert balance with 3 decimals", (value, expected) => {
             let precision = 12;
             let decimals = 3;
             expect(formatBalance(value, precision, decimals)).toBe(expected)
-            expect(formatBalanceAlternative(value, precision, decimals)).toBe(expected)
+
         });
     });
 });
