@@ -21,6 +21,11 @@ export type Account = {
   vestingSchedule: VestingSchedule;
 };
 
+export type Asset = {
+  __typename?: 'Asset';
+  id: Scalars['String'];
+};
+
 export type Balance = {
   __typename?: 'Balance';
   assetId: Scalars['String'];
@@ -46,22 +51,41 @@ export type FeePaymentAsset = {
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
+export type LbpPool = {
+  __typename?: 'LBPPool';
+  assetAId: Scalars['String'];
+  assetBId: Scalars['String'];
+  balances?: Maybe<Array<Balance>>;
+  id: Scalars['String'];
+};
+
 export type LastBlock = {
   __typename?: 'LastBlock';
   id: Scalars['String'];
-  number?: Maybe<Scalars['String']>;
+  parachainBlockNumber?: Maybe<Scalars['String']>;
+  relaychainBlockNumber?: Maybe<Scalars['String']>;
 };
+
+export type Pool = LbpPool | XykPool;
 
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  _tradeType?: Maybe<TradeType>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
+  assets?: Maybe<Array<Asset>>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
+  pools?: Maybe<Array<Pool>>;
 };
+
+export enum TradeType {
+  Buy = 'Buy',
+  Sell = 'Sell'
+}
 
 export type VestingSchedule = {
   __typename?: 'VestingSchedule';
@@ -70,4 +94,12 @@ export type VestingSchedule = {
   periodCount?: Maybe<Scalars['String']>;
   remainingVestingAmount?: Maybe<Scalars['String']>;
   start?: Maybe<Scalars['String']>;
+};
+
+export type XykPool = {
+  __typename?: 'XYKPool';
+  assetAId: Scalars['String'];
+  assetBId: Scalars['String'];
+  balances?: Maybe<Array<Balance>>;
+  id: Scalars['String'];
 };

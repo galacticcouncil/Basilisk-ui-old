@@ -1,0 +1,15 @@
+query GetPoolByAssets($assetAId: String!, $assetBId: String!) {
+    lastBlock @client {
+        parachainBlockNumber
+    }
+    
+    pool: pools(assetIds: [$assetAId, $assetBId]) @client {
+        id,
+        assetAId,
+        assetBId,
+        balances {
+            assetId,
+            balance
+        }
+    }
+}

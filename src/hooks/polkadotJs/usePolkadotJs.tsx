@@ -1,4 +1,4 @@
-import { ApiPromise, WsProvider } from '@polkadot/api';
+import { ApiPromise, WsProvider, HttpProvider } from '@polkadot/api';
 import { ProviderInterface } from '@polkadot/rpc-provider/types'
 import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';
@@ -6,8 +6,28 @@ import typesConfig from './typesConfig';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { types as ormlTypes, typesAlias as ormlTypesAlias } from '@open-web3/orml-type-definitions'
 
-
-
+const getPoolAccount = {
+  description: 'Get pool account id by asset IDs',
+  params: [
+    {
+      name: 'assetAId',
+      type: 'u32'
+    },
+    {
+      name: 'assetBId',
+      type: 'u32'
+    }
+  ],
+  type: 'AccountId'
+};
+const rpc = {
+  xyk: {
+    getPoolAccount  
+  },
+  lbp: {
+    getPoolAccount
+  }
+}
 
 /**
  * Setup an instance of PolkadotJs, and watch
@@ -37,7 +57,8 @@ export const useConfigurePolkadotJs = () => {
       const api = await ApiPromise.create({
         provider,
         types,
-        typesAlias
+        typesAlias,
+        rpc
       });
       await api.isReady;
       setApiInstance(api);

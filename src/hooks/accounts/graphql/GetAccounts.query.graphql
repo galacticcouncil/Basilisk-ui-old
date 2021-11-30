@@ -1,11 +1,17 @@
-#import "./AccountFields.fragment.graphql"
 
 query GetAccounts {
     lastBlock @client {
-        number
+        parachainBlockNumber,
+        relaychainBlockNumber
     }
     
     accounts @client {
-        ...AccountFields
+        id,
+        name,
+        isActive,
+        balances {
+            assetId,
+            balance
+        }
     }
 }

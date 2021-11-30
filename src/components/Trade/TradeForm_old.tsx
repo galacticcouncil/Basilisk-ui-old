@@ -2,7 +2,7 @@ import { AssetPair } from '../Chart/shared';
 import { TradeChart } from '../Chart/TradeChart/TradeChart'
 import { TokenInput } from '../Input/TokenInput';
 import { Button, ButtonKind } from '../Button/Button';
-import './TradeForm.scss';
+import './TradeForm_old.scss';
 import { useEffect, useState } from 'react';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

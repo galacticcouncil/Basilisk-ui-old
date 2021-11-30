@@ -1,4 +1,4 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
+import { ApolloCache, ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
 import { useSetActiveAccount } from '../useSetActiveAccount'
 import { SetActiveAccountMutationVariables } from '../mutations/useSetActiveAccountMutation';

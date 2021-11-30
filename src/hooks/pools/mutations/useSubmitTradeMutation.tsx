@@ -1,0 +1,32 @@
+import { useMutation } from '@apollo/client';
+import { loader } from 'graphql.macro';
+import { PoolType } from '../../../components/Chart/shared';
+import { TradeType } from '../../../generated/graphql';
+
+const SUBMIT_TRADE = loader('./../graphql/SubmitTrade.mutation.graphql');
+
+export interface SubmitTradeMutationVariables {
+    assetAId: string,
+    assetBId: string,
+    assetAAmount: string,
+    assetBAmount: string,
+    poolType: PoolType,
+    tradeType: TradeType,
+    amountWithSlippage: string
+}
+
+export const useSubmitTradeMutation = () => useMutation<void, SubmitTradeMutationVariables>(
+    SUBMIT_TRADE, 
+    {
+        notifyOnNetworkStatusChange: true
+    }
+)
+
+/**
+ * lbp.buy(assetOut, assetIn, amount, maxLimit)
+ * lbp.sell(assetIn, assetOut, amount, maxLimit)
+ * 
+ * exchange.buy(assetBuy, assetSell, amountBuy, maxSold, discount)
+ * exchange.sell(assetSell, assetBuy, amountSell, minBought, discount)
+ */
+

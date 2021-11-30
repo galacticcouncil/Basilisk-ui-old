@@ -12,6 +12,10 @@ import { useExtensionQueryResolvers } from '../polkadotJs/useExtensionQueryResol
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
+import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
+import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
+import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
+import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -19,20 +23,27 @@ import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePay
  */
 export const useResolvers: () => Resolvers = () => {
     const { Query: AccountsQueryResolver, Account } = useAccountsQueryResolvers();
+    const { Query: PoolsQueryResolver, XYKPool, LBPPool } = usePoolsQueryResolver()
     return {
         Query: {
             ...AccountsQueryResolver,
             ...useExtensionQueryResolvers(),
             ...useConfigQueryResolvers(),
             ...useFeePaymentAssetsQueryResolvers(),
+            ...useBalanceQueryResolvers(),
+            ...PoolsQueryResolver,
+            ...useAssetsQueryResolvers(),
         },
         Mutation: {
             ...useAccountsMutationResolvers(),
             ...useVestingMutationResolvers(),
             ...useBalanceMutationResolvers(),
-            ...useConfigMutationResolvers()
+            ...useConfigMutationResolvers(),
+            ...usePoolsMutationResolvers()
         },
-        Account
+        Account,
+        XYKPool,
+        LBPPool
     }
 };
 

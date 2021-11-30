@@ -10,7 +10,7 @@ export interface AccountsQueryResolverArgs {
 
 export const __typename = 'Account';
 
-export const useGetAccountsResolver = () => {
+export const useGetAccountsQueryResolver = () => {
     const [persistedActiveAccount] = usePersistActiveAccount();
     const getAccounts = useGetAccounts();
 
@@ -23,6 +23,12 @@ export const useGetAccountsResolver = () => {
                 persistedActiveAccount?.id,
                 args?.isActive,
             );
+
+            // if no results were found, return undefined/null
+            // this is useful when un-setting the active account
+            if (!accounts) {
+                return null;
+            };
     
             return isArray(accounts)
                 ? accounts.map(account => ({

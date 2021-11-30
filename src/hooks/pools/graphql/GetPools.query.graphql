@@ -1,0 +1,11 @@
+query GetPools {
+    pools @client {
+        id
+        assetAId
+        assetBId,
+        balances {
+            assetId,
+            balance
+        }
+    }
+}

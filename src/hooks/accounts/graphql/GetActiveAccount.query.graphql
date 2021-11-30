@@ -1,13 +1,18 @@
-#import "./AccountFields.fragment.graphql"
-#import "./../../vesting/graphql/VestingScheduleFields.fragment.graphql"
-
+# TODO: fetch only balances for the active fee payment asset
 query GetActiveAccount {
     lastBlock @client { 
-        number 
+        parachainBlockNumber,
+        relaychainBlockNumber,
     }
     
     account: accounts(isActive: true) @client {
-        ...AccountFields,
+        id,
+        name,
+        isActive,
+        balances {
+            assetId,
+            balance
+        },
         vestingSchedule {
             # figure out why this fragment doesnt work
             # ...VestingScheduleFields,

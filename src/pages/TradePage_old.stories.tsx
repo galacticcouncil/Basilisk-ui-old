@@ -1,5 +1,5 @@
 import { StorybookWrapper } from '../misc/StorybookWrapper';
-import { TradePage } from './TradePage';
+import { TradePage } from './TradePage_old';
 import cssColors from './../misc/colors.module.scss';
 import ETHIcon from './../misc/icons/assets/ETH.svg';
 import KSMIcon from './../misc/icons/assets/KSM.svg';

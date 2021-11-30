@@ -4,10 +4,11 @@ import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
-import { DispatchError } from '@polkadot/types/interfaces/system';
+import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
+import { ApiPromise } from '@polkadot/api';
 
 /**
  * Run an async function and handle the thrown errors
@@ -27,6 +28,7 @@ export const withGracefulErrors = async (
         try {
             resolve(await fn(resolve, reject));
         } catch (e: any) {
+            console.log('graceful error', e);
             e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
             // rejecting this promise with an error instead of throwing an error
             // is necessary to reflect the apollo resolver loading state correctly
@@ -54,20 +56,31 @@ export const gracefulExtensionCancelationErrorHandler = (e: any) => {
     return e;
 }
 
-export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
+export const vestingClaimHandler = (resolve: resolve, reject: reject, apiInstance?: ApiPromise) => ({
     status,
+    events = [],
     dispatchError
 }: {
     status: ExtrinsicStatus,
+    events: EventRecord[],
     dispatchError?: DispatchError
 }) => {
-    console.log('status', status);
     if (status.isFinalized) log.info('operation finalized')
+
+    // TODO: extract intention registred for exchange buy/sell
+    events.forEach(({ event: { data, method, section }, phase }) => {
+        console.log('event handler', phase.toString(), `: ${section}.${method}`, data.toString());
+    });
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
+        console.log('is in block', status.createdAtHash?.toString());
         if (dispatchError?.isModule) {
-            return log.info('operation unsuccessful', dispatchError);
+            return log.info('operation unsuccessful',
+                !apiInstance
+                    ? dispatchError
+                    : apiInstance.registry.findMetaError(dispatchError.asModule)
+            );
         }
 
         return log.info('operation successful');
@@ -75,12 +88,12 @@ export const vestingClaimHandler = (resolve: resolve, reject: reject) => ({
 
     // if the operation has been broadcast, finish the mutation
     if (status.isBroadcast) {
-        log.info('transaction has been broadcast');
+        log.info('transaction has been broadcast', status.hash.toHuman());
         return resolve();
     }
     if (dispatchError) {
         log.error('There was a dispatch error', dispatchError);
-        return reject();
+        return reject('Dispatch error');
     }
 };
 

@@ -1,8 +1,8 @@
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
-import { TradeForm, TradeFormProps } from './TradeForm';
+import { TradeForm, TradeFormProps } from './TradeForm_old';
 
 export default {
-  title: 'Trade/TradeForm',
+  title: 'Trade/TradeForm_old',
   component: TradeForm,
   args: {
     assetPair: {

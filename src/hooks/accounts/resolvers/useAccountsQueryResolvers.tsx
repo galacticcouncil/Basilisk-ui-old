@@ -3,17 +3,17 @@ import { useCallback } from 'react';
 import { useBalanceQueryResolvers } from '../../balances/useBalanceQueryResolvers';
 import { useResolverToRef } from './useAccountsMutationResolvers';
 import { useVestingScheduleQueryResolvers } from '../../vesting/useVestingScheduleQueryResolvers';
-import { useGetAccountsResolver } from './useGetAccountsQueryResolver';
+import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
 
 /**
  * Used to resolve queries for the `Account` (or `accounts`) entity.
  */
 export const useAccountsQueryResolvers = () => {    
-    const getAccountsResolver = useGetAccountsResolver();
+    const getAccountsQueryResolver = useGetAccountsQueryResolver();
 
     return {
         Query: {
-            accounts: getAccountsResolver
+            accounts: getAccountsQueryResolver
         },
         /**
          * Additional sub-resolvers for the `Account` entity,

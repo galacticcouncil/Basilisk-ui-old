@@ -9,5 +9,5 @@ export interface GetAccountsQueryResponse {
 }
 
 export const useGetAccountsQuery = () => useQuery<GetAccountsQueryResponse>(GET_ACCOUNTS, {
-    notifyOnNetworkStatusChange: true
+    notifyOnNetworkStatusChange: true,
 });
