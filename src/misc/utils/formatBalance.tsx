@@ -24,7 +24,11 @@ const eToNumber = (num: any) => {
     function r() {return w.replace(new RegExp(`^(.{${pos}})(.)`), `$1${dot}$2`)}
 }
 
-export const formatBalance = (balance: number, balancePrecision: number, outputDecimals: number) => {
+export const formatBalance = (balance: number,
+                              balancePrecision: number,
+                              outputDecimals: number,
+                              thousandSeparator: string = '.',
+                              decimalSeparator: string = ',') => {
 
     const units = ['', 'K', 'M', 'B', 'T'] // Perhaps this could be configurable
     const decimals = Math.min(outputDecimals, 3); // support for max 3 output decimals for now
@@ -73,7 +77,8 @@ export const formatBalance = (balance: number, balancePrecision: number, outputD
         }
         else if ( frac > 0 && decimals > 0 ){
             let f = Math.floor(frac / Math.pow(10, 3 - decimals));
-            fracAmount= `,${f}`;
+            let sep = unit === units[0] ? decimalSeparator : thousandSeparator;
+            fracAmount= `${sep}${f}`;
         }
     }
 
