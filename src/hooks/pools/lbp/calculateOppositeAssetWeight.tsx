@@ -1,37 +1,20 @@
-// import { LbpPool, LbpWeights } from '../../../generated/graphql';
-// import { HydraDxMath } from '../../math/useMath';
+import BigNumber from 'bignumber.js'
 
-// export const lbpWeightsPrecision = '6';
+export const hundredWithPrecision6 = new BigNumber('100')
+    .multipliedBy(
+        new BigNumber('10').pow('6')
+    )
 
-// export const calculateCurrentAssetWeight = (
-//     math: HydraDxMath, 
-//     relaychainBlockNumber: string,
-//     weights: Partial<LbpWeights>,
-//     startBlock: string,
-//     endBlock: string,
-// ) => {
-//     if (!weights.start || !weights.end) throw new Error('Missing start/end weights');
-
-//     return math.lbp.calculate_linear_weights(
-//         startBlock,
-//         endBlock,
-//         weights.start,
-//         weights.end,
-//         relaychainBlockNumber
-//     );
-// }
-
-// export const calculateOppositeAssetWeights = (lbpWeights: Partial<LbpWeights>) => {
-//     const start = '0';
-//     const end = '0';
-
-//     // return {
-//     //     start, 
-//     //     end,
-//     //     current: calculateCurrentAssetWeights({
-//     //         start, end,
-//     //     })
-//     // }
-// }
-
-export const a = 5;
+/**
+ * LBP pools specify weights only for the first asset in the pool,
+ * the `opposite` weights need to be calculated by subtracting from `100`
+ * @param weight 
+ * @returns Calculated oppostite weight as `100 - weight`
+ */
+export const calculateOppositeAssetWeight = (weight: string): string => {
+    return new BigNumber(hundredWithPrecision6)
+        .minus(
+            new BigNumber(weight)
+        )
+        .toFixed(0)
+}

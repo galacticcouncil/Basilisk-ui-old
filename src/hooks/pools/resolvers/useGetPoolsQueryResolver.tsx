@@ -1,3 +1,4 @@
+import { ApolloClient } from '@apollo/client';
 import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import { isArray, isObject } from 'lodash';
@@ -53,8 +54,9 @@ export const useGetPoolsQueryResolver = () => {
         useCallback(async (
             _obj,
             args?: PoolQueryResolverArgs,
+            context?: { client: ApolloClient<object> }
         ) => {
-            if (!apiInstance || loading) return;
+            if (!apiInstance || loading || !context?.client) return;
 
             // use the provided poolId
             let poolId = args?.poolId;
@@ -71,7 +73,7 @@ export const useGetPoolsQueryResolver = () => {
             // if the poolId is specified, try resolving with a single pool
             if (poolIds.xykPoolId || poolIds.lbpPoolId) {
                 console.log('fetching pools');
-                let lbpPool = await getLbpPool(poolIds.lbpPoolId);
+                let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
                 let xykPool = await getXykPool(poolIds.xykPoolId);
                 
                 console.log('pools', lbpPool);
@@ -95,7 +97,7 @@ export const useGetPoolsQueryResolver = () => {
 
             // if no extra args were provided, get all the pools
             const [lbpPools, xykPools] = await Promise.all([
-                getLbpPools(),
+                getLbpPools(context.client),
                 getXykPools()
             ]);
             

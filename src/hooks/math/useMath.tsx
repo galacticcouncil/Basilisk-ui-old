@@ -2,10 +2,29 @@ import constate from 'constate';
 import { useEffect, useState } from 'react'
 
 // TODO: figure out how to extract types from the wasm type definitions
-export interface HydraDxMath {
+export interface HydraDxMathXyk {
     get_spot_price: (a: string, b: string, c: string) => string | undefined,
     calculate_in_given_out: (a: string, b: string, c: string) => string | undefined,
     calculate_out_given_in: (a: string, b: string, c: string) => string | undefined
+}
+
+export interface HydraDxMathLbp {
+    calculate_linear_weights: (start_x: string, end_x: string, start_y: string, end_y: string, at: string) => string,
+    calculate_in_given_out: (s: string, b: string, s_w: string, b_w: string, a: string) => string,
+    calculate_out_given_in: (s: string, b: string, s_w: string, b_w: string, a: string) => string,
+    get_spot_price: (s: string, b: string, s_w: string, b_w: string, a: string) => string,
+}
+
+export interface HydraDxMath {
+    xyk: HydraDxMathXyk,
+    lbp: HydraDxMathLbp
+}
+
+export const loadMath = async (): Promise<HydraDxMath> => {
+    return {
+        xyk: await import('hydra-dx-wasm/build/xyk/bundler'),
+        lbp: await import('hydra-dx-wasm/build/lbp/bundler') as unknown as HydraDxMathLbp
+    }
 }
 
 /**
@@ -25,7 +44,7 @@ export const useMath = () => {
         (async () => {
             setWasm({
                 // TODO: if the module path is a variable, the module can't be found for some reason
-                instance: await import('hydra-dx-wasm/build/xyk/bundler') as HydraDxMath,
+                instance: await loadMath(),
                 loading: false,
             });
         })();

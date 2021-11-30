@@ -29,7 +29,7 @@ export const useSpotPrice = (
 
         if (!assetABalance || !assetBBalance || !math) return;
 
-        return math.get_spot_price(
+        return math.xyk.get_spot_price(
             assetABalance,
             assetBBalance,
             oneWithPrecision,

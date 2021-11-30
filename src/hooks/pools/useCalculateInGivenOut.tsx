@@ -16,7 +16,7 @@ export const useCalculateInGivenOut = (
 
     if (!assetABalance || !assetBBalance || !math || !assetBBalanceInput || !tradeType) return;
 
-    const inGivenOut = math?.calculate_in_given_out(
+    const inGivenOut = math?.xyk.calculate_in_given_out(
         assetABalance, // out_reserve
         assetBBalance, // in_reserve
         assetBBalanceInput, // amount_out

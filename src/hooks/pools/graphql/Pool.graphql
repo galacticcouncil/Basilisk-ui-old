@@ -21,11 +21,30 @@ enum TradeType {
 #     assetBBalance: String!,
 # }
 
+type LBPAssetWeights {
+    initial: String!,
+    final: String!,
+    current: String!,
+}
+
+type LBPFee {
+    numerator: String,
+    denominator: String,
+}
+
+# TODO: figure out which fields are populated at creation and at update
 type LBPPool {
     id: String!,
     assetAId: String!,
     assetBId: String!,
     balances: [Balance!]
+    feeCollector: String!,
+    fee: LBPFee!,
+    repayTarget: String!,
+    assetAWeights: LBPAssetWeights!,
+    assetBWeights: LBPAssetWeights!,
+    startBlock: String!,
+    endBlock: String!
 }
 
 type XYKPool {

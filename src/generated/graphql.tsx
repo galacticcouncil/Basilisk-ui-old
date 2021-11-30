@@ -51,12 +51,32 @@ export type FeePaymentAsset = {
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
+export type LbpAssetWeights = {
+  __typename?: 'LBPAssetWeights';
+  current: Scalars['String'];
+  final: Scalars['String'];
+  initial: Scalars['String'];
+};
+
+export type LbpFee = {
+  __typename?: 'LBPFee';
+  denominator?: Maybe<Scalars['String']>;
+  numerator?: Maybe<Scalars['String']>;
+};
+
 export type LbpPool = {
   __typename?: 'LBPPool';
   assetAId: Scalars['String'];
+  assetAWeights: LbpAssetWeights;
   assetBId: Scalars['String'];
+  assetBWeights: LbpAssetWeights;
   balances?: Maybe<Array<Balance>>;
+  endBlock: Scalars['String'];
+  fee: LbpFee;
+  feeCollector: Scalars['String'];
   id: Scalars['String'];
+  repayTarget: Scalars['String'];
+  startBlock: Scalars['String'];
 };
 
 export type LastBlock = {
