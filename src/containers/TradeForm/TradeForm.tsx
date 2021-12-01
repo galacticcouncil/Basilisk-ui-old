@@ -53,11 +53,22 @@ export const TradeForm = ({
 }: TradeFormProps) => {
     const form = useTradeForm(assetIds);
     const tradeType = useTradeType(form);
-    const handleSubmit = useHandleSubmit(tradeType, form, spotPrice, pool);
     useHandleAssetIdsChange(form, onAssetIdsChange);
     useCalculateInAndOut(form, tradeType, pool);
     useResetAmountInputsOnPoolChange(form, pool);
-    const slippage = useSlippage(tradeType, spotPrice, form.getValues('assetAAmount'), form.getValues('assetBAmount'));
+
+    // TODO: adjust the precision in the hook itself?
+    const slippage = useSlippage(tradeType, spotPrice, 
+        toPrecision12(form.getValues('assetAAmount')),
+        toPrecision12(form.getValues('assetBAmount'))
+    );
+
+    const handleSubmit = useHandleSubmit(
+        tradeType, 
+        form.getValues('allowedSlippage'), 
+        slippage, 
+        pool
+    );
 
     return <div>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
@@ -73,6 +84,11 @@ export const TradeForm = ({
                 assetIdInputProps={form.register('assetBId')}
                 assetAmountInputProps={form.register('assetBAmount')}
             />
+
+            <div>
+                <b>Allowed slippage</b><br/>
+                <input type="text" {...form.register('allowedSlippage')}/>
+            </div>
 
             <br/>
 

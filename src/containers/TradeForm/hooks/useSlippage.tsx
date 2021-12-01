@@ -6,6 +6,11 @@ import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { percentageChange } from '../../../hooks/math/usePercentageChange';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 
+export interface Slippage {
+    percentualSlippage: string,
+    spotPriceAmount: string
+}
+
 export const calculateSlippage = (
     spotPrice: string,
     assetAAmount: string,
@@ -32,10 +37,11 @@ export const calculateSlippage = (
         .abs()
         .toFixed(10) // TODO: deal with formatting to 2 decimal places when displaying the result
 
-    return {
+    const slippage: Slippage = {
         percentualSlippage,
         spotPriceAmount
     }
+    return slippage
 }
 
 /**
