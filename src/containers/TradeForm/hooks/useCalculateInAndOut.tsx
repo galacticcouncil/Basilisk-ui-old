@@ -63,7 +63,7 @@ import { applyTradeFee } from '../../../hooks/pools/resolvers/useSubmitTradeMuta
         log.debug('TradeForm.useCalculateInAndOut', 'outAmount', outAmount);
 
         form.setValue('assetBAmount', fromPrecision12(outAmount));
-    }, [assetAAmount, assetAId, assetBId, tradeType])
+    }, [assetAAmount, assetAId, assetBId, tradeType, pool])
 
     useEffect(() => {
         if (!pool || !math || !assetBId || !assetBAmount) return;
@@ -81,5 +81,5 @@ import { applyTradeFee } from '../../../hooks/pools/resolvers/useSubmitTradeMuta
         log.debug('TradeForm.useCalculateInAndOut', 'inAmount', fromPrecision12(inAmount));
 
         form.setValue('assetAAmount', fromPrecision12(inAmount));
-    }, [assetBAmount, assetAId, assetBId, tradeType])
+    }, [assetBAmount, assetAId, assetBId, tradeType, pool])
 }
