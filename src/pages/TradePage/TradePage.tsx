@@ -20,8 +20,8 @@ export interface SpotPrice {
 export const TradePage = () => {
     // TODO default values here should come from the router where query args are parsed
     const [assetIds, setAssetIds] = useState<TradeFormProps['assetIds']>({
-        assetAId: '1',
-        assetBId: '2'
+        assetInId: '1',
+        assetOutId: '2'
     })
 
     // automatically fetch a pool by the given assets
@@ -46,8 +46,8 @@ export const TradePage = () => {
     log.debug('TradePage.poolData.pool', poolData?.pool);
 
     // when the underlying form's assetIds change, update the state
-    const handleAssetIdsChange = (assetAId: string, assetBId?: string) => {
-        const newIds = { assetAId, assetBId };
+    const handleAssetIdsChange = (assetInId: string, assetOutId?: string) => {
+        const newIds = { assetInId, assetOutId };
         log.debug('TradePage.handleAssetIdsChange', isEqual(assetIds, newIds), newIds);
         if (!isEqual(assetIds, newIds)) setAssetIds(newIds);
     }
@@ -59,8 +59,8 @@ export const TradePage = () => {
 
     const poolLiquidity: PoolLiquidity = useMemo(() => {
         return {
-            assetABalance: find(pool?.balances, { assetId: assetIds.assetAId })?.balance,
-            assetBBalance: find(pool?.balances, { assetId: assetIds.assetBId })?.balance,
+            assetABalance: find(pool?.balances, { assetId: assetIds.assetInId })?.balance,
+            assetBBalance: find(pool?.balances, { assetId: assetIds.assetOutId })?.balance,
         }
     }, [pool]);
 

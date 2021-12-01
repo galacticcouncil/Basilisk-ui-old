@@ -10,7 +10,7 @@ import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolXYK } from '../
 import log from 'loglevel';
 
 export const useSpotPrice = (
-    { assetAId, assetBId }: TradeFormProps['assetIds'],
+    { assetInId, assetOutId }: TradeFormProps['assetIds'],
     pool?: Pool,
 ): SpotPrice | undefined => {
     const client = useApolloClient();
@@ -18,7 +18,7 @@ export const useSpotPrice = (
     const { math } = useMathContext();
    
     return useMemo(() => {
-        if (!math || !pool || !assetAId || !assetBId || !relaychainBlockNumber) return;
+        if (!math || !pool || !assetInId || !assetOutId || !relaychainBlockNumber) return;
 
         // if the pool is an XYKPool, use the XYKPool spot price calculation and vice versa
         const calculateSpotPriceFromPool = pool?.__typename === 'XYKPool'
@@ -27,12 +27,12 @@ export const useSpotPrice = (
 
         const spotPrice: SpotPrice = {
             // TODO: get rid of `as any` since its not type safe *at all*
-            aToB: calculateSpotPriceFromPool(math, pool as any, assetAId, assetBId),
-            bToA: calculateSpotPriceFromPool(math, pool as any, assetBId, assetAId)
+            aToB: calculateSpotPriceFromPool(math, pool as any, assetInId, assetOutId),
+            bToA: calculateSpotPriceFromPool(math, pool as any, assetOutId, assetInId)
         }
 
         log.debug('TradePage.useSpotPrice', spotPrice);
 
         return spotPrice;
-    }, [relaychainBlockNumber, assetAId, assetBId, pool]);
+    }, [relaychainBlockNumber, assetInId, assetOutId, pool]);
 }

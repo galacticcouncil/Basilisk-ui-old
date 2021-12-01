@@ -15,8 +15,8 @@ enum TradeType {
 # 
 # interface Pool {
 #     poolType: PoolType!,
-#     assetAId: String!,
-#     assetBId: String!,
+#     assetInId: String!,
+#     assetOutId: String!,
 #     assetABalance: String!,
 #     assetBBalance: String!,
 # }
@@ -35,8 +35,8 @@ type LBPFee {
 # TODO: figure out which fields are populated at creation and at update
 type LBPPool {
     id: String!,
-    assetAId: String!,
-    assetBId: String!,
+    assetInId: String!,
+    assetOutId: String!,
     balances: [Balance!]
     feeCollector: String!,
     fee: LBPFee!,
@@ -49,8 +49,8 @@ type LBPPool {
 
 type XYKPool {
     id: String!,
-    assetAId: String!,
-    assetBId: String!,
+    assetInId: String!,
+    assetOutId: String!,
     balances: [Balance!]
 }
 

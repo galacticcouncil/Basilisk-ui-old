@@ -25,11 +25,11 @@ export const calculateSpotPriceFromPool = (
 
     if (!assetInBalance || !assetOutBalance) throw new Error(`Can't find the required balances in the pool`);
 
-    const assetInWeight = assetInId === pool.assetAId
+    const assetInWeight = assetInId === pool.assetInId
         ? pool.assetAWeights.current
         : pool.assetBWeights.current
 
-    const assetOutWeight = assetOutId === pool.assetBId
+    const assetOutWeight = assetOutId === pool.assetOutId
         ? pool.assetBWeights.current
         : pool.assetAWeights.current;
 

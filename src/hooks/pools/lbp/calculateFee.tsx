@@ -23,10 +23,10 @@ export const calculateFee = async (
     apiInstance: ApiPromise,
     pool: LbpPool,
 ) => {
-    const poolAssetIds = [pool.assetAId];
+    const poolAssetIds = [pool.assetInId];
     const balances = getBalancesByAddress(apiInstance, pool.feeCollector, poolAssetIds);
     const accumulatedAssetBalance = find(balances, {
-        assetId: pool.assetAId
+        assetId: pool.assetInId
     });
 
     console.log('accumulatedAssetBalance', accumulatedAssetBalance, pool.repayTarget);

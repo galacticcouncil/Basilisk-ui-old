@@ -2,8 +2,8 @@ import log from 'loglevel';
 import { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { TradeType } from '../../../generated/graphql';
-import { TradeFormFields } from '../TradeForm';
 import { useListenForInput } from './useListenForInput';
+import { TradeFormFields } from './useTradeForm';
 
 /**
  * Listen to changes to inputs within the trade form, and set the trade type
@@ -14,21 +14,21 @@ import { useListenForInput } from './useListenForInput';
  export const useTradeType = (form: UseFormReturn<TradeFormFields>) => {
     const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell);
     
-    const watchAssetAAmount = useListenForInput(form, 'assetAAmount');
-    const watchAassetAId = useListenForInput(form, 'assetAId');
+    const watchassetInAmount = useListenForInput(form, 'assetInAmount');
+    const watchAassetInId = useListenForInput(form, 'assetInId');
 
-    const watchAassetBAmount = useListenForInput(form, 'assetBAmount');
-    const watchAassetBId = useListenForInput(form, 'assetBId');
+    const watchAassetOutAmount = useListenForInput(form, 'assetOutAmount');
+    const watchAassetOutId = useListenForInput(form, 'assetOutId');
 
     useEffect(() => { 
         log.debug('TradeForm.setTradeType', TradeType.Sell)
         setTradeType(TradeType.Sell) 
-    }, [watchAssetAAmount, watchAassetAId]);
+    }, [watchassetInAmount, watchAassetInId]);
 
     useEffect(() => {
         log.debug('TradeForm.setTradeType', TradeType.Buy)
         setTradeType(TradeType.Buy) 
-    }, [watchAassetBAmount, watchAassetBId]);
+    }, [watchAassetOutAmount, watchAassetOutId]);
 
     return tradeType;
 }

@@ -3,11 +3,11 @@ import { Pool } from '../../generated/graphql';
 /**
  * Check if the given pool contains the selected assets
  * @param pool 
- * @param assetAId 
- * @param assetBId 
+ * @param assetInId 
+ * @param assetOutId 
  * @returns 
  */
-export const poolHasAssets = (pool: Pool, assetAId: string, assetBId: string) => {
-    const poolAssets = [pool.assetAId, pool.assetBId];
-    return poolAssets.includes(assetAId) && poolAssets.includes(assetBId);
+export const poolHasAssets = (pool: Pool, assetInId: string, assetOutId: string) => {
+    const poolAssets = [pool.assetInId, pool.assetOutId];
+    return poolAssets.includes(assetInId) && poolAssets.includes(assetOutId);
 }

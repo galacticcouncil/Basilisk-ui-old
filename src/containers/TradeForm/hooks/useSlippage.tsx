@@ -13,18 +13,18 @@ export interface Slippage {
 
 export const calculateSlippage = (
     spotPrice: string,
-    assetAAmount: string,
-    assetBAmount: string,
+    assetInAmount: string,
+    assetOutAmount: string,
 ) => {
     const spotPriceAmount = new BigNumber(spotPrice)
         .multipliedBy(
-            fromPrecision12(assetBAmount)!
+            fromPrecision12(assetOutAmount)!
         )
         .toFixed(0);
 
     const resultPercentageChange = percentageChange(
         spotPriceAmount,
-        assetAAmount
+        assetInAmount
     );
 
     if (!resultPercentageChange || resultPercentageChange.isNaN()) return;
@@ -58,13 +58,13 @@ export const useSlippage = (
         aToB?: string,
         bToA?: string
     },
-    assetAAmount?: string,
-    assetBAmount?: string,
+    assetInAmount?: string,
+    assetOutAmount?: string,
 ) => {
-    if (!spotPrice?.aToB || !spotPrice?.bToA || !assetAAmount || !assetBAmount) return;
+    if (!spotPrice?.aToB || !spotPrice?.bToA || !assetInAmount || !assetOutAmount) return;
     return calculateSlippage.apply(null,
         tradeType === TradeType.Buy
-            ? [spotPrice.bToA, assetAAmount, assetBAmount]
-            : [spotPrice.aToB, assetBAmount, assetAAmount]
+            ? [spotPrice.bToA, assetInAmount, assetOutAmount]
+            : [spotPrice.aToB, assetOutAmount, assetInAmount]
     )
 }

@@ -24,24 +24,17 @@ import { useCalculateInAndOut } from './hooks/useCalculateInAndOut'
 import { useSlippage } from './hooks/useSlippage'
 import { isEqual } from 'lodash'
 import { useResetAmountInputsOnPoolChange } from './hooks/useResetAmountInputsOnPoolChange'
+import { useCalculateAllowedSlippage } from './hooks/useCalculateAllowedSlippage'
 
 export interface TradeFormProps {
     pool?: Pool,
     loading: boolean,
     assetIds: {
-        assetAId: string,
-        assetBId?: string
+        assetInId: string,
+        assetOutId?: string
     },
     spotPrice?: SpotPrice,
-    onAssetIdsChange: (assetAId: string, assetBId?: string) => void
-}
-
-export interface TradeFormFields {
-    assetAId: string,
-    assetBId?: string,
-    assetAAmount?: string,
-    assetBAmount?: string,
-    allowedSlippage: string,
+    onAssetIdsChange: (assetInId: string, assetOutId?: string) => void
 }
 
 export const TradeForm = ({
@@ -59,8 +52,8 @@ export const TradeForm = ({
 
     // TODO: adjust the precision in the hook itself?
     const slippage = useSlippage(tradeType, spotPrice, 
-        toPrecision12(form.getValues('assetAAmount')),
-        toPrecision12(form.getValues('assetBAmount'))
+        toPrecision12(form.getValues('assetInAmount')),
+        toPrecision12(form.getValues('assetOutAmount'))
     );
 
     const handleSubmit = useHandleSubmit(
@@ -70,24 +63,33 @@ export const TradeForm = ({
         pool
     );
 
+    const { allowedSlippageInputDisabled } = useCalculateAllowedSlippage(form, pool);
+
     return <div>
         <form onSubmit={form.handleSubmit(handleSubmit)}>
             <p>{tradeType}</p>
             <TokenInput
-                assetIdInputProps={form.register('assetAId')}
-                assetAmountInputProps={form.register('assetAAmount')}
+                assetIdInputProps={form.register('assetInId')}
+                assetAmountInputProps={form.register('assetInAmount')}
             />
 
             <br/>
 
             <TokenInput
-                assetIdInputProps={form.register('assetBId')}
-                assetAmountInputProps={form.register('assetBAmount')}
+                assetIdInputProps={form.register('assetOutId')}
+                assetAmountInputProps={form.register('assetOutAmount')}
             />
 
             <div>
                 <b>Allowed slippage</b><br/>
-                <input type="text" {...form.register('allowedSlippage')}/>
+                <input 
+                    type="text"
+                    disabled={allowedSlippageInputDisabled}
+                    {...form.register('allowedSlippage')}
+                />
+                <br/>
+                <b>Auto slippage</b> 
+                <input type="checkbox" {...form.register('autoSlippage')}/>
             </div>
 
             <br/>

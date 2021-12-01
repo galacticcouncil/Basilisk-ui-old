@@ -20,8 +20,8 @@ export const mapToPool = (apiInstance: ApiPromise) => ([id, codec]: [string, Cod
 
     return {
         id,
-        assetAId: poolAssets[0],
-        assetBId: poolAssets[1],
+        assetInId: poolAssets[0],
+        assetOutId: poolAssets[1],
     } as XykPool
 }
 

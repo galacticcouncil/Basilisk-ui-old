@@ -6,8 +6,9 @@ import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 import { useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
 import { applyAllowedSlippage } from '../../../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
 import { SpotPrice } from '../../../pages/TradePage/TradePage';
-import { TradeFormFields, TradeFormProps } from '../TradeForm';
+import { TradeFormProps } from '../TradeForm';
 import { Slippage } from './useSlippage';
+import { TradeFormFields } from './useTradeForm';
 
 /**
  * Submit the trade mutation once the trade form has been submitted
@@ -24,17 +25,17 @@ import { Slippage } from './useSlippage';
 ) => {
     const [submitTrade] = useSubmitTradeMutation();
     return useCallback(({
-        assetAId,
-        assetBId,
-        assetAAmount,
-        assetBAmount
+        assetInId,
+        assetOutId,
+        assetInAmount,
+        assetOutAmount
     }: TradeFormFields) => {
         if (!pool) throw new Error(`Can't submit a trade mutation without a pool`);
 
-        assetAAmount = toPrecision12(assetAAmount);
-        assetBAmount = toPrecision12(assetBAmount);
+        assetInAmount = toPrecision12(assetInAmount);
+        assetOutAmount = toPrecision12(assetOutAmount);
 
-        if (!assetAId || !assetBId || !assetAAmount || !assetBAmount || !slippage?.spotPriceAmount) {
+        if (!assetInId || !assetOutId || !assetInAmount || !assetOutAmount || !slippage?.spotPriceAmount) {
             throw new Error(`Can't submit a trade mutation without all the required arguments`)
         }
 
@@ -51,10 +52,10 @@ import { Slippage } from './useSlippage';
         // Submit a trade with the given parameters to be handled by Apollo
         submitTrade({ variables: {
             tradeType,
-            assetAId,
-            assetAAmount,
-            assetBId,
-            assetBAmount,
+            assetInId,
+            assetInAmount,
+            assetOutId,
+            assetOutAmount,
             amountWithSlippage,
             poolType,
         }});

@@ -4,14 +4,14 @@ import { useAssetBalance, useSpotPrice } from './useSpotPrice';
 
 export const usePool = (
     pool?: Pool,
-    assetAId?: string,
-    assetBId?: string,
+    assetInId?: string,
+    assetOutId?: string,
 ) => {
-    const liquidityAssetA = useAssetBalance(pool, assetAId);
-    const liquidityAssetB = useAssetBalance(pool, assetBId);
+    const liquidityAssetA = useAssetBalance(pool, assetInId);
+    const liquidityAssetB = useAssetBalance(pool, assetOutId);
 
-    const spotPriceAToB = useSpotPrice(pool, assetBId, assetAId);
-    const spotPriceBToA = useSpotPrice(pool, assetAId, assetBId);
+    const spotPriceAToB = useSpotPrice(pool, assetOutId, assetInId);
+    const spotPriceBToA = useSpotPrice(pool, assetInId, assetOutId);
 
     return {
         liquidity: {

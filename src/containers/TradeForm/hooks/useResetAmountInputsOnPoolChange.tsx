@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { usePreviousDistinct } from 'react-use';
 import { Pool } from '../../../generated/graphql';
-import { TradeFormFields } from '../TradeForm';
+import { TradeFormFields } from './useTradeForm';
 
 export const useResetAmountInputsOnPoolChange = (
     form: UseFormReturn<TradeFormFields>,
@@ -12,8 +12,8 @@ export const useResetAmountInputsOnPoolChange = (
     const previousPoolId = usePreviousDistinct(pool?.id);
     useEffect(() => {
         if (!isEqual(previousPoolId, pool?.id)) {
-            form.resetField('assetAAmount');
-            form.resetField('assetBAmount');
+            form.resetField('assetInAmount');
+            form.resetField('assetOutAmount');
         }
     }, [previousPoolId, pool?.id])
 }

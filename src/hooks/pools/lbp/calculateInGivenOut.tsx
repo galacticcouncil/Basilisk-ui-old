@@ -23,19 +23,19 @@ export const calculateInGivenOut = (
     return math.lbp.calculate_in_given_out(inReserve, outReserve, inWeight, outWeight, amount);
 }
 
-export const getPoolBalances = (pool: Pool, assetAId: string, assetBId: string) => {
-    const assetABalance = find(pool.balances, { assetId: assetAId })?.balance;
-    const assetBBalance = find(pool.balances, { assetId: assetBId })?.balance
+export const getPoolBalances = (pool: Pool, assetInId: string, assetOutId: string) => {
+    const assetABalance = find(pool.balances, { assetId: assetInId })?.balance;
+    const assetBBalance = find(pool.balances, { assetId: assetOutId })?.balance
 
     return { assetABalance, assetBBalance }
 }
 
 export const getInAndOutWeights = (pool: LbpPool, assetInId: string, assetOutId: string) => {
-    const assetInWeight = assetInId === pool.assetAId
+    const assetInWeight = assetInId === pool.assetInId
         ? pool.assetAWeights.current
         : pool.assetBWeights.current
 
-    const assetOutWeight = assetOutId === pool.assetBId
+    const assetOutWeight = assetOutId === pool.assetOutId
         ? pool.assetBWeights.current
         : pool.assetAWeights.current;
 

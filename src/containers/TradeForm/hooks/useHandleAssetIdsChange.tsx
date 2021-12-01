@@ -1,7 +1,8 @@
 import log from 'loglevel';
 import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TradeFormFields, TradeFormProps } from '../TradeForm';
+import { TradeFormProps } from '../TradeForm';
+import { TradeFormFields } from './useTradeForm';
 
 /**
  * Inform parent components about asset ID changes in the form
@@ -12,9 +13,9 @@ import { TradeFormFields, TradeFormProps } from '../TradeForm';
     form: UseFormReturn<TradeFormFields>,
     onAssetIdsChange: TradeFormProps['onAssetIdsChange']
 ) => {
-    const [assetAId, assetBId] = form.watch(['assetAId', 'assetBId']);
+    const [assetInId, assetOutId] = form.watch(['assetInId', 'assetOutId']);
     useEffect(() => {
-        log.debug('TradeForm.useHandleAssetIdsChange', assetAId, assetBId);
-        onAssetIdsChange(assetAId, assetBId);
-    }, [assetAId, assetBId]);
+        log.debug('TradeForm.useHandleAssetIdsChange', assetInId, assetOutId);
+        onAssetIdsChange(assetInId, assetOutId);
+    }, [assetInId, assetOutId]);
 }

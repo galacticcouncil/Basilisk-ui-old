@@ -51,8 +51,8 @@ export const mapToPool = (
         // construct the pool entity without weights
         const partialPool: Omit<LbpPool, 'assetBWeights' | 'assetAWeights'> = {
             id,
-            assetAId: poolData.assets[0].toString(),
-            assetBId: poolData.assets[1].toString(),
+            assetInId: poolData.assets[0].toString(),
+            assetOutId: poolData.assets[1].toString(),
             feeCollector: poolData.feeCollector,
             fee: {
                 numerator: poolData.fee.numerator.toString(),

@@ -71,9 +71,9 @@ export const useSubmitTradeMutationResolver = () => {
                 return await buyXyk(
                     cache,
                     apiInstance,
-                    args.assetBId,
-                    args.assetAId,
-                    args.assetBAmount,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
                     args.amountWithSlippage,
                 );
             }
@@ -82,9 +82,9 @@ export const useSubmitTradeMutationResolver = () => {
                 return await sellXyk(
                     cache,
                     apiInstance,
-                    args.assetAId,
-                    args.assetBId,
-                    args.assetAAmount,
+                    args.assetInId,
+                    args.assetOutId,
+                    args.assetInAmount,
                     args.amountWithSlippage,
                 );
             }
@@ -93,9 +93,9 @@ export const useSubmitTradeMutationResolver = () => {
                 return await buyLbp(
                     cache,
                     apiInstance,
-                    args.assetBId,
-                    args.assetAId,
-                    args.assetBAmount,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
                     args.amountWithSlippage
                 )
             }
@@ -104,9 +104,9 @@ export const useSubmitTradeMutationResolver = () => {
                 return await sellLbp(
                     cache,
                     apiInstance,
-                    args.assetBId,
-                    args.assetAId,
-                    args.assetBAmount,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
                     args.amountWithSlippage
                 )
             }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TradeFormFields } from '../TradeForm';
+import { TradeFormFields } from './useTradeForm';
 
 /**
  * Trigger a state update each time the given input changes (via the `input` event)

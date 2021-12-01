@@ -21,7 +21,7 @@ export const useBalanceQueryResolvers = () => {
                 // TODO: how to extract the typename from the LbpPool[__typename] directly?
                 if (entity.__typename === 'LBPPool' || entity.__typename === 'XYKPool') {
                     entity = (entity as LbpPool | XykPool);
-                    assetIds = [entity.assetAId, entity.assetBId];
+                    assetIds = [entity.assetInId, entity.assetOutId];
                 }
 
                 return (await getBalancesByAddress(entity.id, assetIds))

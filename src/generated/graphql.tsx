@@ -66,9 +66,9 @@ export type LbpFee = {
 
 export type LbpPool = {
   __typename?: 'LBPPool';
-  assetAId: Scalars['String'];
+  assetInId: Scalars['String'];
   assetAWeights: LbpAssetWeights;
-  assetBId: Scalars['String'];
+  assetOutId: Scalars['String'];
   assetBWeights: LbpAssetWeights;
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['String'];
@@ -118,8 +118,8 @@ export type VestingSchedule = {
 
 export type XykPool = {
   __typename?: 'XYKPool';
-  assetAId: Scalars['String'];
-  assetBId: Scalars['String'];
+  assetInId: Scalars['String'];
+  assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
 };
