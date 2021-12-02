@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -66,10 +67,10 @@ export type LbpFee = {
 
 export type LbpPool = {
   __typename?: 'LBPPool';
-  assetInId: Scalars['String'];
   assetAWeights: LbpAssetWeights;
-  assetOutId: Scalars['String'];
   assetBWeights: LbpAssetWeights;
+  assetInId: Scalars['String'];
+  assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['String'];
   fee: LbpFee;
