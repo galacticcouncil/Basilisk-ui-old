@@ -4,6 +4,7 @@ import { Vec } from '@polkadot/types';
 import { VestingScheduleOf, BalanceOf } from '@open-web3/orml-types/interfaces'
 import { find, first } from 'lodash';
 import { ApiPromise } from '@polkadot/api';
+import { Codec } from '@polkadot/types/types';
 
 export const balanceLockDataType = 'Vec<BalanceLock>';
 export const tokensLockDataType = balanceLockDataType;
@@ -11,6 +12,11 @@ export const tokensLockDataType = balanceLockDataType;
 export const vestingBalanceLockId = 'ormlvest';
 
 export const vestingScheduleDataType = 'Vec<VestingScheduleOf>';
+
+export interface OrmlTokensBalanceLock {
+    id?: string,
+    amount?: number,
+}
 
 export const getLockedBalanceByAddressAndLockId = async (
     apiInstance: ApiPromise,
@@ -27,16 +33,22 @@ export const getLockedBalanceByAddressAndLockId = async (
         )
     );
 
+    const tokenBalanceLocks = (await apiInstance.query.tokens.locks.entries(address))
+        .map(([_storageKey, codec]: [any, Codec]) => {
+            const tokenBalanceLock = (codec.toJSON() as any)[0] as unknown as OrmlTokensBalanceLock;
+            return {
+                id: tokenBalanceLock?.id,
+                amount: tokenBalanceLock?.amount?.toString()
+            }
+        });
+    
     const lockedTokensBalance = find(
-        apiInstance.createType(
-            tokensLockDataType,
-            await apiInstance.query.tokens.locks(address, null)
-        ),
+        tokenBalanceLocks,
         lockedAmount => (
-            lockedAmount.id.eq(lockId)
+            lockedAmount?.id === lockId 
         )
     );
-
+    
     return lockedNativeBalance || lockedTokensBalance;
 }
 
@@ -65,7 +77,7 @@ export const useGetVestingScheduleByAddress = () => {
         // in all conditions?
         return {
             // TODO: add a claimableAmount (https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26)
-            remainingVestingAmount: lockedVestingAmount?.amount.toString(),
+            remainingVestingAmount: lockedVestingAmount?.amount?.toString(),
             start: vestingSchedule?.start.toString(),
             period: vestingSchedule?.period.toString(),
             periodCount: vestingSchedule?.periodCount.toString(),

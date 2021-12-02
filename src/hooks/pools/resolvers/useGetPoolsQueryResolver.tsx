@@ -2,6 +2,7 @@ import { ApolloClient } from '@apollo/client';
 import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import { isArray, isObject } from 'lodash';
+import log from 'loglevel';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { LbpPool, XykPool } from '../../../generated/graphql';
@@ -57,6 +58,7 @@ export const useGetPoolsQueryResolver = () => {
             context?: { client: ApolloClient<object> }
         ) => {
             if (!apiInstance || loading || !context?.client) return;
+            log.debug('useGetPoolsQueryResolver', 'fetching pools', args);
 
             // use the provided poolId
             let poolId = args?.poolId;
@@ -68,23 +70,27 @@ export const useGetPoolsQueryResolver = () => {
             // if we're querying by assetIds, find the poolIds via RPC
             if (args?.assetIds) {
                 poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
+                log.debug('useGetPoolsQueryResolver', 'found poolIDs', poolIds, apiInstance);
             }
 
             // if the poolId is specified, try resolving with a single pool
             if (poolIds.xykPoolId || poolIds.lbpPoolId) {
-                console.log('fetching pools');
                 let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
                 let xykPool = await getXykPool(poolIds.xykPoolId);
-                
-                console.log('pools', lbpPool);
+        
+                log.debug('useGetPoolsQueryResolver', 'found pools by poolIDs', lbpPool, xykPool);
 
                 // if the assets are matching, its a default value which means the pool was not found
                 if (xykPool?.assetInId === xykPool?.assetOutId) xykPool = undefined;
                 if (lbpPool?.assetInId === lbpPool?.assetOutId) lbpPool = undefined;
 
+                log.debug('useGetPoolsQueryResolver', 'eliminated default value pools', lbpPool, xykPool);
+
                 // TODO: which pool should have priority if both types exist for the same assets?
                 const pool = xykPool || lbpPool;
-        
+                
+                log.debug('useGetPoolsQueryResolver', 'returning a single pool', pool);
+
                 return pool && ({
                     ...pool,
                     __typename: xykPool 
@@ -101,6 +107,8 @@ export const useGetPoolsQueryResolver = () => {
                 getXykPools()
             ]);
             
+            log.debug('useGetPoolsQueryResolver', 'returning multiple pools', [lbpPools, xykPools]);
+
             return ([] as (LbpPool | XykPool)[])
                 .concat(
                     lbpPools

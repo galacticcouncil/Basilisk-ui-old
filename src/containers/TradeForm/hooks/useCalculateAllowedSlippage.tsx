@@ -20,9 +20,14 @@ export const useCalculateAllowedSlippage = (
     useEffect(() => {
         if (!allowedSlippageInputDisabled) return;
 
-        const allowedSlippage = pool?.__typename === 'XYKPool'
-            ? defaultAllowedSlippage.xyk
-            : defaultAllowedSlippage.lbp
+        // TODO: depending on if the LBP repay fee is applied,
+        // increase the lbp default slippage
+        const allowedSlippage = pool
+            ? (
+                pool?.__typename === 'XYKPool'
+                ? defaultAllowedSlippage.xyk
+                : defaultAllowedSlippage.lbp
+            ) : defaultAllowedSlippage.xyk;
 
         form.setValue('allowedSlippage', allowedSlippage);
     }, [pool, allowedSlippageInputDisabled])

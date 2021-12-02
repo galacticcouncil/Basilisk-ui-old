@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import { useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { PoolType } from '../../../components/Chart/shared';
@@ -44,6 +45,12 @@ import { TradeFormFields } from './useTradeForm';
             allowedSlippage,
             tradeType
         );
+
+        log.debug('TradeForm.useHandleSubmit', 'amountWithSlippage', {
+            spotPriceAmount: slippage.spotPriceAmount,
+            amountWithSlippage,
+            tradeType
+        });
 
         const poolType = pool.__typename === 'LBPPool'
             ? PoolType.LBP

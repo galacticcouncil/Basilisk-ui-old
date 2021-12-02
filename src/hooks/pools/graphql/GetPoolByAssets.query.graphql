@@ -12,8 +12,7 @@ query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
             balance
         },
 
-        # TODO: investigate how caching works when these fields are missing
-        # for XYK pools
+        # TODO: investigate how caching works when these fields are missing for XYK pools
         # lbp fields,
         repayTarget,
         assetAWeights,

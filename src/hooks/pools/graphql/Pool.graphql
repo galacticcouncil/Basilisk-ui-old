@@ -38,9 +38,8 @@ type LBPPool {
     assetInId: String!,
     assetOutId: String!,
     balances: [Balance!]
-    feeCollector: String!,
     fee: LBPFee!,
-    repayTarget: String!,
+    repayTargetReached: Boolean!,
     assetAWeights: LBPAssetWeights!,
     assetBWeights: LBPAssetWeights!,
     startBlock: String!,

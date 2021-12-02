@@ -410,22 +410,6 @@
         "description": null,
         "fields": [
           {
-            "name": "assetInId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "assetAWeights",
             "description": null,
             "args": [],
@@ -442,7 +426,23 @@
             "deprecationReason": null
           },
           {
-            "name": "assetOutId",
+            "name": "assetBWeights",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "LBPAssetWeights",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "assetInId",
             "description": null,
             "args": [],
             "type": {
@@ -458,15 +458,15 @@
             "deprecationReason": null
           },
           {
-            "name": "assetBWeights",
+            "name": "assetOutId",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "LBPAssetWeights",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -526,22 +526,6 @@
             "deprecationReason": null
           },
           {
-            "name": "feeCollector",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "id",
             "description": null,
             "args": [],
@@ -558,7 +542,7 @@
             "deprecationReason": null
           },
           {
-            "name": "repayTarget",
+            "name": "repayTargetReached",
             "description": null,
             "args": [],
             "type": {
@@ -566,7 +550,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Boolean",
                 "ofType": null
               }
             },

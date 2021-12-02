@@ -66,16 +66,15 @@ export type LbpFee = {
 
 export type LbpPool = {
   __typename?: 'LBPPool';
-  assetInId: Scalars['String'];
   assetAWeights: LbpAssetWeights;
-  assetOutId: Scalars['String'];
   assetBWeights: LbpAssetWeights;
+  assetInId: Scalars['String'];
+  assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['String'];
   fee: LbpFee;
-  feeCollector: Scalars['String'];
   id: Scalars['String'];
-  repayTarget: Scalars['String'];
+  repayTargetReached: Scalars['Boolean'];
   startBlock: Scalars['String'];
 };
 

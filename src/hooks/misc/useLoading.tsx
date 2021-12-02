@@ -1,6 +1,8 @@
+import { useMathContext } from '../math/useMath';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 
 export const useLoading = () => {
-    const { apiInstance, loading } = usePolkadotJsContext();
-    return !apiInstance || loading;
+    const { apiInstance } = usePolkadotJsContext();
+    const { math } = useMathContext();
+    return !apiInstance || !math;
 }
