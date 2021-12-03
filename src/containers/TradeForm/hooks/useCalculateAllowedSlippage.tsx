@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { Fee, LbpPool, Pool } from '../../../generated/graphql';
 import { TradeFormFields } from './useTradeForm';
-import constants from './../../../constants';
 import BigNumber from 'bignumber.js';
 import log from 'loglevel';
+import { feeFromPool, feeToPercentage } from './usePercentageFee';
 
 export const defaultAllowedSlippage = {
     xyk: '5',
@@ -15,15 +15,13 @@ export const addFeeToSlippage = (slippage: string, fee?: Fee) => {
     if (!fee) return slippage;
     
     return new BigNumber(slippage).plus(
-        new BigNumber(fee.numerator)
-            .dividedBy(fee.denominator)
-            .multipliedBy('100')
+        feeToPercentage(fee)
     ).toFixed(2);
 }
 
 export const useCalculateAllowedSlippage = (
     form: UseFormReturn<TradeFormFields>,
-    pool?: Pool
+    pool?: Pool,
 ) => {
     const watchAutoSlippage = form.watch('autoSlippage');
     const allowedSlippageInputDisabled = useMemo(() => (
@@ -44,20 +42,8 @@ export const useCalculateAllowedSlippage = (
 
         const allowedSlippageWithFee = addFeeToSlippage(
             allowedSlippage,
-            pool
-            ? (
-                pool.__typename === 'XYKPool'
-                    ? constants.xykFee
-                    : (pool as LbpPool).fee
-            ) : undefined
+            feeFromPool(pool)
         )
-
-        console.log('fee', pool
-        ? (
-            pool.__typename === 'XYKPool'
-                ? constants.xykFee
-                : (pool as LbpPool).fee
-        ) : undefined);
 
         log.debug('TradeForm.useCalculateAllowedSlippage', 'allowedSlippageWithFee', allowedSlippageWithFee);
 
