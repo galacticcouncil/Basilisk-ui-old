@@ -1,0 +1,8 @@
+mutation XcmTransfer(
+    $fromChain: String!,
+    $toChain: String!,
+    $currencyId: String!,
+    $amount: String!,
+    $to: String!) {
+    xcmTransfer(fromChain: $fromChain, toChain: $toChain,currencyId: $currencyId, amount: $amount, to: $to) @client
+}

@@ -32,6 +32,10 @@ export const AppBar = () => {
                     Trade
                 </Link>
                 {' | '}
+                <Link to='/xcm'>
+                    Cross chain
+                </Link>
+                {' | '}
                 <Link to='/wallet'>
                     Wallet
                 </Link>
