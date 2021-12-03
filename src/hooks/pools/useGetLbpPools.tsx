@@ -1,7 +1,7 @@
 import { AccountId, AssetId } from '@open-web3/orml-types/interfaces';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
-import { LbpAssetWeights, LbpFee, LbpPool } from '../../generated/graphql';
+import { Fee, LbpAssetWeights, LbpPool } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import type { Codec } from '@polkadot/types/types';
 import { mapToPoolId } from './useGetXykPools';
@@ -35,9 +35,9 @@ export const lbpRepayFeeLockId = '0x6c6270636c6c6374' // 'lbpcllct';
 export const balanceDataType = 'BalanceOf';
 
 // fee applied in a case when the repayTarget has not been reached
-const repayFee: LbpFee = {
-    numerator: '1',
-    denominator: '20',
+const repayFee: Fee = {
+    numerator: '2',
+    denominator: '10',
 }
 
 /**
@@ -115,7 +115,7 @@ export const mapToPool = (
             ? new BigNumber(feeCollectorBalanceLockAmount).gt(new BigNumber(repayTarget))
             : false
 
-        const poolFee: LbpFee = {
+        const poolFee: Fee = {
             numerator: poolData.fee.numerator.toString(),
             denominator: poolData.fee.denominator.toString(),
         }

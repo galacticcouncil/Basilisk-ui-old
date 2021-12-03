@@ -27,9 +27,9 @@ type LBPAssetWeights {
     current: String!,
 }
 
-type LBPFee {
-    numerator: String,
-    denominator: String,
+type Fee {
+    numerator: String!,
+    denominator: String!,
 }
 
 # TODO: figure out which fields are populated at creation and at update
@@ -38,7 +38,7 @@ type LBPPool {
     assetInId: String!,
     assetOutId: String!,
     balances: [Balance!]
-    fee: LBPFee!,
+    fee: Fee!,
     repayTargetReached: Boolean!,
     assetAWeights: LBPAssetWeights!,
     assetBWeights: LBPAssetWeights!,
