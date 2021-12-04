@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useGetAssetsQuery } from '../hooks/assets/queries/useGetAssetsQuery';
 import { useForm } from 'react-hook-form';
 import {useXcmTransferMutation, XcmTransferMutationVariables} from '../hooks/xcm/useXcmTransferMutation';
-import {useGetChains} from "../hooks/xcm/useGetChains";
+import { CHAINS } from "../hooks/xcm/useGetChains";
 
 export const useAssets = (watch: any) => {
     const { data: assets, loading } = useGetAssetsQuery();
@@ -13,12 +13,6 @@ export const useAssets = (watch: any) => {
         loading,
         assetId
     }
-}
-
-const useChains = () => {
-    const chains = useGetChains();
-
-    return { chains };
 }
 
 export const useXcmTransferForm= (
@@ -59,17 +53,15 @@ export const XcmTransferForm= () => {
     const { register, watch } = form;
     const { assets, loading: assetsLoading } = useAssets(watch);
 
-    const { chains } = useChains();
-
     const chainsOptions = useCallback( () => {
         return <>
             {
-                chains?.map( chain => (
+                CHAINS.map( chain => (
                     <option key={chain.id} value={`${chain.name}`}>{chain.name}</option>
                 ))
             }
         </>
-    }, [chains]) ;
+    }, [CHAINS]) ;
 
     const assetOptions = useCallback(() => {
         return <>

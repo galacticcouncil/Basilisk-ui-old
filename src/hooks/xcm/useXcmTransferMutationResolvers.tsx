@@ -12,7 +12,7 @@ import {GET_ACTIVE_ACCOUNT, GetActiveAccountQueryResponse} from "../accounts/que
 import {ApolloCache, NormalizedCacheObject} from "@apollo/client";
 
 import isValidAddressPolkadotAddress from '../../misc/utils/validatePolkadotAddress';
-import {Chains, ChainTransferData} from "./useGetChains";
+import {isXcmTransferSupported} from "./useGetChains";
 
 // TODO: use validate JSON schema module of some sort
 export const invalidTransferVariablesError = 'Invalid XCM transfer parameters provided';
@@ -57,27 +57,6 @@ export const responseHandler = (
     }
 }
 
-function isXcmTransferSupported(fromChain: string, toChain: string, currencyId: string) {
-    const chains = Chains;
-
-    const from = chains.find( v => v.name === fromChain );
-    const to = chains.find( v => v.name === toChain);
-
-    let isSupported = false;
-    let destChain;
-
-    if (from && to)
-    {
-        destChain = from.supportedTransfers.find(v => v.name === toChain) as ChainTransferData;
-        isSupported = destChain && !!destChain.assets?.find(v => v === currencyId);
-    }
-
-    return {
-        isSupported,
-        destChain
-    }
-}
-
 export const xcmTransferExtrinsic = (apiInstance: ApiPromise) => apiInstance.tx.xTokens.transfer;
 
 export const useXcmTransferMutationResolvers = () => {
@@ -93,9 +72,9 @@ export const useXcmTransferMutationResolvers = () => {
 
             if (!fromChain|| !toChain || !currencyId ) throw new Error(invalidTransferVariablesError);
 
-            const { isSupported, destChain } = isXcmTransferSupported(fromChain, toChain, currencyId);
+            const { destChain } = isXcmTransferSupported(fromChain, toChain, currencyId);
 
-            if (!isSupported || !destChain) throw new Error(xcmNotSupported);
+            if (!destChain) throw new Error(xcmNotSupported);
 
             if (!isValidAddressPolkadotAddress(to)) throw new Error(invalidPolkadotAddress);
 

@@ -1,12 +1,3 @@
-import {useMemo} from 'react';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-
-export type ChainType = {
-    name: string,
-    id: string,
-    supportedTransfers: any[]
-};
-
 export type ChainTransferData = {
     name: string,
     id: string,
@@ -14,7 +5,14 @@ export type ChainTransferData = {
     destWeight?: number
 }
 
-export const Chains = [
+export type ChainType = {
+    name: string,
+    id: string,
+    supportedTransfers: ChainTransferData[]
+};
+
+
+export const CHAINS : ChainType[] = [
     {
         name: "Kusama",
         id: "parent",
@@ -38,17 +36,27 @@ export const Chains = [
     }
 ]
 
+/**
+ *
+ * Checks if XCM transfer is suported for given from/to chain and currency combination
+ *
+ * Returns xcm transfer details for supported xcm transfer if found, otherwise undefined.
+ */
+export const isXcmTransferSupported = (fromChain: string, toChain: string, currencyId: string) => {
+    const from = CHAINS.find( v => v.name === fromChain );
+    const to = CHAINS.find( v => v.name === toChain);
 
+    let destChain;
 
-export const useGetChains = () => {
-    const { apiInstance, loading } = usePolkadotJsContext();
+    if (from && to)
+    {
+        let c = from.supportedTransfers.find(v => v.name === toChain) as ChainTransferData;
+        if ( c && !!c.assets?.find(v => v === currencyId) ){
+            destChain = c
+        }
+    }
 
-    return useMemo(() => {
-        if (!apiInstance || loading) return;
-
-        return Chains.map( (v) => v as ChainType);
-    }, [
-        apiInstance,
-        loading
-    ]);
+    return {
+        destChain
+    }
 }
