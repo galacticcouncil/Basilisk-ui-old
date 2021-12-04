@@ -28,9 +28,9 @@ export const Navigation = () => (
     <Link className= 'basilisk-logo' to="https://bsx.fi">()</Link>
     <Link to="/">Trade</Link>
     {' | '}
-    <Link to="/wallet">Pools</Link>
+    <Link to="/">Pools</Link>
     {' | '}
-    <Link to="/config">Wallet</Link>
+    <Link to="/wallet">Wallet</Link>
   </div>
 );
 

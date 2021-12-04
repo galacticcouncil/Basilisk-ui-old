@@ -6,9 +6,9 @@ export interface ActionBarProps {
   extensionLoading: boolean;
   activeAccountLoading: boolean;
   accountData?: {
-          name: string;
-          address: string;
-          nativeAssetBalance: string | undefined;
+          name?: string;
+          address?: string;
+          nativeAssetBalance?: string;
   };
 }
 
@@ -19,32 +19,35 @@ export const ActionBar = ({
   isExtensionAvailable,
 }: ActionBarProps) => {
   return (
-    <div className="app-bar">
-      <div className="app-bar-help">?</div>
-      <div className="app-bar-notifications">!</div>
+    <div className="action-bar">
+      <div className='action-bar-icons action-bar-item'>
+        <div className="action-bar-help action-bar-icon ">?</div>
+        <div className="action-bar-notifications action-bar-icon ">!</div>
+      </div>
       <div>
-        <b>Active account: </b>
         {extensionLoading || activeAccountLoading ? (
-          'loading...'
+          <div className='action-bar-error action-bar-item'>loading...</div>
         ) : isExtensionAvailable ? (
           <>
             {accountData?.name ? (
-              <>
-                <div>
-                  {accountData?.name}
-                  {' | '}
-                  {accountData?.nativeAssetBalance} BSX
+                <div className='action-bar-account-info action-bar-item'>
+                    <div className='action-bar-account-balance action-bar-account-item'>
+                        {accountData?.nativeAssetBalance} BSX
+                    </div>
+                    {/* TODO! Acc name / address + Icon component*/}
+                    <div className='action-bar-account-name action-bar-account-item'>
+                        {accountData?.name}
+                    </div>
                 </div>
-              </>
             ) : (
-              <Link to="/wallet">select an account</Link>
+              <Link className='action-bar-select-account action-bar-item' to="/wallet">select an account</Link>
             )}
           </>
         ) : (
-          <div>Extension unavailable</div>
+          <div className='action-bar-error action-bar-item'>Extension unavailable</div>
         )}
       </div>
-      <div className="app-bar-settings">v</div>
+      <div className='action-bar-settings action-bar-item'>v</div>
     </div>
   );
 };

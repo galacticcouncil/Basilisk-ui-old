@@ -11,44 +11,59 @@ export default {
 
 const Template: ComponentStory<typeof ActionBar> = (props) =>  (
     <StorybookWrapper>
+    
         <ActionBar {... { 
             isExtensionAvailable: true,
             extensionLoading: false,
             activeAccountLoading:false,
-            activeAccountData: {
+            accountData: {
                 nativeAssetBalance: '1000',
                 name: 'Alice',
                 address: 'sX00000000000000000000000000000000000000000000000',
             },
         }} />
+
+        <br />
+
+        <ActionBar {... { 
+            isExtensionAvailable: true,
+            extensionLoading: false,
+            activeAccountLoading:false,
+        }} />
+
+        <br />
 
         <ActionBar {... { 
             isExtensionAvailable: false,
             extensionLoading: false,
             activeAccountLoading:false,
-            activeAccountData: {
+            accountData: {
                 nativeAssetBalance: '1000',
                 name: 'Alice',
                 address: 'sX00000000000000000000000000000000000000000000000',
             },
         }} />
+
+        <br />
 
         <ActionBar {... { 
             isExtensionAvailable: true,
             extensionLoading: true,
             activeAccountLoading:false,
-            activeAccountData: {
+            accountData: {
                 nativeAssetBalance: '1000',
                 name: 'Alice',
                 address: 'sX00000000000000000000000000000000000000000000000',
             },
         }} />
 
+        <br />
+
         <ActionBar {... { 
             isExtensionAvailable: true,
             extensionLoading: false,
             activeAccountLoading:true,
-            activeAccountData: {
+            accountData: {
                 nativeAssetBalance: '1000',
                 name: 'Alice',
                 address: 'sX00000000000000000000000000000000000000000000000',

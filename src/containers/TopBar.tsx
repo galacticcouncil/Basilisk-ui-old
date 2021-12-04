@@ -6,6 +6,9 @@ import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActive
 import { nativeAssetId } from '../hooks/balances/useGetBalancesByAddress';
 import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery';
 import { useGetExtensionQuery } from '../hooks/polkadotJs/useGetExtensionQuery';
+
+import './TopBar.scss';
+
 export const TopBar = () => {
     // TODO: there is no loading state for last block
     // since its populated in the cache manually
@@ -40,7 +43,7 @@ export const TopBar = () => {
                 extensionLoading,
                 activeAccountLoading,
                 accountData: activeAccountData ? { 
-                    name: activeAccountData.account ? activeAccountData.account.name ? activeAccountData.account.name : 'no-name'  : 'no-name',
+                    name: activeAccountData.account ? activeAccountData.account.name ? activeAccountData.account.name : undefined  : undefined,
                     nativeAssetBalance,
                     address: 'placeholder fill me'
                 } : undefined

@@ -31,6 +31,8 @@ $colors: (
 
 $colorsList: [];
 
+$page-background: linear-gradient(107.54deg, #373741 47.92%, #424250 100%);
+
 @each $color, $values in $colors {
     @each $value in $values {
         $i: index($values, $value);
