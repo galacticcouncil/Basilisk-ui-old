@@ -1,10 +1,19 @@
 import { Balance } from '../../../generated/graphql';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { formatPrecisionSI } from '@gapit/format-si';
+import { formatPrecisionSI, formatFixedSI } from '@gapit/format-si';
 import { useMemo } from 'react';
 import log from 'loglevel';
 import './FormattedBalance.scss';
 
+// TODO: extract
+export const assetIdNameMap: Record<string, { symbol: string, fullName: string }> = {
+    '0': {
+        symbol: 'BSX',
+        fullName: 'Basilisk'
+    }
+}
+
+// TODO: extract
 export const unitMap: Record<string, string> = {
     'G': 'giga',
     'M': 'mega',
@@ -21,12 +30,15 @@ export const unitMap: Record<string, string> = {
 export const useFormatSI = (
     assetSymbol: string,
     precision: number, 
-    number?: string) => {
+    unitStyle: UnitStyle,
+    number?: string,
+) => {
     const formattedBalance = useMemo(() => {
         const balanceWithPrecision12 = fromPrecision12(number);
         if (!balanceWithPrecision12) return;
 
-        let siFormat = formatPrecisionSI(
+        // alternatively use formatPrecisionSI
+        let siFormat = formatFixedSI(
             balanceWithPrecision12,
             '',
             precision
@@ -49,24 +61,43 @@ export const useFormatSI = (
 
         const unit = formattedBalance.unit;
         const unitName = formattedBalance.unitName;
+        const displayUnit = unitStyle === UnitStyle.LONG
+            ? unitName || unit
+            : unit
 
-        return ` ${unitName || unit} ${assetSymbol}`;
+        // TODO: tweak how the displayUnit is positioned
+        return ` ${displayUnit} ${assetSymbol}`;
     }, [formattedBalance])
 
     return { ...formattedBalance, numberOfDecimalPlaces, suffix };
 }
 
+export enum UnitStyle {
+    LONG,
+    SHORT
+}
 export interface FormattedBalanceProps {
     balance: Balance,
-    precision?: number
+    precision?: number,
+    unitStyle: UnitStyle
 }
 
 export const FormattedBalance = ({ 
     balance,
-    precision = 3
+    precision = 3,
+    unitStyle = UnitStyle.SHORT
 }: FormattedBalanceProps) => {
+    const assetSymbol = useMemo(() => 
+        assetIdNameMap[balance.assetId]?.symbol, 
+        [balance.assetId]
+    );
     // TODO: use asset.symbol instead
-    const formattedBalance = useFormatSI('BSX', precision, balance.balance);
+    const formattedBalance = useFormatSI(
+        assetSymbol, 
+        precision, 
+        unitStyle,
+        balance.balance,
+    );
     
     log.debug('FormattedBalance', formattedBalance?.value, formattedBalance?.unit, formattedBalance?.numberOfDecimalPlaces);
 

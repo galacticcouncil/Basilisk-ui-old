@@ -1,4 +1,4 @@
-import { FormattedBalance, FormattedBalanceProps } from './FormattedBalance';
+import { FormattedBalance, FormattedBalanceProps, UnitStyle } from './FormattedBalance';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { BigNumber } from 'bignumber.js'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
@@ -8,7 +8,8 @@ const args: FormattedBalanceProps = {
         assetId: '0',
         balance: toPrecision12('1123456')!
     },
-    precision: 3,
+    precision: 2,
+    unitStyle: UnitStyle.LONG
 }
 export default {
     title: 'components/Balance/FormattedBalance',
@@ -42,6 +43,7 @@ const Template: ComponentStory<typeof FormattedBalance> = (args: FormattedBalanc
         '1123123123',
         '11231231231',
         '112312312312',
+        '12560.5',
     ].map(balance => (
         <div>
             <FormattedBalance 
