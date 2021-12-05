@@ -2010,6 +2010,11 @@
   dependencies:
     prop-types "^15.7.2"
 
+"@gapit/format-si@^0.0.1":
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/@gapit/format-si/-/format-si-0.0.1.tgz#3e69197061ede23b4702af4af11d8bfc9a68fb18"
+  integrity sha512-zjH8M+hDAQaLGWDtq2aRYnlNzcBngaeN4WWROYBffLv3wwvJvV6mEPkMPRVi+G9kgljVhLkEfuILaHkPsctQHQ==
+
 "@gar/promisify@^1.0.1":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
@@ -15124,10 +15129,10 @@ react-countup@^6.0.0:
   dependencies:
     countup.js "^2.0.8"
 
-react-currency-input-field@^3.5.1:
-  version "3.5.1"
-  resolved "https://registry.yarnpkg.com/react-currency-input-field/-/react-currency-input-field-3.5.1.tgz#460318aba22d592f7e886a314ac8a996240acf49"
-  integrity sha512-rUG6WB7g3KLpJtDbtHhlN8FRuOZmTUORs0sCIyGRjcQxofGrKcZ6rwQFSmYdtPRAQ4ut/LMJkDLP+4rDAZmRqg==
+react-currency-input-field@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-currency-input-field/-/react-currency-input-field-3.6.0.tgz#1b19eb34c14cdf9c95ff8c5acd5abcc4441aed09"
+  integrity sha512-UBj/+TxS13kEv2+UuysVPboK0HgXlxVoVx5FESCDHyu7bT4ybNpJxUqHCIcWdsWU+TsfvNndgzNdiKFSiFIJcQ==
 
 react-dev-utils@^11.0.3:
   version "11.0.4"
