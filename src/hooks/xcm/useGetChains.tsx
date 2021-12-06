@@ -43,7 +43,7 @@ export const CHAINS : ChainType[] = [
 
 /**
  *
- * Checks if XCM transfer is suported for given from/to chain and currency combination
+ * Checks if XCM transfer is supported for given from/to chain and currency combination
  *
  * Returns xcm transfer details for supported xcm transfer if found, otherwise undefined.
  */
@@ -66,7 +66,7 @@ export const isXcmTransferSupported = (fromChain: string, toChain: string, curre
     }
 }
 
-export const constructParachainDestination = (chain: ChainTransferData, destAccount: string)  =>{
+export const constructXcmTransferDestination = (chain: ChainTransferData, destAccount: string)  =>{
     let interior;
 
     if ( chain.id === "parent") {
