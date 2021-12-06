@@ -10,9 +10,9 @@
     "main.css.map": "./static/css/main.cd673b32.chunk.css.map",
     "runtime~main.js": "./runtime~main.c0fa7ec0.iframe.bundle.js",
     "vendors~main.css": "./static/css/vendors~main.20b3b198.chunk.css",
-    "vendors~main.js": "./vendors~main.5f207f5b.iframe.bundle.js",
+    "vendors~main.js": "./vendors~main.4edef710.iframe.bundle.js",
     "vendors~main.css.map": "./static/css/vendors~main.20b3b198.chunk.css.map",
-    "vendors~main.js.map": "./vendors~main.5f207f5b.iframe.bundle.js.map",
+    "vendors~main.js.map": "./vendors~main.4edef710.iframe.bundle.js.map",
     "7.27785460.iframe.bundle.js": "./7.27785460.iframe.bundle.js",
     "8.91de97de.iframe.bundle.js": "./8.91de97de.iframe.bundle.js",
     "8.91de97de.iframe.bundle.js.map": "./8.91de97de.iframe.bundle.js.map",
@@ -22,12 +22,12 @@
     "iframe.html": "./iframe.html",
     "static/media/index.scss": "./static/media/bootstrap-icons.38c4d249.woff",
     "static/media/index.css": "./static/media/roboto-latin-900italic.cb5ad999.woff2",
-    "vendors~main.5f207f5b.iframe.bundle.js.LICENSE.txt": "./vendors~main.5f207f5b.iframe.bundle.js.LICENSE.txt"
+    "vendors~main.4edef710.iframe.bundle.js.LICENSE.txt": "./vendors~main.4edef710.iframe.bundle.js.LICENSE.txt"
   },
   "entrypoints": [
     "runtime~main.c0fa7ec0.iframe.bundle.js",
     "static/css/vendors~main.20b3b198.chunk.css",
-    "vendors~main.5f207f5b.iframe.bundle.js",
+    "vendors~main.4edef710.iframe.bundle.js",
     "static/css/main.cd673b32.chunk.css",
     "main.ded07e2d.iframe.bundle.js"
   ]
