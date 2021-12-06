@@ -1,20 +1,43 @@
 import { Balance } from '../../../generated/graphql';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { formatPrecisionSI, formatFixedSI } from '@gapit/format-si';
+import { formatPrecisionSI, formatFixedSI, SI_PREFIXES } from '@gapit/format-si';
 import { useMemo } from 'react';
 import log from 'loglevel';
 import './FormattedBalance.scss';
+import BigNumber from 'bignumber.js';
+import { prefix } from '@fortawesome/free-solid-svg-icons';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 
-// TODO: extract
-export const assetIdNameMap: Record<string, { symbol: string, fullName: string }> = {
-    '0': {
-        symbol: 'BSX',
-        fullName: 'Basilisk'
-    }
+export enum UnitStyle {
+    LONG = 'LONG',
+    SHORT = 'SHORT'
+}
+
+// TODO: offer only a constrained range of units
+export enum MetricUnit {
+    // Y = 'Y',
+    // Z = 'Z',
+    // E = 'E',
+    // P = 'P',
+    T = 'T',
+    G = 'G',
+    M = 'M',
+    k = 'k',
+    NONE = '',
+    m = 'm',
+    µ = 'µ',
+    n = 'n',
+    p = 'p',
+    // TODO: we should not allow anything below 'p' = 1e-12
+    // f = 'f',
+    // a = 'a',
+    // z = 'z',
+    // y = 'y'
 }
 
 // TODO: extract
 export const unitMap: Record<string, string> = {
+    'T': 'tera',
     'G': 'giga',
     'M': 'mega',
     'k': 'kilo',
@@ -25,6 +48,33 @@ export const unitMap: Record<string, string> = {
     'µ': 'micro',
     'n': 'nano',
     'p': 'pico'
+}
+
+export const prefixMap: { [key in MetricUnit]?: number } = SI_PREFIXES.reduce((prefixes, prefix) => {
+    const key = prefix.metricPrefix;
+    return {
+        ...prefixes,
+        [key]: prefix.base10
+    };
+}, {});
+
+export const formatFromSIWithPrecision12 = (number: string, metricPrefix: MetricUnit) => {
+    const base10 = prefixMap[metricPrefix];
+    if (!base10) return;
+
+    const formattedResult = new BigNumber(number)
+        .multipliedBy(base10)
+
+    if (!formattedResult.isNaN()) return toPrecision12(formattedResult);
+}
+
+
+// TODO: extract
+export const assetIdNameMap: Record<string, { symbol: string, fullName: string }> = {
+    '0': {
+        symbol: 'BSX',
+        fullName: 'Basilisk'
+    }
 }
 
 export const useFormatSI = (
@@ -72,10 +122,6 @@ export const useFormatSI = (
     return { ...formattedBalance, numberOfDecimalPlaces, suffix };
 }
 
-export enum UnitStyle {
-    LONG,
-    SHORT
-}
 export interface FormattedBalanceProps {
     balance: Balance,
     precision?: number,
