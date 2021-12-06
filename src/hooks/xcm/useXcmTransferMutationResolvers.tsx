@@ -12,7 +12,7 @@ import {GET_ACTIVE_ACCOUNT, GetActiveAccountQueryResponse} from "../accounts/que
 import {ApolloCache, NormalizedCacheObject} from "@apollo/client";
 
 import isValidAddressPolkadotAddress from '../../misc/utils/validatePolkadotAddress';
-import {isXcmTransferSupported} from "./useGetChains";
+import {constructParachainDestination, isXcmTransferSupported} from "./useGetChains";
 
 // TODO: use validate JSON schema module of some sort
 export const invalidTransferVariablesError = 'Invalid XCM transfer parameters provided';
@@ -87,24 +87,12 @@ export const useXcmTransferMutationResolvers = () => {
 
             const address = account.id;
 
-            const dest = {
-                parents: 1,
-                interior: {
-                    X2: [{
-                        Parachain: destChain.id
-                    }, {
-                        AccountId32: {
-                            id: to,
-                            network: "Any"
-                        }
-                    }]
-                }
-            };
+            let dest = constructParachainDestination( destChain, to);
 
             return withGracefulErrors(async (resolve, reject) => {
                 const { signer } = await web3FromAddress(address);
 
-                await xcmTransferExtrinsic(apiInstance).apply(apiInstance, [currencyId, amount, { V1: dest}, destChain.destWeight])
+                await xcmTransferExtrinsic(apiInstance).apply(apiInstance, [currencyId, amount, dest, destChain.destWeight])
                     .signAndSend(
                         address,
                         { signer },

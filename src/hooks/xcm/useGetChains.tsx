@@ -24,8 +24,13 @@ export const CHAINS : ChainType[] = [
         supportedTransfers: [
             { name : "Karura",
                 id: "2000",
-                assets: ["2"],
+                assets: ["2"], // Asset 2 is registered as KUSD in dev chainspec
                 destWeight: 5e9
+            },
+            { name : "Kusama",
+              id: "parent",
+              assets: ["1"], // Asset 1 is registered as KSM in den chainspec
+              destWeight: 5e9
             }
         ]
     },
@@ -59,4 +64,37 @@ export const isXcmTransferSupported = (fromChain: string, toChain: string, curre
     return {
         destChain
     }
+}
+
+export const constructParachainDestination = (chain: ChainTransferData, destAccount: string)  =>{
+    let interior;
+
+    if ( chain.id === "parent") {
+        // Transferring to relay chain
+        interior = { X1: {
+                AccountId32: {
+                    id: destAccount,
+                    network: "Any"
+                }
+            }}
+
+    }else{
+        // Transferring to parachain
+        interior= {
+            X2: [{
+                Parachain: chain.id
+            }, {
+                AccountId32: {
+                    id: destAccount,
+                    network: "Any"
+                }
+            }]
+        }
+    }
+
+    // XCM V1 support atm
+    return { V1: {
+            parents: 1,
+            interior: interior
+        }};
 }
