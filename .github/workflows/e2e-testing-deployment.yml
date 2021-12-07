@@ -1,0 +1,321 @@
+name: E2E Testing Flow
+on:
+  push:
+    branches:
+      - 'feat/add-playwright-e2e-test-flow'
+  pull_request:
+    branches:
+      - 'feat/add-playwright-e2e-test-flow'
+
+jobs:
+  set_test_env_polkadot_launch:
+    name: Set test environment - Polkadot-launch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone polkadot-launch
+        run: git clone https://github.com/paritytech/polkadot-launch.git
+
+      - name: Cache Node Modules for polkadot-launch
+        id: cache-node-modules-polkadot-launch
+        uses: actions/cache@v2
+        with:
+         path: polkadot-launch/node_modules
+         key: node-modules-polkadot-launch-${{ hashFiles('polkadot-launch/yarn.lock') }}
+
+      - name: Install Dependencies for polkadot-launch
+        if: steps.cache-node-modules-polkadot-launch.outputs.cache-hit != 'true'
+        run: |
+         cd polkadot-launch
+         yarn
+
+      - name: Build polkadot-launch
+        run: |
+         cd polkadot-launch
+         yarn build
+         chmod +x dist/index.js
+         npm link
+
+      - name: Save artifacts - Polkadot-launch
+        uses: actions/upload-artifact@v2
+        with:
+          name: polkadot-launch-artifacts
+          path: ./polkadot-launch/dist
+
+  set_test_env_polkadot_node:
+    name: Set test environment - Polkadot-node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Polkadot-node
+        run: |
+          git clone https://github.com/paritytech/polkadot.git
+
+      - name: Cache binary file for Polkadot-node
+        id: cache-bin-polkadot-node
+        uses: actions/cache@v2
+        with:
+          path: polkadot/target/release
+          key: bin-polkadot-node-3-${{ hashFiles('polkadot/Cargo.lock') }}
+
+      - name: Fetch Polkadot-node bin file
+        if: steps.cache-bin-polkadot-node.outputs.cache-hit != 'true'
+        run: |
+          cd polkadot
+          mkdir -p target
+          cd target
+          mkdir -p release
+          cd release
+          wget https://github.com/paritytech/polkadot/releases/download/v0.9.13/polkadot
+
+      - name: Make Polkadot-node bin executanle
+        run: |
+          cd polkadot/target/release
+          chmod +x polkadot
+
+      - name: Save artifacts - Polkadot-node
+        uses: actions/upload-artifact@v2
+        with:
+          name: polkadot-node-artifacts
+          path: ./polkadot/target/release
+
+  set_test_env_basilisk_node:
+    name: Set test environment - Basilisk-node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone Basilisk-node
+        run: |
+          git clone https://github.com/galacticcouncil/Basilisk-node.git basilisk-node
+
+      - name: Cache binary file for Basilisk-node
+        id: cache-bin-basilisk-node
+        uses: actions/cache@v2
+        with:
+          path: basilisk-node/target/release
+          key: bin-basilisk-node-5-${{ hashFiles('basilisk-node/Cargo.lock') }}
+
+      - name: Fetch Basilisk-node bin file
+        if: steps.cache-bin-basilisk-node.outputs.cache-hit != 'true'
+        run: |
+          cd basilisk-node
+          mkdir -p target
+          cd target
+          mkdir -p release
+          cd release
+          wget https://github.com/galacticcouncil/Basilisk-node/releases/download/v6.0.0/basilisk
+          cp -v basilisk testing-basilisk
+          ls
+
+      - name: Make Basilisk-node bin executanle
+        run: |
+          cd basilisk-node/target/release
+          chmod +x basilisk
+          chmod +x testing-basilisk
+
+      - name: Save artifacts - Basilisk-node
+        uses: actions/upload-artifact@v2
+        with:
+          name: basilisk-node-artifacts
+          path: ./basilisk-node
+
+  build_app:
+    name: Build UI application
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+
+      - name: Cache Node Modules for ui-app
+        id: cache-node-modules-ui-app
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
+
+      - name: Install Dependencies for ui-app
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: |
+          npm install
+          npm ci
+
+      - name: Update browserslist
+        run: npx browserslist@latest --update-db
+
+      - name: Build App and Storybook
+        run: |
+          npm run build
+          npm run build-storybook -- -o sb-build-files
+        env:
+          CI: false
+
+      - name: Upload script files
+        uses: actions/upload-artifact@v2
+        with:
+          name: script-files
+          path: ./scripts
+
+      - name: Upload production-ready SB build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: sb-build-files
+          path: ./sb-build-files
+
+      - name: Upload production-ready App build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-build-files
+          path: ./build
+
+
+  run_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    needs: [set_test_env_polkadot_launch, set_test_env_polkadot_node, set_test_env_basilisk_node, build_app]
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Download artifact - Basilisk-node
+        uses: actions/download-artifact@v2
+        with:
+          name: basilisk-node-artifacts
+          path: ./basilisk-node
+
+      - name: Download artifact - Polkadot-node
+        uses: actions/download-artifact@v2
+        with:
+          name: polkadot-node-artifacts
+          path: ./polkadot/target/release
+
+      - name: Download artifact - Polkadot-launch
+        uses: actions/download-artifact@v2
+        with:
+          name: polkadot-launch-artifacts
+          path: ./polkadot-launch/dist
+
+#      - name: Download artifact - Basilisk-api
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: basilisk-api-artifacts
+#          path: ./Basilisk-api
+
+      - uses: actions/checkout@v2
+        with:
+          path: "ui-app"
+
+      - name: Download artifact - UI app build
+        uses: actions/download-artifact@v2
+        with:
+          name: app-build-files
+          path: ./ui-app
+
+      - name: Download artifact - Storybook build
+        uses: actions/download-artifact@v2
+        with:
+          name: sb-build-files
+          path: ./ui-app
+
+# Prepare Basilisk-api
+
+      - name: Clone Basilisk-api
+        run: git clone -b develop https://github.com/galacticcouncil/Basilisk-api.git
+
+      - name: Cache Node Modules for Basilisk-api
+        id: cache-node-modules-basilisk-api
+        uses: actions/cache@v2
+        with:
+          path: Basilisk-api/node_modules
+          key: node-modules-basilisk-api-${{ hashFiles('Basilisk-api/yarn.lock') }}
+
+      - name: Install Dependencies for Basilisk-api
+        if: steps.cache-node-modules-basilisk-api.outputs.cache-hit != 'true'
+        run: |
+          cd Basilisk-api
+          yarn
+
+# Prepare UI-app
+
+      - name: Cache Node Modules for ui-app
+        id: cache-node-modules-ui-app
+        uses: actions/cache@v2
+        with:
+          path: ui-app/node_modules
+          key: node-modules-ui-app-${{ hashFiles('ui-app/yarn.lock') }}
+
+      - name: Install Dependencies for ui-app
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: |
+          cd ui-app
+          npm install
+          npm ci
+
+# Update folders structure
+
+      - name: Change folders permissions
+        run: |
+          chmod -R 777 polkadot
+          chmod -R 777 basilisk-node
+          chmod -R 777 Basilisk-api
+          chmod -R 777 polkadot-launch
+          chmod -R 777 ui-app
+
+# Prepare Rust Env
+
+      - name: Configure Rust Env
+        run: curl https://getsubstrate.io -sSf | bash -s -- --fast
+
+# Run tests
+
+      - name: Run testnet
+        shell: bash
+        run: |
+          cd Basilisk-api
+          yarn testnet:start
+
+      - name: Sleep for 20 seconds
+        run: sleep 20s
+        shell: bash
+
+#      - name: Run UI application
+#        shell: bash
+#        run: |
+#          cd ui-app
+#          yarn start
+#
+#      - name: Sleep for 20 seconds
+#        run: sleep 20s
+#        shell: bash
+
+      - name: Install operating system dependencies for playwright
+        run: npx playwright install-deps
+
+      - name: Run tests
+        run: |
+          cd ui-app
+          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- npm test polkadot-dapp.test.ts
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+
+      - name: Upload trace files
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: trace_screenshots
+          path: ./ui-app/trace.zip
+
+      - name: Stop testnet
+        if: always()
+        shell: bash
+        run: |
+          killall -q -v polkadot
+          killall -q -v testing-basilisk
+      # cd Basilisk-api
+      # yarn testnet:stop
+
+      - name: Sleep for 10 seconds
+        run: sleep 10
+        shell: bash
