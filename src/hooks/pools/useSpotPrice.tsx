@@ -18,18 +18,18 @@ export const useAssetBalance = (pool?: Pool, assetId?: string) => (
 export const oneWithPrecision = '1000000000000'; // 10^12 doesnt work, use 10^9 instead
 export const useSpotPrice = (
     pool?: Pool,
-    assetAId?: string,
-    assetBId?: string
+    assetInId?: string,
+    assetOutId?: string
 ) => {
     const { math } = useMathContext();
 
     return useMemo(() => {
-        const assetABalance = getAssetBalance(pool, assetAId)
-        const assetBBalance = getAssetBalance(pool, assetBId)
+        const assetABalance = getAssetBalance(pool, assetInId)
+        const assetBBalance = getAssetBalance(pool, assetOutId)
 
         if (!assetABalance || !assetBBalance || !math) return;
 
-        return math.get_spot_price(
+        return math.xyk.get_spot_price(
             assetABalance,
             assetBBalance,
             oneWithPrecision,

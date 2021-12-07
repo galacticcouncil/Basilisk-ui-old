@@ -5,18 +5,18 @@ import { getAssetBalance } from './useSpotPrice';
 
 export const useCalculateOutGivenIn = (
     pool?: Pool,
-    assetAId?: string,
-    assetBId?: string,
+    assetInId?: string,
+    assetOutId?: string,
     assetABalanceInput?: string,
     tradeType?: TradeType
 ) => {
     const { math } = useMathContext();
-    const assetABalance = getAssetBalance(pool, assetAId)
-    const assetBBalance = getAssetBalance(pool, assetBId)
+    const assetABalance = getAssetBalance(pool, assetInId)
+    const assetBBalance = getAssetBalance(pool, assetOutId)
 
     if (!assetABalance || !assetBBalance || !math || !assetABalanceInput || !tradeType) return;
 
-    const outGivenIn = math?.calculate_out_given_in(
+    const outGivenIn = math?.xyk.calculate_out_given_in(
         assetABalance, // in_reserve
         assetBBalance, // out_reserve
         assetABalanceInput, // amount_in

@@ -26,15 +26,15 @@ export const QueryProvider = ({ children }: { children: React.ReactNode }) => (
 export const MultiProvider = ({ children }: { children: React.ReactNode }) => {
     return (
         <PolkadotJsProvider>
-            <LastBlockProvider>
-                <ConfiguredApolloProvider>
-                    <QueryProvider>
-                        <MathProvider>
+            <MathProvider>
+                <LastBlockProvider>
+                    <ConfiguredApolloProvider>
+                        <QueryProvider>
                             {children}
-                        </MathProvider>
-                    </QueryProvider>
-                </ConfiguredApolloProvider>
-            </LastBlockProvider>
+                        </QueryProvider>
+                    </ConfiguredApolloProvider>
+                </LastBlockProvider>
+            </MathProvider>
         </PolkadotJsProvider>
 
     )

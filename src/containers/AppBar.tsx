@@ -9,8 +9,10 @@ export const AppBar = () => {
     // TODO: there is no loading state for last block
     // since its populated in the cache manually
     const { data: lastBlockData } = useLastBlockQuery();
-    const { data: activeAccountData, loading: activeAccountLoading } = useGetActiveAccountQuery();
+    const { data: activeAccountData, loading: activeAccountLoading, error } = useGetActiveAccountQuery();
     const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
+
+    error && console.error(error);
     
     // TODO: should probably be showing the fee payment asset here
     const nativeAssetBalance = useMemo(() => (

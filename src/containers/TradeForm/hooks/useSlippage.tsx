@@ -1,25 +1,30 @@
 import BigNumber from 'bignumber.js';
 import { isNaN } from 'lodash';
 import { useMemo } from 'react';
-import { TradeType } from '../../generated/graphql';
-import { fromPrecision12 } from '../math/useFromPrecision';
-import { percentageChange } from '../math/usePercentageChange';
-import { toPrecision12 } from '../math/useToPrecision';
+import { TradeType } from '../../../generated/graphql';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import { percentageChange } from '../../../hooks/math/usePercentageChange';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+
+export interface Slippage {
+    percentualSlippage: string,
+    spotPriceAmount: string
+}
 
 export const calculateSlippage = (
     spotPrice: string,
-    assetAAmount: string,
-    assetBAmount: string,
+    assetInAmount: string,
+    assetOutAmount: string,
 ) => {
     const spotPriceAmount = new BigNumber(spotPrice)
         .multipliedBy(
-            fromPrecision12(assetBAmount)!
+            fromPrecision12(assetOutAmount)!
         )
         .toFixed(0);
 
     const resultPercentageChange = percentageChange(
         spotPriceAmount,
-        assetAAmount
+        assetInAmount
     );
 
     if (!resultPercentageChange || resultPercentageChange.isNaN()) return;
@@ -32,10 +37,11 @@ export const calculateSlippage = (
         .abs()
         .toFixed(10) // TODO: deal with formatting to 2 decimal places when displaying the result
 
-    return {
+    const slippage: Slippage = {
         percentualSlippage,
         spotPriceAmount
     }
+    return slippage
 }
 
 /**
@@ -48,17 +54,17 @@ export const calculateSlippage = (
  */
 export const useSlippage = (
     tradeType: TradeType,
-    spotPrice: {
+    spotPrice?: {
         aToB?: string,
         bToA?: string
     },
-    assetAAmount?: string,
-    assetBAmount?: string,
+    assetInAmount?: string,
+    assetOutAmount?: string,
 ) => {
-    if (!spotPrice.aToB || !spotPrice.bToA || !assetAAmount || !assetBAmount) return;
+    if (!spotPrice?.aToB || !spotPrice?.bToA || !assetInAmount || !assetOutAmount) return;
     return calculateSlippage.apply(null,
         tradeType === TradeType.Buy
-            ? [spotPrice.aToB, assetAAmount, assetBAmount]
-            : [spotPrice.bToA, assetBAmount, assetAAmount]
+            ? [spotPrice.bToA, assetInAmount, assetOutAmount]
+            : [spotPrice.aToB, assetOutAmount, assetInAmount]
     )
 }

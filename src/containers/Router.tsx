@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { TradePage } from '../pages/TradePage';
+import { TradePage } from '../pages/TradePage/TradePage';
 import { WalletPage } from '../pages/WalletPage';
 
 export const Router = () => {
