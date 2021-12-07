@@ -48,11 +48,12 @@ export const BalanceInput = ({
     return <div>
         <Controller 
             control={control}
-            {...register(name)}
+            name={name}
             render={
                 (({ field }) => (
                     <MaskedInput 
                         mask={currencyMask}
+                        ref={field.ref}
                         onChange={e => field.onChange(setValueAs(e.target.value))}
                     />
                 ))

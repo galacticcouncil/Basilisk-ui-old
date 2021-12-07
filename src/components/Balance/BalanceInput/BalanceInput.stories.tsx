@@ -43,13 +43,9 @@ const Template = (args: { props: BalanceInputProps[] }) => {
     }, []);
     
     return <>
-        <p>
-            TODO: when updating story controls, the underlying `register` form call causes a loop.
-            This only has effect in the storybook development environment
-        </p>
         <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
-                {args.props.map(args => <BalanceInput {...args} />)}
+                {args.props.map((args, i) => <BalanceInput key={i} {...args} />)}
                 <input type="submit" />
             </form>
         </FormProvider>
