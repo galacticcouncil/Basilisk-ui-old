@@ -60,6 +60,7 @@ export const prefixMap: { [key in MetricUnit]?: number } = SI_PREFIXES.reduce((p
 
 export const formatFromSIWithPrecision12 = (number: string, metricPrefix: MetricUnit) => {
     const base10 = prefixMap[metricPrefix];
+    log.debug('formatFromSIWithPrecision12', 'base10', base10, metricPrefix);
     if (!base10) return;
 
     const formattedResult = new BigNumber(number)

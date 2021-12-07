@@ -1,11 +1,13 @@
 import log from 'loglevel';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller, ControllerRenderProps } from 'react-hook-form';
 import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/FormattedBalance';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 
+log.setDefaultLevel('debug')
 export interface BalanceInputProps {
     defaultUnit: MetricUnit,
     name: string,
@@ -30,8 +32,9 @@ export const BalanceInput = ({
     name,
     defaultUnit,
 }: BalanceInputProps) => {
-    const { register, control, setValue, getValues } = useFormContext();
+    const { control, setValue, getValues } = useFormContext();
     const [unit, setUnit] = useState(defaultUnit);
+    const [rawValue, setRawValue] = useState<string | undefined>();
 
     const currencyMask = useMemo(() => createNumberMask({
         ...currencyMaskOptions
@@ -43,14 +46,20 @@ export const BalanceInput = ({
         value = value?.replaceAll(thousandsSeparatorSymbol, '');
         // this converts the given number to unit `NONE` and formats it with 12 digit precision
         const formattedValue = formatFromSIWithPrecision12(value, unit);
-        log.debug('BalanceInput', 'setValueAs', value, formattedValue);
+        log.debug('BalanceInput', 'setValueAs', value, formattedValue, unit);
         return formattedValue;
     }, [formatFromSIWithPrecision12, unit]);
 
+    // TODO better types for `field`
+    const handleOnChange = useCallback((field: ControllerRenderProps, e: ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        field.onChange(setValueAs(value));
+        setRawValue(value);
+    }, [setValueAs, setRawValue]);
+
     useEffect(() => {
-        setValue(name, 
-            setValueAs(getValues(name))
-        )
+        log.debug('BalanceInput', 'unit changed', rawValue, unit);
+        setValue(name, setValueAs(rawValue));
     }, [unit]);
 
     return <div>
@@ -67,7 +76,7 @@ export const BalanceInput = ({
                     <MaskedInput 
                         mask={currencyMask}
                         ref={field.ref}
-                        onChange={e => field.onChange(setValueAs(e.target.value))}
+                        onChange={e => handleOnChange(field, e)}
                     />
                 ))
             }
