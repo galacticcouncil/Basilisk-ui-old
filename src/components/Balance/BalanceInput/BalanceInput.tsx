@@ -1,13 +1,14 @@
 import log from 'loglevel';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { useFormContext, Controller } from 'react-hook-form';
-import { prefixMap, MetricUnit, formatFromSIWithPrecision12 } from '../FormattedBalance/FormattedBalance';
+import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/FormattedBalance';
+import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 
 export interface BalanceInputProps {
-    unit: MetricUnit,
-    name: string
+    defaultUnit: MetricUnit,
+    name: string,
 }
 
 export const thousandsSeparatorSymbol = ',';
@@ -26,10 +27,11 @@ export const currencyMaskOptions = {
 }
 
 export const BalanceInput = ({
-    unit,
-    name
+    name,
+    defaultUnit,
 }: BalanceInputProps) => {
-    const { register, control } = useFormContext();
+    const { register, control, setValue, getValues } = useFormContext();
+    const [unit, setUnit] = useState(defaultUnit);
 
     const currencyMask = useMemo(() => createNumberMask({
         ...currencyMaskOptions
@@ -45,7 +47,18 @@ export const BalanceInput = ({
         return formattedValue;
     }, [formatFromSIWithPrecision12, unit]);
 
+    useEffect(() => {
+        setValue(name, 
+            setValueAs(getValues(name))
+        )
+    }, [unit]);
+
     return <div>
+        <MetricUnitSelector 
+            unit={unit}
+            units={Object.values(MetricUnit)}
+            onUnitSelected={unit => setUnit(unit)}
+        />
         <Controller 
             control={control}
             name={name}
@@ -59,6 +72,5 @@ export const BalanceInput = ({
                 ))
             }
         />
-        <span>{unit}</span>
     </div>
 }

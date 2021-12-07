@@ -8,19 +8,19 @@ import { BalanceInput, BalanceInputProps } from './BalanceInput';
 const args: { props: BalanceInputProps[] } = {
     props: [
         {
-            unit: MetricUnit.k,
+            defaultUnit: MetricUnit.k,
             name: 'balanceInputExample_k'
         },
         {
-            unit: MetricUnit.NONE,
+            defaultUnit: MetricUnit.NONE,
             name: 'balanceInputExample_NONE'
         },
         {
-            unit: MetricUnit.m,
+            defaultUnit: MetricUnit.m,
             name: 'balanceInputExample_m'
         },
         {
-            unit: MetricUnit.p,
+            defaultUnit: MetricUnit.p,
             name: 'balanceInputExample_p'
         }
     ]    

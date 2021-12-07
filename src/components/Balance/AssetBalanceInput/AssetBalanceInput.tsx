@@ -10,7 +10,7 @@ import { useModalPortalElement } from './useModalPortalElement';
 export interface TokenBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
     name: BalanceInputProps['name'],
-    unit: BalanceInputProps['unit']
+    defaultUnit: BalanceInputProps['defaultUnit']
     asset?: Asset,
     assets?: Asset[],
     onAssetSelected: (asset: Asset) => void
@@ -19,7 +19,7 @@ export interface TokenBalanceInputProps {
 export const AssetBalanceInput = ({
     modalContainerRef,
     name,
-    unit,
+    defaultUnit,
     asset,
     assets,
     onAssetSelected
@@ -45,7 +45,7 @@ export const AssetBalanceInput = ({
 
         <BalanceInput 
             name={name}
-            unit={unit}
+            defaultUnit={defaultUnit}
         />
     </div>
 }

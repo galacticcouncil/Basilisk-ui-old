@@ -35,15 +35,15 @@ export enum MetricUnit {
     // y = 'y'
 }
 
+export type MetricUnitMap = Record<MetricUnit, string>;
+
 // TODO: extract
-export const unitMap: Record<string, string> = {
+export const unitMap: MetricUnitMap = {
     'T': 'tera',
     'G': 'giga',
     'M': 'mega',
     'k': 'kilo',
-    'h': 'hecto',
-    'd': 'deci',
-    'c': 'centi',
+    '': 'no unit',
     'm': 'mili',
     'µ': 'micro',
     'n': 'nano',
@@ -94,7 +94,8 @@ export const useFormatSI = (
             precision
         );
 
-        const unitName: string | undefined = unitMap[siFormat.unit];
+        // TODO: get rid of the 'as' call
+        const unitName: string | undefined = unitMap[siFormat.unit as MetricUnit];
 
         return {
             ...siFormat,
