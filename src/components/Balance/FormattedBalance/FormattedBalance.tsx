@@ -8,6 +8,7 @@ import BigNumber from 'bignumber.js';
 import { prefix } from '@fortawesome/free-solid-svg-icons';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 import { MetricUnit, unitMap, UnitStyle } from './metricUnit';
+import { useFormatSI } from './hooks/useFormatSI';
 
 // TODO: extract
 export const assetIdNameMap: Record<string, { symbol: string, fullName: string }> = {
@@ -15,52 +16,6 @@ export const assetIdNameMap: Record<string, { symbol: string, fullName: string }
         symbol: 'BSX',
         fullName: 'Basilisk'
     }
-}
-
-export const useFormatSI = (
-    assetSymbol: string,
-    precision: number, 
-    unitStyle: UnitStyle,
-    number?: string,
-) => {
-    const formattedBalance = useMemo(() => {
-        const balanceWithPrecision12 = fromPrecision12(number);
-        if (!balanceWithPrecision12) return;
-
-        // alternatively use formatPrecisionSI
-        let siFormat = formatFixedSI(
-            balanceWithPrecision12,
-            '',
-            precision
-        );
-
-        // TODO: get rid of the 'as' call
-        const unitName: string | undefined = unitMap[siFormat.unit as MetricUnit];
-
-        return {
-            ...siFormat,
-            unitName
-        }
-    }, [number, precision])
-
-    const numberOfDecimalPlaces = useMemo(() => (
-        formattedBalance?.value?.split('.')[1]?.length
-    ), [formattedBalance]);
-
-    const suffix = useMemo(() => {
-        if (!formattedBalance) return;
-
-        const unit = formattedBalance.unit;
-        const unitName = formattedBalance.unitName;
-        const displayUnit = unitStyle === UnitStyle.LONG
-            ? unitName || unit
-            : unit
-
-        // TODO: tweak how the displayUnit is positioned
-        return ` ${displayUnit} ${assetSymbol}`;
-    }, [formattedBalance, unitStyle])
-
-    return { ...formattedBalance, numberOfDecimalPlaces, suffix };
 }
 
 export interface FormattedBalanceProps {

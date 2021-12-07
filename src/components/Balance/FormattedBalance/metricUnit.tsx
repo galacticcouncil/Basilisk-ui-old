@@ -3,6 +3,7 @@ import BigNumber from 'bignumber.js';
 import log from 'loglevel';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 
+// Used to select in what format should the given unit be displayed
 export enum UnitStyle {
     LONG = 'LONG',
     SHORT = 'SHORT'
@@ -30,9 +31,8 @@ export enum MetricUnit {
     // y = 'y'
 }
 
+// Mapping between short/long metric unit names
 export type MetricUnitMap = Record<MetricUnit, string>;
-
-// TODO: extract
 export const unitMap: MetricUnitMap = {
     'T': 'tera',
     'G': 'giga',
@@ -45,6 +45,7 @@ export const unitMap: MetricUnitMap = {
     'p': 'pico'
 }
 
+// Mapping used to retrieve the base10 multiplier by the short metric unit name
 export const prefixMap: { [key in MetricUnit]?: number } = SI_PREFIXES.reduce((prefixes, prefix) => {
     const key = prefix.metricPrefix;
     return {
@@ -53,6 +54,7 @@ export const prefixMap: { [key in MetricUnit]?: number } = SI_PREFIXES.reduce((p
     };
 }, {});
 
+// convert a number to a baseline value given its metric unit
 export const formatFromSIWithPrecision12 = (number: string, metricPrefix: MetricUnit) => {
     const base10 = prefixMap[metricPrefix];
     log.debug('formatFromSIWithPrecision12', 'base10', base10, metricPrefix);
