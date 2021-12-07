@@ -6,8 +6,8 @@ import { GetPoolsQueryResponse } from './useGetPoolsQuery';
 export const GET_POOL_BY_ASSETS = loader('./../graphql/GetPoolByAssets.query.graphql');
 
 export interface GetPoolByAssetsQueryVariables {
-    assetAId?: string,
-    assetBId?: string,
+    assetInId?: string,
+    assetOutId?: string,
 }
 export interface GetPoolQueryResponse {
     pool: Pool

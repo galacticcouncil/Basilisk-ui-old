@@ -153,8 +153,8 @@ export const App_old = undefined;
 
 // export const PoolList = () => {
 //   const { data, loading, error } = useGetPoolByAssetsQuery({
-//     assetAId: '0',
-//     assetBId: '1',
+//     assetInId: '0',
+//     assetOutId: '1',
 //   });
 //   error && console.error(error);
 //   console.log('pool', data);
@@ -172,15 +172,15 @@ export const App_old = undefined;
 //   onAssetIdsChange,
 //   pool
 // }: {
-//   onAssetIdsChange: (assetAId: string, assetBId: string) => void,
+//   onAssetIdsChange: (assetInId: string, assetOutId: string) => void,
 //   pool?: Pool
 // }) => {
 //   const { register, handleSubmit, watch, formState: { errors }, getValues, setValue, trigger, reset } = useForm<any, any>({
 //     defaultValues: {
-//       assetAId: '0',
-//       assetBId: '1',
-//       assetAAmount: '0',
-//       assetBAmount: '0'
+//       assetInId: '0',
+//       assetOutId: '1',
+//       assetInAmount: '0',
+//       assetOutAmount: '0'
 //     }
 //   });
 
@@ -189,17 +189,17 @@ export const App_old = undefined;
 //   // should actually use the network status instead
 //   const { data: assetsData, loading: assetsLoading } = useGetAssetsQuery();
 
-//   const [assetAId, assetAAmount] = watch(['assetAId', 'assetAAmount']);
-//   const [assetBId, assetBAmount] = watch(['assetBId', 'assetBAmount']);
+//   const [assetInId, assetInAmount] = watch(['assetInId', 'assetInAmount']);
+//   const [assetOutId, assetOutAmount] = watch(['assetOutId', 'assetOutAmount']);
 
-//   useEffect(() => { setTradeType('buy') }, [assetAId, assetAAmount]);
-//   useEffect(() => { setTradeType('sell') }, [assetBId, assetBAmount]);
+//   useEffect(() => { setTradeType('buy') }, [assetInId, assetInAmount]);
+//   useEffect(() => { setTradeType('sell') }, [assetOutId, assetOutAmount]);
 
 //   console.log('pool', pool);
 
 //   useEffect(() => {
-//     onAssetIdsChange(assetAId, assetBId);
-//   }, [assetAId, assetBId]);
+//     onAssetIdsChange(assetInId, assetOutId);
+//   }, [assetInId, assetOutId]);
 
 //   const onSubmit = (data: any) => console.log('submitted yay', data);
 
@@ -226,11 +226,11 @@ export const App_old = undefined;
 //             <div>
 //               <label>Asset A:</label>
 //               <select
-//                 {...register('assetAId', {
+//                 {...register('assetInId', {
 //                   required: true
 //                 })}
 //               >
-//                 {assetOptions(getValues('assetBId'))}
+//                 {assetOptions(getValues('assetOutId'))}
 //               </select>
 //             </div>
 //             <div>
@@ -238,7 +238,7 @@ export const App_old = undefined;
 //                 <input
 //                   type="text"
 //                   width={100}
-//                   {...register('assetAAmount', {
+//                   {...register('assetInAmount', {
 //                     required: true
 //                   })}
 //                 />
@@ -248,18 +248,18 @@ export const App_old = undefined;
 //           <div>
 //             <label>Asset B:</label>
 //             <select
-//               {...register('assetBId', {
+//               {...register('assetOutId', {
 //                 required: true
 //               })}
 //             >
-//               {assetOptions(getValues('assetAId'))}
+//               {assetOptions(getValues('assetInId'))}
 //             </select>
 //           </div>
 //           <div>
 //             <input
 //               type="text"
 //               width={100}
-//               {...register('assetBAmount', {
+//               {...register('assetOutAmount', {
 //                 required: true
 //               })}
 //             />
@@ -291,20 +291,20 @@ export const App_old = undefined;
 // export const TradePage = () => {
 //   const { loading } = usePolkadotJsContext();
 //   const [assetIds, setAssetIds] = useState<{
-//     assetAId: undefined | string,
-//     assetBId: undefined | string
+//     assetInId: undefined | string,
+//     assetOutId: undefined | string
 //   }>({
-//     assetAId: undefined,
-//     assetBId: undefined
+//     assetInId: undefined,
+//     assetOutId: undefined
 //   })
 
 //   const { data: poolData, networkStatus } = useGetPoolByAssetsQuery(assetIds);
 
 
-//   const handleAssetIdsChange = (assetAId: string, assetBId: string) => {
+//   const handleAssetIdsChange = (assetInId: string, assetOutId: string) => {
 //     console.log('assets changed');
 //     setAssetIds({
-//       assetAId, assetBId
+//       assetInId, assetOutId
 //     })
 //   }
 

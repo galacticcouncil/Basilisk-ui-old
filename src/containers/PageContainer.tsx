@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLoading } from '../hooks/misc/useLoading'
-import { AppBar } from './AppBar'
+import { TopBar } from './TopBar'
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     const loading = useLoading();
@@ -10,7 +10,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
             width: '650px',
             margin: '0 auto'
         }}>
-            <AppBar />
+            <TopBar />
             {loading
                 ? <div style={{
                     width: '100%',

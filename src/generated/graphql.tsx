@@ -45,18 +45,37 @@ export type Extension = {
   isAvailable?: Maybe<Scalars['Boolean']>;
 };
 
+export type Fee = {
+  __typename?: 'Fee';
+  denominator: Scalars['String'];
+  numerator: Scalars['String'];
+};
+
 export type FeePaymentAsset = {
   __typename?: 'FeePaymentAsset';
   assetId?: Maybe<Scalars['String']>;
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
+export type LbpAssetWeights = {
+  __typename?: 'LBPAssetWeights';
+  current: Scalars['String'];
+  final: Scalars['String'];
+  initial: Scalars['String'];
+};
+
 export type LbpPool = {
   __typename?: 'LBPPool';
-  assetAId: Scalars['String'];
-  assetBId: Scalars['String'];
+  assetAWeights: LbpAssetWeights;
+  assetBWeights: LbpAssetWeights;
+  assetInId: Scalars['String'];
+  assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
+  endBlock: Scalars['String'];
+  fee: Fee;
   id: Scalars['String'];
+  repayTargetReached: Scalars['Boolean'];
+  startBlock: Scalars['String'];
 };
 
 export type LastBlock = {
@@ -98,8 +117,8 @@ export type VestingSchedule = {
 
 export type XykPool = {
   __typename?: 'XYKPool';
-  assetAId: Scalars['String'];
-  assetBId: Scalars['String'];
+  assetInId: Scalars['String'];
+  assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
 };

@@ -1,8 +1,8 @@
 query GetPools {
     pools @client {
         id
-        assetAId
-        assetBId,
+        assetInId
+        assetOutId,
         balances {
             assetId,
             balance

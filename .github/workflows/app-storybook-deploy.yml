@@ -35,7 +35,7 @@ jobs:
 
       - name: Build App and Storybook
         run: |
-          npm run build
+          npm run build:deployment
           npm run build-storybook -- -o sb-build-files
         env:
           CI: false
