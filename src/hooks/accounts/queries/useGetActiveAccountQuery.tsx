@@ -23,7 +23,7 @@ export const useGetActiveAccountQuery = () => {
     // since the config for `feePaymentAsset` depends on the active account
     useEffect(() => {
         client.refetchQueries({
-            include: [GET_CONFIG]
+            // include: [GET_CONFIG]
         });
     }, [result.data?.account?.id])
 

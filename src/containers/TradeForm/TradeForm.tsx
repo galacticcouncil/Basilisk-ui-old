@@ -25,6 +25,7 @@ import { useSlippage } from './hooks/useSlippage'
 import { isEqual } from 'lodash'
 import { useResetAmountInputsOnPoolChange } from './hooks/useResetAmountInputsOnPoolChange'
 import { useCalculateAllowedSlippage } from './hooks/useCalculateAllowedSlippage'
+import { usePercentageFee } from './hooks/usePercentageFee'
 
 export interface TradeFormProps {
     pool?: Pool,
@@ -45,6 +46,7 @@ export const TradeForm = ({
     spotPrice
 }: TradeFormProps) => {
     const form = useTradeForm(assetIds);
+    const fee = usePercentageFee(pool);
     const tradeType = useTradeType(form);
     useHandleAssetIdsChange(form, onAssetIdsChange);
     useCalculateInAndOut(form, tradeType, pool);
@@ -95,7 +97,10 @@ export const TradeForm = ({
             <br/>
 
             <p>
-                <b>Slippage:</b> {slippage?.percentualSlippage} / {slippage?.spotPriceAmount}
+                <b>Slippage:</b> {slippage?.percentualSlippage} / {fromPrecision12(slippage?.spotPriceAmount)}
+            </p>
+            <p>
+                <b>Fee:</b> {fee}%
             </p>
 
             <button

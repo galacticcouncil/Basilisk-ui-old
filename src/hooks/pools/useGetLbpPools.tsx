@@ -1,7 +1,7 @@
 import { AccountId, AssetId } from '@open-web3/orml-types/interfaces';
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
-import { LbpAssetWeights, LbpFee, LbpPool } from '../../generated/graphql';
+import { Fee, LbpAssetWeights, LbpPool } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import type { Codec } from '@polkadot/types/types';
 import { mapToPoolId } from './useGetXykPools';
@@ -11,6 +11,9 @@ import { calculateCurrentAssetWeight } from './lbp/calculateCurrentAssetWeight';
 import { partial } from 'lodash';
 import { ApolloClient, useApolloClient } from '@apollo/client';
 import { readLastBlock } from '../lastBlock/readLastBlock';
+import { getLockedBalanceByAddressAndLockId } from '../vesting/useGetVestingScheduleByAddress';
+import log from 'loglevel';
+import BigNumber from 'bignumber.js';
 
 export type AssetPair = number[];
 export interface PoolData {
@@ -27,6 +30,16 @@ export interface PoolData {
     end: number,
 }
 
+// ID isnt parsed when converting the codec into a JSON
+export const lbpRepayFeeLockId = '0x6c6270636c6c6374' // 'lbpcllct';
+export const balanceDataType = 'BalanceOf';
+
+// fee applied in a case when the repayTarget has not been reached
+const repayFee: Fee = {
+    numerator: '2',
+    denominator: '10',
+}
+
 /**
  * @param math 
  * @param client 
@@ -34,13 +47,14 @@ export interface PoolData {
  */
 export const mapToPool = (
     math: HydraDxMath,
-    client: ApolloClient<object>
+    client: ApolloClient<object>,
+    apiInstance: ApiPromise
 ) => 
     /**
      * @param [id, codec]
      * @returns LBPPool parsed from the coded provided as an argument
      */
-    ([id, codec]: [string, Codec]) => {
+    async ([id, codec]: [string, Codec]) => {
         // TODO this is possibly VERY unsafe and needs to be revisited for type parsing / creation
         const poolData = codec.toJSON() as unknown as PoolData;
         const lastBlockData = readLastBlock(client);
@@ -48,17 +62,17 @@ export const mapToPool = (
         
         if (!poolData || !relaychainBlockNumber) return;
 
+        const feeCollector = poolData.feeCollector.toString();
+        const repayTarget = apiInstance.createType(
+            balanceDataType,
+            poolData.repayTarget.toString()
+        ).toString()
+
         // construct the pool entity without weights
-        const partialPool: Omit<LbpPool, 'assetBWeights' | 'assetAWeights'> = {
+        const partialPool: Omit<LbpPool, 'assetBWeights' | 'assetAWeights' | 'repayTargetReached' | 'fee'> = {
             id,
             assetInId: poolData.assets[0].toString(),
             assetOutId: poolData.assets[1].toString(),
-            feeCollector: poolData.feeCollector,
-            fee: {
-                numerator: poolData.fee.numerator.toString(),
-                denominator: poolData.fee.denominator.toString(),
-            },
-            repayTarget: poolData.repayTarget.toString(),
             startBlock: poolData.start.toString(),
             endBlock: poolData.end.toString()
         }
@@ -78,18 +92,41 @@ export const mapToPool = (
                 relaychainBlockNumber
             )
         }
-        
-        // determine weights for asset B
-        const assetBWeights: LbpAssetWeights = {
+
+         // determine weights for asset B
+         const assetBWeights: LbpAssetWeights = {
             initial: calculateOppositeAssetWeight(assetAWeights.initial),
             final: calculateOppositeAssetWeight(assetAWeights.final),
             current: calculateOppositeAssetWeight(assetAWeights.current)
         }
 
+        // TODO: this function only works by finding the first lock with the given ID
+        // TODO: this data fetching should be moved to a resolver, and this mapper
+        // should be a plain function
+        const feeCollectorBalanceLockAmount = (await getLockedBalanceByAddressAndLockId(
+            apiInstance,
+            feeCollector, 
+            lbpRepayFeeLockId
+        ))?.amount?.toString();
+        
+        const repayTargetReached = repayTarget && feeCollectorBalanceLockAmount
+            // if collected fees are greater than the repay target, the repay target has been reached
+            // this means that we won't apply the repay fee down the line
+            ? new BigNumber(feeCollectorBalanceLockAmount).gt(new BigNumber(repayTarget))
+            : false
+
+        const poolFee: Fee = {
+            numerator: poolData.fee.numerator.toString(),
+            denominator: poolData.fee.denominator.toString(),
+        }
+
         const pool: LbpPool = {
             ...partialPool,
             assetAWeights,
-            assetBWeights
+            assetBWeights,
+            repayTargetReached,
+            // if we've haven't reached the repay target, the pool will carry a larger fee
+            fee: repayTargetReached ? poolFee : repayFee
         };
 
         return pool;
@@ -100,9 +137,11 @@ export const getLbpPools = async (
     math: HydraDxMath,
     client: ApolloClient<object>
 ) => {
-    return (await apiInstance.query.lbp.poolData.entries())
-        .map(mapToPoolId) 
-        .map(mapToPool(math, client)) || [];
+    return await Promise.all(
+        (await apiInstance.query.lbp.poolData.entries())
+            .map(mapToPoolId) 
+            .map(mapToPool(math, client, apiInstance))
+    ) || [];
 }
 
 /**

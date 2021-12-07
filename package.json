@@ -1,5 +1,5 @@
 {
-  "homepage": "https://galacticcouncil.github.io/basilisk-ui/",
+  "homepage": ".",
   "name": "basilisk-ui",
   "version": "0.1.0",
   "private": true,
@@ -32,6 +32,7 @@
     "classnames": "^2.3.1",
     "constate": "^3.3.0",
     "date-fns": "^2.25.0",
+    "env-cmd": "^10.1.0",
     "gql": "^1.1.2",
     "graphql": "^16.0.1",
     "graphql.macro": "^1.4.2",
@@ -61,8 +62,9 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "FAST_REFRESH=false craco start",
+    "start": "craco start",
     "build": "craco build",
+    "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
     "test": "craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:ci": "CI=true craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",

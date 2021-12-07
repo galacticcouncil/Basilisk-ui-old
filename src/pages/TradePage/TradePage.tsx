@@ -20,7 +20,7 @@ export interface SpotPrice {
 export const TradePage = () => {
     // TODO default values here should come from the router where query args are parsed
     const [assetIds, setAssetIds] = useState<TradeFormProps['assetIds']>({
-        assetInId: '1',
+        assetInId: '0',
         assetOutId: '2'
     })
 
@@ -30,6 +30,7 @@ export const TradePage = () => {
         loading: poolLoading, 
         error: poolError 
     } = useGetPoolByAssetsQuery(assetIds);
+    log.debug('TradePage.useGetPoolByAssetsQuery', assetIds);
 
     const pool: Pool | undefined = useMemo(() => poolData?.pool, [poolData?.pool]);
 

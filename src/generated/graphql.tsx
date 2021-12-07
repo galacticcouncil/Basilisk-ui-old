@@ -1,6 +1,5 @@
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
@@ -46,6 +45,12 @@ export type Extension = {
   isAvailable?: Maybe<Scalars['Boolean']>;
 };
 
+export type Fee = {
+  __typename?: 'Fee';
+  denominator: Scalars['String'];
+  numerator: Scalars['String'];
+};
+
 export type FeePaymentAsset = {
   __typename?: 'FeePaymentAsset';
   assetId?: Maybe<Scalars['String']>;
@@ -59,12 +64,6 @@ export type LbpAssetWeights = {
   initial: Scalars['String'];
 };
 
-export type LbpFee = {
-  __typename?: 'LBPFee';
-  denominator?: Maybe<Scalars['String']>;
-  numerator?: Maybe<Scalars['String']>;
-};
-
 export type LbpPool = {
   __typename?: 'LBPPool';
   assetAWeights: LbpAssetWeights;
@@ -73,10 +72,9 @@ export type LbpPool = {
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['String'];
-  fee: LbpFee;
-  feeCollector: Scalars['String'];
+  fee: Fee;
   id: Scalars['String'];
-  repayTarget: Scalars['String'];
+  repayTargetReached: Scalars['Boolean'];
   startBlock: Scalars['String'];
 };
 
