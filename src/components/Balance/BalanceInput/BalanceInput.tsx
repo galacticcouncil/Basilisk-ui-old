@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { useFormContext, Controller, ControllerRenderProps } from 'react-hook-form';
-import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/FormattedBalance';
+import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/metricUnit';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { Asset } from '../../../generated/graphql';

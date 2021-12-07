@@ -1,7 +1,7 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { MetricUnit } from '../FormattedBalance/FormattedBalance';
+import { MetricUnit } from '../FormattedBalance/metricUnit';
 import { AssetBalanceInput } from './AssetBalanceInput';
 
 export default {

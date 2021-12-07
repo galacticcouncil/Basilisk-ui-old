@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useModalPortal } from '../../AssetBalanceInput/useModalPortal';
-import { MetricUnit, MetricUnitMap, unitMap } from './../../FormattedBalance/FormattedBalance';
+import { MetricUnit, MetricUnitMap, unitMap } from './../../FormattedBalance/metricUnit';
 import { useTogglable } from './useTogglable';
 
 export interface MetricUnitSelectorProps {

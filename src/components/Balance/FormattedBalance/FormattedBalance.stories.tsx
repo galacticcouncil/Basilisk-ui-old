@@ -1,7 +1,8 @@
-import { FormattedBalance, FormattedBalanceProps, UnitStyle } from './FormattedBalance';
+import { FormattedBalance, FormattedBalanceProps } from './FormattedBalance';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { BigNumber } from 'bignumber.js'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { UnitStyle } from './metricUnit';
 
 const args: FormattedBalanceProps = {
     balance: {

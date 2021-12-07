@@ -2,7 +2,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useCallback, useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { MetricUnit } from '../FormattedBalance/FormattedBalance';
+import { MetricUnit } from '../FormattedBalance/metricUnit';
 import { BalanceInput, BalanceInputProps } from './BalanceInput';
 
 const args: { props: BalanceInputProps[] } = {
