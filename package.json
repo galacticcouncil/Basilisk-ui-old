@@ -147,7 +147,7 @@
     "@storybook/addon-actions": "^6.3.11",
     "@storybook/addon-essentials": "^6.3.11",
     "@storybook/addon-knobs": "^6.3.1",
-    "@storybook/addon-links": "^6.3.11",
+    "@storybook/addon-links": "^6.4.4",
     "@storybook/node-logger": "^6.3.11",
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/preset-scss": "^1.0.3",
@@ -163,6 +163,7 @@
     "node-sass": "^6.0.1",
     "sass": "^1.42.1",
     "sass-loader": "10.1.1",
+    "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2"
   }
