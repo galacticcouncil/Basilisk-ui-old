@@ -1,3 +1,4 @@
+import { Balance } from '@open-web3/orml-types/interfaces';
 import { MutableRefObject, ReactPortal, useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom';
 import { Asset } from '../../../generated/graphql';
@@ -8,7 +9,8 @@ import { useModalPortalElement } from './useModalPortalElement';
 
 export interface TokenBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
-    balanceInputProps: BalanceInputProps,
+    name: BalanceInputProps['name'],
+    unit: BalanceInputProps['unit']
     asset?: Asset,
     assets?: Asset[],
     onAssetSelected: (asset: Asset) => void
@@ -16,7 +18,8 @@ export interface TokenBalanceInputProps {
 
 export const AssetBalanceInput = ({
     modalContainerRef,
-    balanceInputProps,
+    name,
+    unit,
     asset,
     assets,
     onAssetSelected
@@ -40,6 +43,9 @@ export const AssetBalanceInput = ({
             </button>
         </div>
 
-        <BalanceInput {...balanceInputProps} />
+        <BalanceInput 
+            name={name}
+            unit={unit}
+        />
     </div>
 }

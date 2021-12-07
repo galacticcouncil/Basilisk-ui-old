@@ -100,7 +100,7 @@ export const useFormatSI = (
             ...siFormat,
             unitName
         }
-    }, [number])
+    }, [number, precision])
 
     const numberOfDecimalPlaces = useMemo(() => (
         formattedBalance?.value?.split('.')[1]?.length
@@ -117,7 +117,7 @@ export const useFormatSI = (
 
         // TODO: tweak how the displayUnit is positioned
         return ` ${displayUnit} ${assetSymbol}`;
-    }, [formattedBalance])
+    }, [formattedBalance, unitStyle])
 
     return { ...formattedBalance, numberOfDecimalPlaces, suffix };
 }

@@ -19,10 +19,8 @@ export default {
                 id: '1'
             }
         ],
-        balanceInputProps: {
-            unit: MetricUnit.k,
-            name: 'test-input'
-        }
+        unit: MetricUnit.k,
+        name: 'test-input'
     }
 } as ComponentMeta<typeof AssetBalanceInput>
 
