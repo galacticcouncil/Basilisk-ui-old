@@ -15,7 +15,7 @@ export interface BalanceInputProps {
     asset?: Asset
 }
 
-export const thousandsSeparatorSymbol = ',';
+export const thousandsSeparatorSymbol = ' ';
 export const currencyMaskOptions = {
     prefix: '',
     suffix: '',
