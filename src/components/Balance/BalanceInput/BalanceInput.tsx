@@ -6,11 +6,13 @@ import { useFormContext, Controller, ControllerRenderProps } from 'react-hook-fo
 import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/FormattedBalance';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import { Asset } from '../../../generated/graphql';
 
 log.setDefaultLevel('debug')
 export interface BalanceInputProps {
     defaultUnit: MetricUnit,
     name: string,
+    asset?: Asset
 }
 
 export const thousandsSeparatorSymbol = ',';
@@ -31,6 +33,7 @@ export const currencyMaskOptions = {
 export const BalanceInput = ({
     name,
     defaultUnit,
+    asset
 }: BalanceInputProps) => {
     const { control, setValue, getValues } = useFormContext();
     const [unit, setUnit] = useState(defaultUnit);
@@ -63,6 +66,7 @@ export const BalanceInput = ({
     }, [unit]);
 
     return <div>
+        <div>{asset?.id}</div>
         <MetricUnitSelector 
             unit={unit}
             units={Object.values(MetricUnit)}

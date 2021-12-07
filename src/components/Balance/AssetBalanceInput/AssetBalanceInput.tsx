@@ -1,4 +1,5 @@
 import { Balance } from '@open-web3/orml-types/interfaces';
+import classNames from 'classnames';
 import { MutableRefObject, ReactPortal, useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom';
 import { Asset } from '../../../generated/graphql';
@@ -13,6 +14,7 @@ export interface TokenBalanceInputProps {
     defaultUnit: BalanceInputProps['defaultUnit']
     asset?: Asset,
     assets?: Asset[],
+    isAssetSelectable: boolean,
     onAssetSelected: (asset: Asset) => void
 }
 
@@ -22,6 +24,7 @@ export const AssetBalanceInput = ({
     defaultUnit,
     asset,
     assets,
+    isAssetSelectable = true,
     onAssetSelected
 }: TokenBalanceInputProps) => {
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected });
@@ -30,7 +33,7 @@ export const AssetBalanceInput = ({
         modalContainerRef
     );
 
-    const handleAssetSelectorClick = useCallback(() => openModal(), [openModal]);
+    const handleAssetSelectorClick = useCallback(() => isAssetSelectable && openModal(), [isAssetSelectable, openModal]);
 
     return <div>
         {/* This portal will be rendered at it's container ref as defined above */}
@@ -38,13 +41,18 @@ export const AssetBalanceInput = ({
 
         {/* Selected asset */}
         <div>
-            <button onClick={handleAssetSelectorClick}>
+            <button 
+                className={classNames({
+                    'is-asset-selectable': isAssetSelectable
+                })}
+                onClick={handleAssetSelectorClick}>
                 {asset?.id}
             </button>
         </div>
 
         <BalanceInput 
             name={name}
+            asset={asset}
             defaultUnit={defaultUnit}
         />
     </div>
