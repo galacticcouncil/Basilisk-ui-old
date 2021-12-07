@@ -7,10 +7,13 @@ import { PageContainer } from './containers/PageContainer';
 
 log.setLevel('info');
 
+export const branch = process.env.REACT_APP_GIT_BRANCH;
+export const baseName = branch?.length ? `basilisk-ui/${branch}/app` : undefined;
+
 export const App = () => {
   return (
     <MultiProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={baseName}>
         <PageContainer>
           <Router />
         </PageContainer>
