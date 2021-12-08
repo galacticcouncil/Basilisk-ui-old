@@ -1,14 +1,15 @@
 import { Balance } from '@open-web3/orml-types/interfaces';
+import { decorateDeriveSections } from '@polkadot/api/util/decorate';
 import classNames from 'classnames';
 import { MutableRefObject, ReactPortal, useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom';
 import { Asset } from '../../../generated/graphql';
 import { BalanceInput, BalanceInputProps } from '../BalanceInput/BalanceInput';
 import { AssetSelector } from './AssetSelector/AssetSelector';
-import { ModalPortalElementFactory, useModalPortal } from './useModalPortal';
-import { useModalPortalElement } from './useModalPortalElement';
+import { ModalPortalElementFactory, useModalPortal } from './hooks/useModalPortal';
+import { useModalPortalElement } from './hooks/useModalPortalElement';
 
-export interface TokenBalanceInputProps {
+export interface AssetBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
     name: BalanceInputProps['name'],
     defaultUnit: BalanceInputProps['defaultUnit']
@@ -26,7 +27,7 @@ export const AssetBalanceInput = ({
     assets,
     isAssetSelectable = true,
     onAssetSelected
-}: TokenBalanceInputProps) => {
+}: AssetBalanceInputProps) => {
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected });
     const { openModal, modalPortal } = useModalPortal(
         modalPortalElement,

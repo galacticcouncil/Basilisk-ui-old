@@ -1,7 +1,8 @@
 import { useRef } from 'react';
-import { useModalPortal } from '../../AssetBalanceInput/useModalPortal';
+import { useModalPortal } from '../../AssetBalanceInput/hooks/useModalPortal';
 import { MetricUnit, MetricUnitMap, unitMap } from './../../FormattedBalance/metricUnit';
-import { useTogglable } from './useTogglable';
+import { useModalPortalElement } from './hooks/useModalPortalElement';
+import { MetricUnitItem } from './MetricUnitItem/MetricUnitItem';
 
 export interface MetricUnitSelectorProps {
     unit: MetricUnit,
@@ -15,22 +16,9 @@ export const MetricUnitSelector = ({
     onUnitSelected
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
+    const modalPortalElement = useModalPortalElement({ units, onUnitSelected });
     const { modalPortal, openModal } = useModalPortal(
-        ({ closeModal }) => {
-            const handleUnitSelected = (unit: MetricUnit) => {
-                closeModal();
-                onUnitSelected(unit);
-            };
-
-            return <div>
-                {units.map((unit, i) => (
-                    <p 
-                        key={i}
-                        onClick={_ => handleUnitSelected(unit)}
-                    >{unitMap[unit]}</p>
-                ))}
-            </div>
-        },
+        modalPortalElement,
         selectorContainerRef
     );
 

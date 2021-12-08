@@ -1,11 +1,11 @@
 import { useCallback, useRef } from 'react';
-import { Asset } from '../../../generated/graphql';
-import { TokenBalanceInputProps } from './AssetBalanceInput';
-import { AssetSelector } from './AssetSelector/AssetSelector';
+import { Asset } from '../../../../generated/graphql';
+import { AssetBalanceInputProps } from './../AssetBalanceInput';
+import { AssetSelector } from './../AssetSelector/AssetSelector';
 import { ModalPortalElementFactory, ModalPortalElementFactoryArgs } from './useModalPortal';
 
 export type ModalPortalElement =
-    ({ assets, onAssetSelected }: Pick<TokenBalanceInputProps, 'assets' | 'onAssetSelected'>) 
+    ({ assets, onAssetSelected }: Pick<AssetBalanceInputProps, 'assets' | 'onAssetSelected'>) 
     => ModalPortalElementFactory;
 export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
 
