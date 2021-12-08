@@ -7,6 +7,7 @@ import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { Asset } from '../../../generated/graphql';
+import './BalanceInput.scss';
 
 log.setDefaultLevel('debug')
 export interface BalanceInputProps {
