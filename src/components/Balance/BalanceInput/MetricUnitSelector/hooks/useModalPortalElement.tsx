@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { AssetBalanceInputProps } from '../../../AssetBalanceInput/AssetBalanceInput';
 import { ModalPortalElementFactory } from '../../../AssetBalanceInput/hooks/useModalPortal';
 import { CloseModal } from '../../../AssetBalanceInput/hooks/useModalPortalElement';
@@ -7,10 +7,10 @@ import { MetricUnitItem } from '../MetricUnitItem/MetricUnitItem';
 import { MetricUnitSelectorProps } from '../MetricUnitSelector';
 
 export type ModalPortalElement =
-    ({ units, onUnitSelected }: Pick<MetricUnitSelectorProps, 'units' | 'onUnitSelected'>)
+    ({ units, onUnitSelected, unit }: Pick<MetricUnitSelectorProps, 'units' | 'onUnitSelected' | 'unit'>)
     => ModalPortalElementFactory
 
-export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelected }) => {
+export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelected, unit }) => {
     const handleUnitSelected = useCallback((closeModal: CloseModal) => (
         (unit: MetricUnit) => {
             closeModal();
@@ -18,12 +18,15 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
         }
     ), [onUnitSelected]);
 
+    const activeUnit = useMemo(() => unit, [unit]);
+
     return ({ closeModal }) => {
         return <div>
             {units.map((unit, i) => (
                 <MetricUnitItem
                     key={i}
                     metricUnit={unit}
+                    active={unit === activeUnit}
                     onClick={() => handleUnitSelected(closeModal)(unit)}
                 />
             ))}

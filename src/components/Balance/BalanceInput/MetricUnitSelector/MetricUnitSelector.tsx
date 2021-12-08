@@ -16,7 +16,7 @@ export const MetricUnitSelector = ({
     onUnitSelected
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
-    const modalPortalElement = useModalPortalElement({ units, onUnitSelected });
+    const modalPortalElement = useModalPortalElement({ units, onUnitSelected, unit });
     const { modalPortal, openModal } = useModalPortal(
         modalPortalElement,
         selectorContainerRef

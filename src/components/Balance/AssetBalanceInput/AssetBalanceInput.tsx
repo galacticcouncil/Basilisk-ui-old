@@ -28,7 +28,7 @@ export const AssetBalanceInput = ({
     isAssetSelectable = true,
     onAssetSelected
 }: AssetBalanceInputProps) => {
-    const modalPortalElement = useModalPortalElement({ assets, onAssetSelected });
+    const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
     const { openModal, modalPortal } = useModalPortal(
         modalPortalElement,
         modalContainerRef

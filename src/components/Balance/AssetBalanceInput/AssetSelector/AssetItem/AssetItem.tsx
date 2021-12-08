@@ -1,15 +1,21 @@
 import { Asset } from '../../../../../generated/graphql';
-
+import classNames from 'classnames';
 export interface AssetItemProps {
     asset: Asset,
-    onClick: () => void
+    onClick: () => void,
+    active: boolean
 }
 
 export const AssetItem = ({
     asset,
-    onClick
+    onClick,
+    active
 }: AssetItemProps) => (
-    <div onClick={onClick}>
+    <div
+        className={classNames({
+            'active': active
+        })} 
+        onClick={onClick}>
         {asset.id}
     </div>
 )
