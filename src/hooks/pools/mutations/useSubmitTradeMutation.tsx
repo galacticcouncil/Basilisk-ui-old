@@ -6,10 +6,10 @@ import { TradeType } from '../../../generated/graphql';
 const SUBMIT_TRADE = loader('./../graphql/SubmitTrade.mutation.graphql');
 
 export interface SubmitTradeMutationVariables {
-    assetAId: string,
-    assetBId: string,
-    assetAAmount: string,
-    assetBAmount: string,
+    assetInId: string,
+    assetOutId: string,
+    assetInAmount: string,
+    assetOutAmount: string,
     poolType: PoolType,
     tradeType: TradeType,
     amountWithSlippage: string

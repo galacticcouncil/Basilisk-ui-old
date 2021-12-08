@@ -5,9 +5,12 @@ import { useCallback } from 'react'
 import { PoolType } from '../../../components/Chart/shared';
 import { Maybe, TradeType } from '../../../generated/graphql';
 import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers'
+import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation';
-import { useBuyXyk } from '../useBuyXyk'
-import { useSellXyk } from '../useSellXyk';
+import { buy as buyLbp } from '../lbp/buy';
+import { sell as sellLbp } from '../lbp/sell';
+import { buy as buyXyk } from '../xyk/buy'
+import { sell as sellXyk } from '../xyk/sell';
 
 // this is for buy, for sell we need to use minus, not plus
 export const applyAllowedSlippage = (
@@ -55,8 +58,7 @@ export const applyTradeFee = (
 }
 
 export const useSubmitTradeMutationResolver = () => {
-    const buyXyk = useBuyXyk();
-    const sellXyk = useSellXyk();
+    const { apiInstance } = usePolkadotJsContext();
 
     return useResolverToRef(
         useCallback(async (
@@ -64,13 +66,14 @@ export const useSubmitTradeMutationResolver = () => {
             args: Maybe<SubmitTradeMutationVariables>,
             { cache }: { cache: ApolloCache<NormalizedCacheObject> }
         ) => {
-            if (!args) return
+            if (!args || !apiInstance) return
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Buy) {
                 return await buyXyk(
                     cache,
-                    args.assetBId,
-                    args.assetAId,
-                    args.assetBAmount,
+                    apiInstance,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
                     args.amountWithSlippage,
                 );
             }
@@ -78,14 +81,37 @@ export const useSubmitTradeMutationResolver = () => {
             if (args?.poolType === PoolType.XYK && args?.tradeType === TradeType.Sell) {
                 return await sellXyk(
                     cache,
-                    args.assetAId,
-                    args.assetBId,
-                    args.assetAAmount,
+                    apiInstance,
+                    args.assetInId,
+                    args.assetOutId,
+                    args.assetInAmount,
                     args.amountWithSlippage,
                 );
             }
 
+            if (args?.poolType === PoolType.LBP && args?.tradeType === TradeType.Buy) {
+                return await buyLbp(
+                    cache,
+                    apiInstance,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
+                    args.amountWithSlippage
+                )
+            }
+
+            if (args?.poolType === PoolType.LBP && args?.tradeType === TradeType.Sell) {
+                return await sellLbp(
+                    cache,
+                    apiInstance,
+                    args.assetOutId,
+                    args.assetInId,
+                    args.assetOutAmount,
+                    args.amountWithSlippage
+                )
+            }
+
             throw new Error('We dont support this trade type yet');
-        }, [buyXyk])
+        }, [buyXyk, sellXyk, apiInstance])
     )
 }

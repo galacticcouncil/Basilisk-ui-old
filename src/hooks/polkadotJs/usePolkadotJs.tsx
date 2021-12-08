@@ -10,11 +10,11 @@ const getPoolAccount = {
   description: 'Get pool account id by asset IDs',
   params: [
     {
-      name: 'assetAId',
+      name: 'assetInId',
       type: 'u32'
     },
     {
-      name: 'assetBId',
+      name: 'assetOutId',
       type: 'u32'
     }
   ],

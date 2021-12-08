@@ -1,0 +1,9 @@
+@import './misc/colors.module.scss';
+
+html, body { 
+    background: $page-background;
+}
+
+#root {
+    color: $white1;
+}
