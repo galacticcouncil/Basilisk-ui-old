@@ -296,7 +296,7 @@ jobs:
       - name: Run tests
         run: |
           cd ui-app
-          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- npm test polkadot-dapp.test.ts
+          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn jest polkadot-dapp.test.ts
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
 
