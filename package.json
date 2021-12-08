@@ -73,6 +73,7 @@
     "test": "craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:ci": "CI=true craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
+    "test:e2e-ci": "CI=true yarn jest --testPathPattern=e2e-tests/tests",
     "eject": "craco eject",
     "lint": "eslint",
     "commit": "git-cz",

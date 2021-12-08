@@ -1,7 +1,7 @@
 module.exports = {
   preset: 'jest-playwright-preset',
   testRegex: './*\\.test\\.ts$',
-  setupFilesAfterEnv: ['./setup.js'],
+  setupFilesAfterEnv: ["./src/setupTests.ts"],
   transform: {
     '^.+\\.(ts)$': 'ts-jest',
   },
