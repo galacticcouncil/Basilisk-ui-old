@@ -25,9 +25,9 @@ export const useModalPortal = (
 
     const elementRef = useRef<HTMLDivElement | null>(null);
 
-    const element = useMemo(() => (
-        elementFactory({ toggleModal, openModal, closeModal, elementRef, isModalOpen })
-    ), [elementFactory, toggleModal, openModal, closeModal, isModalOpen]);
+    const element = useMemo(() => {
+        return elementFactory({ toggleModal, openModal, closeModal, elementRef, isModalOpen })
+    }, [elementFactory, toggleModal, openModal, closeModal, isModalOpen, elementRef]);
 
     useEffect(() => {
         if (!container.current || !element) return;
@@ -44,6 +44,6 @@ export const useModalPortal = (
         toggleModal,
         openModal,
         closeModal,
-        modalPortal: isModalOpen ? modalPortal : undefined
+        modalPortal: modalPortal
     };
 }

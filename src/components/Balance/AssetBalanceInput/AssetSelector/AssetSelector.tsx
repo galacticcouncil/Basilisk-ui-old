@@ -21,7 +21,7 @@ export const AssetSelector = ({
     innerRef
 }: AssetSelectorProps) => {
     const activeAsset = useMemo(() => asset, [asset]);
-    console.log('activeAsset', activeAsset);
+    
     return <div ref={innerRef}>
         <h1>Select an asset</h1>
         {/* TODO: export as AssetItem */}

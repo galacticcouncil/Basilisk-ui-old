@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useModalPortal } from '../../AssetBalanceInput/hooks/useModalPortal';
 import { MetricUnit, MetricUnitMap, unitMap } from '../../metricUnit';
 import { useModalPortalElement } from './hooks/useModalPortalElement';

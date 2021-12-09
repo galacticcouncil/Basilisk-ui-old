@@ -9,6 +9,7 @@ import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { Asset } from '../../../generated/graphql';
 import './BalanceInput.scss';
 import { useDefaultUnit } from './hooks/useDefaultUnit';
+import { useHandleOnChange } from './hooks/useHandleOnChange';
 
 log.setDefaultLevel('debug')
 export interface BalanceInputProps {
@@ -45,27 +46,7 @@ export const BalanceInput = ({
         ...currencyMaskOptions
     }), [unit])
 
-    // TODO: type the value
-    const setValueAs = useCallback(value => {
-        // entering dangerous waters
-        value = value?.replaceAll(thousandsSeparatorSymbol, '');
-        // this converts the given number to unit `NONE` and formats it with 12 digit precision
-        const formattedValue = formatFromSIWithPrecision12(value, unit);
-        log.debug('BalanceInput', 'setValueAs', value, formattedValue, unit);
-        return formattedValue;
-    }, [formatFromSIWithPrecision12, unit]);
-
-    // TODO better types for `field`
-    const handleOnChange = useCallback((field: ControllerRenderProps, e: ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        field.onChange(setValueAs(value));
-        setRawValue(value);
-    }, [setValueAs, setRawValue]);
-
-    useEffect(() => {
-        log.debug('BalanceInput', 'unit changed', rawValue, unit);
-        setValue(name, setValueAs(rawValue));
-    }, [unit]);
+    const handleOnChange = useHandleOnChange({ setValue, unit, name });
 
     return <div className='balance-input flex-container'>
         {showMetricUnitSelector

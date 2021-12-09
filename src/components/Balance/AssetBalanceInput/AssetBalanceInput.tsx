@@ -39,11 +39,8 @@ export const AssetBalanceInput = ({
         modalContainerRef,
         false // don't auto close when clicking outside the modalPortalElement
     );
-
     const { unit, setUnit } = useDefaultUnit(defaultUnit);
-
     const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
-
 
     return <div className='asset-balance-input'>
         {/* This portal will be rendered at it's container ref as defined above */}
@@ -72,7 +69,7 @@ export const AssetBalanceInput = ({
         </div>
 
         {/* TODO: css */}
-        <div onClick={_ => handleAssetSelectorClick()}>
+        <div className='test' onClick={_ => handleAssetSelectorClick()}>
             {asset?.id}
         </div>
         

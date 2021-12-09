@@ -21,19 +21,23 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
     const activeUnit = useMemo(() => unit, [unit]);
 
     return useCallback(({ closeModal, elementRef, isModalOpen }) => {
-        return isModalOpen
-            ? <div
-                className="metric-unit-selector__unit-list__wrapper"
-                ref={elementRef}>
-                {units.map((unit, i) => (
-                    <MetricUnitItem
-                        key={i}
-                        metricUnit={unit}
-                        active={unit === activeUnit}
-                        onClick={() => handleUnitSelected(closeModal)(unit)}
-                    />
-                ))}
-            </div>
-            : undefined
-    }, [handleUnitSelected, units, onUnitSelected, unit])
+        return <div ref={elementRef}>
+            {isModalOpen
+                ? <div
+                    className="metric-unit-selector__unit-list__wrapper">
+                    {units?.map((unit, i) => (
+                        <MetricUnitItem
+                            key={i}
+                            metricUnit={unit}
+                            active={unit === activeUnit}
+                            onClick={() => handleUnitSelected(closeModal)(unit)}
+                        />
+                    ))}
+                </div>
+                : <></>}
+        </div>
+    }, 
+        // TODO: figure out why `units` causes an ininite render loop
+        [handleUnitSelected, activeUnit, unit]
+    )
 }

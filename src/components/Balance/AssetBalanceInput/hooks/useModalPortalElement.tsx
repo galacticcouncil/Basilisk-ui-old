@@ -25,6 +25,6 @@ export const useModalPortalElement: ModalPortalElement = ({ assets, onAssetSelec
                 asset={asset}
                 onAssetSelected={handleAssetSelected(closeModal)}
             />
-            : undefined
+            : <></>
     }, [assets, asset, handleAssetSelected])
 }
