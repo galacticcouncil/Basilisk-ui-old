@@ -166,5 +166,9 @@
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2"
+  },
+  "resolutions": {
+    "@polkadot/util": "8.0.6-8",
+    "@polkadot/util-crypto": "8.0.6-8"
   }
 }
