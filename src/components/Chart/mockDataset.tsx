@@ -13,7 +13,8 @@ export const assetPair: AssetPair = {
     }
 };
 
-const randomDataPoint = () => random(3000, 3100);
+const randomDataPoint = () => random(10, 100);
+const singularity = randomDataPoint();
 
 const now = Date.now();
 const hourAgo = subMinutes(now, 60);
@@ -22,19 +23,19 @@ const hourAgo = subMinutes(now, 60);
 export const createDataset = (assetPair: AssetPair, entries:number) => times(entries)
     .map(i => ({
         x: now + (i * 100000),
-        y: random(3000, 3100) / (assetPair.assetA.symbol === 'BSX' ? 2 : 1)
+        y: randomDataPoint() / (assetPair.assetA.symbol === 'BSX' ? 2 : 1)
     }))
 
 // TODO: Proper dataset
 export const createLBPDataset = (assetPair: AssetPair, entries:number) => { return {
     primaryDataset: times(entries)
         .map(i => ({
-            x: addMinutes(hourAgo, (i + 1) * 10).getTime(),
-            y: i === (entries - 1) ? entries / 2 : randomDataPoint()
+            x: addMinutes(hourAgo, (i + 1) * (60 / entries)).getTime(),
+            y: i === (entries - 1) ? singularity : randomDataPoint()
         })),
     secondaryDataset: times(entries)
         .map(i => ({
-            x: addMinutes(now, i * 10).getTime(),
-            y: i === 0 ? entries / 2 : randomDataPoint()
+            x: addMinutes(now, i * (60 / entries)).getTime(),
+            y: i === 0 ? singularity : singularity / (i + 2 * 0.5)
         }))
 }}

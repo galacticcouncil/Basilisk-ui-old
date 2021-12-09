@@ -3,7 +3,7 @@ import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { useFormContext, Controller, ControllerRenderProps } from 'react-hook-form';
-import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../FormattedBalance/metricUnit';
+import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../metricUnit';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { Asset } from '../../../generated/graphql';
@@ -66,25 +66,31 @@ export const BalanceInput = ({
         setValue(name, setValueAs(rawValue));
     }, [unit]);
 
-    return <div>
-        <div>{asset?.id}</div>
-        <MetricUnitSelector 
-            unit={unit}
-            units={Object.values(MetricUnit)}
-            onUnitSelected={unit => setUnit(unit)}
-        />
-        <Controller 
-            control={control}
-            name={name}
-            render={
-                (({ field }) => (
-                    <MaskedInput 
-                        mask={currencyMask}
-                        ref={field.ref}
-                        onChange={e => handleOnChange(field, e)}
-                    />
-                ))
-            }
-        />
+    return <div className='balance-input flex-container'>
+        <div className='balance-input__info flex-container column'>
+            <div className='balance-input__unit-selector'>
+            <MetricUnitSelector 
+                unit={unit}
+                units={Object.values(MetricUnit)}
+                onUnitSelected={unit => setUnit(unit)}
+            />
+            </div>
+            <div className='balance-input__asset'>{asset?.id}</div>
+        </div>
+        <div className='balance-input__input-wrapper'>
+            <Controller 
+                control={control}
+                name={name}
+                render={
+                    (({ field }) => (
+                        <MaskedInput 
+                            mask={currencyMask}
+                            ref={field.ref}
+                            onChange={e => handleOnChange(field, e)}
+                        />
+                    ))
+                }
+            />
+        </div>
     </div>
 }

@@ -1,22 +1,25 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useRef } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
-import { MetricUnit } from '../FormattedBalance/metricUnit';
+import { MetricUnit } from '../metricUnit';
 import { AssetBalanceInput } from './AssetBalanceInput';
+
+import cssColors from './../../../misc/colors.module.scss'
+import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
     title: 'components/Balance/AssetBalanceInput',
     component: AssetBalanceInput,
     args: {
         asset: {
-            id: '0'
+            id: 'BSX'
         },
         assets: [
             {
-                id: '0',
+                id: 'BSX',
             },
             {
-                id: '1'
+                id: 'kUSD'
             }
         ],
         defaultUnit: MetricUnit.k,
@@ -28,20 +31,26 @@ const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
     const modalContainerRef = useRef<HTMLDivElement | null>(null);
     const methods = useForm();
 
-    return <div>
-        {/* This is where the underlying modal should be rendered */}
-        <div ref={modalContainerRef}></div>
+    return <StorybookWrapper>
+        <div style={{
+            margin: '-1rem',
+            padding: '1rem',
+            backgroundColor: cssColors.gray2
+        }} >
+            {/* This is where the underlying modal should be rendered */}
+            <div ref={modalContainerRef}></div>
 
-        <FormProvider {...methods}>
-            <form onSubmit={methods.handleSubmit(() => {})}>
-                {/* 
-                    Pass the ref to the element above, so that the TokenBalanceInput
-                    can render the modal there.
-                */}
-                <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
-            </form>
-        </FormProvider>
-    </div>
+            <FormProvider {...methods}>
+                <form onSubmit={methods.handleSubmit(() => {})}>
+                    {/* 
+                        Pass the ref to the element above, so that the TokenBalanceInput
+                        can render the modal there.
+                    */}
+                    <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                </form>
+            </FormProvider>
+        </div>
+    </StorybookWrapper>
 }
 
 export const Default = Template.bind({});

@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { MetricUnit, unitMap } from '../../../FormattedBalance/metricUnit';
+import { MetricUnit, unitMap } from '../../../metricUnit';
 
 export interface MetricUnitItemProps {
     metricUnit: MetricUnit,

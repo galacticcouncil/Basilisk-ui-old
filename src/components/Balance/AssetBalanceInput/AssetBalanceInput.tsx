@@ -9,6 +9,8 @@ import { AssetSelector } from './AssetSelector/AssetSelector';
 import { ModalPortalElementFactory, useModalPortal } from './hooks/useModalPortal';
 import { useModalPortalElement } from './hooks/useModalPortalElement';
 
+import './AssetBalanceInput.scss';
+
 export interface AssetBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
     name: BalanceInputProps['name'],
@@ -29,32 +31,33 @@ export const AssetBalanceInput = ({
     onAssetSelected
 }: AssetBalanceInputProps) => {
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
-    const { openModal, modalPortal } = useModalPortal(
+    const { toggleModal, modalPortal } = useModalPortal(
         modalPortalElement,
         modalContainerRef
     );
 
-    const handleAssetSelectorClick = useCallback(() => isAssetSelectable && openModal(), [isAssetSelectable, openModal]);
+    const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
 
-    return <div>
+    return <div className='asset-balance-input'>
         {/* This portal will be rendered at it's container ref as defined above */}
         {modalPortal}
 
         {/* Selected asset */}
-        <div>
-            <button 
-                className={classNames({
-                    'is-asset-selectable': isAssetSelectable
-                })}
-                onClick={handleAssetSelectorClick}>
-                {asset?.id}
-            </button>
-        </div>
-
+        
+        <button 
+            className={
+                'asset-balance-input__select '
+                + classNames({
+                    'is-asset-selectable': isAssetSelectable    
+                })
+            }
+            onClick={handleAssetSelectorClick}>
+        </button>
+        
         <BalanceInput 
             name={name}
             asset={asset}
-            defaultUnit={defaultUnit}
+            defaultUnit={defaultUnit} // TODO: Let's paste the button inside here as param and replace the static asset if available?
         />
     </div>
 }

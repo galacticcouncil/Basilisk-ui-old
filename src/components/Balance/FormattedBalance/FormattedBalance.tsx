@@ -7,7 +7,7 @@ import './FormattedBalance.scss';
 import BigNumber from 'bignumber.js';
 import { prefix } from '@fortawesome/free-solid-svg-icons';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
-import { MetricUnit, unitMap, UnitStyle } from './metricUnit';
+import { MetricUnit, unitMap, UnitStyle } from '../metricUnit';
 import { useFormatSI } from './hooks/useFormatSI';
 
 // TODO: extract
@@ -27,15 +27,13 @@ export interface FormattedBalanceProps {
 export const FormattedBalance = ({ 
     balance,
     precision = 3,
-    unitStyle = UnitStyle.SHORT
+    unitStyle = UnitStyle.SHORT // TODO FIX: When u change default to long it shows long only in story even when changed to SHORT
 }: FormattedBalanceProps) => {
     const assetSymbol = useMemo(() => 
         assetIdNameMap[balance.assetId]?.symbol, 
         [balance.assetId]
     );
-    // TODO: use asset.symbol instead
     const formattedBalance = useFormatSI(
-        assetSymbol, 
         precision, 
         unitStyle,
         balance.balance,
@@ -46,8 +44,9 @@ export const FormattedBalance = ({
     // We don't need to use the currency input here
     // because when there is more than 3 significant digits, the formatter
     // moves one notch up/down and keeps a fixed precision
-    return <>
-        <span>{formattedBalance.value}</span>
-        <span>{formattedBalance.suffix}</span>
-    </>
+    return <div className='formatted-balance flex-container'>
+        <div className='formatted-balance__value'>{formattedBalance.value}</div>
+        <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>{formattedBalance.suffix}</div>
+        <div className='formatted-balance__symbol'>{assetSymbol}</div>
+    </div>
 };

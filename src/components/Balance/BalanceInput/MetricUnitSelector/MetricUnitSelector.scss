@@ -1,0 +1,67 @@
+@import '../../../../misc/colors.module.scss';
+@import '../../../../misc/misc.module.scss';
+
+.metric-unit-selector {
+    position: relative;
+
+    background-color: $gray1;
+    font-weight: bold;
+    width: 100%;
+
+    cursor: pointer;
+
+    &__select {
+        font-size: 0.65em;
+
+        div {
+            display: inline;
+        }
+    }
+
+    &__icon {
+        padding-right: 0.5em;
+        font-size: 0.8em;
+        line-height: 0.8em;
+
+        color: $orange1;
+    }
+
+    &__unit {
+        text-transform: uppercase;
+        color: $orange1;
+    }
+
+    &__unit-list {
+        position: absolute;
+        width: 115%;
+        left: 0;
+        right: 0;
+
+        background-color: $gray1;
+
+        border-bottom-left-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+
+        z-index: 1;
+
+        font-size: 0.7em;
+
+        div {
+            text-transform: uppercase;
+            text-align: right;
+            padding: 0.35em 10%;
+        }
+
+        div:hover {
+            color: $orange1;
+        }
+
+        div:first-child {
+            padding-top: 1em;
+        }
+
+        div:last-child {
+            padding-bottom: 0.6em;
+        }
+    }
+}

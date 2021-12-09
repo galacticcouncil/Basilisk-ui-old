@@ -16,11 +16,13 @@ div {
 }
 
 input {
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
     color: $white1;
     outline: none;
     border: none;
-    background-color: $gray3;
-    border-radius: $border-radius;
+    background-color: $gray1;
+    box-sizing: border-box;
 }
 
 .flex-container {

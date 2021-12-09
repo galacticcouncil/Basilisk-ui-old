@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { AssetBalanceInputProps } from '../../../AssetBalanceInput/AssetBalanceInput';
 import { ModalPortalElementFactory } from '../../../AssetBalanceInput/hooks/useModalPortal';
 import { CloseModal } from '../../../AssetBalanceInput/hooks/useModalPortalElement';
-import { MetricUnit } from '../../../FormattedBalance/metricUnit';
+import { MetricUnit } from '../../../metricUnit';
 import { MetricUnitItem } from '../MetricUnitItem/MetricUnitItem';
 import { MetricUnitSelectorProps } from '../MetricUnitSelector';
 
@@ -21,7 +21,7 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
     const activeUnit = useMemo(() => unit, [unit]);
 
     return ({ closeModal }) => {
-        return <div>
+        return <>
             {units.map((unit, i) => (
                 <MetricUnitItem
                     key={i}
@@ -30,6 +30,6 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
                     onClick={() => handleUnitSelected(closeModal)(unit)}
                 />
             ))}
-        </div>
+        </>
     }
 }

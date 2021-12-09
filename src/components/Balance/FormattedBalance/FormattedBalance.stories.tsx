@@ -2,7 +2,9 @@ import { FormattedBalance, FormattedBalanceProps } from './FormattedBalance';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { BigNumber } from 'bignumber.js'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
-import { UnitStyle } from './metricUnit';
+import { UnitStyle } from '../metricUnit';
+
+import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 const args: FormattedBalanceProps = {
     balance: {
@@ -19,7 +21,10 @@ export default {
 } as ComponentMeta<typeof FormattedBalance>
 
 const Template: ComponentStory<typeof FormattedBalance> = (args: FormattedBalanceProps) => (
-    <>
+    <div className='flex-container column' style={{
+        textAlign:'end',
+        width: 'fit-content'
+    }}>
     {/* TODO: generate a better dataset */}
     {[
         '0.000000001',
@@ -46,7 +51,7 @@ const Template: ComponentStory<typeof FormattedBalance> = (args: FormattedBalanc
         '112312312312',
         '12560.5',
     ].map(balance => (
-        <div>
+        <StorybookWrapper>
             <FormattedBalance 
                 {...args} 
                 balance={{
@@ -54,9 +59,13 @@ const Template: ComponentStory<typeof FormattedBalance> = (args: FormattedBalanc
                     balance: toPrecision12(balance)!
                 }}
             />
-        </div>
+        </StorybookWrapper>
     ))}
-    </>
+    </div>
 )
 
 export const Default = Template.bind({})
+export const ShortSuffix = Template.bind({})
+ShortSuffix.args = {
+    unitStyle: UnitStyle.SHORT
+}

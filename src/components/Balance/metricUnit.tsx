@@ -1,7 +1,7 @@
 import { SI_PREFIXES } from '@gapit/format-si';
 import BigNumber from 'bignumber.js';
 import log from 'loglevel';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { toPrecision12 } from '../../hooks/math/useToPrecision';
 
 // Used to select in what format should the given unit be displayed
 export enum UnitStyle {
@@ -38,7 +38,7 @@ export const unitMap: MetricUnitMap = {
     'G': 'giga',
     'M': 'mega',
     'k': 'kilo',
-    '': 'no unit',
+    '': 'unit',
     'm': 'mili',
     'µ': 'micro',
     'n': 'nano',

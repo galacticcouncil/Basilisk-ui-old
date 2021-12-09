@@ -1,10 +1,9 @@
 import { formatFixedSI } from '@gapit/format-si';
 import { useMemo } from 'react';
 import { fromPrecision12 } from '../../../../hooks/math/useFromPrecision';
-import { MetricUnit, unitMap, UnitStyle } from '../metricUnit';
+import { MetricUnit, unitMap, UnitStyle } from '../../metricUnit';
 
 export const useFormatSI = (
-    assetSymbol: string,
     precision: number, 
     unitStyle: UnitStyle,
     number?: string,
@@ -43,7 +42,7 @@ export const useFormatSI = (
             : unit
 
         // TODO: tweak how the displayUnit is positioned
-        return ` ${displayUnit} ${assetSymbol}`;
+        return ` ${displayUnit}`;
     }, [formattedBalance, unitStyle])
 
     return { ...formattedBalance, numberOfDecimalPlaces, suffix };

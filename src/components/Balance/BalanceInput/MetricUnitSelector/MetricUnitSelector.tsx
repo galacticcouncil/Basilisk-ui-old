@@ -1,8 +1,9 @@
 import { useRef } from 'react';
 import { useModalPortal } from '../../AssetBalanceInput/hooks/useModalPortal';
-import { MetricUnit, MetricUnitMap, unitMap } from './../../FormattedBalance/metricUnit';
+import { MetricUnit, MetricUnitMap, unitMap } from '../../metricUnit';
 import { useModalPortalElement } from './hooks/useModalPortalElement';
 import { MetricUnitItem } from './MetricUnitItem/MetricUnitItem';
+import './MetricUnitSelector.scss';
 
 export interface MetricUnitSelectorProps {
     unit: MetricUnit,
@@ -17,18 +18,19 @@ export const MetricUnitSelector = ({
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
     const modalPortalElement = useModalPortalElement({ units, onUnitSelected, unit });
-    const { modalPortal, openModal } = useModalPortal(
+    const { modalPortal, toggleModal } = useModalPortal(
         modalPortalElement,
         selectorContainerRef
     );
 
-    return <div>
+    return <div className="metric-unit-selector">
         {/* Currently selected unit */}
-        <div onClick={openModal}>
-            {unitMap[unit]}
+        <div className='metric-unit-selector__select' onClick={toggleModal}>
+            <div className='metric-unit-selector__icon'>v</div>
+            <div className='metric-unit-selector__unit'>{unitMap[unit]}</div>
         </div>
         {/* List of available units */}
-        <div ref={selectorContainerRef}></div>
+        <div className='metric-unit-selector__unit-list flex-container column' ref={selectorContainerRef}></div>
         {modalPortal}
     </div>
 }
