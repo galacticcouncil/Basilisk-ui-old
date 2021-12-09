@@ -10,6 +10,9 @@ import { ModalPortalElementFactory, useModalPortal } from './hooks/useModalPorta
 import { useModalPortalElement } from './hooks/useModalPortalElement';
 
 import './AssetBalanceInput.scss';
+import { MetricUnit } from '../metricUnit';
+import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUnitSelector';
+import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
 
 export interface AssetBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
@@ -37,7 +40,10 @@ export const AssetBalanceInput = ({
         false // don't auto close when clicking outside the modalPortalElement
     );
 
+    const { unit, setUnit } = useDefaultUnit(defaultUnit);
+
     const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
+
 
     return <div className='asset-balance-input'>
         {/* This portal will be rendered at it's container ref as defined above */}
@@ -45,7 +51,7 @@ export const AssetBalanceInput = ({
 
         {/* Selected asset */}
         
-        <button 
+        {/* <button 
             className={
                 'asset-balance-input__select '
                 + classNames({
@@ -53,12 +59,27 @@ export const AssetBalanceInput = ({
                 })
             }
             onClick={handleAssetSelectorClick}>
-        </button>
+        </button> */}
+
+        {/* TODO: css/rename classes */}
+        <div className='balance-input__info flex-container column'>
+            <div className='balance-input__unit-selector'>
+                <MetricUnitSelector 
+                    unit={unit}
+                    onUnitSelected={setUnit}
+                />
+            </div>
+        </div>
+
+        {/* TODO: css */}
+        <div onClick={_ => handleAssetSelectorClick()}>
+            {asset?.id}
+        </div>
         
         <BalanceInput 
             name={name}
-            asset={asset}
-            defaultUnit={defaultUnit} // TODO: Let's paste the button inside here as param and replace the static asset if available?
+            defaultUnit={defaultUnit}
+            showMetricUnitSelector={false}
         />
     </div>
 }

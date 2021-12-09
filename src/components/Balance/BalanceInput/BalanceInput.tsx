@@ -8,12 +8,13 @@ import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { Asset } from '../../../generated/graphql';
 import './BalanceInput.scss';
+import { useDefaultUnit } from './hooks/useDefaultUnit';
 
 log.setDefaultLevel('debug')
 export interface BalanceInputProps {
     defaultUnit: MetricUnit,
     name: string,
-    asset?: Asset
+    showMetricUnitSelector?: boolean
 }
 
 export const thousandsSeparatorSymbol = ' ';
@@ -34,11 +35,11 @@ export const currencyMaskOptions = {
 export const BalanceInput = ({
     name,
     defaultUnit,
-    asset
+    showMetricUnitSelector = true,
 }: BalanceInputProps) => {
     const { control, setValue, getValues } = useFormContext();
-    const [unit, setUnit] = useState(defaultUnit);
     const [rawValue, setRawValue] = useState<string | undefined>();
+    const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
     const currencyMask = useMemo(() => createNumberMask({
         ...currencyMaskOptions
@@ -67,16 +68,18 @@ export const BalanceInput = ({
     }, [unit]);
 
     return <div className='balance-input flex-container'>
-        <div className='balance-input__info flex-container column'>
-            <div className='balance-input__unit-selector'>
-            <MetricUnitSelector 
-                unit={unit}
-                units={Object.values(MetricUnit)}
-                onUnitSelected={unit => setUnit(unit)}
-            />
-            </div>
-            <div className='balance-input__asset'>{asset?.id}</div>
-        </div>
+        {showMetricUnitSelector
+            ? (
+                <div className='balance-input__info flex-container column'>
+                    <div className='balance-input__unit-selector'>
+                        <MetricUnitSelector 
+                            unit={unit}
+                            onUnitSelected={setUnit}
+                        />
+                    </div>
+                </div>
+            )
+            : <></>}
         <div className='balance-input__input-wrapper'>
             <Controller 
                 control={control}

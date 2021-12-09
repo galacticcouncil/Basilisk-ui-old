@@ -21,12 +21,10 @@ const args: { props: BalanceInputProps[] } = {
         {
             defaultUnit: MetricUnit.m,
             name: 'balanceInputExample_m',
-            asset: {id:'kUSD'}
         },
         {
             defaultUnit: MetricUnit.p,
             name: 'balanceInputExample_p',
-            asset: {id:'BSX'}
         }
     ]    
 }

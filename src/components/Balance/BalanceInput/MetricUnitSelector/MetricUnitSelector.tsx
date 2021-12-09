@@ -7,13 +7,13 @@ import './MetricUnitSelector.scss';
 
 export interface MetricUnitSelectorProps {
     unit: MetricUnit,
-    units: MetricUnit[],
+    units?: MetricUnit[],
     onUnitSelected: (unit: MetricUnit) => void
 }
 
 export const MetricUnitSelector = ({
     unit,
-    units,
+    units = Object.values(MetricUnit),
     onUnitSelected
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
