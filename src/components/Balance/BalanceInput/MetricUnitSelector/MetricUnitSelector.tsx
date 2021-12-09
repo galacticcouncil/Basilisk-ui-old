@@ -18,7 +18,7 @@ export const MetricUnitSelector = ({
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
     const modalPortalElement = useModalPortalElement({ units, onUnitSelected, unit });
-    const { modalPortal, toggleModal } = useModalPortal(
+    const { modalPortal, closeModal, toggleModal } = useModalPortal(
         modalPortalElement,
         selectorContainerRef
     );

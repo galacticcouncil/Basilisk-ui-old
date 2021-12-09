@@ -17,8 +17,9 @@ export const useModalPortalElement: ModalPortalElement = ({ assets, onAssetSelec
         }
     ), []);
 
-    return ({ closeModal }) => {
-        return <AssetSelector 
+    return ({ closeModal, elementRef }) => {
+        return <AssetSelector
+            innerRef={elementRef} 
             assets={assets}
             asset={asset}
             onAssetSelected={handleAssetSelected(closeModal)}

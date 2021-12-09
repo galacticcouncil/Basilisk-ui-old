@@ -20,8 +20,8 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
 
     const activeUnit = useMemo(() => unit, [unit]);
 
-    return ({ closeModal }) => {
-        return <>
+    return ({ closeModal, elementRef }) => {
+        return <div ref={elementRef}>
             {units.map((unit, i) => (
                 <MetricUnitItem
                     key={i}
@@ -30,6 +30,6 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
                     onClick={() => handleUnitSelected(closeModal)(unit)}
                 />
             ))}
-        </>
+        </div>
     }
 }

@@ -33,7 +33,8 @@ export const AssetBalanceInput = ({
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
     const { toggleModal, modalPortal } = useModalPortal(
         modalPortalElement,
-        modalContainerRef
+        modalContainerRef,
+        false // don't auto close when clicking outside the modalPortalElement
     );
 
     const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
