@@ -111,7 +111,18 @@
       }
     ]
   },
-  "browserslist": [],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
@@ -166,9 +177,5 @@
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2"
-  },
-  "resolutions": {
-    "@polkadot/util": "8.0.6-8",
-    "@polkadot/util-crypto": "8.0.6-8"
   }
 }
