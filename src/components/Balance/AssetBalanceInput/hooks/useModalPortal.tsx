@@ -5,7 +5,8 @@ export interface ModalPortalElementFactoryArgs {
     openModal: () => void,
     closeModal: () => void,
     toggleModal: () => void,
-    elementRef: MutableRefObject<HTMLDivElement | null>
+    elementRef: MutableRefObject<HTMLDivElement | null>,
+    isModalOpen: boolean,
 }
 
 export type ModalPortalElementFactory = (args: ModalPortalElementFactoryArgs) => ReactNode;
@@ -25,18 +26,15 @@ export const useModalPortal = (
     const elementRef = useRef<HTMLDivElement | null>(null);
 
     const element = useMemo(() => (
-        elementFactory({ toggleModal, openModal, closeModal, elementRef })
-    ), [elementFactory, toggleModal, openModal, closeModal]);
+        elementFactory({ toggleModal, openModal, closeModal, elementRef, isModalOpen })
+    ), [elementFactory, toggleModal, openModal, closeModal, isModalOpen]);
 
     useEffect(() => {
-        if (!container.current) return;
+        if (!container.current || !element) return;
         setModalPortal(
-            createPortal(
-                element,
-                container.current
-            )
+            createPortal(element, container.current)
         );
-    }, [container.current]);
+    }, [container.current, element]);
     
     useOnClickOutside(elementRef as MutableRefObject<Node>, () => {
         closeOnClickOutside && closeModal()

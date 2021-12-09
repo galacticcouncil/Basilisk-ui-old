@@ -20,16 +20,20 @@ export const useModalPortalElement: ModalPortalElement = ({ units, onUnitSelecte
 
     const activeUnit = useMemo(() => unit, [unit]);
 
-    return ({ closeModal, elementRef }) => {
-        return <div ref={elementRef}>
-            {units.map((unit, i) => (
-                <MetricUnitItem
-                    key={i}
-                    metricUnit={unit}
-                    active={unit === activeUnit}
-                    onClick={() => handleUnitSelected(closeModal)(unit)}
-                />
-            ))}
-        </div>
-    }
+    return useCallback(({ closeModal, elementRef, isModalOpen }) => {
+        return isModalOpen
+            ? <div
+                className="metric-unit-selector__unit-list__wrapper"
+                ref={elementRef}>
+                {units.map((unit, i) => (
+                    <MetricUnitItem
+                        key={i}
+                        metricUnit={unit}
+                        active={unit === activeUnit}
+                        onClick={() => handleUnitSelected(closeModal)(unit)}
+                    />
+                ))}
+            </div>
+            : undefined
+    }, [handleUnitSelected, units, onUnitSelected, unit])
 }

@@ -52,6 +52,7 @@
             padding: 0.35em 10%;
         }
 
+        // TODO: @jakpann be more specific with the selector here, i've added an extra div to wrap the metricunititems and it breaks on hover
         div:hover {
             color: $orange1;
         }

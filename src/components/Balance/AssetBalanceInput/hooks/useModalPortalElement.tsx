@@ -15,14 +15,16 @@ export const useModalPortalElement: ModalPortalElement = ({ assets, onAssetSelec
             closeModal();
             onAssetSelected(asset);   
         }
-    ), []);
+    ), [onAssetSelected]);
 
-    return ({ closeModal, elementRef }) => {
-        return <AssetSelector
-            innerRef={elementRef} 
-            assets={assets}
-            asset={asset}
-            onAssetSelected={handleAssetSelected(closeModal)}
-        />
-    }
+    return useCallback(({ closeModal, elementRef, isModalOpen }) => {
+        return isModalOpen 
+            ? <AssetSelector
+                innerRef={elementRef} 
+                assets={assets}
+                asset={asset}
+                onAssetSelected={handleAssetSelected(closeModal)}
+            />
+            : undefined
+    }, [assets, asset, handleAssetSelected])
 }
