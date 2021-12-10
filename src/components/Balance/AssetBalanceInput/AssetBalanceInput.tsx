@@ -30,7 +30,7 @@ export const AssetBalanceInput = ({
     onAssetSelected
 }: AssetBalanceInputProps) => {
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
-    const { toggleModal, modalPortal } = useModalPortal(
+    const { toggleModal, modalPortal, toggleId } = useModalPortal(
         modalPortalElement,
         modalContainerRef,
         false // don't auto close when clicking outside the modalPortalElement
@@ -42,7 +42,11 @@ export const AssetBalanceInput = ({
         {/* This portal will be rendered at it's container ref as defined above */}
         {modalPortal}
         {/* TODO: icon */}
-        <div className='asset-balance-input__asset-icon' onClick={_ => handleAssetSelectorClick()}>
+        <div 
+            className='asset-balance-input__asset-icon' 
+            onClick={_ => handleAssetSelectorClick()}
+            data-modal-portal-toggle={toggleId}
+        >
             <div>{asset?.id}</div>
         </div>
         <div className='asset-balance-input__input-wrapper'>

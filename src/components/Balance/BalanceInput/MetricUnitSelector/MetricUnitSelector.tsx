@@ -10,6 +10,8 @@ export interface MetricUnitSelectorProps {
     onUnitSelected: (unit: MetricUnit) => void
 }
 
+export const modalPortalToggleId = 'metric-unit-selector-toggle'
+
 export const MetricUnitSelector = ({
     unit,
     units = Object.values(MetricUnit),
@@ -17,9 +19,10 @@ export const MetricUnitSelector = ({
 }: MetricUnitSelectorProps) => {
     const selectorContainerRef = useRef<HTMLDivElement | null>(null);
     const modalPortalElement = useModalPortalElement({ units, onUnitSelected, unit });
-    const { modalPortal, openModal } = useModalPortal(
+    const { modalPortal, openModal, toggleId } = useModalPortal(
         modalPortalElement,
-        selectorContainerRef
+        selectorContainerRef,
+        true,
     );
     
     const handleUnitClick = useCallback(openModal, [openModal]);
@@ -30,7 +33,7 @@ export const MetricUnitSelector = ({
         <div 
             className='metric-unit-selector__select flex-container' 
             onClick={handleUnitClick}
-            data-modal-portal-toggle
+            data-modal-portal-toggle={toggleId}
         >
             <div className='metric-unit-selector__unit'>{unitMap[unit]}</div>
             <div className='metric-unit-selector__icon'>v</div>

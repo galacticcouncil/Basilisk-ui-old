@@ -14,7 +14,7 @@ export type ModalPortalElementFactory = (args: ModalPortalElementFactoryArgs) =>
 export const useModalPortal = (
     elementFactory: ModalPortalElementFactory,
     container: MutableRefObject<HTMLDivElement | null>,
-    closeOnClickOutside: boolean = true
+    closeOnClickOutside: boolean = true,
 ) => {
     const [modalPortal, setModalPortal] = useState<ReactPortal | undefined>();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,6 +24,9 @@ export const useModalPortal = (
     const closeModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen]);
 
     const elementRef = useRef<HTMLDivElement | null>(null);
+
+    // TODO: use uuid to generate the toggleId
+    const toggleId = useMemo(() => Math.random() * 10000, []);
 
     const element = useMemo(() => {
         return elementFactory({ toggleModal, openModal, closeModal, elementRef, isModalOpen })
@@ -37,7 +40,9 @@ export const useModalPortal = (
     }, [container.current, element]);
     
     useOnClickOutside(elementRef as MutableRefObject<Node>, (event) => {
-        const didClickOutsideToggle = !(event.target as HTMLElement).closest('[data-modal-portal-toggle]');
+        // TODO: this is not entirely reliable, since it works on any data-modal-portal-toggle, not only on the relevant ones
+        const didClickOutsideToggle = !(event.target as HTMLElement).closest(`[data-modal-portal-toggle="${toggleId}"]`);
+        console.log('didClickOutsideToggle', didClickOutsideToggle, `[data-modal-portal-toggle="${toggleId}"]`);
         closeOnClickOutside && didClickOutsideToggle && closeModal()
     });
 
@@ -46,6 +51,7 @@ export const useModalPortal = (
         openModal,
         closeModal,
         isModalOpen,
+        toggleId,
         modalPortal: modalPortal
     };
 }
