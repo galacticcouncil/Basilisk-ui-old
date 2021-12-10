@@ -7,11 +7,16 @@
     background-color: $gray1;
     border-radius: $border-radius;
 
+    &.no-selector {
+        border-radius: $border-radius;
+        overflow: hidden;
+    }
+
     &__input-wrapper {
         flex-grow: 1;
 
         input {
-            box-shadow: -1px 0 0 $gray2;
+            box-shadow: -1px 0 0 $gray2 inset;
 
             text-align: right;
             padding: 0 0.8em;
@@ -19,23 +24,18 @@
             height: 100%;
             width: 100%;
 
-            border-top-right-radius: $border-radius;
-            border-bottom-right-radius: $border-radius;
+            border-top-left-radius: $border-radius;
+            border-bottom-left-radius: $border-radius;
         }
     }
 
     &__info {
         user-select: none;
 
-        padding-right: 0.85rem;
-
         text-align: right;
         justify-content: center;
         width: 5rem;
-    }
 
-    &__asset {
-        font-size: 0.95em;
-        font-weight: bold;
+        border-radius: $border-radius;
     }
 }

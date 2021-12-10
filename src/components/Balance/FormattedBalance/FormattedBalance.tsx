@@ -27,7 +27,7 @@ export interface FormattedBalanceProps {
 export const FormattedBalance = ({ 
     balance,
     precision = 3,
-    unitStyle = UnitStyle.SHORT // TODO FIX: When u change default to long it shows long only in story even when changed to SHORT
+    unitStyle = UnitStyle.LONG
 }: FormattedBalanceProps) => {
     const assetSymbol = useMemo(() => 
         assetIdNameMap[balance.assetId]?.symbol, 

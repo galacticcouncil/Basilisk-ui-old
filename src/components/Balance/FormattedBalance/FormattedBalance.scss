@@ -13,7 +13,11 @@
     }
 
     &__suffix {
-        color: $orange1;
+        color: $gray4;
         font-size: 0.8em;
+    }
+
+    &__symbol {
+        color: $white1;
     }
 }

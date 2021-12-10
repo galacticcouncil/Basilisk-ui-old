@@ -1,19 +1,20 @@
 import log from 'loglevel';
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { useFormContext, Controller, ControllerRenderProps } from 'react-hook-form';
-import { prefixMap, MetricUnit, formatFromSIWithPrecision12, unitMap } from '../metricUnit';
+import { useFormContext, Controller } from 'react-hook-form';
+import {  MetricUnit } from '../metricUnit';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { Asset } from '../../../generated/graphql';
-import './BalanceInput.scss';
 import { useDefaultUnit } from './hooks/useDefaultUnit';
 import { useHandleOnChange } from './hooks/useHandleOnChange';
+import classNames from 'classnames';
+
+import './BalanceInput.scss';
 
 log.setDefaultLevel('debug')
+// TODO Make default unit non-required?
 export interface BalanceInputProps {
-    defaultUnit: MetricUnit,
+    defaultUnit?: MetricUnit,
     name: string,
     showMetricUnitSelector?: boolean
 }
@@ -35,7 +36,7 @@ export const currencyMaskOptions = {
 
 export const BalanceInput = ({
     name,
-    defaultUnit,
+    defaultUnit = MetricUnit.NONE,
     showMetricUnitSelector = true,
 }: BalanceInputProps) => {
     const { control, setValue, getValues } = useFormContext();
@@ -48,19 +49,9 @@ export const BalanceInput = ({
 
     const handleOnChange = useHandleOnChange({ setValue, unit, name });
 
-    return <div className='balance-input flex-container'>
-        {showMetricUnitSelector
-            ? (
-                <div className='balance-input__info flex-container column'>
-                    <div className='balance-input__unit-selector'>
-                        <MetricUnitSelector 
-                            unit={unit}
-                            onUnitSelected={setUnit}
-                        />
-                    </div>
-                </div>
-            )
-            : <></>}
+    return <div className={'balance-input flex-container ' + classNames({
+        'no-selector': !showMetricUnitSelector
+    })}>
         <div className='balance-input__input-wrapper'>
             <Controller 
                 control={control}
@@ -76,5 +67,16 @@ export const BalanceInput = ({
                 }
             />
         </div>
+        {showMetricUnitSelector
+            ? (
+                <div className='balance-input__info flex-container column'>
+                    <MetricUnitSelector 
+                        unit={unit}
+                        onUnitSelected={setUnit}
+                    />
+                </div>
+            )
+            : <></>
+        }
     </div>
 }

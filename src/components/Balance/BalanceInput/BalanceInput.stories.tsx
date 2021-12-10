@@ -25,6 +25,10 @@ const args: { props: BalanceInputProps[] } = {
         {
             defaultUnit: MetricUnit.p,
             name: 'balanceInputExample_p',
+        },
+        {
+            showMetricUnitSelector: false,
+            name: 'balanceInputExample_NO_SELECTOR'
         }
     ]    
 }

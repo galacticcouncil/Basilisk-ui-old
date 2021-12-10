@@ -4,38 +4,51 @@
 .metric-unit-selector {
     position: relative;
 
-    background-color: $gray1;
     font-weight: bold;
     width: 100%;
 
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
     cursor: pointer;
 
+    padding: 0 0.5rem;
+
     &__select {
+        width: 100%;
         font-size: 0.65em;
 
-        div {
+        justify-content: center;
+        align-items: center;
+
+        color: $gray4;
+
+        > div {
             display: inline;
+        }
+
+        &:hover {
+            color: $green1;
         }
     }
 
     &__icon {
-        padding-right: 0.5em;
+        padding-left: 0.5em;
         font-size: 0.8em;
         line-height: 0.8em;
-
-        color: $orange1;
     }
 
     &__unit {
         text-transform: uppercase;
-        color: $orange1;
     }
 
     &__unit-list {
         position: absolute;
-        width: 115%;
+        width: 100%;
+
+        top:100%;
         left: 0;
-        right: 0;
 
         background-color: $gray1;
 
@@ -44,25 +57,24 @@
 
         z-index: 1;
 
-        font-size: 0.7em;
+        font-size: 0.65em;
 
-        div {
+        .metric-unit-list-item {
             text-transform: uppercase;
-            text-align: right;
-            padding: 0.35em 10%;
-        }
+            padding: 0.35em 0.5em;
+            text-align: center;
 
-        // TODO: @jakpann be more specific with the selector here, i've added an extra div to wrap the metricunititems and it breaks on hover
-        div:hover {
-            color: $orange1;
-        }
+            &.active {
+                color: $green1;
+            }
 
-        div:first-child {
-            padding-top: 1em;
-        }
-
-        div:last-child {
-            padding-bottom: 0.6em;
+            &:hover {
+                color: $green1;
+            }
+    
+            &:last-child {
+                padding-bottom: 0.6em;
+            }
         }
     }
 }

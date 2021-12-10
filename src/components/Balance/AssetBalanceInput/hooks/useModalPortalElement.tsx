@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback } from 'react';
 import { Asset } from '../../../../generated/graphql';
 import { AssetBalanceInputProps } from './../AssetBalanceInput';
 import { AssetSelector } from './../AssetSelector/AssetSelector';

@@ -9,7 +9,7 @@ export interface MetricUnitItemProps {
 
 export const MetricUnitItem = ({ metricUnit, onClick, active }: MetricUnitItemProps) => (
     <div
-        className={classNames({
+        className={'metric-unit-list-item ' + classNames({
             'active': active
         })} 
         onClick={_ => onClick()}>

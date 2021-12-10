@@ -1,6 +1,7 @@
 import { MutableRefObject, useMemo } from 'react';
 import { Asset } from '../../../../generated/graphql';
 import { AssetItem } from './AssetItem/AssetItem';
+import './AssetSelector.scss';
 
 export interface AssetSelectorProps {
     assets?: Asset[],
@@ -22,8 +23,9 @@ export const AssetSelector = ({
 }: AssetSelectorProps) => {
     const activeAsset = useMemo(() => asset, [asset]);
     
-    return <div ref={innerRef}>
-        <h1>Select an asset</h1>
+    // TODO: SEARCH
+    return <div className='asset-selector' ref={innerRef}>
+        <div className='asset-selector__heading'>Select an asset</div>
         {/* TODO: export as AssetItem */}
         {assets?.map((asset, i) => (
             <AssetItem

@@ -12,7 +12,7 @@ export const AssetItem = ({
     active
 }: AssetItemProps) => (
     <div
-        className={classNames({
+        className={'asset-selector__asset-item ' + classNames({
             'active': active
         })} 
         onClick={onClick}>

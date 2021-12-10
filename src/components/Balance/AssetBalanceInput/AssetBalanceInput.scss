@@ -1,19 +1,40 @@
+@import '../../../misc/colors.module.scss';
+@import '../../../misc/misc.module.scss';
+
 .asset-balance-input {
     position: relative;
+    align-items: center;
 
-    &__select {
-        background-color: transparent;
-        border-style: none;
+    background-color: $gray1;
+    border-radius: $border-radius;
 
+    &__info {
+        width: 4.5rem;
+        align-items: center;
+        font-weight: bold;
+    }
+
+    &__asset-icon {
+        height: 2rem;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        width: 4rem;
+
+        font-size: 0.95rem;
+        font-weight: bold;
         cursor: pointer;
 
-        height: calc(100% - 1.1rem);
-        position: absolute;
-        width: 5rem;
-        bottom: 0;
+        box-shadow: -1px 0 0 $gray2 inset;
 
         &:hover {
-            background-color: rgba(0,0,0,0.1);
+            color: $green1;
         }
+    }
+
+    &__input-wrapper {
+        flex-grow: 1;
     }
 }

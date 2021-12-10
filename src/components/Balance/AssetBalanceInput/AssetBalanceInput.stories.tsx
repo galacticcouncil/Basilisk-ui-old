@@ -7,6 +7,8 @@ import { AssetBalanceInput } from './AssetBalanceInput';
 import cssColors from './../../../misc/colors.module.scss'
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
+import './AssetBalanceInput2.scss';
+
 export default {
     title: 'components/Balance/AssetBalanceInput',
     component: AssetBalanceInput,
@@ -47,6 +49,20 @@ const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
                         can render the modal there.
                     */}
                     <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                    <br/>
+                    <div className='style2'>
+                        <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                    </div>
+                    <br/>
+                    <div style={{
+                        width: '325px'
+                    }}>
+                                            <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                    <br/>
+                    <div className='style2'>
+                        <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                    </div>
+                    </div>
                 </form>
             </FormProvider>
         </div>

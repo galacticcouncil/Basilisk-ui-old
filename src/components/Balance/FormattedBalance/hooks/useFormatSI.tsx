@@ -36,12 +36,11 @@ export const useFormatSI = (
         if (!formattedBalance) return;
 
         const unit = formattedBalance.unit;
-        const unitName = formattedBalance.unitName;
+        const unitName = unit === '' ? '' : formattedBalance.unitName;
         const displayUnit = unitStyle === UnitStyle.LONG
             ? unitName || unit
             : unit
 
-        // TODO: tweak how the displayUnit is positioned
         return ` ${displayUnit}`;
     }, [formattedBalance, unitStyle])
 

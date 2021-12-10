@@ -1,12 +1,8 @@
-import { Balance } from '@open-web3/orml-types/interfaces';
-import { decorateDeriveSections } from '@polkadot/api/util/decorate';
 import classNames from 'classnames';
-import { MutableRefObject, ReactPortal, useCallback, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom';
+import { MutableRefObject, useCallback } from 'react'
 import { Asset } from '../../../generated/graphql';
 import { BalanceInput, BalanceInputProps } from '../BalanceInput/BalanceInput';
-import { AssetSelector } from './AssetSelector/AssetSelector';
-import { ModalPortalElementFactory, useModalPortal } from './hooks/useModalPortal';
+import {  useModalPortal } from './hooks/useModalPortal';
 import { useModalPortalElement } from './hooks/useModalPortalElement';
 
 import './AssetBalanceInput.scss';
@@ -27,7 +23,7 @@ export interface AssetBalanceInputProps {
 export const AssetBalanceInput = ({
     modalContainerRef,
     name,
-    defaultUnit,
+    defaultUnit = MetricUnit.NONE,
     asset,
     assets,
     isAssetSelectable = true,
@@ -42,41 +38,28 @@ export const AssetBalanceInput = ({
     const { unit, setUnit } = useDefaultUnit(defaultUnit);
     const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
 
-    return <div className='asset-balance-input'>
+    return <div className='asset-balance-input flex-container'>
         {/* This portal will be rendered at it's container ref as defined above */}
         {modalPortal}
-
-        {/* Selected asset */}
-        
-        {/* <button 
-            className={
-                'asset-balance-input__select '
-                + classNames({
-                    'is-asset-selectable': isAssetSelectable    
-                })
-            }
-            onClick={handleAssetSelectorClick}>
-        </button> */}
-
-        {/* TODO: css/rename classes */}
-        <div className='balance-input__info flex-container column'>
-            <div className='balance-input__unit-selector'>
-                <MetricUnitSelector 
-                    unit={unit}
-                    onUnitSelected={setUnit}
-                />
+        {/* TODO: icon */}
+        <div className='asset-balance-input__asset-icon' onClick={_ => handleAssetSelectorClick()}>
+            <div>{asset?.id}</div>
+        </div>
+        <div className='asset-balance-input__input-wrapper'>
+            <BalanceInput 
+                name={name}
+                defaultUnit={defaultUnit}
+                showMetricUnitSelector={false}
+            />
+        </div>
+        <div className='asset-balance-input__info flex-container column'>
+            <MetricUnitSelector 
+                unit={unit}
+                onUnitSelected={setUnit}
+            />
+            <div className='asset-balance-input__asset-suffix'>
+                <div>{asset?.id}</div>
             </div>
         </div>
-
-        {/* TODO: css */}
-        <div className='test' onClick={_ => handleAssetSelectorClick()}>
-            {asset?.id}
-        </div>
-        
-        <BalanceInput 
-            name={name}
-            defaultUnit={defaultUnit}
-            showMetricUnitSelector={false}
-        />
     </div>
 }
