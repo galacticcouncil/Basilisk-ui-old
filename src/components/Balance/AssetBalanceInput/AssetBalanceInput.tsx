@@ -48,7 +48,7 @@ export const AssetBalanceInput = ({
         <div className='asset-balance-input__input-wrapper'>
             <BalanceInput 
                 name={name}
-                defaultUnit={defaultUnit}
+                defaultUnit={unit}
                 showMetricUnitSelector={false}
             />
         </div>

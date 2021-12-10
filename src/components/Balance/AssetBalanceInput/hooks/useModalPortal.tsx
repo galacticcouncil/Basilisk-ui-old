@@ -36,14 +36,16 @@ export const useModalPortal = (
         );
     }, [container.current, element]);
     
-    useOnClickOutside(elementRef as MutableRefObject<Node>, () => {
-        closeOnClickOutside && closeModal()
+    useOnClickOutside(elementRef as MutableRefObject<Node>, (event) => {
+        const didClickOutsideToggle = !(event.target as HTMLElement).closest('[data-modal-portal-toggle]');
+        closeOnClickOutside && didClickOutsideToggle && closeModal()
     });
 
     return { 
         toggleModal,
         openModal,
         closeModal,
+        isModalOpen,
         modalPortal: modalPortal
     };
 }
