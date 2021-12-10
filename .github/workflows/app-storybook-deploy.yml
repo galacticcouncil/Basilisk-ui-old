@@ -30,7 +30,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: node-modules-ui-app-v1-${{ hashFiles('yarn.lock') }}
+          key: node-modules-ui-app-v2-${{ hashFiles('yarn.lock') }}
 
       - name: Install NPM packages
         if: steps.cache-node-modules-ui-app-v1.outputs.cache-hit != 'true'
