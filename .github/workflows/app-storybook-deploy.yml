@@ -26,14 +26,14 @@ jobs:
           node-version: 14.x
 
       - name: Cache Node Modules
-        id: cache-node-modules-ui-app
+        id: cache-node-modules-ui-app-v1
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
+          key: node-modules-ui-app-v1-${{ hashFiles('yarn.lock') }}
 
       - name: Install NPM packages
-        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        if: steps.cache-node-modules-ui-app-v1.outputs.cache-hit != 'true'
         run: |
           npm install
           npm ci
@@ -68,7 +68,7 @@ jobs:
 
   clear_build:
     name: Clear existing build
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout
@@ -137,7 +137,7 @@ jobs:
     name: Deploy new builds
     if: ${{ always() && needs.build.result=='success' }}
     needs: [build, clear_build]
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
