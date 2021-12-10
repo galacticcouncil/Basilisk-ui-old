@@ -36,7 +36,7 @@
     "gql": "^1.1.2",
     "graphql": "^16.0.1",
     "graphql.macro": "^1.4.2",
-    "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm",
+    "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm#main",
     "lodash": "^4.17.21",
     "loglevel": "^1.7.1",
     "moment": "^2.29.1",
@@ -111,7 +111,20 @@
       }
     ]
   },
-  "browserslist": [],
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not ie <= 99",
+      "not android <= 4.4.4",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
