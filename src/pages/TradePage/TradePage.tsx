@@ -2,7 +2,7 @@ import { find, isEqual } from 'lodash';
 import { useCallback, useMemo, useState } from 'react';
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { TradeForm, TradeFormProps } from '../../components/Trade/TradeForm/TradeForm';
-import { PoolLiquidity, TradeChart } from '../../containers/TradeChart';
+import { PoolLiquidity, TradeChart } from '../../components/Trade/TradeChart/TradeChart';
 import log from 'loglevel';
 import { useSpotPrice } from '../../components/Trade/TradePage/hooks/useSpotPrice';
 import { Pool } from '../../generated/graphql';

@@ -1,5 +1,5 @@
-import { fromPrecision12 } from '../hooks/math/useFromPrecision'
-import { SpotPrice } from '../pages/TradePage/TradePage'
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
+import { SpotPrice } from '../../../pages/TradePage/TradePage'
 
 export interface PoolLiquidity {
     assetABalance?: string,

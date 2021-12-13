@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 import { useCallback, useMemo } from 'react';
-import { PoolLiquidity, TradeChart, TradeChartProps } from '../../../containers/TradeChart'
+import { PoolLiquidity, TradeChart, TradeChartProps } from '../TradeChart/TradeChart'
 import { SubmitTradeMutationVariables, useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
 import { useSpotPrice } from './hooks/useSpotPrice';
 import { TradeForm, TradeFormProps } from '../TradeForm/TradeForm'
