@@ -5,7 +5,7 @@ import { usePreviousDistinct } from 'react-use'
 import { PoolType } from '../../Chart/shared'
 import { TokenInput } from '../../Input/TokenInput'
 import { Pool, TradeType } from '../../../generated/graphql'
-import { useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
+import { SubmitTradeMutationVariables, useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
 import { calculateOutGivenInFromPool as calculateOutGivenInFromPoolXYK } from '../../../hooks/pools/xyk/calculateOutGivenIn'
 import { calculateOutGivenInFromPool as calculateOutGivenInFromPoolLBP } from '../../../hooks/pools/lbp/calculateOutGivenIn'
 import { useMathContext } from '../../../hooks/math/useMath'
@@ -35,7 +35,8 @@ export interface TradeFormProps {
         assetOutId?: string
     },
     spotPrice?: SpotPrice,
-    onAssetIdsChange: (assetInId: string, assetOutId?: string) => void
+    onAssetIdsChange: (assetInId: string, assetOutId?: string) => void,
+    onTradeSubmit: (trade: SubmitTradeMutationVariables) => void
 }
 
 export const TradeForm = ({
@@ -43,7 +44,8 @@ export const TradeForm = ({
     loading,
     onAssetIdsChange,
     assetIds,
-    spotPrice
+    spotPrice,
+    onTradeSubmit
 }: TradeFormProps) => {
     const form = useTradeForm(assetIds);
     const fee = usePercentageFee(pool);
@@ -61,8 +63,9 @@ export const TradeForm = ({
     const handleSubmit = useHandleSubmit(
         tradeType, 
         form.getValues('allowedSlippage'), 
+        onTradeSubmit,
         slippage, 
-        pool
+        pool,
     );
 
     const { allowedSlippageInputDisabled } = useCalculateAllowedSlippage(form, pool);

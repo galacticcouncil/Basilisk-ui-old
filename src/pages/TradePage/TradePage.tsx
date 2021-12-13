@@ -1,7 +1,7 @@
 import { find, isEqual } from 'lodash';
 import { useMemo, useState } from 'react';
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
-import { TradeForm, TradeFormProps } from '../../components/Trade/TradeForm/TradeForm';
+import { TradeForm, TradeFormProps } from '../../containers/Trade/TradeForm/TradeForm';
 import { PoolLiquidity, TradeChart } from '../../containers/TradeChart';
 import log from 'loglevel';
 import { useSpotPrice } from './hooks/useSpotPrice';

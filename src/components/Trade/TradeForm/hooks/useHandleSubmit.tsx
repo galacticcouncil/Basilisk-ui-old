@@ -20,11 +20,12 @@ import { TradeFormFields } from './useTradeForm';
  export const useHandleSubmit = (
     tradeType: TradeType,
     allowedSlippage: string,
+    onTradeSubmit: TradeFormProps['onTradeSubmit'],
     slippage?: Slippage,
     pool?: TradeFormProps['pool'],
-
 ) => {
-    const [submitTrade] = useSubmitTradeMutation();
+    // const [submitTrade] = useSubmitTradeMutation();
+    const submitTrade: any = () => {}
     return useCallback(({
         assetInId,
         assetOutId,
@@ -57,7 +58,7 @@ import { TradeFormFields } from './useTradeForm';
             : PoolType.XYK
 
         // Submit a trade with the given parameters to be handled by Apollo
-        submitTrade({ variables: {
+        onTradeSubmit({
             tradeType,
             assetInId,
             assetInAmount,
@@ -65,7 +66,7 @@ import { TradeFormFields } from './useTradeForm';
             assetOutAmount,
             amountWithSlippage,
             poolType,
-        }});
+        });
 
     }, [submitTrade, pool, tradeType, slippage]);
 }
