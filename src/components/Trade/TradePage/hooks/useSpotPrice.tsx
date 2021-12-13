@@ -1,24 +1,22 @@
 import { useApolloClient } from '@apollo/client';
 import { useMemo } from 'react';
-import { TradeFormProps } from '../../../components/Trade/TradeForm/TradeForm';
-import { Pool } from '../../../generated/graphql';
-import { readLastBlock } from '../../../hooks/lastBlock/readLastBlock';
-import { useMathContext } from '../../../hooks/math/useMath';
-import { SpotPrice } from '../TradePage';
-import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolLBP } from '../../../hooks/pools/lbp/calculateSpotPrice';
-import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolXYK } from '../../../hooks/pools/xyk/calculateSpotPrice';
+import { TradeFormProps } from '../../TradeForm/TradeForm';
+import { Pool } from '../../../../generated/graphql';
+import { readLastBlock } from '../../../../hooks/lastBlock/readLastBlock';
+import { useMathContext } from '../../../../hooks/math/useMath';
+import { SpotPrice } from '../../../../pages/TradePage/TradePage';
+import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolLBP } from '../../../../hooks/pools/lbp/calculateSpotPrice';
+import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolXYK } from '../../../../hooks/pools/xyk/calculateSpotPrice';
 import log from 'loglevel';
 
 export const useSpotPrice = (
     { assetInId, assetOutId }: TradeFormProps['assetIds'],
     pool?: Pool,
 ): SpotPrice | undefined => {
-    const client = useApolloClient();
-    const relaychainBlockNumber = readLastBlock(client);
     const { math } = useMathContext();
    
     return useMemo(() => {
-        if (!math || !pool || !assetInId || !assetOutId || !relaychainBlockNumber) return;
+        if (!math || !pool || !assetInId || !assetOutId) return;
 
         // if the pool is an XYKPool, use the XYKPool spot price calculation and vice versa
         const calculateSpotPriceFromPool = pool?.__typename === 'XYKPool'
@@ -34,5 +32,5 @@ export const useSpotPrice = (
         log.debug('TradePage.useSpotPrice', spotPrice);
 
         return spotPrice;
-    }, [relaychainBlockNumber, assetInId, assetOutId, pool]);
+    }, [assetInId, assetOutId, pool, math]);
 }

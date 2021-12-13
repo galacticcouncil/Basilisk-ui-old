@@ -36,7 +36,7 @@ import { TradeFormFields } from './useTradeForm';
 
         assetInAmount = toPrecision12(assetInAmount);
         assetOutAmount = toPrecision12(assetOutAmount);
-
+        console.log(assetInId, assetOutId, assetInAmount, assetOutAmount, slippage?.spotPriceAmount);
         if (!assetInId || !assetOutId || !assetInAmount || !assetOutAmount || !slippage?.spotPriceAmount) {
             throw new Error(`Can't submit a trade mutation without all the required arguments`)
         }

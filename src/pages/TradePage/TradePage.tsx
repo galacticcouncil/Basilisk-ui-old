@@ -1,12 +1,13 @@
 import { find, isEqual } from 'lodash';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
-import { TradeForm, TradeFormProps } from '../../containers/Trade/TradeForm/TradeForm';
+import { TradeForm, TradeFormProps } from '../../components/Trade/TradeForm/TradeForm';
 import { PoolLiquidity, TradeChart } from '../../containers/TradeChart';
 import log from 'loglevel';
-import { useSpotPrice } from './hooks/useSpotPrice';
-import { usePreviousDistinct } from 'react-use';
+import { useSpotPrice } from '../../components/Trade/TradePage/hooks/useSpotPrice';
 import { Pool } from '../../generated/graphql';
+import { SubmitTradeMutationVariables, useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
+import { TradePage as TradePageComponent } from '../../components/Trade/TradePage/TradePage';
 
 export interface SpotPrice {
     aToB?: string,
@@ -53,34 +54,16 @@ export const TradePage = () => {
         if (!isEqual(assetIds, newIds)) setAssetIds(newIds);
     }
 
-    const spotPrice = useSpotPrice(
-        assetIds,
-        poolData?.pool
-    );
+    const [submitTrade] = useSubmitTradeMutation();
+    const handleTradeSubmit = useCallback((variables: SubmitTradeMutationVariables) => {
+        submitTrade({ variables })
+    }, []);
 
-    const poolLiquidity: PoolLiquidity = useMemo(() => {
-        return {
-            assetABalance: find(pool?.balances, { assetId: assetIds.assetInId })?.balance,
-            assetBBalance: find(pool?.balances, { assetId: assetIds.assetOutId })?.balance,
-        }
-    }, [pool]);
-
-    return <div>
-        <h1>Trade</h1>
-
-        <br /><br />
-
-        <TradeChart
-            poolLiquidity={poolLiquidity}
-            spotPrice={spotPrice}
-        />
-        
-        <TradeForm
-            onAssetIdsChange={handleAssetIdsChange}
-            assetIds={assetIds}
-            loading={loading}
-            pool={pool}
-            spotPrice={spotPrice}
-        />
-    </div>
+    return <TradePageComponent 
+        pool={pool}
+        loading={loading}
+        assetIds={assetIds}
+        onTradeSubmit={handleTradeSubmit}
+        onAssetIdsChange={handleAssetIdsChange}
+    />
 }
