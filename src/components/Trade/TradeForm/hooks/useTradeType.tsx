@@ -1,7 +1,7 @@
 import log from 'loglevel';
 import { useState, useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { TradeType } from '../../../generated/graphql';
+import { TradeType } from '../../../../generated/graphql';
 import { useListenForInput } from './useListenForInput';
 import { TradeFormFields } from './useTradeForm';
 

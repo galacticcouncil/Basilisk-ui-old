@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { Fee, LbpPool, Pool } from '../../../generated/graphql';
+import { Fee, LbpPool, Pool } from '../../../../generated/graphql';
 import { TradeFormFields } from './useTradeForm';
 import BigNumber from 'bignumber.js';
 import log from 'loglevel';

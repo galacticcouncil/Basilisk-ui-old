@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { Fee, LbpPool, Pool } from '../../../generated/graphql';
-import constants from './../../../constants';
+import { Fee, LbpPool, Pool } from '../../../../generated/graphql';
+import constants from '../../../../constants';
 
 export const feeToPercentage = (fee: Fee) => {
     return new BigNumber(fee.numerator)

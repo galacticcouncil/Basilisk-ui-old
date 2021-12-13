@@ -11,7 +11,7 @@ import { useCalculateOutGivenIn } from '../hooks/pools/useCalculateOutGivenIn';
 import { fromPrecision12, useFromPrecision12 } from '../hooks/math/useFromPrecision';
 import { toPrecision12 } from '../hooks/math/useToPrecision';
 import { usePool } from '../hooks/pools/usePool';
-import { useSlippage } from './TradeForm/hooks/useSlippage';
+import { useSlippage } from '../components/Trade/TradeForm/hooks/useSlippage';
 import { applyAllowedSlippage, applyTradeFee } from '../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
 import { AnyNaptrRecord } from 'dns';
 

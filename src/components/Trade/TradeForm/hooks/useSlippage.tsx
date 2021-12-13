@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { isNaN } from 'lodash';
 import { useMemo } from 'react';
-import { TradeType } from '../../../generated/graphql';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { percentageChange } from '../../../hooks/math/usePercentageChange';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { TradeType } from '../../../../generated/graphql';
+import { fromPrecision12 } from '../../../../hooks/math/useFromPrecision';
+import { percentageChange } from '../../../../hooks/math/usePercentageChange';
+import { toPrecision12 } from '../../../../hooks/math/useToPrecision';
 
 export interface Slippage {
     percentualSlippage: string,

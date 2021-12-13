@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { useMemo } from 'react';
-import { TradeFormProps } from '../../../containers/TradeForm/TradeForm';
+import { TradeFormProps } from '../../../components/Trade/TradeForm/TradeForm';
 import { Pool } from '../../../generated/graphql';
 import { readLastBlock } from '../../../hooks/lastBlock/readLastBlock';
 import { useMathContext } from '../../../hooks/math/useMath';

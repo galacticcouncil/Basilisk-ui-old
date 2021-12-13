@@ -2,7 +2,7 @@ import { isEqual } from 'lodash';
 import { useEffect } from 'react';
 import { UseFormReturn } from 'react-hook-form';
 import { usePreviousDistinct } from 'react-use';
-import { Pool } from '../../../generated/graphql';
+import { Pool } from '../../../../generated/graphql';
 import { TradeFormFields } from './useTradeForm';
 
 export const useResetAmountInputsOnPoolChange = (

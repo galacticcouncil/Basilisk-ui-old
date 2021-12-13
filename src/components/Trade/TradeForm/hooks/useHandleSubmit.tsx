@@ -1,12 +1,12 @@
 import log from 'loglevel';
 import { useCallback } from 'react';
 import { UseFormReturn } from 'react-hook-form';
-import { PoolType } from '../../../components/Chart/shared';
-import { TradeType } from '../../../generated/graphql';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
-import { useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
-import { applyAllowedSlippage } from '../../../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
-import { SpotPrice } from '../../../pages/TradePage/TradePage';
+import { PoolType } from '../../../Chart/shared';
+import { TradeType } from '../../../../generated/graphql';
+import { toPrecision12 } from '../../../../hooks/math/useToPrecision';
+import { useSubmitTradeMutation } from '../../../../hooks/pools/mutations/useSubmitTradeMutation';
+import { applyAllowedSlippage } from '../../../../hooks/pools/resolvers/useSubmitTradeMutationResolvers';
+import { SpotPrice } from '../../../../pages/TradePage/TradePage';
 import { TradeFormProps } from '../TradeForm';
 import { Slippage } from './useSlippage';
 import { TradeFormFields } from './useTradeForm';
