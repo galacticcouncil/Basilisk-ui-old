@@ -139,7 +139,7 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     needs:
-      [ set_test_env_polkadot_launch, et_test_env_polkadot_node, set_test_env_basilisk_node, build_app ]
+      [ set_test_env_polkadot_node, set_test_env_basilisk_node, build_app ]
     steps:
       - uses: actions/setup-node@v2
         with:
