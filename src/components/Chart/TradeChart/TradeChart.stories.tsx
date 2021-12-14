@@ -1,22 +1,16 @@
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
-import { TradeChart } from './TradeChart';
-import cssColors from './../../../misc/colors.module.scss'
-import { ChartGranularity, ChartType, PoolType } from '../shared';
+import { TradeChart, TradeChartProps } from './TradeChart';
+import { AssetPair, ChartGranularity, ChartType, PoolType } from '../shared';
+import {createDataset, assetPair} from '../mockDataset'
+import { Story } from '@storybook/react';
+
+const primaryDataset = createDataset(assetPair, 60);
 
 export default {
     title: 'Components/Chart/TradeChart',
     component: TradeChart,
     args: {
-        assetPair: {
-            assetA: {
-                symbol: 'BSX',
-                fullName: 'Basilisk'
-            },
-            assetB: {
-                symbol: 'kUSD',
-                fullName: 'Karura US Dollar'
-            }
-        },
+        assetPair,
         poolType: PoolType.LBP,
         chartType: ChartType.PRICE,
         granularity: ChartGranularity.H1,
@@ -28,19 +22,20 @@ export default {
                 fullName: 'Karura US Dollar'
             }
         },
-        wrapperWidth: '760px'
+        primaryDataset,
+        
     }
 }
 
 
-const Template = (args: any) => (
+const Template: Story<TradeChartProps> = (args) => (
     <StorybookWrapper>
-        <div style={{
-            width: args.wrapperWidth
-        }}>
-            <TradeChart {...args} />
-        </div>
+        <TradeChart {...args} />
     </StorybookWrapper>
 )
 
 export const Default = Template.bind({})
+export const NoData = Template.bind({}) 
+NoData.args = {
+    primaryDataset: undefined
+}

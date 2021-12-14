@@ -44,12 +44,10 @@ export const formatTick = (tick: number, granularity: ChartGranularity) => {
 
 export const ChartTicks = ({
     datasets,
-    granularity,
-    className
+    granularity
 }: {
     datasets: Dataset[],
-    granularity: ChartGranularity,
-    className: string
+    granularity: ChartGranularity
 }) => {
     const ticks = useMemo(() => {
         // compose all datasets into one
@@ -79,15 +77,14 @@ export const ChartTicks = ({
     ), [ticks, granularity])
 
     return (
-        <div className={`row g-0 justify-content-between text-top chart-ticks ${className}`}>
+        <div className={`flex-container flex-align-space chart-ticks`}>
             {formattedTicks?.map((formattedTick, i) => (
                 <div
-                    className="col-auto"
                     key={i}
                 >
-                    <span>
+                    <div>
                         {formattedTick}
-                    </span>
+                    </div>
                 </div>
             ))}
         </div>

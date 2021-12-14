@@ -8,7 +8,7 @@ import cssColors from './../../../misc/colors.module.scss'
 
 const now = Date.now();
 const hourAgo = subMinutes(now, 60);
-const demoDataCount = 6;
+const demoDataCount = 60;
 const jointValue = 3;
 const randomDataPoint = () => random(1,5);
 const datasets = {
@@ -39,8 +39,7 @@ export default {
 const Template = (args: any) => (
     <StorybookWrapper>
         <div style={{
-            backgroundColor: cssColors.gray2,
-            width: args.wrapperWidth
+            backgroundColor: cssColors.gray2
         }}>
             <ChartTicks {...args} />
         </div>

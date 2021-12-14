@@ -1,27 +1,15 @@
-import { addMinutes, subMinutes } from 'date-fns';
-import { subHours } from 'date-fns/esm';
-import { random, times } from 'lodash';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
-import { LineChart } from './LineChart';
+import { LineChart, LineChartProps } from './LineChart';
 import cssColors from './../../../misc/colors.module.scss'
+import { createDataset, createLBPDataset } from '../mockDataset';
+import { assetPair } from '../mockDataset';
+import { Story } from '@storybook/react';
 
-const now = Date.now();
-const hourAgo = subMinutes(now, 60);
-const demoDataCount = 6;
-const jointValue = 3;
-const randomDataPoint = () => random(1,5);
+
+ const primaryDataset = createDataset(assetPair, 60);
 
 const args = {
-    primaryDataset: times(demoDataCount)
-        .map(i => ({
-            x: addMinutes(hourAgo, (i + 1) * 10),
-            y: i == (demoDataCount - 1) ? jointValue : randomDataPoint()
-        })),
-    secondaryDataset: times(demoDataCount)
-        .map(i => ({
-            x: addMinutes(now, i * 10),
-            y: i === 0 ? jointValue : randomDataPoint()
-        })),
+    primaryDataset
 };
 
 export default {
@@ -42,11 +30,11 @@ export default {
     }
 }
 
-const Template = (args: any) => (
+const Template: Story<LineChartProps> = (args) => (
     <StorybookWrapper>
         <div style={{
+            height: '20rem',
             backgroundColor: cssColors.gray2,
-            width: args.wrapperWidth
         }}>
             <LineChart {...args} />
         </div>
@@ -54,3 +42,11 @@ const Template = (args: any) => (
 )
 
 export const Default = Template.bind({})
+export const LBP = Template.bind({})
+
+const LBPDatasets = createLBPDataset(assetPair, 60);
+
+LBP.args = {
+    primaryDataset: LBPDatasets.primaryDataset, 
+    secondaryDataset: LBPDatasets.secondaryDataset
+}
