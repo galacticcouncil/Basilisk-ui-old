@@ -231,8 +231,8 @@ jobs:
           cd Basilisk-api
           yarn testnet:start &
 
-      - name: Sleep for 20 seconds
-        run: sleep 20s
+      - name: Sleep for 10 seconds
+        run: sleep 10s
         shell: bash
 
       - name: Run UI application
@@ -241,8 +241,8 @@ jobs:
           cd ui-app/build
           http-server -s -p 3000 -a 127.0.0.1 &
 
-      - name: Sleep for 20 seconds
-        run: sleep 20s
+      - name: Sleep for 10 seconds
+        run: sleep 10s
         shell: bash
 
       - name: Install operating system dependencies for playwright
@@ -267,7 +267,9 @@ jobs:
           path: ./ui-app/traces
 
       - name: Run unit tests
-        run: yarn test:ci
+        run: |
+          cd ui-app
+          yarn test:ci
 
       - name: Stop testnet
         if: always()
