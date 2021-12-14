@@ -145,6 +145,9 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Install Node.js HTTP-Server
+        run: npm install -g http-server
+
       - name: Download artifact - Basilisk-node
         uses: actions/download-artifact@v2
         with:
@@ -237,7 +240,7 @@ jobs:
         shell: bash
         run: |
           cd ui-app
-          yarn start
+          http-server -s -p 3000 &
 
       - name: Sleep for 20 seconds
         run: sleep 20s
