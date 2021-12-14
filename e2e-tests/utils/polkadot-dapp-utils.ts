@@ -1,6 +1,12 @@
 import { chromium, ChromiumBrowserContext, Page } from 'playwright';
 import { join } from 'path';
 
+export type PolkadotDappAccCredentials = {
+  seed: string;
+  name: string;
+  password: string;
+};
+
 export const EXTENSION_PATH = join(__dirname, process.env.EXTENSSION_SRC || '');
 
 export const isExtensionURL = (url: string) =>
@@ -67,10 +73,15 @@ export const initBrowserWithExtension = async () => {
   return { browserContext, extensionURL };
 };
 
-export const initPolkadotDapp = async (
-  browserContext: ChromiumBrowserContext,
-  extensionURL: string
-) => {
+export const importPolkadotDappAccount = async ({
+  browserContext,
+  extensionURL,
+  accountCredentials,
+}: {
+  browserContext: ChromiumBrowserContext;
+  extensionURL: string;
+  accountCredentials: PolkadotDappAccCredentials;
+}) => {
   const page = browserContext.pages()[0];
   // await browserContext.tracing.start({ screenshots: true, snapshots: true });
 
@@ -82,14 +93,14 @@ export const initPolkadotDapp = async (
   await page.click('.menuItem a[href="#/account/import-seed"]');
   await page.fill(
     'textarea[class*="TextInputs__TextArea-sc"]',
-    process.env.TEST_ACCOUNT_SEED || ''
+    accountCredentials.seed
   );
   await page.click('button[class*=Button-]');
-  await page.fill('input[type=text]', process.env.TEST_ACCOUNT_NAME || '');
-  await page.fill('input[type=password]', process.env.TEST_ACCOUNT_PASS || '');
+  await page.fill('input[type=text]', accountCredentials.name);
+  await page.fill('input[type=password]', accountCredentials.password);
   await page.fill(
     '//label[(text()="Repeat password for verification")]/following-sibling::input',
-    process.env.TEST_ACCOUNT_PASS || ''
+    accountCredentials.password
   );
   await page.click(
     '//div[(text()="Add the account with the supplied seed")]/..'
@@ -103,7 +114,7 @@ export const openPages = async (
   urls: string[]
 ) => {
   return await Promise.all(
-    urls.map(async url => {
+    urls.map(async (url) => {
       const newPage = await browserContext.newPage();
       await newPage.goto(url);
       await newPage.waitForLoadState('load');

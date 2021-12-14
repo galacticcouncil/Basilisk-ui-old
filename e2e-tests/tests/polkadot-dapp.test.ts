@@ -7,7 +7,7 @@ import {
 import {
   CLOSE_PAGES,
   initBrowserWithExtension,
-  initPolkadotDapp,
+  importPolkadotDappAccount,
 } from '../utils/polkadot-dapp-utils';
 
 expect.extend({ toMatchImageSnapshot });
@@ -25,12 +25,20 @@ describe('The Extension page should', () => {
 
     await browserContext.tracing.start({ screenshots: true, snapshots: true });
 
-    page = await initPolkadotDapp(browserContext, extensionURL);
+    page = await importPolkadotDappAccount({
+      browserContext,
+      extensionURL,
+      accountCredentials: {
+        seed: process.env.TEST_ACCOUNT_SEED || '',
+        name: process.env.TEST_ACCOUNT_NAME || '',
+        password: process.env.TEST_ACCOUNT_PASS || '',
+      },
+    });
     // page = browserContext.pages()[0]
   });
 
   afterAll(async () => {
-    await browserContext.tracing.stop({ path: './trace.zip' });
+    await browserContext.tracing.stop({ path: './traces/polkadot-dapp.zip' });
     await browserContext?.close();
     // browserContext = null;
     // page = null;
@@ -47,7 +55,7 @@ describe('The Extension page should', () => {
   //   await CLOSE_PAGES(browserContext)
   // })
 
-  // await initPolkadotDapp();
+  // await importPolkadotDappAccount();
   // await page.waitForTimeout(2000);
   // await browserContext.tracing.stop({ path: './trace.zip' });
   //
@@ -98,12 +106,14 @@ describe('The Extension page should', () => {
   // });
 
   it('Open Polkadot UI', async () => {
-    await page.goto('https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9988#/accounts');
+    await page.goto(
+      'https://polkadot.js.org/apps/?rpc=ws%3A%2F%2F127.0.0.1%3A9988#/accounts'
+    );
     // await page.goto(
     //   'https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fbasilisk.api.onfinality.io%2Fpublic-ws#/accounts'
     // );
 
-    browserContext.on('page', async confPage => {
+    browserContext.on('page', async (confPage) => {
       await confPage.waitForLoadState();
       await confPage.click(
         '//div[(text()="Yes, allow this application access")]/..'

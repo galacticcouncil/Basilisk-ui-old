@@ -4,7 +4,7 @@ describe.only('lbp', () => {
     let math: HydraDxMath;
 
     beforeAll(async () => {
-        const xykMath = await import('hydra-dx-wasm/build/xyk/bundler');
+        // const xykMath = await import('hydra-dx-wasm/build/xyk/bundler');
     });
 
     describe('calculateSpotPrice', () => {
