@@ -1,46 +1,43 @@
-# Getting Started with Create React App
+# Basilisk UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Storybook based front-end for Basilisk parachain employing react-use hooks and Apollo Client for data layer.
 
-## Available Scripts
+## Develop
 
-In the project directory, you can run:
+Use yarn to install dependencies
 
-### `yarn start`
+```
+yarn install
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Start Storybook component development environment.
 
+```
+yarn storybook
+```
+
+Storybook can be opened at [:6006](http://localhost:6006)
+
+Run the app in the development mode locally. 
+
+*Requires to have [Basilisk API](https://github.com/galacticcouncil/Basilisk-api#readme) testnet running and 
+optionally its indexer and processor as well.*
+
+```
+yarn start
+```
+
+Open [:3000](http://localhost:3000) to view it in the browser.
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `yarn test`
+Start tests interactive mode
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+yarn test
+```
 
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-
-## Deployment
+## Deploy
 
 GitHub Actions Workflow is configured for deployment of UI application and Storybooks
 at the same time. Each branch `develop|feat|fix/**` deploys to appropriate folder in `app-builds-gh-pages` branch. 
@@ -66,8 +63,16 @@ pull_request:
         - 'feat/**'
 ```
 
-## Learn More
+To build optimized production artifacts locally you can run 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+yarn build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## FAQ
+
+### Why my build fails on `error:03000086:digital envelope routines::initialization error` ?
+You have to use legacy openssl provider in node 17+. Set this to node options
+```
+export NODE_OPTIONS=--openssl-legacy-provider
+```
