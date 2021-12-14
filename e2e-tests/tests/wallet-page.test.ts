@@ -46,20 +46,29 @@ describe('The App Wallet page should', () => {
   });
 
   it('Open Basiliisk UI', async () => {
-    await page.goto('http://127.0.0.1:3000/wallet');
+    await page.goto('http://127.0.0.1:3000');
     await page.waitForLoadState();
 
-    browserContext.on('page', async (confPage) => {
-      await confPage.waitForLoadState();
+    await new Promise((res) => {
+      browserContext.on('page', async (confPage) => {
+        await confPage.waitForLoadState();
+        await page.waitForTimeout(3000);
 
-      await confPage.click(
-        '//div[(text()="Yes, allow this application access")]/..'
-      );
+        await confPage.click(
+          '//div[(text()="Yes, allow this application access")]/..'
+        );
+        res(0);
+      });
     });
 
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(4000);
 
     await page.reload();
+    await page.waitForTimeout(2000);
+
+    console.log(await page.$('//a[(text()="Wallet")]'));
+
+    await page.click('//a[(text()="Wallet")]');
 
     const testAccItem = await page.waitForSelector(
       `//h3[text()="${process.env.TEST_ACCOUNT_NAME_ALICE}"]`,
