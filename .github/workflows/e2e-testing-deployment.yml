@@ -168,13 +168,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: app-build-files
-          path: ./ui-app
+          path: ./ui-app/build
 
-      - name: Download artifact - Storybook build
-        uses: actions/download-artifact@v2
-        with:
-          name: sb-build-files
-          path: ./ui-app
+#      - name: Download artifact - Storybook build
+#        uses: actions/download-artifact@v2
+#        with:
+#          name: sb-build-files
+#          path: ./ui-app/storybook-static
 
       # Prepare Basilisk-api
 
@@ -207,8 +207,7 @@ jobs:
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: |
           cd ui-app
-          npm install
-          npm ci
+          rm -rf node_modules && yarn install --frozen-lockfile
 
       # Update folders structure
 
@@ -239,8 +238,8 @@ jobs:
       - name: Run UI application
         shell: bash
         run: |
-          cd ui-app
-          http-server -s -p 3000 &
+          cd ui-app/build
+          http-server -s -p 3000 -a 127.0.0.1 &
 
       - name: Sleep for 20 seconds
         run: sleep 20s
@@ -285,6 +284,7 @@ jobs:
 
   purge_testnet_artifacts:
     name: Purge testnet artifacts
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     needs: run_tests
     steps:
@@ -293,6 +293,7 @@ jobs:
           name: |
             basilisk-node-artifacts
             polkadot-node-artifacts
+          failOnError: false
 
 #  clear_build:
 #    name: Clear existing build

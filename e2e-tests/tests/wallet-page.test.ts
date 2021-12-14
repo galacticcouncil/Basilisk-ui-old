@@ -45,8 +45,8 @@ describe('The App Wallet page should', () => {
     extensionURL = '';
   });
 
-  it('Open Polkadot UI', async () => {
-    await page.goto('http://localhost:3000/wallet');
+  it('Open Basiliisk UI', async () => {
+    await page.goto('http://127.0.0.1:3000/wallet');
     await page.waitForLoadState();
 
     browserContext.on('page', async (confPage) => {
