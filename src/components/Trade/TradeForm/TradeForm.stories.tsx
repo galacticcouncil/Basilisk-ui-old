@@ -31,6 +31,8 @@ export default {
 } as ComponentMeta<typeof TradeForm>
 
 const Template: ComponentStory<typeof TradeForm> = (args: TradeFormProps) => {
+
+    
     return <StorybookWrapper>
         <TradeForm {...args}/>
     </StorybookWrapper>

@@ -2,8 +2,10 @@ import log from 'loglevel'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useForm, UseFormReturn } from 'react-hook-form'
 import { usePreviousDistinct } from 'react-use'
+import {useRef} from 'react'
 import { PoolType } from '../../Chart/shared'
-import { TokenInput } from '../../Input/TokenInput'
+import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
+import {  useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
 import { Pool, TradeType } from '../../../generated/graphql'
 import { SubmitTradeMutationVariables, useSubmitTradeMutation } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
 import { calculateOutGivenInFromPool as calculateOutGivenInFromPoolXYK } from '../../../hooks/pools/xyk/calculateOutGivenIn'
@@ -68,24 +70,36 @@ export const TradeForm = ({
         pool,
     );
 
+    const modalContainerRef = useRef<HTMLDivElement | null>(null);
+
+    const onAssetSelected = () => {}
+
     const { allowedSlippageInputDisabled } = useCalculateAllowedSlippage(form, pool);
 
     return <div>
+        {/* This is where the underlying modal should be rendered */}
+        <div ref={modalContainerRef}></div>
+
         <form onSubmit={form.handleSubmit(handleSubmit)}>
             <p>{tradeType}</p>
-            <TokenInput
-                assetIdInputProps={form.register('assetInId')}
-                assetAmountInputProps={form.register('assetInAmount')}
+            <AssetBalanceInput
+                name="assetInInput"
+                modalContainerRef={modalContainerRef}
+                isAssetSelectable={true}
+                onAssetSelected={onAssetSelected}
             />
 
             <br/>
 
-            <TokenInput
-                assetIdInputProps={form.register('assetOutId')}
-                assetAmountInputProps={form.register('assetOutAmount')}
+            <AssetBalanceInput
+                name="assetOutInput"
+                modalContainerRef={modalContainerRef}
+                isAssetSelectable={true}
+                onAssetSelected={onAssetSelected}
             />
 
             <div>
+                {/*TODO*/}
                 <b>Allowed slippage</b><br/>
                 <input 
                     type="text"

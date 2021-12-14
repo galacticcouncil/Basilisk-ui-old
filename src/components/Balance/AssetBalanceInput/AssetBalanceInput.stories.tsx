@@ -57,11 +57,11 @@ const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
                     <div style={{
                         width: '325px'
                     }}>
-                                            <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
-                    <br/>
-                    <div className='style2'>
                         <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
-                    </div>
+                        <br/>
+                        <div className='style2'>
+                            <AssetBalanceInput {...args} modalContainerRef={modalContainerRef}/>
+                        </div>
                     </div>
                 </form>
             </FormProvider>

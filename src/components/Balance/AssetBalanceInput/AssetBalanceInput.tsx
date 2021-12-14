@@ -13,7 +13,7 @@ import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
 export interface AssetBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
     name: BalanceInputProps['name'],
-    defaultUnit: BalanceInputProps['defaultUnit']
+    defaultUnit?: BalanceInputProps['defaultUnit']
     asset?: Asset,
     assets?: Asset[],
     isAssetSelectable: boolean,
