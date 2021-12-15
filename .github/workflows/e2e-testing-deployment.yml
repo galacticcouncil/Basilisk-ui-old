@@ -191,7 +191,7 @@ jobs:
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: |
           cd ui-app
-          yarn install --frozen-lockfile
+          yarn
 
       # Update folders structure
 
