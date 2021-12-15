@@ -1,11 +1,8 @@
 name: E2E and Unit Testing Flow
 on:
-  push:
-    branches:
-      - 'feat/add-playwright-e2e-test-flow'
   pull_request:
     branches:
-      - 'feat/add-playwright-e2e-test-flow'
+      - develop
 
 jobs:
   set_test_env_polkadot_node:
