@@ -18,6 +18,7 @@ let extensionURL: string;
 
 describe('The App Wallet page should', () => {
   beforeAll(async () => {
+    jest.setTimeout(60000);
     const init = await initBrowserWithExtension();
 
     browserContext = init.browserContext;
@@ -48,6 +49,8 @@ describe('The App Wallet page should', () => {
     await page.goto('http://127.0.0.1:3000');
     await page.waitForLoadState();
 
+    await page.click('//a[(text()="Wallet")]');
+
     await new Promise((res) => {
       browserContext.on('page', async (confPage) => {
         await confPage.waitForLoadState();
@@ -61,13 +64,6 @@ describe('The App Wallet page should', () => {
     });
 
     await page.waitForTimeout(4000);
-
-    await page.reload();
-    await page.waitForTimeout(2000);
-
-    console.log(await page.$('//a[(text()="Wallet")]'));
-
-    await page.click('//a[(text()="Wallet")]');
 
     const testAccItem = await page.waitForSelector(
       `//h3[text()="${process.env.TEST_ACCOUNT_NAME_ALICE}"]`,
