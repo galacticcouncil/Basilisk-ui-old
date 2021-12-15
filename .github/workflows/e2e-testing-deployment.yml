@@ -1,4 +1,4 @@
-name: E2E Testing Flow
+name: E2E and Unit Testing Flow
 on:
   push:
     branches:
@@ -103,17 +103,13 @@ jobs:
 
       - name: Install Dependencies for ui-app
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-        run: |
-          npm install
-          npm ci
+        run: rm -rf node_modules && yarn install --frozen-lockfile
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
 
-      - name: Build App and Storybook
-        run: |
-          npm run build
-          npm run build-storybook -- -o sb-build-files
+      - name: Build App
+        run: yarn run build:deployment
         env:
           CI: false
 
@@ -122,12 +118,6 @@ jobs:
         with:
           name: script-files
           path: ./scripts
-
-      - name: Upload production-ready SB build files
-        uses: actions/upload-artifact@v2
-        with:
-          name: sb-build-files
-          path: ./sb-build-files
 
       - name: Upload production-ready App build files
         uses: actions/upload-artifact@v2
@@ -138,8 +128,7 @@ jobs:
   run_tests:
     name: Run tests
     runs-on: ubuntu-latest
-    needs:
-      [ set_test_env_polkadot_node, set_test_env_basilisk_node, build_app ]
+    needs: [set_test_env_polkadot_node, set_test_env_basilisk_node, build_app]
     steps:
       - uses: actions/setup-node@v2
         with:
@@ -170,12 +159,6 @@ jobs:
           name: app-build-files
           path: ./ui-app/build
 
-#      - name: Download artifact - Storybook build
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: sb-build-files
-#          path: ./ui-app/storybook-static
-
       # Prepare Basilisk-api
 
       - name: Clone Basilisk-api
@@ -196,6 +179,7 @@ jobs:
 
       # Prepare UI-app
 
+      # Install NPM deps for running tests
       - name: Cache Node Modules for ui-app
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -207,7 +191,7 @@ jobs:
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: |
           cd ui-app
-          rm -rf node_modules && yarn install --frozen-lockfile
+          yarn install --frozen-lockfile
 
       # Update folders structure
 
@@ -245,7 +229,7 @@ jobs:
         run: sleep 10s
         shell: bash
 
-      - name: Install operating system dependencies for playwright
+      - name: Install OS dependencies for Playwright
         run: npx playwright install-deps
 
       - name: Run e2e tests
@@ -267,6 +251,7 @@ jobs:
           path: ./ui-app/traces
 
       - name: Run unit tests
+        if: always()
         run: |
           cd ui-app
           yarn test:ci
@@ -277,12 +262,6 @@ jobs:
         run: |
           killall -q -v polkadot
           killall -q -v testing-basilisk
-      # cd Basilisk-api
-      # yarn testnet:stop
-
-      - name: Sleep for 10 seconds
-        run: sleep 10
-        shell: bash
 
   purge_testnet_artifacts:
     name: Purge testnet artifacts
@@ -296,126 +275,3 @@ jobs:
             basilisk-node-artifacts
             polkadot-node-artifacts
           failOnError: false
-
-#  clear_build:
-#    name: Clear existing build
-#    runs-on: ubuntu-latest
-#    needs: run_tests
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Check gh-pages branch existence
-#        shell: bash
-#        run: |
-#          chmod -R 777 ./scripts
-#          echo "##[set-output name=is_ghp_branch_exists;]$(./scripts/gh-actions-is-branch-exists.sh "$GH_PAGES_FULL_BRANCH")"
-#        env:
-#          GH_PAGES_FULL_BRANCH: ${{ secrets.GH_PAGES_FULL_BRANCH }}
-#        id: ghp_branch_existence
-#
-#      - name: Checkout gh-pages branch
-#        if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        uses: actions/checkout@v2
-#        with:
-#          ref: ${{ secrets.GH_PAGES_FULL_BRANCH }}
-#
-#      - name: Download artifact
-#        if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: script-files
-#          path: ./scripts
-#
-#      - name: Update script file
-#        if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        shell: bash
-#        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
-#
-#      - name: Extract branch folder name
-#        if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        shell: bash
-#        run: |
-#          if [[ $GITHUB_EVENT_NAME = 'push' ]]
-#          then
-#            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-#          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
-#          then
-#            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
-#          else
-#            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-#          fi
-#        id: branch_folder_name
-#
-#      - name: Remove Existing build (app and storybook)
-#        uses: JesseTG/rm@v1.0.2
-#        if: ${{ success() && steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        with:
-#          path: ${{ steps.branch_folder_name.outputs.folder_name }}
-#
-#      - name: Remove redundant files from the current branch
-#        if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
-#        shell: bash
-#        run: rm -r ./scripts
-#
-#      - name: Commit changes
-#        uses: stefanzweifel/git-auto-commit-action@v4
-#        if: steps.auto-commit-action.outputs.changes_detected == 'true' && steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true'
-#        with:
-#          branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
-
-#  deploy:
-#    name: Deploy new builds
-#    if: ${{ always() && needs.run_tests.result=='success' }}
-#    needs: [ run_tests, clear_build ]
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Download artifact - Storybook (build files)
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: sb-build-files
-#          path: ./sb-build-files
-#
-#      - name: Download artifact - App (build files)
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: app-build-files
-#          path: ./app-build-files
-#
-#      - name: Download artifact
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: script-files
-#          path: ./scripts
-#
-#      - name: Extract branch folder name
-#        shell: bash
-#        run: |
-#          if [[ $GITHUB_EVENT_NAME = 'push' ]]
-#          then
-#            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-#          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
-#          then
-#            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
-#          else
-#            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-#          fi
-#        id: extract_branch
-#
-#      - name: Deploy Storybook to GH Pages
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GH_TOKEN }}
-#          publish_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
-#          publish_dir: ./sb-build-files
-#          destination_dir: ${{ format('{0}/{1}', steps.extract_branch.outputs.branch, 'storybook') }}
-#
-#      - name: Deploy App to GH Pages
-#        uses: peaceiris/actions-gh-pages@v3
-#        with:
-#          github_token: ${{ secrets.GH_TOKEN }}
-#          publish_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
-#          publish_dir: ./app-build-files
-#          destination_dir: ${{ format('{0}/{1}', steps.extract_branch.outputs.branch, 'app') }}
