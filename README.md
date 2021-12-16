@@ -77,6 +77,11 @@ To ensure consistent code across our codebase, we're using both Prettier and ESL
 You can either use `yarn lint / yarn lint --fix` or `yarn prettier / yarn prettier --write`,
 or make use of the built-in pre-commit prettier & linting for staged files.
 
+### VSCode extensions
+
+- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
+
 ## FAQ
 
 ### Why my build fails on `error:03000086:digital envelope routines::initialization error` ?
