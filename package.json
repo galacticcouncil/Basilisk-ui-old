@@ -33,10 +33,13 @@
     "constate": "^3.3.0",
     "date-fns": "^2.25.0",
     "env-cmd": "^10.1.0",
+    "eslint-config-prettier": "^8.3.0",
     "gql": "^1.1.2",
     "graphql": "^16.0.1",
     "graphql.macro": "^1.4.2",
+    "husky": "^7.0.4",
     "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm#main",
+    "lint-staged": "^12.1.2",
     "lodash": "^4.17.21",
     "loglevel": "^1.7.1",
     "moment": "^2.29.1",
@@ -78,12 +81,17 @@
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
     "codegen": "graphql-codegen --config codegen.yml",
-    "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql"
+    "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql",
+    "prepare": "husky install"
+  },
+  "prettier": {
+    "singleQuote": true
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest"
+      "react-app/jest",
+      "eslint-config-prettier"
     ],
     "overrides": [
       {
@@ -136,6 +144,9 @@
       "path": "cz-conventional-changelog"
     }
   },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
   "babel": {
     "plugins": [
       [
@@ -174,6 +185,7 @@
     "css-loader": "5.2.6",
     "cz-conventional-changelog": "^3.2.0",
     "node-sass": "^6.0.1",
+    "prettier": "2.5.1",
     "sass": "^1.42.1",
     "sass-loader": "10.1.1",
     "storybook-react-router-dom": "^6.1.21",
