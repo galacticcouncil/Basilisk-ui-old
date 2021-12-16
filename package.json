@@ -146,7 +146,7 @@
     }
   },
   "lint-staged": {
-    "**/*": "yarn prettier --write",
+    "**/*": "prettier --ignore-path .gitignore --write",
     "src/**/*": "eslint --fix"
   },
   "babel": {
