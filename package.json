@@ -72,7 +72,8 @@
     "test:ci": "CI=true craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "eject": "craco eject",
-    "lint": "eslint",
+    "prettier": "prettier **/** --check --ignore-path .gitignore",
+    "lint": "eslint src",
     "commit": "git-cz",
     "preci": "rm -fr node_modules",
     "ci": "yarn install --frozen-lockfile",
@@ -145,7 +146,8 @@
     }
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "yarn prettier --write",
+    "src/**/*": "eslint --fix"
   },
   "babel": {
     "plugins": [
