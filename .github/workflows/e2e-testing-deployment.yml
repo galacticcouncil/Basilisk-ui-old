@@ -232,6 +232,10 @@ jobs:
       - name: Install OS dependencies for Playwright
         run: npx playwright install-deps
 
+      - name: Make e2e testing env vars file visible
+        run: mv ui-app/.env.test.e2e.ci ui-app/env.test.e2e.ci
+        shell: bash
+
       - name: Prepate E2E Tests Env Variables
         uses: falnyr/replace-env-vars-action@master
         env:
@@ -239,7 +243,11 @@ jobs:
           E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
           E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
         with:
-          filename: /ui-app/.env.test.e2e.ci
+          filename: /ui-app/env.test.e2e.ci
+
+      - name: Make e2e testing env vars file hidden
+        run: mv ui-app/env.test.e2e.ci ui-app/.env.test.e2e.ci
+        shell: bash
 
       - name: Run e2e tests
         shell: bash
