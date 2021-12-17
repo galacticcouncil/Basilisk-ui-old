@@ -229,6 +229,15 @@ jobs:
       - name: Install OS dependencies for Playwright
         run: npx playwright install-deps
 
+      - name: Prepate E2E Tests Env Variables
+        uses: falnyr/replace-env-vars-action@master
+        env:
+          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
+          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
+          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
+        with:
+          filename: /ui-app/.env.test.e2e.ci
+
       - name: Run e2e tests
         shell: bash
         run: |
@@ -236,9 +245,6 @@ jobs:
           DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
-          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
-          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
-          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
 
       - name: Upload trace files
         if: always()
@@ -246,6 +252,13 @@ jobs:
         with:
           name: traces_screenshots
           path: ./ui-app/traces
+
+      - name: Upload e2e tests report file
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e_tests_report_html
+          path: ./ui-app/ui-app-e2e-results.html
 
       - name: Run unit tests
         if: always()

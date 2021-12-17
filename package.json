@@ -75,7 +75,8 @@
     "test": "craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:ci": "CI=true craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
-    "test:e2e-ci": "CI=true yarn jest --testPathPattern=e2e-tests/tests --runInBand",
+    "test:e2e-ci": "CI=true npx playwright test /e2e-tests/tests --runInBand",
+    "test:e2e-local": "CI=false npx playwright test /e2e-tests/tests",
     "eject": "craco eject",
     "lint": "eslint",
     "commit": "git-cz",
@@ -165,6 +166,7 @@
     "@graphql-codegen/typescript": "2.4.1",
     "@graphql-codegen/typescript-operations": "2.2.1",
     "@graphql-codegen/typescript-react-apollo": "3.2.2",
+    "@playwright/test": "^1.17.1",
     "@storybook/addon-actions": "^6.3.11",
     "@storybook/addon-essentials": "^6.3.11",
     "@storybook/addon-knobs": "^6.3.1",
@@ -187,7 +189,8 @@
     "sass-loader": "10.1.1",
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
-    "wait-for-expect": "^3.0.2"
+    "wait-for-expect": "^3.0.2",
+    "xunit-viewer": "^7.1.5"
   },
   "resolutions": {
     "playwright": "1.17.0-rc1"

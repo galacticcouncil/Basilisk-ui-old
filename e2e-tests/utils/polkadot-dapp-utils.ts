@@ -84,7 +84,6 @@ export const importPolkadotDappAccount = async ({
 }) => {
   const page = browserContext.pages()[0];
   // await browserContext.tracing.start({ screenshots: true, snapshots: true });
-
   await page.goto(extensionURL);
   await page.bringToFront();
 
