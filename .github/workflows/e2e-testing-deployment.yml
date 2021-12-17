@@ -233,7 +233,7 @@ jobs:
         run: npx playwright install-deps
 
       - name: Make e2e testing env vars file visible
-        run: mv ui-app/.env.test.e2e.ci ui-app/env.test.e2e.ci
+        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
         shell: bash
 
       - name: Prepate E2E Tests Env Variables
@@ -243,10 +243,10 @@ jobs:
           E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
           E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
         with:
-          filename: /ui-app/env.test.e2e.ci
+          filename: ui-app/e2e-tests-vars.txt
 
       - name: Make e2e testing env vars file hidden
-        run: mv ui-app/env.test.e2e.ci ui-app/.env.test.e2e.ci
+        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
         shell: bash
 
       - name: Run e2e tests
