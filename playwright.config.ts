@@ -7,7 +7,7 @@ env.config({
 });
 
 const config: PlaywrightTestConfig = {
-  globalTeardown: require.resolve('./global-teardown'),
+  globalTeardown: require.resolve('./global-teardown-e2e'),
   timeout: 60000,
   expect: {
     timeout: 60 * 1000,
@@ -15,10 +15,15 @@ const config: PlaywrightTestConfig = {
   use: {
     actionTimeout: 10 * 1000,
     navigationTimeout: 60 * 1000,
-    screenshot: 'only-on-failure',
+    // screenshot: 'only-on-failure',
     channel: 'chromium',
+    screenshot: 'on',
+    ignoreHTTPSErrors: true,
   },
-  reporter: [['list'], ['junit', { outputFile: 'ui-app-e2e-results.xml' }]],
+  reporter: [
+    [process.env.NODE_ENV !== 'CI' ? 'list' : 'github'],
+    ['junit', { outputFile: 'ui-app-e2e-results.xml' }],
+  ],
 };
 
 export default config;

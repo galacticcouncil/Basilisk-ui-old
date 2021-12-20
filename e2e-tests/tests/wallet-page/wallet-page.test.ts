@@ -29,6 +29,9 @@ test.describe('The Polkadot.js Extension browser should', () => {
     extensionURL = init.extensionURL;
 
     await browserContext.tracing.start({ screenshots: true, snapshots: true });
+    await browserContext.tracing.startChunk({
+      title: 'Init Browser with Polkadot.js extension',
+    });
 
     page = await importPolkadotDappAccount({
       browserContext,
@@ -39,11 +42,15 @@ test.describe('The Polkadot.js Extension browser should', () => {
         password: process.env.E2E_TEST_ACCOUNT_PASSWORD_ALICE || '',
       },
     });
+    await browserContext.tracing.stopChunk({
+      path: './traces/wallet-page/initPolkadotJsExt.zip',
+    });
   });
 
   test.afterAll(async () => {
+    // await browserContext.tracing.stop({ path: './traces/wallet-page.zip' });
+
     await browserContext?.close();
-    await browserContext.tracing.stop({ path: './traces/wallet-page.zip' });
 
     // browserContext = null;
     // page = null;

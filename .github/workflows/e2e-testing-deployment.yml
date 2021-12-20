@@ -271,11 +271,30 @@ jobs:
           name: e2e_tests_report_html
           path: ./ui-app/ui-app-e2e-results.html
 
+      - name: Upload unit tests report file
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: unint_tests_report_html
+          path: ./ui-app/ui-app-unit-tests-results.html
+
       - name: Run unit tests
         if: always()
         run: |
           cd ui-app
           yarn test:ci
+
+      - name: Add artifact links to pull request
+        uses: tonyhallett/artifacts-url-comments@v1.1.0
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          prefix: Here are the artifacts
+          suffix: Have a nice day.
+          format: (name)[url]
+          addTo: pull
+          errorNoArtifacts: 'false'
 
       - name: Stop testnet
         if: always()

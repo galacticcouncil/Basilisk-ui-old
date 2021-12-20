@@ -41,6 +41,7 @@
     "graphql.macro": "^1.4.2",
     "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm#main",
     "jest-image-snapshot": "^4.5.1",
+    "jest-junit": "^13.0.0",
     "jest-playwright-preset": "^1.6.0",
     "lodash": "^4.17.21",
     "loglevel": "^1.7.1",

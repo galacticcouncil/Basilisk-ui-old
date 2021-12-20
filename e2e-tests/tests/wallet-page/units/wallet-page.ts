@@ -8,8 +8,12 @@ const { expect } = require('@playwright/test');
 expect.extend({ toMatchImageSnapshot });
 
 const testUnitWalletPage = async (browserContext: ChromiumBrowserContext) => {
+  await browserContext.tracing.startChunk({ title: 'testUnitWalletPage' });
+
   const page: Page = await browserContext.newPage();
+
   await page.goto('http://127.0.0.1:3000/#/wallet');
+
   await page.waitForLoadState();
 
   // await page.click('//a[(text()="Wallet")]');
@@ -36,6 +40,8 @@ const testUnitWalletPage = async (browserContext: ChromiumBrowserContext) => {
     `//h3[text()="${process.env.E2E_TEST_ACCOUNT_NAME_ALICE}"]`,
     { timeout: 20000 }
   );
+  await browserContext.tracing.stopChunk({ path: './traces/wallet-page/testUnitWalletPage.zip' });
+
   await expect(testAccItem).not.toBe(null);
 };
 

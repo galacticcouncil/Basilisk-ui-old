@@ -9,6 +9,10 @@ expect.extend({ toMatchImageSnapshot });
 const testUnitPolkadotUiDemoTest = async (
   browserContext: ChromiumBrowserContext
 ) => {
+  await browserContext.tracing.startChunk({
+    title: 'testUnitPolkadotUiDemoTest',
+  });
+
   const page: Page = await browserContext.newPage();
 
   await page.goto(
@@ -32,6 +36,10 @@ const testUnitPolkadotUiDemoTest = async (
     `//div[text()="${process.env.TEST_ACCOUNT_NAME} (EXTENSION)"]/ancestor-or-self::tr`,
     { timeout: 20000 }
   );
+
+  await browserContext.tracing.stopChunk({
+    path: './traces/wallet-page/testUnitPolkadotUiDemoTest.zip',
+  });
 
   await expect(testAccItem).not.toBe(null);
 };
