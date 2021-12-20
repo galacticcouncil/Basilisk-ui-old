@@ -92,7 +92,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
 
       - name: Cache Node Modules for ui-app
         id: cache-node-modules-ui-app
@@ -128,11 +128,12 @@ jobs:
   run_tests:
     name: Run tests
     runs-on: ubuntu-latest
+    continue-on-error: true
     needs: [set_test_env_polkadot_node, set_test_env_basilisk_node, build_app]
     steps:
       - uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: 16.x
 
       - name: Install Node.js HTTP-Server
         run: npm install -g http-server
