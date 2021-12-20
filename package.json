@@ -83,7 +83,7 @@
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "eject": "craco eject",
     "prettier": "prettier **/** --check --ignore-path .gitignore",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings=0",
     "commit": "git-cz",
     "preci": "rm -fr node_modules",
     "ci": "yarn install --frozen-lockfile",
@@ -104,6 +104,7 @@
       "react-app/jest",
       "eslint-config-prettier"
     ],
+    
     "overrides": [
       {
         "files": [
@@ -156,8 +157,12 @@
     }
   },
   "lint-staged": {
-    "**/*": "prettier --ignore-path .gitignore --write",
-    "src/**/*": "eslint --fix"
+    "src/**/*": [
+      "prettier --ignore-unknown --ignore-path .gitignore --write"
+    ],
+    "src/**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix --max-warnings=0"
+    ]
   },
   "babel": {
     "plugins": [
