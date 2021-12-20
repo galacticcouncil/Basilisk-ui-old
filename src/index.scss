@@ -1,12 +1,13 @@
 $spacer: 1rem !default;
 $spacers: (
   0: 0,
-  1: $spacer * .25,
-  2: $spacer * .5,
+  1: $spacer * 0.25,
+  2: $spacer * 0.5,
   3: $spacer,
   4: $spacer * 1.5,
   5: $spacer * 2,
 );
 
+@import '~bootstrap/scss/bootstrap';
 @import './misc/defaults.scss';
 @import '~bootstrap-icons/font/bootstrap-icons.css';
