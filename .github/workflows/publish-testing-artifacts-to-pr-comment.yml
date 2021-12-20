@@ -1,7 +1,7 @@
-name: add artifact links to pull request and related issues
+name: Add artifact links to pull request
 on:
   workflow_run:
-    workflows: [E2E and Unit Testing Flow]
+    workflows: ["E2E and Unit Testing Flow"]
     types: [completed]
 
 jobs:
