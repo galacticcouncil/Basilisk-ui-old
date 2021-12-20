@@ -2,6 +2,7 @@ import {MutableRefObject} from "react";
 import {FormattedBalance} from '../Balance/FormattedBalance/FormattedBalance';
 import {Account} from "../../generated/graphql";
 import {UnitStyle} from "../Balance/metricUnit";
+import Identicon from '@polkadot/react-identicon';
 import './Wallet.scss';
 
 const horizontalBar = '―';
@@ -33,6 +34,10 @@ export const Wallet = ({
             <div className="flex-container column text-end">
                 <FormattedBalance balance={account.balances[0]} unitStyle={UnitStyle.SHORT} precision={1}/>
                 <div className="wallet__fiat-balance">~$ {horizontalBar}</div>
+            </div>
+            <div>
+                <Identicon value={'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH'}
+                    size={32}/>
             </div>
             <div className="wallet__account-name">{account.name}</div>
             <div>

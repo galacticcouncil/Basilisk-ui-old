@@ -42,7 +42,7 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
                         can render the modal there.
                     */}
                     <div style={{
-                        width: '325px'
+                        width: '360px'
                     }}>
                         <Wallet {...args} modalContainerRef={modalContainerRef}/>
                     </div>

@@ -15,6 +15,7 @@
     "@open-web3/orml-types": "^1.0.1",
     "@polkadot/api": "^6.4.2",
     "@polkadot/extension-dapp": "^0.40.3",
+    "@polkadot/react-identicon": "^0.87.6",
     "@polkadot/types": "^6.11.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
