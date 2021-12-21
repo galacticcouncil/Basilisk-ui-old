@@ -19,6 +19,22 @@ export default {
       isActive: true,
       vestingSchedule: {},
     },
+    accounts: [
+      {
+        name: 'Alice 1',
+        balances: [{ assetId: '0', balance: toPrecision12('100200') }],
+        id: 'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH',
+        isActive: true,
+        vestingSchedule: {},
+      },
+      {
+        name: 'Kusama snekmaster',
+        balances: [{ assetId: '0', balance: toPrecision12('0') }],
+        id: 'E7ncQKp4xayUoUdpraxBjT7NzxaayLJA4TuPcKKboBkJ5GH',
+        isActive: false,
+        vestingSchedule: {},
+      },
+    ],
   },
 } as ComponentMeta<typeof Wallet>;
 

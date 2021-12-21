@@ -28,7 +28,12 @@ export const AccountSelector = ({
       <div className="account-selector__content-wrapper">
         <div className="account-selector__heading d-flex flex-align-space">
           <div>Select an account</div>
-          <div onClick={() => closeModal()}>X</div>
+          <div
+            className="account-selector__close-modal-btn"
+            onClick={() => closeModal()}
+          >
+            x
+          </div>
         </div>
         {accounts?.map((account, i) => (
           <AccountItem
