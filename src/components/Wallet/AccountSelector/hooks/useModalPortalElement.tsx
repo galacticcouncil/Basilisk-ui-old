@@ -38,6 +38,7 @@ export const useModalPortalElement: ModalPortalElement = ({
           accounts={accounts}
           account={account}
           onAccountSelected={handleAccountSelected(closeModal)}
+          closeModal={closeModal}
         />
       ) : (
         <></>

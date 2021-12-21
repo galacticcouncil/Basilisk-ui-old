@@ -9,6 +9,7 @@
   &__info-wrapper {
     align-items: center;
     gap: 0.75rem;
+    cursor: pointer;
   }
   &__fiat-balance {
     font-size: 0.75rem;
@@ -16,6 +17,7 @@
   &__icon {
     display: inline-flex;
     margin: 0.75rem 0.75rem 0.75rem 0;
+    cursor: pointer;
   }
   &__account-name {
     font-weight: bold;
