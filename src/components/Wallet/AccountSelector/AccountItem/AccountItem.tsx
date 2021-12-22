@@ -2,6 +2,9 @@ import { Account } from '../../../../generated/graphql';
 import classNames from 'classnames';
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
 import { UnitStyle } from '../../../Balance/metricUnit';
+import './AccountItem.scss';
+
+import Identicon from '@polkadot/react-identicon';
 export interface AccountItemProps {
   account: Account;
   onClick: () => void;
@@ -11,24 +14,37 @@ export interface AccountItemProps {
 export const AccountItem = ({ account, onClick, active }: AccountItemProps) => (
   <div
     className={
-      'account-selector__account-item ' +
+      'account-item ' +
       classNames({
-        'account-selector__account-item--active': active,
+        'account-item--active': active,
       })
     }
     onClick={onClick}
   >
     <div className="d-flex flex-align-space">
-      <div className="account-selector__account-item-heading">
-        {account.name}
-      </div>
+      <div className="account-item__heading">{account.name}</div>
       <div>
-        {' '}
         <FormattedBalance
           balance={account?.balances[0]}
           unitStyle={UnitStyle.SHORT}
           precision={1}
         />
+      </div>
+    </div>
+    <div className="d-flex flex-column">
+      <div className="d-flex gap-2 my-1">
+        <Identicon value={account?.id} size={32} />
+        <div className="d-flex flex-column">
+          <div className="account-item__chain-name">Basilisk</div>
+          <div className="account-item__chain-address">{account?.id}</div>
+        </div>
+      </div>
+      <div className="d-flex gap-2 my-1">
+        <Identicon value={account?.id} size={32} theme="polkadot" />
+        <div className="d-flex flex-column">
+          <div className="account-item__chain-name">Kusama</div>
+          <div className="account-item__chain-address">{account?.id}</div>
+        </div>
       </div>
     </div>
   </div>

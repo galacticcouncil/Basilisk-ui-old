@@ -28,25 +28,32 @@
     padding: 1rem 0;
   }
 
-  &__account-item {
-    cursor: pointer;
-    padding: 0.5em;
-    margin-bottom: 0.5rem;
-    border: 3px solid transparent;
-    border-radius: $border-radius;
-    &--active {
-      background-color: $gray3;
-    }
-
-    &:hover {
-      border-color: $gray3;
-      .account-selector__account-item-heading {
-        color: $green1;
-      }
-    }
-  }
-
   &__close-modal-btn {
     cursor: pointer;
+  }
+  &__accounts-list {
+    overflow-y: scroll;
+    height: calc(50vh - 8rem);
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background-color: $gray3;
+    }
+    &::-webkit-scrollbar-track:hover {
+      background-color: $gray1;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: transparent url('../../../misc/images/scrollbar.png')
+        no-repeat;
+      background-size: 6px 84px;
+      display: block;
+      width: 6px;
+    }
   }
 }

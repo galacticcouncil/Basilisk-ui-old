@@ -35,14 +35,16 @@ export const AccountSelector = ({
             x
           </div>
         </div>
-        {accounts?.map((account, i) => (
-          <AccountItem
-            key={i}
-            onClick={() => onAccountSelected(account)}
-            active={account.id === activeAccount?.id}
-            account={account}
-          />
-        ))}
+        <div className="account-selector__accounts-list">
+          {accounts?.map((account, i) => (
+            <AccountItem
+              key={i}
+              onClick={() => onAccountSelected(account)}
+              active={account.id === activeAccount?.id}
+              account={account}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

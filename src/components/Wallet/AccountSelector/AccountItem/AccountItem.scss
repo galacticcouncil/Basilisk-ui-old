@@ -1,0 +1,34 @@
+@import '../../../../misc/colors.module.scss';
+@import '../../../../misc/misc.module.scss';
+
+.account-item {
+  cursor: pointer;
+  padding: 0.5em;
+  margin-bottom: 0.5rem;
+  border: 3px solid transparent;
+  border-radius: $border-radius;
+
+  &--active {
+    background-color: $gray3;
+  }
+
+  &:hover {
+    border-color: $gray3;
+  }
+
+  &:hover &__heading {
+    color: $green1;
+  }
+
+  &__chain-name {
+    font-size: 0.75rem;
+  }
+
+  &__chain-address {
+    font-weight: normal;
+    width: 10rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
