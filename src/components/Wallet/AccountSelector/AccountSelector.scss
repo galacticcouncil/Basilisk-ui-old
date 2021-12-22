@@ -31,7 +31,7 @@
   }
   &__accounts-list {
     overflow-y: scroll;
-    height: calc(50vh - 8rem);
+    height: calc(50vh - 7.2rem);
 
     &::-webkit-scrollbar {
       width: 6px;
@@ -53,5 +53,8 @@
       display: block;
       width: 6px;
     }
+  }
+  &__clear-btn {
+    width: 100%;
   }
 }

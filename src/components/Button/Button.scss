@@ -2,26 +2,35 @@
 @import './../../misc/misc.module.scss';
 
 .button {
-    border: none;
-    outline: none;
-    padding: 0;
-    background: none;
-    user-select: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  background: none;
+  user-select: none;
 
+  border-radius: $border-radius;
+  font-weight: bold;
+  width: 100%;
+
+  &--primary {
     padding: 0.875rem;
-    border-radius: $border-radius;
+    background: $green1;
     text-transform: uppercase;
-    font-weight: bold;
-    width: 100%;
-
-    &--primary {
-        background: $green1;
-        &:hover {
-            background: darken($color: $green1, $amount: 5);
-        }
-    }
-
     &:hover {
-        cursor: pointer;
+      background: darken($color: $green1, $amount: 5);
     }
+  }
+
+  &--secondary {
+    padding: 0.3rem;
+    color: $white1;
+    background: $gray3;
+    &:hover {
+      background: darken($color: $green1, $amount: 5);
+    }
+  }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
