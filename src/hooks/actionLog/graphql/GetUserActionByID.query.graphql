@@ -1,0 +1,9 @@
+query GetUserActionByID($id: String!) {
+  action: actionLog(id: $id) @client {
+    id
+    status
+    account
+    action
+    clientDetails
+  }
+}

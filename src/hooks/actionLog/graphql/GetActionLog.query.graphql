@@ -1,0 +1,10 @@
+query GetActionLog {
+  actionLog @client {
+    id
+    status
+    account
+    action
+    detail
+    clientDetails
+  }
+}

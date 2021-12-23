@@ -1,0 +1,8 @@
+query GetUserActions($account: String!) {
+  userActions(orderBy: id_DESC, where: { account_eq: $account }, limit: 50) {
+    id
+    status
+    account
+    action
+  }
+}

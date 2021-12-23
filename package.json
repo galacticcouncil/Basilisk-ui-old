@@ -23,6 +23,7 @@
     "@types/react-dom": "^17.0.0",
     "@types/use-persisted-state": "^0.3.0",
     "add-days": "^2.0.1",
+    "apollo3-cache-persist": "^0.13.0",
     "babel-loader": "8.1.0",
     "bootstrap": "^5.1.1",
     "bootstrap-icons": "^1.6.0",
@@ -94,7 +95,6 @@
       "react-app/jest",
       "eslint-config-prettier"
     ],
-    
     "overrides": [
       {
         "files": [

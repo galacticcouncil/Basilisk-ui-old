@@ -1,8 +1,14 @@
-import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -30,6 +36,34 @@ export type Balance = {
   __typename?: 'Balance';
   assetId: Scalars['String'];
   balance: Scalars['String'];
+};
+
+export type BuyActionDetail = {
+  __typename?: 'BuyActionDetail';
+  assetIn: Scalars['String'];
+  assetInAmount: Scalars['String'];
+  assetOut: Scalars['String'];
+  assetOutAmount: Scalars['String'];
+  buyPrice: Scalars['String'];
+  feeAmount: Scalars['String'];
+  feeAsset: Scalars['String'];
+  poolId: Scalars['String'];
+};
+
+export type ClientUserAction = {
+  __typename?: 'ClientUserAction';
+  account: Scalars['String'];
+  action: UserActionType;
+  clientDetails?: Maybe<ClientUserActionDetail>;
+  detail?: Maybe<UserActionDetail>;
+  id: Scalars['String'];
+  status: Status;
+};
+
+export type ClientUserActionDetail = {
+  __typename?: 'ClientUserActionDetail';
+  blockHeight?: Maybe<Scalars['String']>;
+  inBlockHash?: Maybe<Scalars['String']>;
 };
 
 export type Config = {
@@ -93,17 +127,63 @@ export type Query = {
   _tradeType?: Maybe<TradeType>;
   account?: Maybe<Account>;
   accounts: Array<Account>;
+  action?: Maybe<ClientUserAction>;
+  actionLog: Array<ClientUserAction>;
   assets?: Maybe<Array<Asset>>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   pools?: Maybe<Array<Pool>>;
+  userActions: Array<UserAction>;
 };
+
+export type SellActionDetail = {
+  __typename?: 'SellActionDetail';
+  assetIn: Scalars['String'];
+  assetInAmount: Scalars['String'];
+  assetOut: Scalars['String'];
+  assetOutAmount: Scalars['String'];
+  feeAmount: Scalars['String'];
+  feeAsset: Scalars['String'];
+  poolId: Scalars['String'];
+  sellPrice: Scalars['String'];
+};
+
+export enum Status {
+  IsError = 'IsError',
+  IsReady = 'IsReady',
+  Unapproved = 'Unapproved',
+  IsBroadcast = 'isBroadcast',
+  IsFinalized = 'isFinalized',
+  IsInBlock = 'isInBlock',
+}
 
 export enum TradeType {
   Buy = 'Buy',
-  Sell = 'Sell'
+  Sell = 'Sell',
+}
+
+export type UserAction = {
+  __typename?: 'UserAction';
+  account: Scalars['String'];
+  action: UserActionType;
+  detail?: Maybe<UserActionDetail>;
+  id: Scalars['String'];
+  parachainBlockHeight?: Maybe<Scalars['String']>;
+  status: Status;
+};
+
+export type UserActionDetail = BuyActionDetail | SellActionDetail;
+
+export enum UserActionType {
+  AddLiquidity = 'AddLiquidity',
+  Buy = 'Buy',
+  RemoveLiquidity = 'RemoveLiquidity',
+  Sell = 'Sell',
+  SetFeeAsset = 'SetFeeAsset',
+  Transfer = 'Transfer',
+  Xcm = 'XCM',
 }
 
 export type VestingSchedule = {

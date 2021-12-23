@@ -10,29 +10,41 @@ import { calculateSpotPriceFromPool as calculateSpotPriceFromPoolXYK } from '../
 import log from 'loglevel';
 
 export const useSpotPrice = (
-    { assetInId, assetOutId }: TradeFormProps['assetIds'],
-    pool?: Pool,
+  { assetInId, assetOutId }: TradeFormProps['assetIds'],
+  pool?: Pool
 ): SpotPrice | undefined => {
-    const client = useApolloClient();
-    const relaychainBlockNumber = readLastBlock(client);
-    const { math } = useMathContext();
-   
-    return useMemo(() => {
-        if (!math || !pool || !assetInId || !assetOutId || !relaychainBlockNumber) return;
+  const client = useApolloClient();
+  const relaychainBlockNumber = readLastBlock(client.cache);
+  const { math } = useMathContext();
 
-        // if the pool is an XYKPool, use the XYKPool spot price calculation and vice versa
-        const calculateSpotPriceFromPool = pool?.__typename === 'XYKPool'
-            ? calculateSpotPriceFromPoolXYK
-            : calculateSpotPriceFromPoolLBP
+  return useMemo(() => {
+    if (!math || !pool || !assetInId || !assetOutId || !relaychainBlockNumber)
+      return;
 
-        const spotPrice: SpotPrice = {
-            // TODO: get rid of `as any` since its not type safe *at all*
-            aToB: calculateSpotPriceFromPool(math, pool as any, assetInId, assetOutId),
-            bToA: calculateSpotPriceFromPool(math, pool as any, assetOutId, assetInId)
-        }
+    // if the pool is an XYKPool, use the XYKPool spot price calculation and vice versa
+    const calculateSpotPriceFromPool =
+      pool?.__typename === 'XYKPool'
+        ? calculateSpotPriceFromPoolXYK
+        : calculateSpotPriceFromPoolLBP;
 
-        log.debug('TradePage.useSpotPrice', spotPrice);
+    const spotPrice: SpotPrice = {
+      // TODO: get rid of `as any` since its not type safe *at all*
+      aToB: calculateSpotPriceFromPool(
+        math,
+        pool as any,
+        assetInId,
+        assetOutId
+      ),
+      bToA: calculateSpotPriceFromPool(
+        math,
+        pool as any,
+        assetOutId,
+        assetInId
+      ),
+    };
 
-        return spotPrice;
-    }, [relaychainBlockNumber, assetInId, assetOutId, pool]);
-}
+    log.debug('TradePage.useSpotPrice', spotPrice);
+
+    return spotPrice;
+  }, [relaychainBlockNumber, assetInId, assetOutId, pool, math]);
+};

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Navigation.scss';
-import { Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export const Modal = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -25,12 +25,16 @@ export const useModal = (content: React.ReactNode) => {
 
 export const Navigation = () => (
   <div>
-    <Link className= 'basilisk-logo' to="https://bsx.fi">()</Link>
+    <Link className="basilisk-logo" to="https://bsx.fi">
+      ()
+    </Link>
     <Link to="/">Trade</Link>
     {' | '}
     <Link to="/">Pools</Link>
     {' | '}
     <Link to="/wallet">Wallet</Link>
+    {' | '}
+    <Link to="/log">Action Log</Link>
   </div>
 );
 

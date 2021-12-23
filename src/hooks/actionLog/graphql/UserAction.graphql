@@ -1,0 +1,69 @@
+enum UserActionType {
+  Buy # LBP & XYK
+  Sell # LBP & XYK
+  AddLiquidity # XYK
+  RemoveLiquidity # XYK
+  SetFeeAsset
+  Transfer
+  XCM # cross chain transfer
+}
+
+enum Status {
+  Unapproved
+  IsReady
+  isBroadcast
+  isInBlock
+  isFinalized
+  IsError
+}
+
+type SellActionDetail {
+  poolId: String!
+  assetIn: String!
+  assetOut: String!
+  assetInAmount: String!
+  assetOutAmount: String!
+  sellPrice: String!
+  feeAsset: String!
+  feeAmount: String!
+}
+
+type BuyActionDetail {
+  poolId: String!
+  assetOut: String!
+  assetIn: String!
+  assetOutAmount: String!
+  assetInAmount: String!
+  buyPrice: String!
+  feeAsset: String!
+  feeAmount: String!
+}
+
+union UserActionDetail = SellActionDetail | BuyActionDetail # | LiquidityAddedActionDetail | LiquidityRemovedActionDetail;
+type ClientUserActionDetail {
+  blockHeight: String
+  inBlockHash: String
+}
+
+type ClientUserAction {
+  id: String!
+  status: Status!
+  account: String!
+  action: UserActionType!
+  detail: UserActionDetail
+  clientDetails: ClientUserActionDetail
+}
+type UserAction {
+  id: String!
+  status: Status!
+  account: String!
+  action: UserActionType!
+  detail: UserActionDetail
+  parachainBlockHeight: String
+}
+
+extend type Query {
+  actionLog: [ClientUserAction!]!
+  action: ClientUserAction
+  userActions: [UserAction!]!
+}
