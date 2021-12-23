@@ -69,11 +69,10 @@ export const useConfigureApolloClient = () => {
   const cache = useMemo(() => {
     const inMemoryCache = new InMemoryCache();
     persistCache({
-      cache,
+      cache: inMemoryCache,
       storage: new LocalStorageWrapper(window.localStorage),
     }).then(() => {
-      // Continue setting up Apollo Client as usual.
-      //TODO: how do ?
+      //TODO: what do ?
     });
     return inMemoryCache;
   }, []);
