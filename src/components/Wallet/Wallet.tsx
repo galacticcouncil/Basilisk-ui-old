@@ -56,22 +56,31 @@ export const Wallet = ({
         onClick={(_) => handleAccountSelectorClick()}
         data-modal-portal-toggle={toggleId}
       >
-        <div className="d-flex flex-column align-items-end">
-          {account?.balances[0] ? (
-            <FormattedBalance
-              balance={account?.balances[0]}
-              unitStyle={UnitStyle.SHORT}
-              precision={1}
-            />
-          ) : (
-            <div>{horizontalBar}</div>
-          )}
-          <div className="wallet__fiat-balance">~$ {horizontalBar}</div>
-        </div>
-        <div>
-          <Identicon value={account?.id} size={32} />
-        </div>
-        <div className="wallet__account-name">{account?.name}</div>
+        {account ? (
+          <>
+            <div className="d-flex flex-column align-items-end">
+              {account?.balances[0] ? (
+                <FormattedBalance
+                  balance={account?.balances[0]}
+                  unitStyle={UnitStyle.SHORT}
+                  precision={1}
+                />
+              ) : (
+                <div>{horizontalBar}</div>
+              )}
+              <div className="wallet__fiat-balance">~$ {horizontalBar}</div>
+            </div>
+            <Identicon value={account?.id} size={32} />
+            <div className="wallet__account-name">{account?.name}</div>
+          </>
+        ) : (
+          <>
+            <div className="wallet__select-account-icon" />
+            <div className="wallet__connect-account-action">
+              Connect account
+            </div>
+          </>
+        )}
         <div>
           <Icon type={IconType.DROPDOWN_ARROW} />
         </div>

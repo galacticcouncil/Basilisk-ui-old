@@ -75,3 +75,12 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
 };
 
 export const Default = Template.bind({});
+export const NoAccountSelected = Template.bind({});
+NoAccountSelected.args = {
+  account: undefined,
+};
+export const NoAccountsAvailable = Template.bind({});
+NoAccountsAvailable.args = {
+  account: undefined,
+  accounts: [],
+};

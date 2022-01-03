@@ -22,4 +22,14 @@
   &__account-name {
     font-weight: bold;
   }
+  &__select-account-icon {
+    border-radius: 50%;
+    height: 28px;
+    width: 28px;
+    background-color: $green1;
+  }
+  &__connect-account-action {
+    color: $green1;
+    font-weight: bold;
+  }
 }
