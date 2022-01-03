@@ -50,10 +50,10 @@ export const AccountSelector = ({
         ) : (
           <div className="mx-3 my-5 text-center">
             <h4>No accounts available</h4>
-            <button href="/#" className="account-selector__create-account-link">
+            <a href="/#" className="account-selector__create-account-link">
               Need help creating an account? <br />
               Click here
-            </button>
+            </a>
           </div>
         )}
         {account && (
