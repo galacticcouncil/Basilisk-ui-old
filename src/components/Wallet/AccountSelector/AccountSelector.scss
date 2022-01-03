@@ -23,7 +23,7 @@
   }
 
   &__heading {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 
   &__close-modal-btn {
@@ -31,7 +31,7 @@
   }
   &__accounts-list {
     overflow-y: scroll;
-    height: calc(50vh - 7.2rem);
+    height: calc(50vh - 8rem);
 
     &::-webkit-scrollbar {
       width: 6px;
@@ -56,5 +56,10 @@
   }
   &__clear-btn {
     width: 100%;
+  }
+  &__create-account-link {
+    text-decoration: none;
+    font-weight: normal;
+    color: $orange1;
   }
 }

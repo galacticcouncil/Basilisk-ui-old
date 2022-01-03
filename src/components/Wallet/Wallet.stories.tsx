@@ -75,8 +75,8 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
 };
 
 export const Default = Template.bind({});
-export const NoAccountSelected = Template.bind({});
-NoAccountSelected.args = {
+export const NoAccountConnected = Template.bind({});
+NoAccountConnected.args = {
   account: undefined,
 };
 export const NoAccountsAvailable = Template.bind({});

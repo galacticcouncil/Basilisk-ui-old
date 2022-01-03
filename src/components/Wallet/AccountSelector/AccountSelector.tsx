@@ -36,19 +36,31 @@ export const AccountSelector = ({
             x
           </div>
         </div>
-        <div className="account-selector__accounts-list">
-          {accounts?.map((account, i) => (
-            <AccountItem
-              key={i}
-              onClick={() => onAccountSelected(account)}
-              active={account.id === activeAccount?.id}
-              account={account}
-            />
-          ))}
-        </div>
-        <div className="d-flex justify-content-center mx-3">
-          <Button kind={ButtonKind.Secondary}>Clear account</Button>
-        </div>
+        {accounts?.length ? (
+          <div className="account-selector__accounts-list">
+            {accounts?.map((account, i) => (
+              <AccountItem
+                key={i}
+                onClick={() => onAccountSelected(account)}
+                active={account.id === activeAccount?.id}
+                account={account}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="mx-3 my-5 text-center">
+            <h4>No accounts available</h4>
+            <button href="/#" className="account-selector__create-account-link">
+              Need help creating an account? <br />
+              Click here
+            </button>
+          </div>
+        )}
+        {account && (
+          <div className="d-flex mx-3">
+            <Button kind={ButtonKind.Secondary}>Clear account</Button>
+          </div>
+        )}
       </div>
     </div>
   );
