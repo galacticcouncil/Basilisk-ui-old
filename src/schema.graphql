@@ -7,8 +7,10 @@
 #import './hooks/pools/graphql/Pool.graphql'
 #import './hooks/assets/graphql/Asset.graphql'
 
+directive @client on FIELD
+
 extend type Query {
-    # just a placeholder to make the codegen not complain about
-    # root query not being defined
-    _empty: String
+  # just a placeholder to make the codegen not complain about
+  # root query not being defined
+  _empty: String
 }
