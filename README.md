@@ -85,8 +85,11 @@ between different application layers.
 ### Presentational layer
 
 The presenational layer is used to present and transform the normalized data provided by the *composition layer*. It begins on the *dumb* component level,
-which are fed data via containers through props. Dumb components should be developed in isolation via *storybook* to fit the visual/layout/structural design requirements. Dumb components should only hold local state specific to their own presentational logic (e.g. `isModalOpen`), and should communicate with their respective parent components via props and handlers (e.g. `onClick / handleOnClick`).
+those are fed data via containers through props. Dumb components should be developed in isolation via *storybook* to fit the visual/layout/structural design requirements. Dumb components should only hold local state specific to their own presentational logic (e.g. `isModalOpen`), and should communicate with their respective parent components via props and handlers (e.g. `onClick / handleOnClick`).
 
+#### Testing
+
+Storybook components should be tested via playwright, as explained [here](https://storybook.js.org/docs/react/writing-tests/importing-stories-in-tests#example-with-playwright).
 
 Example:
 
@@ -96,11 +99,12 @@ import { Account } from './generated/graphql'
 
 // data to be presented passed via props
 export interface WalletProps {
-  activeAccount?: Account  
+  activeAccount?: Account,
+  onActiveAccountClick: () => void
 }
 
-export const Wallet = ({ account }: WalletProps) => {
-  return <div>
+export const Wallet = ({ account, onActiveAccountClick }: WalletProps) => {
+  return <div onClick={_ => onActiveAccountClick()}>
     <p>{account?.name}</p>
   </div>
 }
@@ -117,8 +121,6 @@ There are three major approaches to data composition within our UI:
 1. `useQuery` - this will imidiatelly request data via the data layer's resolvers
 2. `useLazyQuery` - this will return a callback, that can be timed or manually executed to request the data at a later time (e.g. after a timeout or on user interaction)
 3. `constate` - both query types can be contextualized to avoid concurency issues in a case where multiple containers use the same queries at the same times (at time of rendering)
-
-
 
 Example:
 
@@ -154,7 +156,79 @@ export const Wallet = () => {
 
 ### Data layer
 
-TBD
+The data layer is provided by the [Apollo client](https://www.apollographql.com), containers are not aware of where the data comes from, they only define what data they're interested in. We use Apollo's [local resolvers](https://www.apollographql.com/docs/react/local-state/local-resolvers/) to provide the data that is being requested by containers via queries.
+
+Local resolver is a function that can be parametrized via a query, which returns (resolves) data for the given entity (e.g. Accounts).
+As far as separation of concerns goes in the data layer itself, the resolver should only parse our the query arguments and call subsequent functions that take care of the data fetching itself.
+
+Fetching of data is facilitated by query resolvers, writing of data (both local and remote) is facilitated by mutation resolvers.
+
+#### Data freshness and historical data
+
+Overall strategy for data fetching in our UI is to provide the latest possible data using the Basilisk node itself. This ensure that our users are presented with the latest possible data, and can make well informed decision for e.g. trading. Our current backend infrastructure ((Basilisk API)[https://github.com/galacticcouncil/Basilisk-api]) only processes finalized data - which can and will be more than 3 blocks behind the actual latest data on-chain.
+
+Thanks to our local resolver architecture, we can compose various data sources easily and serve them in an unified manner via complex queries.
+
+Example of a query resolver:
+
+```typescript
+export interface PoolResolverArgs {
+  assetIds?: { assetAId: string, assetBId: string },
+  id?: string
+}
+
+export const getPoolIdFromAssetIds = (...) => {...}
+
+export const toTypename = (pool: Pool) => {
+  const __typename = pool.__typename === 'LBPPool' ? 'LBPPool' : 'XYKPool';
+  return {
+    __typename,
+    ...pool
+  }
+};
+
+/**
+ * Resolver for the `Pool` entity is a simple factory function,
+ * accepting dependencies as arguments and returning the resolver itself
+ */
+export const poolResolverFactory = (
+  apiInstance: ApiInstance,
+) => async (
+  _obj,
+  args: PoolResolverArgs
+) => {
+  let poolId = args.assetIds ? await getPoolIdFromAssetIds(args.assetIds) : args.id;
+  if (!poolId) throw new Error('poolId not found');
+
+  const pool = await getPool(apiInstance,poolId);
+
+  return toTypename(pool)
+}
+
+/**
+ * In order to access contextual dependencies, the resolver
+ * must be wrapped as a hook
+ */
+export const usePoolResolver = () => useCallback(() => {
+  // polkadot.js api instance from the parent context
+  const { apiInstance } => usePolkadotJsContext();
+
+  return {
+    Query: {
+      /**
+       * Passed by reference, so that apollo can use
+       * the latest function after the dependencies for the resolver change.
+       */
+      pool: useResolverToRef(useMemo(
+        () => poolResolverFactory(apiInstance), 
+        [apiInstance, pool]
+      ))
+    }
+  }
+});
+
+
+```
 
 ## E2E testing
 
