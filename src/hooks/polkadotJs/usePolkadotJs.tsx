@@ -1,33 +1,35 @@
-import { ApiPromise, WsProvider, HttpProvider } from '@polkadot/api';
-import { ProviderInterface } from '@polkadot/rpc-provider/types'
+import { ApiPromise, WsProvider } from '@polkadot/api';
 import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';
 import typesConfig from './typesConfig';
 import { usePersistentConfig } from '../config/usePersistentConfig';
-import { types as ormlTypes, typesAlias as ormlTypesAlias } from '@open-web3/orml-type-definitions'
+import {
+  types as ormlTypes,
+  typesAlias as ormlTypesAlias,
+} from '@open-web3/orml-type-definitions';
 
 const getPoolAccount = {
   description: 'Get pool account id by asset IDs',
   params: [
     {
       name: 'assetInId',
-      type: 'u32'
+      type: 'u32',
     },
     {
       name: 'assetOutId',
-      type: 'u32'
-    }
+      type: 'u32',
+    },
   ],
-  type: 'AccountId'
+  type: 'AccountId',
 };
 const rpc = {
   xyk: {
-    getPoolAccount  
+    getPoolAccount,
   },
   lbp: {
-    getPoolAccount
-  }
-}
+    getPoolAccount,
+  },
+};
 
 /**
  * Setup an instance of PolkadotJs, and watch
@@ -36,19 +38,27 @@ const rpc = {
  */
 export const useConfigurePolkadotJs = () => {
   const [{ nodeUrl }] = usePersistentConfig();
-  const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(undefined);
-  const loading = useMemo(() => apiInstance ? false : true, [apiInstance]);
+  const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(
+    undefined
+  );
+  const loading = useMemo(() => (apiInstance ? false : true), [apiInstance]);
   const provider = useMemo(() => new WsProvider(nodeUrl), [nodeUrl]);
 
-  const types = useMemo(() => ({
-    ...typesConfig.types[0],
-    ...ormlTypes,
-  }), []);
+  const types = useMemo(
+    () => ({
+      ...typesConfig.types[0],
+      ...ormlTypes,
+    }),
+    []
+  );
 
-  const typesAlias = useMemo(() => ({
-    ...typesConfig.alias,
-    ...ormlTypesAlias
-  }), []);
+  const typesAlias = useMemo(
+    () => ({
+      ...typesConfig.alias,
+      ...ormlTypesAlias,
+    }),
+    []
+  );
 
   // (re-)Create the PolkadotJS instance, when the provider updates.
   useEffect(() => {
@@ -58,7 +68,7 @@ export const useConfigurePolkadotJs = () => {
         provider,
         types,
         typesAlias,
-        rpc
+        rpc,
       });
       await api.isReady;
       setApiInstance(api);
@@ -68,11 +78,12 @@ export const useConfigurePolkadotJs = () => {
     return () => {
       apiInstance?.disconnect();
     };
-  }, [provider]);
+  }, [provider, apiInstance, types, typesAlias]);
 
   return { apiInstance, loading };
 };
 
 // TODO: lift to context using constate
-// export const usePolkadotJs = () => useConfigurePolkadotJs();
-export const [PolkadotJsProvider, usePolkadotJsContext] = constate(useConfigurePolkadotJs);
+export const [PolkadotJsProvider, usePolkadotJsContext] = constate(
+  useConfigurePolkadotJs
+);
