@@ -160,7 +160,7 @@
     "src/**/*": [
       "prettier --ignore-unknown --ignore-path .gitignore --write"
     ],
-    "src/**/*.{ts,tsx,js,jsx}": [
+    "src/**/!(graphql).{ts,tsx,js,jsx}": [
       "eslint --fix --max-warnings=0"
     ]
   },
