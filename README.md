@@ -176,6 +176,8 @@ Overall strategy for data fetching in our UI is to provide the latest possible d
 
 Thanks to our local resolver architecture, we can compose various data sources easily and serve them in an unified manner via complex queries.
 
+> Please refer to `src/hooks/extension` for a simple example of a folder structure & code separation.
+
 Example of a query resolver:
 
 ```typescript
@@ -233,8 +235,6 @@ export const usePoolResolver = () => useCallback(() => {
     }
   }
 });
-
-
 ```
 
 ## E2E testing
