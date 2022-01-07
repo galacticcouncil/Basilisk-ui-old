@@ -3,6 +3,16 @@ import { getExtension } from './getExtension';
 
 const extensionDappModule = '@polkadot/extension-dapp';
 
+export const mockExtensionDappModule = ({
+  isWeb3Injected,
+}: {
+  isWeb3Injected: boolean;
+}) => {
+  jest.doMock(extensionDappModule, () => ({
+    isWeb3Injected,
+  }));
+};
+
 describe('getExtension', () => {
   let extension: Extension;
 
@@ -19,9 +29,9 @@ describe('getExtension', () => {
 
   describe('extension availale', () => {
     beforeEach(() => {
-      jest.doMock(extensionDappModule, () => ({
+      mockExtensionDappModule({
         isWeb3Injected: true,
-      }));
+      });
 
       extension = getExtension();
     });

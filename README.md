@@ -170,13 +170,18 @@ As far as separation of concerns goes in the data layer itself, the resolver sho
 
 Fetching of data is facilitated by query resolvers, writing of data (both local and remote) is facilitated by mutation resolvers.
 
+
+> Please refer to `src/hooks/extension` for a simple example of a folder structure & code separation. 
+
+#### Testing
+
+Queries and resolvers should be tested in unison, this can be easily done by writing an integration test that sets up a resolver and a component that consumes it via a query. Resolver internals can be mocked in order to make the testing easier. Please look at `src/hooks/extension/resolvers/query/extension.test.tsx` for reference.
+
 #### Data freshness and historical data
 
 Overall strategy for data fetching in our UI is to provide the latest possible data using the Basilisk node itself. This ensure that our users are presented with the latest possible data, and can make well informed decision for e.g. trading. Our current backend infrastructure ((Basilisk API)[https://github.com/galacticcouncil/Basilisk-api]) only processes finalized data - which can and will be more than 3 blocks behind the actual latest data on-chain.
 
 Thanks to our local resolver architecture, we can compose various data sources easily and serve them in an unified manner via complex queries.
-
-> Please refer to `src/hooks/extension` for a simple example of a folder structure & code separation.
 
 Example of a query resolver:
 
