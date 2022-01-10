@@ -1,4 +1,5 @@
 @import './../../misc/colors.module.scss';
+@import './../../misc/misc.module.scss';
 
 .button {
     border: none;
@@ -7,9 +8,8 @@
     background: none;
     user-select: none;
 
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 0.875rem;
+    border-radius: $border-radius;
     text-transform: uppercase;
     font-weight: bold;
     width: 100%;

@@ -1,0 +1,23 @@
+@import '../../../misc/colors.module.scss';
+
+.formatted-balance {
+    width: 100%;
+
+    align-items: baseline;
+    justify-self: end;
+
+    font-weight: bold;
+
+    &__value {
+        margin-right: 0.5em;
+    }
+
+    &__suffix {
+        color: $gray4;
+        font-size: 0.8em;
+    }
+
+    &__symbol {
+        color: $white1;
+    }
+}

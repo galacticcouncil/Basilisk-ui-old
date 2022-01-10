@@ -50,25 +50,26 @@ export const ChartHeader = ({
     }, [displayData, referenceData]);
 
     return (
-            <div className="col-12 g-0 chart-header">
-                <div className="row g-0">
-                    <div className='col-6'>
+            <div className="chart-header">
+                <div className="flex-container flex-align-space">
+                    <div className='flex-container column'>
 
-                        <div className="row g-0 align-items-center">
+                        <div className="flex-container">
                             {/* pair symbols */}
-                            <div className='col-xs-auto text-white-1 chart-header__pair-symbols'>
-                                <p>
-                                    {`${assetPair.assetA.symbol} / `}
+                            <div className='chart-header__pair-symbols'>
+                                <div>
+                                    {`${assetPair.assetA.symbol}`}
+                                    <span> / </span>
                                     {assetPair.assetB?.symbol
                                         ? `${assetPair.assetB.symbol}`
                                         // TODO: replace with long dash glyph
                                         : horizontalBar
                                     }
-                                </p>
+                                </div>
                             </div>
 
                             {/* TODO: add tooltip after the component is implemented */}
-                            <div className="col text-gray-4 chart-header__type-label">
+                            <div className="chart-header__type-label">
                                 {poolType
                                     ? (
                                         <>
@@ -86,23 +87,23 @@ export const ChartHeader = ({
                             </div>
                         </div>
 
-                        <div className="row g-0">
+                        <div className="flex-container">
                             {/* Pair full names */}
                             <div className='text-gray-4 chart-header__pair-full-names'>
-                                <p>
+                                <div>
                                     {`${assetPair.assetA.fullName} / `}
                                     {assetPair.assetB?.fullName
                                         ? `${assetPair.assetB.fullName}`
                                         : horizontalBar
                                     }
-                                </p>
+                                </div>
                             </div>
                         </div>
 
                     </div>
-                    <div className='col-6 text-end'>
-                        <div className='text-white-1 chart-header__data'>
-                            <div className='row g-0'>
+                    <div className='text-end'>
+                        <div className='chart-header__data'>
+                            
                                 <div className='chart-header__data__in-asset'>
                                     {/* TODO: add guards for symbol length */}
                                     {/* TODO: add abbreviations for spot price */}
@@ -123,8 +124,9 @@ export const ChartHeader = ({
 
                                     {displayData.asset.symbol}
                                 </div>
-                                <div className='chart-header__data__breakdown'>
-                                    <span className='text-gray-4'>
+                                <div className='flex-container flex-align-right flex-wrap chart-header__data__breakdown'>
+                             
+                                    <div className='text-gray-4'>
                                         {displayData.usdBalance
                                             ? (
                                                 <FormattedNumber
@@ -137,9 +139,9 @@ export const ChartHeader = ({
                                                 />
                                             )
                                             : `$ ${horizontalBar}`}
-                                    </span>
+                                    </div>
 
-                                    <span className={classNames({
+                                    <div className={classNames({
                                         "text-green-1": dataTrend === Trend.Positive,
                                         "text-gray-1": dataTrend === Trend.Neutral,
                                         "text-red-1": dataTrend === Trend.Negative
@@ -153,9 +155,10 @@ export const ChartHeader = ({
                                             value={referenceDataPercentageChange}
                                         />
                                         )
-                                    </span>
+                                    </div>
+                                    
 
-                                    <span className={"text-gray-4 chart-header__data__breakdown__granularity " + classNames({
+                                    <div className={"text-gray-4 chart-header__data__breakdown__granularity " + classNames({
                                         "disabled": isUserBrowsingGraph
                                     })}>
                                         <FormattedMessage
@@ -185,43 +188,43 @@ export const ChartHeader = ({
                                                     return
                                             }
                                         })()}
-                                    </span>
+                                    </div>
                                 </div>
-                            </div>
+    
                         </div>
                     </div>
                 </div>
-                <div className="row g-0 chart-header__controls">
+                <div className="flex-container flex-align-space chart-header__controls">
 
                     {/* graph selector */}
-                    <div className="col-6">
-                        <div className="chart-header__controls__graph-type text-gray-4 text-start">
 
-                    {/* TODO: add translations & granularity enums & on graph type handler */}
-                    {/* for now only price chart is available */}
-                    {availableChartTypes.map((chartTypeEntry, i) => (
-                        <span
-                            className={classNames({
-                                "chart-header__controls__graph-type__individual": true,
-                                'active': chartTypeEntry === chartType,
-                                'disabled': chartTypeEntry !== chartType
-                            })}
-                            key={i}
-                            onClick={_ => onChartTypeChange(chartTypeEntry)}
-                        >
-                            <FormattedMessage
-                                id="ChartHeader.chartType.selector"
-                                defaultMessage="{chartType, select, PRICE {PRICE} VOLUME {VOLUME} WEIGHTS {WEIGHT} other {-}}"
-                                values={{ chartType: chartTypeEntry }}
-                            />
-                        </span>
-                    ))}
-                    
-                        </div>
+                    <div className="chart-header__controls__graph-type text-gray-4 text-start">
+
+                        {/* TODO: add translations & granularity enums & on graph type handler */}
+                        {/* for now only price chart is available */}
+                        {availableChartTypes.map((chartTypeEntry, i) => (
+                            <span
+                                className={classNames({
+                                    "chart-header__controls__graph-type__individual": true,
+                                    'active': chartTypeEntry === chartType,
+                                    'disabled': chartTypeEntry !== chartType
+                                })}
+                                key={i}
+                                onClick={_ => onChartTypeChange(chartTypeEntry)}
+                            >
+                                <FormattedMessage
+                                    id="ChartHeader.chartType.selector"
+                                    defaultMessage="{chartType, select, PRICE {PRICE} VOLUME {VOLUME} WEIGHTS {WEIGHT} other {-}}"
+                                    values={{ chartType: chartTypeEntry }}
+                                />
+                            </span>
+                        ))}
+                        
                     </div>
 
+
                     {/* granularity selector */}
-                    <div className="col-6">
+
                         <div className="chart-header__controls__granularity text-end text-gray-4">
 
                             {availableGranularity.map((granularityEntry, i) => {
@@ -238,7 +241,7 @@ export const ChartHeader = ({
                             })}
 
                         </div>
-                    </div>
+
 
                 </div>
             </div>

@@ -7,7 +7,6 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     return (
         <div style={{
             padding: '24px',
-            width: '650px',
             margin: '0 auto'
         }}>
             <TopBar />

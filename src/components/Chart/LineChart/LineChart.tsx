@@ -27,6 +27,16 @@ export type TooltipData = {
 export type OnHandleTooltip = (tooltipData: TooltipData | undefined) => void | undefined;
 export type TooltipHandler = ({ tooltip }: { tooltip: TooltipModel<'line'> }) => void;
 
+export interface LineChartProps {
+    primaryDataset: Dataset,
+    secondaryDataset?: Dataset,
+    from?: number,
+    to?: number,
+    fill?: boolean,
+    trend: Trend,
+    onHandleTooltip: OnHandleTooltip
+}
+
 // determine if the given dataset is primary, based on its label
 export const primaryDatasetLabel = 'primary';
 export const secondaryDatasetLabel = 'secondary';
@@ -141,15 +151,7 @@ export const LineChart = ({
     to,
     trend,
     onHandleTooltip
-}: {
-    primaryDataset: Dataset,
-    secondaryDataset?: Dataset,
-    from?: number,
-    to?: number,
-    fill?: boolean,
-    trend: Trend,
-    onHandleTooltip: OnHandleTooltip
-}) => {
+}: LineChartProps) => {
     const { chartContainer, chartCtx } = useChartCtx();
     const [tooltipData, setTooltipData] = useState<TooltipData | undefined>(undefined);
     const tooltipHandler = useTooltipHandler(tooltipData, setTooltipData);
@@ -231,7 +233,7 @@ export const LineChart = ({
         }
     }, [from, to, tooltipHandler, yAxisMin]);
 
-    return <div className='row g-0 line-chart'>
+    return <div className='line-chart'>
         <Line
             ref={chartContainer}
             data={chartData}

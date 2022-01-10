@@ -1,4 +1,3 @@
-import './shared.scss'
 import ScssColors from './colors.module.scss';
 
 const Color = ({ color }: { color: string }) => {

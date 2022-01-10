@@ -53,7 +53,6 @@ export default {
 const Template = (args: any) => {
     return <StorybookWrapper>
         <div style={{
-            width: args.wrapperWidth,
             backgroundColor: cssColors.gray2
         }}>
             <ChartHeader {...args} />
