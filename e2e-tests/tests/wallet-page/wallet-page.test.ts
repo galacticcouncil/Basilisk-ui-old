@@ -1,10 +1,8 @@
 import { Page, ChromiumBrowserContext } from 'playwright';
 import {
-  MatchImageSnapshotOptions,
   toMatchImageSnapshot,
 } from 'jest-image-snapshot';
 import {
-  CLOSE_PAGES,
   initBrowserWithExtension,
   importPolkadotDappAccount,
 } from '../../utils/polkadot-dapp-utils';
@@ -21,7 +19,7 @@ let page: Page;
 let browserContext: ChromiumBrowserContext;
 let extensionURL: string;
 
-test.describe('The Polkadot.js Extension browser should', () => {
+test.skip().describe('The Polkadot.js Extension browser should', () => {
   test.beforeAll(async () => {
     const init = await initBrowserWithExtension();
 
