@@ -84,7 +84,7 @@ between different application layers.
 
 ### Presentational layer
 
-The presenational layer is used to present and transform the normalized data provided by the *composition layer*. It begins on the *dumb* component level,
+The presentational layer is used to present and transform the normalized data provided by the *composition layer*. It begins on the *dumb* component level,
 those are fed data via containers through props. Dumb components should be developed in isolation via *storybook* to fit the visual/layout/structural design requirements. Dumb components should only hold local state specific to their own presentational logic (e.g. `isModalOpen`), and should communicate with their respective parent components via props and handlers (e.g. `onClick / handleOnClick`).
 
 #### Testing
@@ -118,9 +118,9 @@ One of the major roles of the composition layer is to determine when data should
 
 There are a few approaches to data composition within our UI:
 
-1. `useQuery` - this will imidiatelly request data via the data layer's resolvers
+1. `useQuery` - this will immediately request data via the data layer's resolvers
 2. `useLazyQuery` - this will return a callback, that can be timed or manually executed to request the data at a later time (e.g. after a timeout or on user interaction)
-3. `constate` - both query types can be contextualized to avoid concurency issues in a case where multiple containers use the same queries at the same times (at time of rendering)
+3. `constate` - both query types can be contextualized to avoid concurrency issues in a case where multiple containers use the same queries at the same times (at time of rendering)
 4. `cache.readQuery / cache.readFragment` - this will only read already cached data, without making a roundtrip to the data resolver.
 
 #### Handling loading statuses
@@ -166,7 +166,7 @@ export const Wallet = () => {
 The data layer is provided by the [Apollo client](https://www.apollographql.com), containers are not aware of where the data comes from, they only define what data they're interested in. We use Apollo's [local resolvers](https://www.apollographql.com/docs/react/local-state/local-resolvers/) to provide the data that is being requested by containers via queries.
 
 Local resolver is a function that can be parametrized via a query, which returns (resolves) data for the given entity (e.g. Accounts).
-As far as separation of concerns goes in the data layer itself, the resolver should only parse our the query arguments and call subsequent functions that take care of the data fetching itself.
+As far as separation of concerns goes in the data layer itself, the resolver should only parse out the query arguments and call subsequent functions that take care of the data fetching itself.
 
 Fetching of data is facilitated by query resolvers, writing of data (both local and remote) is facilitated by mutation resolvers.
 
@@ -275,7 +275,7 @@ For running e2e test locally you should:
 
 ### Github Actions workflows
 
-`E2E and Unit Testing Flow` (`.github/workflows/e2e-and-unit-tisting-flow.yml`) workflow generates testing reports and 
+`E2E and Unit Testing Flow` (`.github/workflows/e2e-and-unit-testing-flow.yml`) workflow generates testing reports and 
 screenshots traces which are available as artifacts in this workflow.
 
 Possible artifacts:
@@ -301,7 +301,7 @@ Workflow config from default branch will be used for all actions
 
 ## FAQ
 
-### Why my build fails on `error:03000086:digital envelope routines::initialization error` ?
+### Why does my build fail on `error:03000086:digital envelope routines::initialization error`?
 
 You have to use legacy openssl provider in node 17+. Set this to node options
 
