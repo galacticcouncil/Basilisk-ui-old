@@ -34,18 +34,36 @@ jobs:
 
       - name: Install NPM packages
         if: steps.cache-node-modules-ui-app-v1.outputs.cache-hit != 'true'
-        run: |
-          rm -rf node_modules && yarn install --frozen-lockfile
+        run: rm -rf node_modules && yarn install --frozen-lockfile
 
       - name: Update browserslist
         run: npx browserslist@latest --update-db
 
+      - name: Update script file
+        shell: bash
+        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
+
+      - name: Extract branch folder name
+        shell: bash
+        run: |
+          if [[ $GITHUB_EVENT_NAME = 'push' ]]
+          then
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
+          then
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+          else
+            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+          fi
+        id: extract_branch
+
       - name: Build App and Storybook
         run: |
-          yarn run build:deployment
+          yarn run build
           yarn run build-storybook -- -o sb-build-files
         env:
           CI: false
+          REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
 
       - name: Upload script files
         uses: actions/upload-artifact@v2
