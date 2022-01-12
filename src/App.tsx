@@ -1,7 +1,7 @@
 import './App.scss';
 import { MultiProvider } from './containers/MultiProvider';
 import log from 'loglevel';
-import { BrowserRouter, HashRouter } from 'react-router-dom';
+import { HashRouter } from 'react-router-dom';
 import { Router } from './containers/Router';
 import { PageContainer } from './containers/PageContainer';
 

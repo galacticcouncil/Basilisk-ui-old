@@ -1,0 +1,80 @@
+@import '../../../../misc/colors.module.scss';
+@import '../../../../misc/misc.module.scss';
+
+.metric-unit-selector {
+    position: relative;
+
+    font-weight: bold;
+    width: 100%;
+
+    justify-content: center;
+    align-items: center;
+    display: flex;
+
+    cursor: pointer;
+
+    padding: 0 0.5rem;
+
+    &__select {
+        width: 100%;
+        font-size: 0.65em;
+
+        justify-content: center;
+        align-items: center;
+
+        color: $gray4;
+
+        > div {
+            display: inline;
+        }
+
+        &:hover {
+            color: $green1;
+        }
+    }
+
+    &__icon {
+        padding-left: 0.5em;
+        font-size: 0.8em;
+        line-height: 0.8em;
+    }
+
+    &__unit {
+        text-transform: uppercase;
+    }
+
+    &__unit-list {
+        position: absolute;
+        width: 100%;
+
+        top:100%;
+        left: 0;
+
+        background-color: $gray1;
+
+        border-bottom-left-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+
+        z-index: 1;
+
+        font-size: 0.65em;
+
+        .metric-unit-list-item {
+            text-transform: uppercase;
+            padding: 0.35em 0.5em;
+            text-align: center;
+
+            &.active {
+                color: $green1;
+            }
+
+            &:hover {
+                color: $green1;
+            }
+    
+            &:last-child {
+                padding-bottom: 0.6em;
+            }
+        }
+    }
+}

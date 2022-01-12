@@ -1,7 +1,7 @@
 import { Page, ChromiumBrowserContext } from 'playwright';
-const { expect } = require('@playwright/test');
 
 import { toMatchImageSnapshot } from 'jest-image-snapshot';
+const { expect } = require('@playwright/test');
 
 // More info https://github.com/playwright-community/expect-playwright
 expect.extend({ toMatchImageSnapshot });

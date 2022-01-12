@@ -1,2 +1,2 @@
-import './shared.scss';
+import './defaults.scss';
 import 'typeface-roboto';

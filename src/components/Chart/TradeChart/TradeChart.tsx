@@ -26,6 +26,16 @@ export const _getTooltipPositionCss = (tooltipPosition: number) => {
     };
 }
 
+export interface TradeChartProps {
+    assetPair: AssetPair,
+    poolType: PoolType,
+    granularity: ChartGranularity,
+    chartType: ChartType,
+    primaryDataset: Dataset,
+    onChartTypeChange: (chartType: ChartType) => void,
+    onGranularityChange: (granularity: ChartGranularity) => void,
+}
+
 export const TradeChart = ({
     assetPair,
     poolType,
@@ -34,15 +44,7 @@ export const TradeChart = ({
     onChartTypeChange,
     onGranularityChange,
     primaryDataset,
-}: {
-    assetPair: AssetPair,
-    poolType: PoolType,
-    granularity: ChartGranularity,
-    chartType: ChartType,
-    primaryDataset: Dataset,
-    onChartTypeChange: (chartType: ChartType) => void,
-    onGranularityChange: (granularity: ChartGranularity) => void,
-}) => {
+}: TradeChartProps) => {
 
     const [displayData, setDisplayData] = useState<DisplayData>({
         balance: last(primaryDataset)?.y,
@@ -133,82 +135,77 @@ export const TradeChart = ({
     ]), [])
 
     return (
-        <div className='row p-5 g-0 trade-chart'>
-            <div className="row g-0">
-                <ChartHeader
-                    assetPair={assetPair}
-                    poolType={poolType}
-                    granularity={granularity}
-                    chartType={chartType}
-                    onChartTypeChange={onChartTypeChange}
-                    onGranularityChange={onGranularityChange}
-                    displayData={displayData}
-                    referenceData={referenceData}
-                    dataTrend={dataTrend}
-                    isUserBrowsingGraph={tooltipData?.visible}
-                    availableChartTypes={availableChartTypes}
-                    availableGranularity={availableGranularity}
-                />
-            </div>
+        <div className='trade-chart flex-container column'>
 
-            <div className="row g-0">
+            <ChartHeader
+                assetPair={assetPair}
+                poolType={poolType}
+                granularity={granularity}
+                chartType={chartType}
+                onChartTypeChange={onChartTypeChange}
+                onGranularityChange={onGranularityChange}
+                displayData={displayData}
+                referenceData={referenceData}
+                dataTrend={dataTrend}
+                isUserBrowsingGraph={tooltipData?.visible}
+                availableChartTypes={availableChartTypes}
+                availableGranularity={availableGranularity}
+            />
 
-                {primaryDataset?.length
-                    ? (
-                        <div className="col-12 align-self-end trade-chart__chart-wrapper">
-                            <div className='trade-chart__chart-wrapper__chart-jail'>
-                                <LineChart
-                                    primaryDataset={primaryDataset}
-                                    fill={true}
-                                    trend={dataTrend}
-                                    onHandleTooltip={handleTooltip}
-                                />
-                            </div>
-
-                            {tooltipData?.positionX
-                                ? (
-                                    <div>
-                                        <div
-                                            className="trade-chart__tooltip"
-                                            style={{
-                                                left: `${tooltipData.positionX}px`,
-                                                opacity: tooltipData.visible ? 1 : 0
-                                            }}
-                                        ></div>
-                                        <div
-                                            className="trade-chart__tooltip__label"
-                                            style={{
-                                                ...getTooltipPositionCss(tooltipData.positionX!),
-                                                opacity: tooltipData.visible ? 1 : 0
-                                            }}
-                                        >
-                                            {tooltipData.data?.x ? (
-                                                //TODO: format using intl
-                                                moment(new Date(tooltipData.data.x)).toString()
-                                            ) : <></>}
-                                        </div>
-                                    </div>
-                                ) : <></>}
-
-                            <ChartTicks
-                                className='align-self-end'
-                                datasets={[
-                                    primaryDataset
-                                ]}
-                                granularity={granularity}
+            {primaryDataset?.length
+                ? (
+                    <div className="trade-chart__chart-wrapper">
+                        <div className='trade-chart__chart-wrapper__chart-jail'>
+                            <LineChart
+                                primaryDataset={primaryDataset}
+                                fill={true}
+                                trend={dataTrend}
+                                onHandleTooltip={handleTooltip}
                             />
                         </div>
-                    )
-                    : <></>}
 
+                        {tooltipData?.positionX
+                            ? (
+                                <div>
+                                    <div
+                                        className="trade-chart__tooltip"
+                                        style={{
+                                            left: `${tooltipData.positionX}px`,
+                                            opacity: tooltipData.visible ? 1 : 0
+                                        }}
+                                    ></div>
+                                    <div
+                                        className="trade-chart__tooltip__label"
+                                        style={{
+                                            ...getTooltipPositionCss(tooltipData.positionX!),
+                                            opacity: tooltipData.visible ? 1 : 0
+                                        }}
+                                    >
+                                        {tooltipData.data?.x ? (
+                                            //TODO: format using intl
+                                            moment(new Date(tooltipData.data.x)).toString()
+                                        ) : <></>}
+                                    </div>
+                                </div>
+                            ) : <></>}
 
-                {!primaryDataset?.length
-                    ? <div className="col-12 align-self-center trade-chart__error-wrapper">
-                        <TradeChartError type={TradeChartErrorType.InvalidPair} />
+                        <ChartTicks
+                            datasets={[
+                                primaryDataset
+                            ]}
+                            granularity={granularity}
+                        />
                     </div>
-                    : <></>}
+                )
+                : <></>}
 
-            </div>
+
+            {!primaryDataset?.length
+                ? <div className="trade-chart__error-wrapper">
+                    <TradeChartError type={TradeChartErrorType.InvalidPair} />
+                </div>
+                : <></>}
+
         </div>
     )
 }
