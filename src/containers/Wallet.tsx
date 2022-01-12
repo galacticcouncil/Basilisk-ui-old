@@ -11,7 +11,7 @@ export const Wallet = () => {
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
-  console.log(extensionData, extensionLoading, accountsLoading);
+  console.log(accountsLoading);
 
   // request data from the data layer
   // render the component with the provided data
@@ -19,6 +19,10 @@ export const Wallet = () => {
     <>
       <div ref={modalContainerRef} />
       <WalletComponent
+        isExtensionAvailable={
+          !!extensionData && !!extensionData.extension?.isAvailable
+        }
+        extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
         onAccountSelected={(account) => console.log(account)}
         modalContainerRef={modalContainerRef}
