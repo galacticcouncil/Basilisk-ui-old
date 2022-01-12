@@ -1,7 +1,7 @@
 import { Wallet as WalletComponent } from '../components/Wallet/Wallet';
-import { useGetExtensionQuery } from '../hooks/polkadotJs/useGetExtensionQuery';
 import { useRef } from 'react';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
+import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtensionQuery';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
@@ -19,9 +19,7 @@ export const Wallet = () => {
     <>
       <div ref={modalContainerRef} />
       <WalletComponent
-        isExtensionAvailable={
-          !!extensionData && !!extensionData.extension?.isAvailable
-        }
+        isExtensionAvailable={!!extensionData?.extension.isAvailable}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
         onAccountSelected={(account) => console.log(account)}
