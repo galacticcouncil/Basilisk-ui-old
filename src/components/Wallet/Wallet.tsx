@@ -61,7 +61,7 @@ export const Wallet = ({
         data-modal-portal-toggle={toggleId}
       >
         {extensionLoading ? (
-          <div className="action-bar-error action-bar-item">loading...</div>
+          <div className="wallet__info">Loading...</div>
         ) : isExtensionAvailable ? (
           <>
             {account ? (
@@ -84,14 +84,12 @@ export const Wallet = ({
             ) : (
               <>
                 <div className="wallet__select-account-icon" />
-                <div className="wallet__connect-account-action">
-                  Connect account
-                </div>
+                <div className="wallet__info">Connect account</div>
               </>
             )}
           </>
         ) : (
-          <>Extension unavailable</>
+          <div className="wallet__info">Extension unavailable</div>
         )}
         <div>
           <Icon type={IconType.DROPDOWN_ARROW} />

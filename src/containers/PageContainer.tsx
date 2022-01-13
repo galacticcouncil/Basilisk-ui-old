@@ -12,7 +12,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           <Wallet />
         </div>
       </div>
-      {children}
+      <div className="row">{children}</div>
     </div>
   );
 };

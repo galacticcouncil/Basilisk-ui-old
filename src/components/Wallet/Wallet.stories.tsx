@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useRef } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
 import cssColors from './../../misc/colors.module.scss';
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
 import { Wallet } from './Wallet';
@@ -10,6 +9,8 @@ export default {
   title: 'components/Wallet',
   component: Wallet,
   args: {
+    extensionLoading: false,
+    isExtensionAvailable: true,
     account: {
       name: 'Alice 1',
       balances: [{ assetId: '0', balance: toPrecision12('100200') }],
@@ -38,7 +39,6 @@ export default {
 
 const Template: ComponentStory<typeof Wallet> = (args) => {
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
-  const methods = useForm();
 
   return (
     <StorybookWrapper>
@@ -52,21 +52,17 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
         {/* This is where the underlying modal should be rendered */}
         <div ref={modalContainerRef} />
 
-        <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(() => {})}>
-            {/*
+        {/*
                         Pass the ref to the element above, so that the Wallet
                         can render the modal there.
                     */}
-            <div
-              style={{
-                width: '360px',
-              }}
-            >
-              <Wallet {...args} modalContainerRef={modalContainerRef} />
-            </div>
-          </form>
-        </FormProvider>
+        <div
+          style={{
+            width: '360px',
+          }}
+        >
+          <Wallet {...args} modalContainerRef={modalContainerRef} />
+        </div>
       </div>
     </StorybookWrapper>
   );
@@ -81,4 +77,14 @@ export const NoAccountsAvailable = Template.bind({});
 NoAccountsAvailable.args = {
   account: undefined,
   accounts: [],
+};
+export const ExtensionUnavailable = Template.bind({});
+ExtensionUnavailable.args = {
+  isExtensionAvailable: false,
+  account: undefined,
+  accounts: [],
+};
+export const LoadingData = Template.bind({});
+LoadingData.args = {
+  extensionLoading: true,
 };

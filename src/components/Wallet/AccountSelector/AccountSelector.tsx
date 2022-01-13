@@ -27,7 +27,7 @@ export const AccountSelector = ({
   return (
     <div className="account-selector" ref={innerRef}>
       <div className="account-selector__content-wrapper">
-        <div className="account-selector__heading d-flex flex-align-space mx-3 my-3">
+        <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
           <div>Select an account</div>
           <div
             className="account-selector__close-modal-btn"
