@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { Account as AccountModel } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
+import { usePersistActiveAccount } from '../hooks/accounts/usePersistActiveAccount';
 
 export const Account = ({ account }: { account?: AccountModel }) => {
   // TODO: you can get the loading state of the mutation here as well
@@ -10,6 +11,8 @@ export const Account = ({ account }: { account?: AccountModel }) => {
   const [setActiveAccount] = useSetActiveAccountMutation({
     id: account?.id,
   });
+
+  const [persistedActiveAccount] = usePersistActiveAccount();
 
   const [unsetActiveAccount] = useSetActiveAccountMutation({
     id: undefined,
@@ -25,7 +28,7 @@ export const Account = ({ account }: { account?: AccountModel }) => {
     >
       <h3>
         {account?.name}
-        {account?.isActive ? ' [active]' : <></>}
+        {account?.id === persistedActiveAccount?.id ? ' [active]' : <></>}
       </h3>
       <p>
         <b>Address:</b>
@@ -41,10 +44,14 @@ export const Account = ({ account }: { account?: AccountModel }) => {
       </div>
       <button
         onClick={(_) =>
-          account?.isActive ? unsetActiveAccount() : setActiveAccount()
+          account?.id === persistedActiveAccount?.id
+            ? unsetActiveAccount()
+            : setActiveAccount()
         }
       >
-        {account?.isActive ? 'Unset active' : 'Set active'}
+        {account?.id === persistedActiveAccount?.id
+          ? 'Unset active'
+          : 'Set active'}
       </button>
     </div>
   );

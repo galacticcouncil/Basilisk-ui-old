@@ -2,18 +2,17 @@
 #import './../../vesting/graphql/VestingSchedule.graphql'
 
 type Account {
-    id: String!,
-    name: String,
-    isActive: Boolean!,
-    balances: [Balance!]!,
-    vestingSchedule: VestingSchedule!
+  id: String!
+  name: String
+  balances: [Balance!]!
+  vestingSchedule: VestingSchedule!
 }
 
 extend type Query {
-    accounts: [Account!]!
-    account: Account
+  accounts: [Account!]!
+  account: Account
 }
 
 extend type Mutation {
-    setActiveAccount: Account
+  setActiveAccount: Account
 }

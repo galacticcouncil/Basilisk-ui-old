@@ -13,7 +13,7 @@ const withTypename = (extension: Extension) => ({
 
 /**
  * Resolver for the `Extension` entity which uses the standalone lib/getExtension
- * function to resolve the reqested data.
+ * function to resolve the requested data.
  *
  * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */

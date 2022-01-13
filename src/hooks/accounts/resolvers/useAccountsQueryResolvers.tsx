@@ -12,6 +12,9 @@ export const useAccountsQueryResolvers = () => {
     Query: {
       accounts: getAccountsQueryResolver,
     },
+    Accounts: {
+      ...useBalanceQueryResolvers(),
+    },
     /**
      * Additional sub-resolvers for the `Account` entity,
      * resolving e.g. the `balances` or `vestingSchedules` fields.

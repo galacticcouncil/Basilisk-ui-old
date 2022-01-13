@@ -3,11 +3,12 @@ import { TradePage } from '../pages/TradePage/TradePage';
 import { WalletPage } from '../pages/WalletPage';
 
 export const Router = () => {
-    return (
-        <Routes>
-            <Route path='/' element={<TradePage />} />
-            <Route path='wallet' element={<WalletPage />} />
-            <Route path="*" element={<Navigate to='/'/>}/>
-        </Routes>
-    )
-}
+  return (
+    <Routes>
+      <Route path="/" element={<WalletPage />} />
+      <Route path="wallet" element={<WalletPage />} />
+      <Route path="trade" element={<TradePage />} />
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
+  );
+};

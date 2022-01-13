@@ -23,7 +23,6 @@ export type Account = {
   __typename?: 'Account';
   balances: Array<Balance>;
   id: Scalars['String'];
-  isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
   vestingSchedule: VestingSchedule;
 };
