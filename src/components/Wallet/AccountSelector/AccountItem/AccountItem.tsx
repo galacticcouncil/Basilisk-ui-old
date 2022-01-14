@@ -5,6 +5,7 @@ import { UnitStyle } from '../../../Balance/metricUnit';
 import './AccountItem.scss';
 
 import Identicon from '@polkadot/react-identicon';
+import { useSetActiveAccountMutation } from '../../../../hooks/accounts/mutations/useSetActiveAccountMutation';
 export interface AccountItemProps {
   account: Account;
   onClick: () => void;
@@ -12,6 +13,10 @@ export interface AccountItemProps {
 }
 
 export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
+  const [setActiveAccount] = useSetActiveAccountMutation({
+    id: account?.id,
+  });
+
   return (
     <div
       className={
@@ -20,7 +25,9 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
           'account-item--active': active,
         })
       }
-      onClick={onClick}
+      onClick={() => {
+        setActiveAccount().then(onClick);
+      }}
     >
       <div className="d-flex flex-align-space">
         <div className="account-item__heading">{account.name}</div>
