@@ -34,6 +34,9 @@ export default {
         vestingSchedule: {},
       },
     ],
+    setActiveAccount: () => {
+      return Promise.resolve();
+    },
   },
 } as ComponentMeta<typeof Wallet>;
 

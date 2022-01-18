@@ -8,15 +8,9 @@ export const Account = ({ account }: { account?: AccountModel }) => {
   // TODO: you can get the loading state of the mutation here as well
   // but it probably needs to be turned into a contextual mutation
   // in order to share the loading state accross multiple mutation hook calls
-  const [setActiveAccount] = useSetActiveAccountMutation({
-    id: account?.id,
-  });
+  const [setActiveAccount] = useSetActiveAccountMutation();
 
   const [persistedActiveAccount] = usePersistActiveAccount();
-
-  const [unsetActiveAccount] = useSetActiveAccountMutation({
-    id: undefined,
-  });
 
   return (
     <div
@@ -45,8 +39,8 @@ export const Account = ({ account }: { account?: AccountModel }) => {
       <button
         onClick={(_) =>
           account?.id === persistedActiveAccount?.id
-            ? unsetActiveAccount()
-            : setActiveAccount()
+            ? setActiveAccount({ variables: { id: undefined } })
+            : setActiveAccount({ variables: { id: account?.id } })
         }
       >
         {account?.id === persistedActiveAccount?.id

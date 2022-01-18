@@ -3,7 +3,6 @@ import { Account } from '../../../generated/graphql';
 import { AccountItem } from './AccountItem/AccountItem';
 import { Button, ButtonKind } from '../../Button/Button';
 import './AccountSelector.scss';
-import { useSetActiveAccountMutation } from '../../../hooks/accounts/mutations/useSetActiveAccountMutation';
 
 export interface AccountSelectorProps {
   accounts?: Account[];
@@ -11,6 +10,7 @@ export interface AccountSelectorProps {
   onAccountSelected: (asset: Account) => void;
   innerRef: MutableRefObject<HTMLDivElement | null>;
   closeModal: () => void;
+  setActiveAccount: Function;
 }
 
 /**
@@ -22,12 +22,9 @@ export const AccountSelector = ({
   account,
   innerRef,
   closeModal,
+  setActiveAccount,
 }: AccountSelectorProps) => {
   const activeAccount = useMemo(() => account, [account]);
-
-  const [unsetActiveAccount] = useSetActiveAccountMutation({
-    id: undefined,
-  });
 
   return (
     <div className="account-selector" ref={innerRef}>
@@ -49,6 +46,7 @@ export const AccountSelector = ({
                 onClick={() => onAccountSelected(account)}
                 active={account.id === activeAccount?.id}
                 account={account}
+                setActiveAccount={setActiveAccount}
               />
             ))}
           </div>
@@ -65,7 +63,13 @@ export const AccountSelector = ({
           <div className="d-flex mx-3">
             <Button
               kind={ButtonKind.Secondary}
-              onClick={() => unsetActiveAccount()}
+              onClick={() =>
+                setActiveAccount({
+                  variables: {
+                    id: undefined,
+                  },
+                })
+              }
             >
               Clear account
             </Button>
