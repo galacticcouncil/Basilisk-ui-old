@@ -21,24 +21,21 @@ export const useSelectedAccountQueryResolver = () => {
         { client }: { client: ApolloClient<NormalizedCacheObject> }
       ) => {
         if (persistedActiveAccount?.id) {
-          console.log('persistedActiveAccount', persistedActiveAccount?.id);
-
           const { data: accountsData } = await client.query({
             query: GET_ACCOUNTS,
             notifyOnNetworkStatusChange: true,
           });
-          console.log('accounts list', accountsData?.accounts);
           const selectedAccount = find(accountsData?.accounts, {
             id: persistedActiveAccount?.id,
           });
-          console.log('selected account', selectedAccount);
 
           return {
-            selectedAccount,
-            id: selectedAccount.id,
+            ...selectedAccount,
             __typename,
           };
-        } else return null;
+        } else {
+          return null;
+        }
       },
       [persistedActiveAccount]
     ),

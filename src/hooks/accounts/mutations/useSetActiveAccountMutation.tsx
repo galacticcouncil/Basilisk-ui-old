@@ -17,6 +17,6 @@ export const useSetActiveAccountMutation = (options?: Object) =>
     refetchQueries: [
       // TODO: figure out why do we need to refetch active account manually,
       // while all accounts query gets updated automatically
-      GET_SELECTED_ACCOUNT,
+      { query: GET_SELECTED_ACCOUNT },
     ],
   });

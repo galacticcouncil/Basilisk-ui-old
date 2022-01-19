@@ -10,11 +10,11 @@ export const Wallet = () => {
     useGetExtensionQuery();
   const [setActiveAccount] = useSetActiveAccountMutation();
   const { data: selectedAccountData } = useGetSelectedAccountQuery();
-  const { data: accountsData } = useGetAccountsQuery();
+  const { data: accountsData } = useGetAccountsQuery(
+    !extensionData?.extension.isAvailable && !extensionLoading
+  );
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
-
-  console.log('wallet container', selectedAccountData, selectedAccountData);
 
   // request data from the data layer
   // render the component with the provided data
