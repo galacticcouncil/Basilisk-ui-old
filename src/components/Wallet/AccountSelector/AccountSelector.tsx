@@ -68,7 +68,7 @@ export const AccountSelector = ({
                   variables: {
                     id: undefined,
                   },
-                })
+                }).then(() => onAccountSelected(account))
               }
             >
               Clear account

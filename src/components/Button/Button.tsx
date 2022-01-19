@@ -16,9 +16,11 @@ export const Button = ({
   // TODO: default should not be primary
   kind = ButtonKind.Primary,
   children,
+  onClick,
 }: ButtonProps) => {
   return (
     <button
+      onClick={onClick}
       className={
         'button ' +
         classNames({
