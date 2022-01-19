@@ -82,7 +82,7 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "craco start",
+    "start": "craco --openssl-legacy-provider start",
     "build": "craco build",
     "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
     "test": "craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
