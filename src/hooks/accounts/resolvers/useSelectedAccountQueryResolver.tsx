@@ -1,22 +1,20 @@
 import { useBalanceQueryResolvers } from '../../balances/useBalanceQueryResolvers';
-import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
 import { useSelectedAccountQueryResolver } from './query/selectedAccount';
 
 /**
  * Used to resolve queries for the `Account` (or `accounts`) entity.
  */
-export const useAccountsQueryResolvers = () => {
-  const getAccountsQueryResolver = useGetAccountsQueryResolver();
+export const useSelectedAccountQueryResolvers = () => {
   const getSelectedAccountQueryResolver = useSelectedAccountQueryResolver();
 
   return {
     Query: {
-      accounts: getAccountsQueryResolver,
       selectedAccount: getSelectedAccountQueryResolver,
     },
-    Accounts: {
-      ...useBalanceQueryResolvers(),
-    },
+    /**
+     * Additional sub-resolvers for the `Account` entity,
+     * resolving e.g. the `balances` or `vestingSchedules` fields.
+     */
     SelectedAccount: {
       ...useBalanceQueryResolvers(),
     },

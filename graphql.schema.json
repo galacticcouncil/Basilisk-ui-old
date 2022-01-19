@@ -693,18 +693,6 @@
             "deprecationReason": null
           },
           {
-            "name": "account",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Account",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "accounts",
             "description": null,
             "args": [],
@@ -828,6 +816,18 @@
                   "ofType": null
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "selectedAccount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Account",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

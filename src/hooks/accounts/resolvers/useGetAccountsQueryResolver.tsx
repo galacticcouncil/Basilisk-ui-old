@@ -17,6 +17,7 @@ export const useGetAccountsQueryResolver = () => {
         if (!accounts) {
           return null;
         }
+        console.log('useGetAccountsQueryResolver', accounts);
 
         return accounts.map((account) => ({
           ...account,

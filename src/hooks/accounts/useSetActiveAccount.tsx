@@ -1,6 +1,10 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
+import {
+  GET_ACCOUNTS,
+  GetAccountsQueryResponse,
+} from './queries/useGetAccountsQuery';
 
 export const useSetActiveAccount = () => {
   const [, setPersistedActiveAccount] = usePersistActiveAccount();
@@ -10,9 +14,10 @@ export const useSetActiveAccount = () => {
       client: ApolloClient<NormalizedCacheObject>,
       address: string | undefined
     ) => {
-      // const accountsData = client.cache?.readQuery<GetAccountsQueryResponse>({
-      //   query: GET_ACCOUNTS,
-      // });
+      const accountsData = client.cache?.readQuery<GetAccountsQueryResponse>({
+        query: GET_ACCOUNTS,
+      });
+      console.log('active account', accountsData);
 
       console.log('setPersistedActiveAccount', client.cache);
 

@@ -22,7 +22,11 @@ import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolv
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolver, Account } = useAccountsQueryResolvers();
+  const {
+    Query: AccountsQueryResolvers,
+    Accounts,
+    SelectedAccount,
+  } = useAccountsQueryResolvers();
   const {
     Query: PoolsQueryResolver,
     XYKPool,
@@ -31,7 +35,7 @@ export const useResolvers: () => Resolvers = () => {
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
   return {
     Query: {
-      ...AccountsQueryResolver,
+      ...AccountsQueryResolvers,
       ...ExtensionQueryResolver,
       ...useConfigQueryResolvers(),
       ...useFeePaymentAssetsQueryResolvers(),
@@ -46,7 +50,8 @@ export const useResolvers: () => Resolvers = () => {
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
     },
-    Account,
+    Accounts,
+    SelectedAccount,
     XYKPool,
     LBPPool,
   };

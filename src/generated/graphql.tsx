@@ -98,7 +98,6 @@ export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
-  account?: Maybe<Account>;
   accounts: Array<Account>;
   assets?: Maybe<Array<Asset>>;
   config: Config;
@@ -106,6 +105,7 @@ export type Query = {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   pools?: Maybe<Array<Pool>>;
+  selectedAccount?: Maybe<Account>;
 };
 
 export enum TradeType {

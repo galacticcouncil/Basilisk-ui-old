@@ -13,7 +13,7 @@ const horizontalBar = '―';
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   accounts?: Account[];
-  account?: Account;
+  account?: Pick<Account, 'name' | 'id' | 'balances' | 'vestingSchedule'>;
   onAccountSelected: (account: Account) => void;
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
@@ -70,12 +70,14 @@ export const Wallet = ({
             {account ? (
               <>
                 <div className="d-flex flex-column align-items-end">
-                  {account?.balances[0] ? (
-                    <FormattedBalance
-                      balance={account?.balances[0]}
-                      unitStyle={UnitStyle.SHORT}
-                      precision={1}
-                    />
+                  {account?.balances ? (
+                    account?.balances.map((balance, i) => (
+                      <FormattedBalance
+                        balance={balance}
+                        unitStyle={UnitStyle.SHORT}
+                        precision={1}
+                      />
+                    ))
                   ) : (
                     <div>{horizontalBar}</div>
                   )}

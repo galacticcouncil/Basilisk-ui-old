@@ -19,7 +19,6 @@ export const useGetAccounts = () =>
     const accounts = (await web3Accounts())
       // transform the returned accounts into the required entity format
       .map((account) => {
-        console.log('getAccounts', account);
         const address = encodeAddress(
           decodeAddress(account.address),
           basiliskAddressPrefix

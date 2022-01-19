@@ -9,7 +9,7 @@ export const GET_ACTIVE_ACCOUNT = loader(
 );
 
 export interface GetActiveAccountQueryResponse {
-  account: Query['account'];
+  account: Query['selectedAccount'];
   lastBlock: Query['lastBlock'];
 }
 

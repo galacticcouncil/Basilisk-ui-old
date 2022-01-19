@@ -1,7 +1,8 @@
 import { useMutation } from '@apollo/client';
 import { loader } from 'graphql.macro';
-import { GET_ACTIVE_ACCOUNT } from '../queries/useGetActiveAccountQuery';
-
+export const GET_SELECTED_ACCOUNT = loader(
+  './../graphql/GetSelectedAccount.query.graphql'
+);
 export const SET_ACTIVE_ACCOUNT = loader(
   './../graphql/SetActiveAccount.mutation.graphql'
 );
@@ -16,6 +17,6 @@ export const useSetActiveAccountMutation = (options?: Object) =>
     refetchQueries: [
       // TODO: figure out why do we need to refetch active account manually,
       // while all accounts query gets updated automatically
-      GET_ACTIVE_ACCOUNT,
+      GET_SELECTED_ACCOUNT,
     ],
   });
