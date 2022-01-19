@@ -70,6 +70,7 @@ export const useConfigurePolkadotJs = () => {
         typesAlias,
         rpc,
       });
+
       await api.isReady;
       setApiInstance(api);
     })();
