@@ -3,5 +3,9 @@ query GetSelectedAccount {
   selectedAccount @client {
     id
     name
+    balances {
+      assetId
+      balance
+    }
   }
 }

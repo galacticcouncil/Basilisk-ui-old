@@ -13,7 +13,7 @@ const horizontalBar = '―';
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   accounts?: Account[];
-  account?: Pick<Account, 'name' | 'id' | 'balances' | 'vestingSchedule'>;
+  account?: Account;
   onAccountSelected: (account: Account) => void;
   extensionLoading: boolean;
   isExtensionAvailable: boolean;

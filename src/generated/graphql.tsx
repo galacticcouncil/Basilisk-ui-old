@@ -105,7 +105,7 @@ export type Query = {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   pools?: Maybe<Array<Pool>>;
-  selectedAccount?: Maybe<Account>;
+  selectedAccount: Account;
 };
 
 export enum TradeType {

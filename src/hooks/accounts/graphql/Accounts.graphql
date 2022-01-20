@@ -10,7 +10,7 @@ type Account {
 
 extend type Query {
   accounts: [Account!]!
-  selectedAccount: Account
+  selectedAccount: Account!
 }
 
 extend type Mutation {
