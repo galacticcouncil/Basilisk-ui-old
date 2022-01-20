@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { Query } from '../../../generated/graphql';
 import { loader } from 'graphql.macro';
 
@@ -8,8 +8,7 @@ export interface GetAccountsQueryResponse {
   lastBlock: Query['lastBlock'];
 }
 
-export const useGetAccountsQuery = (skip = false) =>
-  useQuery<GetAccountsQueryResponse>(GET_ACCOUNTS, {
+export const useGetAccountsLazyQuery = () =>
+  useLazyQuery<GetAccountsQueryResponse>(GET_ACCOUNTS, {
     notifyOnNetworkStatusChange: true,
-    skip,
   });

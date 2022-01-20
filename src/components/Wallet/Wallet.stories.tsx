@@ -37,6 +37,9 @@ export default {
     setActiveAccount: () => {
       return Promise.resolve();
     },
+    setAccountSelectorOpen: () => {
+      console.log('toggle modal open');
+    },
   },
 } as ComponentMeta<typeof Wallet>;
 

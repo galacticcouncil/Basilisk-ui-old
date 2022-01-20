@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Account as AccountModel } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
-import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
+import { useGetAccountsLazyQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../hooks/accounts/usePersistActiveAccount';
 
 export const Account = ({ account }: { account?: AccountModel }) => {
@@ -52,13 +52,18 @@ export const Account = ({ account }: { account?: AccountModel }) => {
 };
 
 export const WalletPage = () => {
-  const { data: accountsData, loading: accountsLoading } =
-    useGetAccountsQuery();
-  // const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
+  // const { data: accountsData, loading: accountsLoading } =
+  //   useGetAccountsQuery();
+  const [getAccounts, { data: accountsData, loading: accountsLoading }] =
+    useGetAccountsLazyQuery();
 
   const loading = useMemo(() => {
     return accountsLoading;
   }, [accountsLoading]);
+
+  useEffect(() => {
+    getAccounts();
+  }, [getAccounts]);
 
   return (
     <div

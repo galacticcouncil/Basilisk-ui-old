@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback } from 'react';
+import { MutableRefObject, useCallback, useEffect } from 'react';
 import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
 import { Account } from '../../generated/graphql';
 import { UnitStyle } from '../Balance/metricUnit';
@@ -18,6 +18,7 @@ export interface WalletProps {
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
   setActiveAccount: Function;
+  setAccountSelectorOpen: Function;
 }
 
 export const Wallet = ({
@@ -28,6 +29,7 @@ export const Wallet = ({
   extensionLoading,
   isExtensionAvailable,
   setActiveAccount,
+  setAccountSelectorOpen,
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
@@ -35,7 +37,7 @@ export const Wallet = ({
     account,
     setActiveAccount,
   });
-  const { toggleModal, modalPortal, toggleId } = useModalPortal(
+  const { isModalOpen, toggleModal, modalPortal, toggleId } = useModalPortal(
     modalPortalElement,
     modalContainerRef,
     false // don't auto close when clicking outside the modalPortalElement
@@ -44,6 +46,9 @@ export const Wallet = ({
     () => toggleModal(),
     [toggleModal]
   );
+  useEffect(() => {
+    setAccountSelectorOpen(isModalOpen);
+  }, [isModalOpen, setAccountSelectorOpen]);
 
   return (
     <div className="wallet d-flex justify-content-between">
