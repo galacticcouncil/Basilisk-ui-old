@@ -1,11 +1,25 @@
 # Query that triggers the local extension resolver
 query GetSelectedAccount {
+  lastBlock @client {
+    parachainBlockNumber
+    relaychainBlockNumber
+  }
+
   selectedAccount @client {
     id
     name
     balances {
       assetId
       balance
+    }
+    vestingSchedule {
+      # figure out why this fragment doesnt work
+      # ...VestingScheduleFields,
+      remainingVestingAmount
+      start
+      period
+      periodCount
+      perPeriod
     }
   }
 }
