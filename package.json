@@ -70,8 +70,8 @@
     "react-text-mask": "^5.4.3",
     "react-use": "^17.3.1",
     "save": "^2.4.0",
-    "ts-jest": "^27.1.2",
     "text-mask-addons": "^3.8.0",
+    "ts-jest": "^26.4.2",
     "typeface-roboto": "^1.1.13",
     "typescript": "^4.1.2",
     "use-count-up": "^3.0.1",
@@ -90,13 +90,17 @@
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/'",
     "test:e2e-ci": "CI=true npx playwright test /e2e-tests/tests",
     "test:e2e-local": "CI=false npx playwright test /e2e-tests/tests",
+    "test:storybook-test-runner": "test-storybook",
+    "test:playwright:stories": "npx playwright test --config=storybook-testing/playwright.config.ts",
+    "test:stories": "yarn test:storybook-test-runner && yarn test:playwright:stories",
+    "test:stories:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn start-storybook --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn test:stories\"",
     "eject": "craco eject",
     "prettier": "prettier **/** --check --ignore-path .gitignore",
     "lint": "eslint src --max-warnings=0",
     "commit": "git-cz",
     "preci": "rm -fr node_modules",
     "ci": "yarn install --frozen-lockfile",
-    "storybook": "start-storybook -p 6006 -s public",
+    "start-storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
@@ -113,7 +117,6 @@
       "react-app/jest",
       "eslint-config-prettier"
     ],
-    "ignorePatterns": "src/generated/**/*.tsx",
     "overrides": [
       {
         "files": [
@@ -169,7 +172,7 @@
     "src/**/*": [
       "prettier --ignore-unknown --ignore-path .gitignore --write"
     ],
-    "src/**/!(graphql).{ts,tsx,js,jsx}": [
+    "src/**/*.{ts,tsx,js,jsx}": [
       "eslint --fix --max-warnings=0"
     ]
   },
@@ -197,20 +200,26 @@
     "@playwright/test": "^1.17.1",
     "@storybook/addon-actions": "^6.3.11",
     "@storybook/addon-essentials": "^6.3.11",
+    "@storybook/addon-interactions": "^6.4.12",
     "@storybook/addon-knobs": "^6.3.1",
     "@storybook/addon-links": "^6.4.4",
+    "@storybook/jest": "^0.0.5",
     "@storybook/node-logger": "^6.3.11",
     "@storybook/preset-create-react-app": "^3.2.0",
     "@storybook/preset-scss": "^1.0.3",
     "@storybook/react": "^6.3.11",
+    "@storybook/test-runner": "^0.0.1",
+    "@storybook/testing-library": "^0.0.7",
     "@testing-library/react-hooks": "^7.0.2",
     "@types/lodash": "^4.14.177",
     "babel-plugin-formatjs": "^10.3.9",
     "bignumber.js": "^9.0.1",
     "chai": "^4.3.4",
     "commitizen": "^4.2.4",
+    "concurrently": "^7.0.0",
     "css-loader": "5.2.6",
     "cz-conventional-changelog": "^3.2.0",
+    "http-server": "^14.1.0",
     "node-sass": "^6.0.1",
     "prettier": "2.5.1",
     "react-test-renderer": "^17.0.2",
@@ -219,6 +228,7 @@
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2",
+    "wait-on": "^6.0.0",
     "xunit-viewer": "^7.1.5"
   },
   "resolutions": {
