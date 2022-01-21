@@ -9,6 +9,12 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 // make sure the __typename is well typed
 export const __typename: Account['__typename'] = 'Account';
 
+// helper function to decorate the extension entity for normalised caching
+const withTypename = (account: Account) => ({
+  __typename,
+  ...account,
+});
+
 export const useSelectedAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
 
@@ -30,10 +36,7 @@ export const useSelectedAccountQueryResolver = () => {
               id: persistedActiveAccount?.id,
             });
 
-            return {
-              ...selectedAccount,
-              __typename,
-            };
+            return withTypename(selectedAccount);
           } else {
             return null;
           }
