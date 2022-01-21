@@ -24,7 +24,7 @@ export const useSelectedAccountQueryResolver = () => {
         // () => {
         async (
           _obj,
-          args: any,
+          _args,
           { client }: { client: ApolloClient<NormalizedCacheObject> }
         ) => {
           if (persistedActiveAccount?.id) {

@@ -11,6 +11,7 @@ export interface AccountSelectorProps {
   innerRef: MutableRefObject<HTMLDivElement | null>;
   closeModal: () => void;
   setActiveAccount: Function;
+  isExtensionAvailable: boolean;
 }
 
 /**
@@ -23,6 +24,7 @@ export const AccountSelector = ({
   innerRef,
   closeModal,
   setActiveAccount,
+  isExtensionAvailable,
 }: AccountSelectorProps) => {
   const activeAccount = useMemo(() => account, [account]);
 
@@ -30,7 +32,9 @@ export const AccountSelector = ({
     <div className="account-selector" ref={innerRef}>
       <div className="account-selector__content-wrapper">
         <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
-          <div>Select an account</div>
+          <div>
+            {isExtensionAvailable ? 'Select an account' : 'Install extension'}
+          </div>
           <div
             className="account-selector__close-modal-btn"
             onClick={() => closeModal()}
@@ -38,41 +42,59 @@ export const AccountSelector = ({
             x
           </div>
         </div>
-        {accounts?.length ? (
-          <div className="account-selector__accounts-list">
-            {accounts?.map((account, i) => (
-              <AccountItem
-                key={i}
-                onClick={() => onAccountSelected(account)}
-                active={account.id === activeAccount?.id}
-                account={account}
-                setActiveAccount={setActiveAccount}
-              />
-            ))}
-          </div>
+        {isExtensionAvailable ? (
+          <>
+            {accounts?.length ? (
+              <div className="account-selector__accounts-list">
+                {accounts?.map((account, i) => (
+                  <AccountItem
+                    key={i}
+                    onClick={() => onAccountSelected(account)}
+                    active={account.id === activeAccount?.id}
+                    account={account}
+                    setActiveAccount={setActiveAccount}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mx-3 my-5 text-center">
+                <h4>No accounts available</h4>
+                <a href="/#" className="account-selector__create-account-link">
+                  Need help creating an account? <br />
+                  Click here
+                </a>
+              </div>
+            )}
+            {account && (
+              <div className="d-flex mx-3">
+                <Button
+                  kind={ButtonKind.Secondary}
+                  onClick={() =>
+                    setActiveAccount({
+                      variables: {
+                        id: undefined,
+                      },
+                    }).then(() => onAccountSelected(account))
+                  }
+                >
+                  Clear account
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="mx-3 my-5 text-center">
-            <h4>No accounts available</h4>
-            <a href="/#" className="account-selector__create-account-link">
-              Need help creating an account? <br />
-              Click here
-            </a>
-          </div>
-        )}
-        {account && (
-          <div className="d-flex mx-3">
-            <Button
-              kind={ButtonKind.Secondary}
-              onClick={() =>
-                setActiveAccount({
-                  variables: {
-                    id: undefined,
-                  },
-                }).then(() => onAccountSelected(account))
-              }
-            >
-              Clear account
-            </Button>
+            <p>
+              {' '}
+              To connect your account, please{' '}
+              <a
+                href="https://polkadot.js.org/extension/"
+                title=""
+                className="account-selector__create-account-link"
+              >
+                install or enable the polkadot.js extension
+              </a>
+            </p>
           </div>
         )}
       </div>

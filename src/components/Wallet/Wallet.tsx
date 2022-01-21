@@ -36,6 +36,7 @@ export const Wallet = ({
     onAccountSelected,
     account,
     setActiveAccount,
+    isExtensionAvailable,
   });
   const { isModalOpen, toggleModal, modalPortal, toggleId } = useModalPortal(
     modalPortalElement,
@@ -99,7 +100,7 @@ export const Wallet = ({
             )}
           </>
         ) : (
-          <div className="wallet__info">Extension unavailable</div>
+          <div className="wallet__info">Install extension</div>
         )}
         <div>
           <Icon type={IconType.DROPDOWN_ARROW} />
