@@ -85,15 +85,31 @@ export const AccountSelector = ({
         ) : (
           <div className="mx-3 my-5 text-center">
             <p>
-              {' '}
               To connect your account, please{' '}
               <a
                 href="https://polkadot.js.org/extension/"
                 title=""
                 className="account-selector__create-account-link"
+                target="_blank"
+                rel="noreferrer"
               >
-                install or enable the polkadot.js extension
+                install or enable the polkadot.js extension.
               </a>
+            </p>
+            <p>
+              You can{' '}
+              <a
+                href="/#"
+                className="account-selector__create-account-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.reload();
+                }}
+              >
+                {' '}
+                reload the page
+              </a>{' '}
+              once you're done with the installation.
             </p>
           </div>
         )}
