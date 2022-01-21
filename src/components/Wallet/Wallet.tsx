@@ -71,7 +71,7 @@ export const Wallet = ({
       >
         {extensionLoading ? (
           <div className="wallet__info">Loading...</div>
-        ) : (
+        ) : isExtensionAvailable ? (
           <>
             {account ? (
               <>
@@ -99,6 +99,8 @@ export const Wallet = ({
               </>
             )}
           </>
+        ) : (
+          <div className="wallet__info">Install extension</div>
         )}
         <div>
           <Icon type={IconType.DROPDOWN_ARROW} />

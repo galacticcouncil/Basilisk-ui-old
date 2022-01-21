@@ -33,7 +33,7 @@ export const AccountSelector = ({
       <div className="account-selector__content-wrapper">
         <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
           <div>
-            {isExtensionAvailable ? 'Select an account' : 'Connect an account'}
+            {isExtensionAvailable ? 'Select an account' : 'Install extension'}
           </div>
           <div
             className="account-selector__close-modal-btn"
