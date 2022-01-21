@@ -12,7 +12,7 @@ import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
-import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
+import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
