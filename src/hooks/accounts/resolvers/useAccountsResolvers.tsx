@@ -6,14 +6,14 @@ import { useVestingScheduleQueryResolvers } from '../../vesting/useVestingSchedu
 /**
  * Used to resolve queries for the `Account` (or `accounts`) entity.
  */
-export const useAccountsQueryResolvers = () => {
+export const useAccountsResolvers = () => {
   const getAccountsQueryResolver = useGetAccountsQueryResolver();
   const getSelectedAccountQueryResolver = useSelectedAccountQueryResolver();
 
   return {
     Query: {
-      accounts: getAccountsQueryResolver,
-      selectedAccount: getSelectedAccountQueryResolver,
+      ...getAccountsQueryResolver,
+      ...getSelectedAccountQueryResolver,
     },
     Accounts: {
       ...useBalanceQueryResolvers(),

@@ -12,33 +12,35 @@ export const __typename: Account['__typename'] = 'Account';
 export const useSelectedAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
 
-  return useResolverToRef(
-    useCallback(
-      // () => {
-      async (
-        _obj,
-        args: any,
-        { client }: { client: ApolloClient<NormalizedCacheObject> }
-      ) => {
-        if (persistedActiveAccount?.id) {
-          const { data: accountsData } = await client.query({
-            query: GET_ACCOUNTS,
-            notifyOnNetworkStatusChange: true,
-          });
-          const selectedAccount = find(accountsData?.accounts, {
-            id: persistedActiveAccount?.id,
-          });
+  return {
+    selectedAccount: useResolverToRef(
+      useCallback(
+        // () => {
+        async (
+          _obj,
+          args: any,
+          { client }: { client: ApolloClient<NormalizedCacheObject> }
+        ) => {
+          if (persistedActiveAccount?.id) {
+            const { data: accountsData } = await client.query({
+              query: GET_ACCOUNTS,
+              notifyOnNetworkStatusChange: true,
+            });
+            const selectedAccount = find(accountsData?.accounts, {
+              id: persistedActiveAccount?.id,
+            });
 
-          return {
-            ...selectedAccount,
-            __typename,
-          };
-        } else {
-          return null;
-        }
-      },
-      [persistedActiveAccount]
+            return {
+              ...selectedAccount,
+              __typename,
+            };
+          } else {
+            return null;
+          }
+        },
+        [persistedActiveAccount]
+      ),
+      'useSelectedAccountQueryResolver'
     ),
-    'useSelectedAccountQueryResolver'
-  );
+  };
 };
