@@ -5,52 +5,52 @@ on:
       - develop
 
 jobs:
-    build_app:
-      name: Build UI application
-      runs-on: macos-11
-      steps:
-        - uses: actions/checkout@v2
+  build_app:
+    name: Build UI application
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
 
-        - name: Install Node.js
-          uses: actions/setup-node@v1
-          with:
-            node-version: 16.x
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
 
-        - name: Cache Node Modules for ui-app
-          id: cache-node-modules-ui-app
-          uses: actions/cache@v2
-          with:
-            path: node_modules
-            key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
+      - name: Cache Node Modules for ui-app
+        id: cache-node-modules-ui-app
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-        - name: Install Dependencies for ui-app
-          if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-          run: rm -rf node_modules && yarn install --frozen-lockfile
+      - name: Install Dependencies for ui-app
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: rm -rf node_modules && yarn install --frozen-lockfile
 
-        - name: Update browserslist
-          run: npx browserslist@latest --update-db
+      - name: Update browserslist
+        run: npx browserslist@latest --update-db
 
-        - name: Build App
-          run: yarn run build:deployment
-          env:
-            CI: false
+      - name: Build App
+        run: yarn run build:deployment
+        env:
+          CI: false
 
-        - name: Build Storybook
-          run: yarn run build-storybook -- -o sb-build-files
-          env:
-            CI: false
+      - name: Build Storybook
+        run: yarn run build-storybook -- -o sb-build-files
+        env:
+          CI: false
 
-        - name: Upload production-ready SB build files
-          uses: actions/upload-artifact@v2
-          with:
-            name: sb-build-files
-            path: ./sb-build-files
+      - name: Upload production-ready SB build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: sb-build-files
+          path: ./sb-build-files
 
-        - name: Upload production-ready App build files
-          uses: actions/upload-artifact@v2
-          with:
-            name: app-build-files
-            path: ./build
+      - name: Upload production-ready App build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-build-files
+          path: ./build
 
   run_tests:
     name: Run tests
@@ -79,10 +79,9 @@ jobs:
           name: sb-build-files
           path: ./ui-app/storybook-static
 
-
-#      - name: Pull Testnet Docker image
-#        shell: bash
-#        run: docker pull public.ecr.aws/e4o7i5u6/polkadot-basilisk-testnet:0.1.23
+      #      - name: Pull Testnet Docker image
+      #        shell: bash
+      #        run: docker pull public.ecr.aws/e4o7i5u6/polkadot-basilisk-testnet:0.1.23
 
       # Prepare Basilisk-api ("develop" branch must be cloned)
       - name: Clone Basilisk-api
