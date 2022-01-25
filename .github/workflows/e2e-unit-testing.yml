@@ -55,6 +55,7 @@ jobs:
   run_tests:
     name: Run tests
     runs-on: ubuntu-latest
+    needs: [build_app]
     steps:
       - uses: actions/setup-node@v2
         with:
