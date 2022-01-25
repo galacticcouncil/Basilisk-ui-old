@@ -1,48 +1,85 @@
 import { ApiPromise } from '@polkadot/api';
 import { includes } from 'lodash';
-import { useCallback } from 'react';
 import { Balance } from '../../../generated/graphql';
-import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import constants from '../../../constants';
+import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 
-export const assetBalanceDataType = 'AccountData';
-
+/**
+ * This function fetches asset balances only for a given set of assetIds.
+ *
+ */
 export const getBalancesByAddress = async (
   apiInstance: ApiPromise,
   address: string,
-  assetIds?: string[]
+  assetIds: string[]
 ): Promise<Balance[]> => {
-  /**
-   * Implementation
-   *
-   * const nativeAssetBalance = await apiInstance.query.system.account(address);
-   * or
-   * await apiInstance.query.tokens.accounts.multi( ... )
-   * or
-   * await apiInstance.query.tokens.accounts.entries( ... )
-   */
-  const balances: Balance[] = [];
-  if (!assetIds || includes(assetIds, constants.nativeAssetId)) {
-    const nativeAssetBalance = await apiInstance.query.system.account(address);
-
-    balances.push({
-      assetId: constants.nativeAssetId,
-      balance: nativeAssetBalance?.data.free.toString(),
-    });
+  const nativeBalance: Balance[] = [];
+  if (includes(assetIds, constants.nativeAssetId)) {
+    const balance = await fetchNativeAssetBalance(apiInstance, address);
+    nativeBalance.push(balance);
   }
 
+  // make sure that there is no native assetId
+  const nonNativeAssetIds = assetIds.filter(
+    (id) => id !== constants.nativeAssetId
+  );
+  let nonNativeBalances: Balance[] = [];
+  // fetch non-native assets only if needed
+  if (nonNativeAssetIds.length !== 0) {
+    nonNativeBalances = await fetchNonNativeAssetBalances(
+      apiInstance,
+      address,
+      nonNativeAssetIds
+    );
+  }
+
+  const balances = [...nativeBalance, ...nonNativeBalances];
   return balances;
 };
 
-export const useGetBalancesByAddress = () => {
-  const { apiInstance } = usePolkadotJsContext();
+export const fetchNativeAssetBalance = async (
+  apiInstance: ApiPromise,
+  address: string
+): Promise<Balance> => {
+  const nativeAssetBalance = await apiInstance.query.system.account(address);
 
-  return useCallback(
-    async (address?: string, assetIds?: string[]) => {
-      if (!apiInstance || !address) return;
-      return await getBalancesByAddress(apiInstance, address, assetIds);
-    },
-    // TODO: investigate why 'loading' can't be used in callback (es-lint error)
-    [apiInstance]
-  );
+  return {
+    assetId: constants.nativeAssetId,
+    balance: nativeAssetBalance.data.free.toString(),
+  };
+};
+
+/**
+ * This function fetches balances for multiple non-native assetIds
+ *
+ * @param apiInstance PolkadotJS ApiPromise
+ * @param address of the account
+ * @param assetIds of non-native tokens
+ * @returns balance object with assetId and balance
+ */
+export const fetchNonNativeAssetBalances = async (
+  apiInstance: ApiPromise,
+  address: string,
+  assetIds: string[]
+): Promise<Balance[]> => {
+  // compose search parameters as [[address, assetIdA], [address, assetIdB], ...]
+  const searchParameters: string[][] = assetIds.map((assetId) => [
+    address,
+    assetId,
+  ]);
+  const searchResult =
+    await apiInstance.query.tokens.accounts.multi<OrmlAccountData>(
+      searchParameters
+    );
+
+  const balances: Balance[] = searchResult.map((balanceData, i) => {
+    // extract free balance as string
+    const freeBalance = balanceData.free.toString();
+
+    return {
+      assetId: assetIds[i], // pair assetId in the same order as provided as search parameter
+      balance: freeBalance,
+    };
+  });
+  return balances;
 };

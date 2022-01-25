@@ -1,16 +1,23 @@
 import { ApiPromise } from '@polkadot/api';
 import { AccountId32 } from '@polkadot/types/interfaces';
 import { Balance } from '../../../generated/graphql';
-import { getBalancesByAddress } from './getBalancesByAddress';
+import constants from '../../../constants';
+import {
+  getBalancesByAddress,
+  fetchNativeAssetBalance,
+} from './getBalancesByAddress';
 
-const getApiPromise = () =>
+const nativeAssetBalance = '10';
+const nonNativeAssetBalance = '20';
+
+const getMockApiPromise = () =>
   ({
     query: {
       system: {
         account: jest.fn((arg: AccountId32 | string | Uint8Array) => {
           return {
             data: {
-              free: '1000000000000000000000000',
+              free: nativeAssetBalance,
             },
           };
         }),
@@ -18,48 +25,41 @@ const getApiPromise = () =>
       tokens: {
         accounts: {
           multi: jest.fn((arg: (unknown[] | unknown)[]) => {
-            return 'result';
-          }),
-          entries: jest.fn((arg: unknown[]) => {
-            return 'result';
+            return arg.map((arg) => {
+              return { free: nonNativeAssetBalance };
+            });
           }),
         },
       },
     },
   } as unknown as ApiPromise);
 
-describe('getBalancesByAddress', () => {
-  describe('for native asset', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
+describe('hooks/balances/lib/getBalancesByAddress', () => {
+  let mockApiInstance: ApiPromise;
 
-    it('can retrieve native asset balance without providing assetId', async () => {
-      const apiInstance = getApiPromise();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockApiInstance = getMockApiPromise();
+  });
 
+  describe('getBalancesByAddress', () => {
+    it('returns no balance for missing assetIds', async () => {
       const balances: Balance[] = await getBalancesByAddress(
-        apiInstance,
-        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak'
+        mockApiInstance,
+        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
+        []
       );
 
-      expect(balances).toEqual([
-        {
-          assetId: '0',
-          balance: '1000000000000000000000000',
-        },
-      ]);
-      expect(apiInstance.query.system.account).toHaveBeenCalledTimes(1);
-      expect(apiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(0);
-      expect(apiInstance.query.tokens.accounts.entries).toHaveBeenCalledTimes(
+      expect(balances).toEqual([]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         0
       );
     });
 
-    it('can retrieve native asset balance for explicitly provided assetId', async () => {
-      const apiInstance = getApiPromise();
-
+    it('can retrieve native asset balance', async () => {
       const balances: Balance[] = await getBalancesByAddress(
-        apiInstance,
+        mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
         ['0']
       );
@@ -67,20 +67,100 @@ describe('getBalancesByAddress', () => {
       expect(balances).toEqual([
         {
           assetId: '0',
-          balance: '1000000000000000000000000',
+          balance: nativeAssetBalance,
         },
       ]);
-      expect(apiInstance.query.system.account).toHaveBeenCalledTimes(1);
-      expect(apiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(0);
-      expect(apiInstance.query.tokens.accounts.entries).toHaveBeenCalledTimes(
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(1);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         0
+      );
+    });
+
+    it('can retrieve 1 non-native asset balance', async () => {
+      const balances: Balance[] = await getBalancesByAddress(
+        mockApiInstance,
+        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
+        ['1']
+      );
+
+      expect(balances).toEqual([
+        {
+          assetId: '1',
+          balance: '20',
+        },
+      ]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
+        1
+      );
+    });
+
+    it('can retrieve multiple non-native asset balances', async () => {
+      const balances: Balance[] = await getBalancesByAddress(
+        mockApiInstance,
+        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
+        ['1', '2']
+      );
+
+      expect(balances).toEqual([
+        {
+          assetId: '1',
+          balance: nonNativeAssetBalance,
+        },
+        {
+          assetId: '2',
+          balance: nonNativeAssetBalance,
+        },
+      ]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
+        1
+      );
+    });
+
+    it('can retrieve 1 native and multiple non-native asset balances', async () => {
+      const balances: Balance[] = await getBalancesByAddress(
+        mockApiInstance,
+        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
+        ['0', '1', '2']
+      );
+
+      expect(balances).toEqual([
+        {
+          assetId: '0',
+          balance: nativeAssetBalance,
+        },
+        {
+          assetId: '1',
+          balance: nonNativeAssetBalance,
+        },
+        {
+          assetId: '2',
+          balance: nonNativeAssetBalance,
+        },
+      ]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(1);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
+        1
       );
     });
   });
 
-  describe('for any custom asset', () => {
-    it.skip('can retrieve custom asset balance with explicitly provided assetId', () => {});
+  describe('fetchNativeAssetBalance', () => {
+    it('can fetch native asset balance for address', async () => {
+      const balance: Balance = await fetchNativeAssetBalance(
+        mockApiInstance,
+        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak'
+      );
 
-    it.skip('can retrieve multiple balances for explicitly provided assetIds', () => {});
+      expect(balance).toEqual({
+        assetId: constants.nativeAssetId,
+        balance: nativeAssetBalance,
+      });
+    });
+  });
+
+  describe.skip('fetchNonNativeAssetBalances', () => {
+    // TODO
   });
 });
