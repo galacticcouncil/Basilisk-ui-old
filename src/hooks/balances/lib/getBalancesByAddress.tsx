@@ -4,10 +4,7 @@ import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 
-/**
- * This function fetches asset balances only for a given set of assetIds.
- *
- */
+// this function fetches asset balances only for a given set of assetIds
 export const getBalancesByAddress = async (
   apiInstance: ApiPromise,
   address: string,
@@ -50,7 +47,7 @@ export const fetchNativeAssetBalance = async (
 };
 
 /**
- * This function fetches balances for multiple non-native assetIds
+ * This function fetches balances for multiple non-native assetIds.
  *
  * @param apiInstance PolkadotJS ApiPromise
  * @param address of the account
