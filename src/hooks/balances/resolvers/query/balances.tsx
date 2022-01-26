@@ -1,50 +1,64 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import {
   Account,
+  AssetIds,
   Balance,
   LbpPool,
   XykPool,
 } from '../../../../generated/graphql';
 import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
-import { useGetBalancesByAddress as getBalancesByAddress } from '../../lib/getBalancesByAddress';
+import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
+import { ApiPromise } from '@polkadot/api';
+import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 
 export const __typename: Balance['__typename'] = 'Balance';
+const errorApiInstanceNotInitialized = 'ApiPromise is not initialized';
 
 const withTypename = (balance: Balance) => ({
   __typename,
   ...balance,
 });
 
-export const balancesByAddressQueryResolver = async (
-  parent: Account | LbpPool | XykPool,
-  args: any
-) => {
-  let assetIds;
-  // TODO: how to extract the typename from the LbpPool[__typename] directly?
-  if (parent.__typename === 'LBPPool' || parent.__typename === 'XYKPool') {
-    parent = parent as LbpPool | XykPool;
-    assetIds = [parent.assetInId, parent.assetOutId];
-  }
+export interface BalancesByAddressResolverArgs {
+  assetIds: AssetIds;
+}
 
-  return (await getBalancesByAddress()(parent.id, assetIds))?.map(function (
-    balance: Balance
-  ) {
-    balance.id = `${parent.id}-${balance.assetId}`;
-    return withTypename(balance);
-  });
-};
+export const balancesByAddressQueryResolverFactory =
+  (apiInstance?: ApiPromise) =>
+  async (
+    _obj: Account | LbpPool | XykPool,
+    args: BalancesByAddressResolverArgs
+  ) => {
+    // every component is supposed to have an initialized apiInstance
+    if (!apiInstance) throw errorApiInstanceNotInitialized;
+
+    return (
+      await getBalancesByAddress(apiInstance, _obj.id, args.assetIds)
+    )?.map((balance: Balance) => {
+      // add id to balance entity
+      balance.id = `${_obj.id}-${balance.assetId}`;
+      // add typename
+      return withTypename(balance);
+    });
+  };
 
 /**
  * For standardization purposes, we expose the resolver as a hook.
  * Since many more complex resolvers require contextual dependency injection,
  * and thus need to apply the useContext hook.
  */
-export const useBalanceQueryResolvers = () => ({
-  // key is the entity, value is the resolver
-  balances: useResolverToRef(
-    // practically we dont have to wrap this in useCallback
-    // since it does not have any contextual dependencies
-    useCallback(balancesByAddressQueryResolver, [getBalancesByAddress]),
-    'balances'
-  ),
-});
+export const useBalanceQueryResolvers = () => {
+  const { apiInstance } = usePolkadotJsContext();
+  return {
+    // key is the entity, value is the resolver
+    balances: useResolverToRef(
+      // practically we dont have to wrap this in useCallback
+      // since it does not have any contextual dependencies
+      useMemo(
+        () => balancesByAddressQueryResolverFactory(apiInstance),
+        [apiInstance]
+      ),
+      'balances'
+    ),
+  };
+};

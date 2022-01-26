@@ -1,4 +1,5 @@
 type Balance {
+  id: String
   assetId: String!
   balance: String!
 }
