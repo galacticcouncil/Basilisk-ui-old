@@ -1,16 +1,17 @@
 import { ApiPromise } from '@polkadot/api';
 import { AccountId32 } from '@polkadot/types/interfaces';
-import { Balance } from '../../../generated/graphql';
+import { AssetIds, Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import {
   getBalancesByAddress,
   fetchNativeAssetBalance,
+  objectToArrayWithoutNull,
 } from './getBalancesByAddress';
 
-const nativeAssetBalance = '10';
-const nonNativeAssetBalance = '20';
+export const nativeAssetBalance = '10';
+export const nonNativeAssetBalance = '20';
 
-const getMockApiPromise = () =>
+export const getMockApiPromise = () =>
   ({
     query: {
       system: {
@@ -43,25 +44,11 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
   });
 
   describe('getBalancesByAddress', () => {
-    it('returns no balance for missing assetIds', async () => {
-      const balances: Balance[] = await getBalancesByAddress(
-        mockApiInstance,
-        'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        []
-      );
-
-      expect(balances).toEqual([]);
-      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
-      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
-        0
-      );
-    });
-
     it('can retrieve native asset balance', async () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        ['0']
+        { a: '0' }
       );
 
       expect(balances).toEqual([
@@ -80,7 +67,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        ['1']
+        { a: '1' }
       );
 
       expect(balances).toEqual([
@@ -99,7 +86,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        ['1', '2']
+        { a: '1', b: '2' }
       );
 
       expect(balances).toEqual([
@@ -118,11 +105,11 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       );
     });
 
-    it('can retrieve 1 native and multiple non-native asset balances', async () => {
+    it('can retrieve 1 native and 1 non-native asset balances', async () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        ['0', '1', '2']
+        { a: '0', b: '1' }
       );
 
       expect(balances).toEqual([
@@ -132,10 +119,6 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
         },
         {
           assetId: '1',
-          balance: nonNativeAssetBalance,
-        },
-        {
-          assetId: '2',
           balance: nonNativeAssetBalance,
         },
       ]);
@@ -162,5 +145,37 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
 
   describe.skip('fetchNonNativeAssetBalances', () => {
     // TODO
+  });
+
+  describe('objectToArrayWithoutNull', () => {
+    it('can convert an object to an array', () => {
+      const assetIds = {
+        a: '0',
+        b: '1',
+      };
+      const assets = objectToArrayWithoutNull(assetIds);
+
+      expect(assets).toEqual(['0', '1']);
+    });
+
+    it('can convert an object to an array with one null value', () => {
+      const assetIds: AssetIds = {
+        a: '0',
+        b: null,
+      };
+      const assets = objectToArrayWithoutNull(assetIds);
+
+      expect(assets).toEqual(['0']);
+    });
+
+    it('can convert an object to an array with one undefined value', () => {
+      const assetIds: AssetIds = {
+        a: '0',
+        b: undefined,
+      };
+      const assets = objectToArrayWithoutNull(assetIds);
+
+      expect(assets).toEqual(['0']);
+    });
   });
 });

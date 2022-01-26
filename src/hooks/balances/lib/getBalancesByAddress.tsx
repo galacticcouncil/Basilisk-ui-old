@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { includes } from 'lodash';
-import { Balance } from '../../../generated/graphql';
+import { AssetIds, Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 
@@ -8,29 +8,31 @@ import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 export const getBalancesByAddress = async (
   apiInstance: ApiPromise,
   address: string,
-  assetIds: string[]
+  assetIds: AssetIds
 ): Promise<Balance[]> => {
-  const nativeBalance: Balance[] = [];
-  if (includes(assetIds, constants.nativeAssetId)) {
-    const balance = await fetchNativeAssetBalance(apiInstance, address);
-    nativeBalance.push(balance);
+  const assets = objectToArrayWithoutNull(assetIds);
+  let balances: Balance[] = [];
+
+  if (includes(assets, constants.nativeAssetId)) {
+    const nativeBalance = await fetchNativeAssetBalance(apiInstance, address);
+    balances.push(nativeBalance);
   }
 
   // make sure that there is no native assetId
-  const nonNativeAssetIds = assetIds.filter(
+  const nonNativeAssetIds = assets.filter(
     (id) => id !== constants.nativeAssetId
   );
-  let nonNativeBalances: Balance[] = [];
   // fetch non-native assets only if needed
-  if (nonNativeAssetIds.length !== 0) {
-    nonNativeBalances = await fetchNonNativeAssetBalances(
+  if (nonNativeAssetIds.length) {
+    const nonNativeBalances = await fetchNonNativeAssetBalances(
       apiInstance,
       address,
       nonNativeAssetIds
     );
+
+    balances.push(...nonNativeBalances);
   }
 
-  const balances = [...nativeBalance, ...nonNativeBalances];
   return balances;
 };
 
@@ -59,14 +61,14 @@ export const fetchNonNativeAssetBalances = async (
   address: string,
   assetIds: string[]
 ): Promise<Balance[]> => {
-  // compose search parameters as [[address, assetIdA], [address, assetIdB], ...]
-  const searchParameters: string[][] = assetIds.map((assetId) => [
+  // compose search parameter as [[address, assetIdA], [address, assetIdB], ...]
+  const queryParameter: string[][] = assetIds.map((assetId) => [
     address,
     assetId,
   ]);
   const searchResult =
     await apiInstance.query.tokens.accounts.multi<OrmlAccountData>(
-      searchParameters
+      queryParameter
     );
 
   const balances: Balance[] = searchResult.map((balanceData, i) => {
@@ -74,9 +76,13 @@ export const fetchNonNativeAssetBalances = async (
     const freeBalance = balanceData.free.toString();
 
     return {
-      assetId: assetIds[i], // pair assetId in the same order as provided as search parameter
+      assetId: assetIds[i], // pair assetId in the same order as provided in query parameter
       balance: freeBalance,
     };
   });
   return balances;
+};
+
+export const objectToArrayWithoutNull = (obj: object): any[] => {
+  return Object.values(obj).filter((value) => value != null);
 };
