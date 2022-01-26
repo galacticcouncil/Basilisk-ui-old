@@ -33,10 +33,17 @@ export type Asset = {
   id: Scalars['String'];
 };
 
+export type AssetIds = {
+  __typename?: 'AssetIds';
+  a: Scalars['String'];
+  b?: Maybe<Scalars['String']>;
+};
+
 export type Balance = {
   __typename?: 'Balance';
   assetId: Scalars['String'];
   balance: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
 };
 
 export type Config = {
@@ -76,6 +83,7 @@ export type LbpPool = {
   __typename?: 'LBPPool';
   assetAWeights: LbpAssetWeights;
   assetBWeights: LbpAssetWeights;
+  assetIds: AssetIds;
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
@@ -102,6 +110,7 @@ export type Query = {
   account?: Maybe<Account>;
   accounts: Array<Account>;
   assets?: Maybe<Array<Asset>>;
+  balance: Balance;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
@@ -125,6 +134,7 @@ export type VestingSchedule = {
 
 export type XykPool = {
   __typename?: 'XYKPool';
+  assetIds: AssetIds;
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
