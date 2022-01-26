@@ -106,7 +106,8 @@
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "patch-package"
   },
   "prettier": {
     "singleQuote": true
@@ -227,6 +228,5 @@
   },
   "resolutions": {
     "playwright": "1.17.0-rc1"
-  },
-  "postinstall": "patch-package"
+  }
 }
