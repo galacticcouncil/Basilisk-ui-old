@@ -113,14 +113,12 @@ jobs:
           yarn install --frozen-lockfile
 
       # Update folders structure
-
       - name: Change folders permissions
         run: |
           chmod -R 777 Basilisk-api
           chmod -R 777 ui-app
 
       # Run testnet
-
       - name: Run testnet
         shell: bash
         timeout-minutes: 10
@@ -135,7 +133,6 @@ jobs:
         run: wait-port 9988
 
       # Run UI App
-
       - name: Run UI application
         shell: bash
         run: |
