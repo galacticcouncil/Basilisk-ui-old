@@ -1,0 +1,15 @@
+diff --git a/node_modules/react-scripts/config/webpack.config.js b/node_modules/react-scripts/config/webpack.config.js
+index 2b1b3bb..a7d6ae7 100644
+--- a/node_modules/react-scripts/config/webpack.config.js
++++ b/node_modules/react-scripts/config/webpack.config.js
+@@ -328,6 +328,10 @@ module.exports = function (webpackEnv) {
+         }),
+         ...(modules.webpackAliases || {}),
+       },
++      fallback: {
++        'react/jsx-runtime': 'react/jsx-runtime.js',
++        'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
++      },
+       plugins: [
+         // Prevents users from importing files from outside of src/ (or node_modules/).
+         // This often causes confusion because we only process files within src/ with babel.

@@ -15,8 +15,8 @@
     "@open-web3/orml-types": "^1.0.1",
     "@polkadot/api": "^7.4.1",
     "@polkadot/extension-dapp": "^0.42.6",
+    "@polkadot/react-identicon": "^0.89.3",
     "@polkadot/types": "^7.4.1",
-    "@polkadot/react-identicon": "^0.87.6",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -55,9 +55,11 @@
     "lodash": "^4.17.21",
     "loglevel": "^1.7.1",
     "moment": "^2.29.1",
+    "patch-package": "^6.4.7",
     "percent-change": "^1.0.1",
     "playwright": "1.17.0-rc1",
     "postcss-normalize": "^10.0.1",
+    "postinstall-postinstall": "^2.1.0",
     "react": "^17.0.2",
     "react-apollo-network-status": "^5.1.0",
     "react-chartjs-2": "^3.0.5",
@@ -225,5 +227,6 @@
   },
   "resolutions": {
     "playwright": "1.17.0-rc1"
-  }
+  },
+  "postinstall": "patch-package"
 }
