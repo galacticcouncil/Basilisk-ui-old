@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 17.3
 
       - name: Cache Node Modules
         id: cache-node-modules-ui-app-v1

@@ -14,7 +14,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: 17.3
 
       - name: Cache Node Modules for ui-app
         id: cache-node-modules-ui-app
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 17.3
 
       - name: Install Node.js HTTP-Server, wait-port
         run: yarn global add http-server wait-port

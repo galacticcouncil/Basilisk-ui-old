@@ -5,5 +5,8 @@ module.exports = {
     '@storybook/addon-essentials',
     '@storybook/preset-create-react-app',
   ],
-  staticDirs: ['../public', '../storybook-static'],
+  staticDirs: ['../public'],
+  core: {
+    builder: 'webpack5',
+  },
 };

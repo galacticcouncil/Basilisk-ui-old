@@ -4,13 +4,13 @@ module.exports = {
       // support for wasm
       webpackConfig.module.rules.push({
         test: /\.wasm$/,
-        type: 'webassembly/experimental',
+        type: 'webassembly/sync',
       });
 
       webpackConfig.experiments = {
         ...webpackConfig.experiments,
-        syncWebAssembly: true
-      }
+        syncWebAssembly: true,
+      };
 
       return webpackConfig;
     }
