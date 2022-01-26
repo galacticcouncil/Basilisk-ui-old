@@ -1,25 +1,19 @@
-// baseURL
-
 import { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
-  testDir: '../src',
-  outputDir: './results',
   globalTeardown: require.resolve('./teardown'),
-  timeout: 60000,
-  expect: {
-    timeout: 60 * 1000,
-  },
+  outputDir: './results',
+  testDir: '../src',
+  testMatch: /.*\.stories.test\.ts/,
   use: {
-    actionTimeout: 10 * 1000,
+    baseURL: process.env.NODE_ENV === 'CI' ? 'http://10.0.0.227:6006/iframe.html?id=' : 'http://localhost:6006/iframe.html?id=',
     channel: 'chromium',
     headless: true,
     ignoreHTTPSErrors: true,
-    navigationTimeout: 60 * 1000,
     screenshot: 'only-on-failure',
   },
   reporter: [
-    [process.env.NODE_ENV !== 'CI' ? 'list' : 'github'],
+    [process.env.NODE_ENV === 'CI' ? 'github' : 'list'],
     ['junit', { outputFile: 'storybook-testing/results/storybook-testing-results.xml' }],
   ],
 };

@@ -1,8 +1,6 @@
 import React from 'react';
 import { ComponentStory, ComponentMeta } from '@storybook/react';
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
-import { userEvent, waitFor, within } from '@storybook/testing-library';
-import { expect } from '@storybook/jest';
 import { Button, ButtonKind } from './Button';
 
 export default {
@@ -26,22 +24,6 @@ const Template: ComponentStory<typeof Button> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = { kind: ButtonKind.Primary };
-Default.play = async ({ args, canvasElement }) => {
-  const canvas = within(canvasElement);
-
-  await userEvent.click(canvas.getByRole('button'));
-
-  await waitFor(() => expect(args.onClick).toHaveBeenCalled());
-};
 
 export const Secondary = Template.bind({});
 Secondary.args = { kind: ButtonKind.Secondary };
-
-Secondary.play = async ({ args, canvasElement }) => {
-  const canvas = within(canvasElement);
-  const hasSecondaryClass = await canvas
-    .getByRole('button')
-    .classList.contains('button--secondary');
-
-  await waitFor(() => expect(hasSecondaryClass).toBeTruthy());
-};
