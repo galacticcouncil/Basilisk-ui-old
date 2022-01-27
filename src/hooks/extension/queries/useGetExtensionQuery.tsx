@@ -1,4 +1,4 @@
-import { QueryHookOptions, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { loader } from 'graphql.macro';
 import { Extension } from '../../../generated/graphql';
 
@@ -11,8 +11,7 @@ export interface GetExtensionQueryResponse {
 }
 
 // hook wrapping the built-in apollo useQuery hook with proper types & configuration
-export const useGetExtensionQuery = (options?: QueryHookOptions) =>
+export const useGetExtensionQuery = () =>
   useQuery<GetExtensionQueryResponse>(GET_EXTENSION, {
     notifyOnNetworkStatusChange: true,
-    ...options,
   });

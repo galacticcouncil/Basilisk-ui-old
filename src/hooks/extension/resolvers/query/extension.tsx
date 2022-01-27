@@ -17,8 +17,7 @@ const withTypename = (extension: Extension) => ({
  *
  * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */
-export const extensionQueryResolver = async () =>
-  withTypename(await getExtension());
+export const extensionQueryResolver = () => withTypename(getExtension());
 
 /**
  * For standardization purposes, we expose the resolver as a hook.
@@ -30,7 +29,6 @@ export const useExtensionQueryResolver = () => ({
   extension: useResolverToRef(
     // practically we dont have to wrap this in useCallback
     // since it does not have any contextual dependencies
-    useCallback(extensionQueryResolver, []),
-    'extension'
+    useCallback(extensionQueryResolver, [extensionQueryResolver])
   ),
 });

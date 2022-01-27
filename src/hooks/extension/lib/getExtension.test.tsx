@@ -16,9 +16,9 @@ export const mockExtensionDappModule = ({
 describe('getExtension', () => {
   let extension: Extension;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     jest.resetAllMocks();
-    extension = await getExtension();
+    extension = getExtension();
   });
 
   describe('extension unavailable', () => {
@@ -28,12 +28,12 @@ describe('getExtension', () => {
   });
 
   describe('extension availale', () => {
-    beforeEach(async () => {
+    beforeEach(() => {
       mockExtensionDappModule({
         isWeb3Injected: true,
       });
 
-      extension = await getExtension();
+      extension = getExtension();
     });
 
     it('should set `isAvailable = true`', () => {

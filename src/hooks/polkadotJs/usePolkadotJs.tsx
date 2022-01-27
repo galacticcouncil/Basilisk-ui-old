@@ -1,15 +1,12 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import constate from 'constate';
 import typesConfig from './typesConfig';
+import { usePersistentConfig } from '../config/usePersistentConfig';
 import {
   types as ormlTypes,
   typesAlias as ormlTypesAlias,
 } from '@open-web3/orml-type-definitions';
-import { useUnmount } from 'react-use';
-import log from 'loglevel';
-import { usePrevious } from 'use-hooks';
-import { usePersistentConfig } from '../config/usePersistentConfig';
 
 const getPoolAccount = {
   description: 'Get pool account id by asset IDs',
@@ -34,16 +31,6 @@ const rpc = {
   },
 };
 
-const types = {
-  ...typesConfig.types[0],
-  ...ormlTypes,
-};
-
-const typesAlias = {
-  ...typesConfig.alias,
-  ...ormlTypesAlias,
-};
-
 /**
  * Setup an instance of PolkadotJs, and watch
  * for config updates. In case the nodeUrl changes,
@@ -54,95 +41,49 @@ export const useConfigurePolkadotJs = () => {
   const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(
     undefined
   );
-  const [loading, setLoading] = useState(false);
+  const loading = useMemo(() => (apiInstance ? false : true), [apiInstance]);
   const provider = useMemo(() => new WsProvider(nodeUrl), [nodeUrl]);
-  const previousProvider = usePrevious(provider);
 
-  const createApiInstance = useCallback(() => {
-    setLoading(true);
-    log.debug(
-      'useConfigurePolkadotJs',
-      'createApiInstance',
-      'creating a new instance',
-      provider
-    );
+  const types = useMemo(
+    () => ({
+      ...typesConfig.types[0],
+      ...ormlTypes,
+    }),
+    []
+  );
+
+  const typesAlias = useMemo(
+    () => ({
+      ...typesConfig.alias,
+      ...ormlTypesAlias,
+    }),
+    []
+  );
+
+  // (re-)Create the PolkadotJS instance, when the provider updates.
+  useEffect(() => {
     (async () => {
-      const apiInstance = new ApiPromise({
+      setApiInstance(undefined);
+      const api = await ApiPromise.create({
         provider,
         types,
         typesAlias,
         rpc,
       });
-      setApiInstance(apiInstance);
+      await api.isReady;
+      setApiInstance(api);
     })();
-  }, [provider]);
 
-  const destroyApiInstance = useCallback(async () => {
-    log.debug(
-      'useConfigurePolkadotJs',
-      'destroyApiInstance',
-      'destroying the instance'
-    );
-    await apiInstance?.disconnect();
-    setApiInstance(undefined);
-    log.debug(
-      'useConfigurePolkadotJs',
-      'destroyApiInstance',
-      'instance destroyed'
-    );
-  }, [apiInstance]);
+    // when the component using the usePolkadot hook unmounts, disconnect the websocket
+    return () => {
+      apiInstance?.disconnect();
+    };
+  }, [provider, apiInstance, types, typesAlias]);
 
-  // if there is no apiInstance, then create one
-  useEffect(() => {
-    if (apiInstance) return;
-    log.debug('useConfigurePolkadotJs', 'creating a new instance', apiInstance);
-    createApiInstance();
-  }, [createApiInstance, apiInstance]);
-
-  /**
-   * Loading status is handled separately from instance creation
-   */
-  useEffect(() => {
-    // only start waiting for an api instance to be ready, if its connected to the node
-    // if (!loading || !apiInstance?.isConnected) return;
-    if (!loading || !apiInstance) return;
-    (async () => {
-      log.debug('useConfigurePolkadotJs', 'waiting to be ready');
-      // TODO: what happens here when a new apiInstance is created
-      // while we're still listening to the `isReady` status on an old instance?
-      // possible memory leak ^^
-      await apiInstance?.isReady;
-      log.debug('useConfigurePolkadotJs', 'instance is ready');
-      setLoading(false);
-    })();
-  }, [apiInstance, loading]);
-
-  // if the provider changes, then destroy the existing instance
-  useEffect(() => {
-    if (previousProvider === provider || !apiInstance) return;
-    (async () => {
-      log.debug(
-        'useConfigurePolkadotJs',
-        'provider has changed, recreating instance'
-      );
-      await destroyApiInstance();
-    })();
-  }, [
-    apiInstance,
-    previousProvider,
-    provider,
-    destroyApiInstance,
-    createApiInstance,
-  ]);
-
-  // when the component unmounts, destroy the api instance
-  useUnmount(() => {
-    log.debug('useConfigurePolkadotJs', 'unmounting');
-    destroyApiInstance();
-  });
   return { apiInstance, loading };
 };
 
+// TODO: lift to context using constate
 export const [PolkadotJsProvider, usePolkadotJsContext] = constate(
   useConfigurePolkadotJs
 );

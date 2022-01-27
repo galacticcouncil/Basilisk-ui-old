@@ -1,19 +1,29 @@
+const { addBeforeLoader, loaderByName } = require('@craco/craco');
+
 module.exports = {
   webpack: {
     configure: (webpackConfig) => {
-      // support for wasm
-      webpackConfig.module.rules.push({
-        test: /\.wasm$/,
-        type: 'webassembly/sync',
+      const wasmExtensionRegExp = /\.wasm$/;
+      webpackConfig.resolve.extensions.push('.wasm');
+
+      webpackConfig.module.rules.forEach((rule) => {
+        (rule.oneOf || []).forEach((oneOf) => {
+          if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
+            oneOf.exclude.push(wasmExtensionRegExp);
+          }
+        });
       });
 
-      webpackConfig.experiments = {
-        ...webpackConfig.experiments,
-        syncWebAssembly: true
-      }
+      const wasmLoader = {
+        test: /\.wasm$/,
+        exclude: /node_modules/,
+        loaders: ['wasm-loader'],
+      };
+
+      addBeforeLoader(webpackConfig, loaderByName('file-loader'), wasmLoader);
 
       return webpackConfig;
-    }
+    },
   },
   jest: {
     configure: (jestConfig, { env, paths, resolve, rootDir }) => {
@@ -29,5 +39,3 @@ module.exports = {
     },
   },
 };
-
-// module.exports = {}
