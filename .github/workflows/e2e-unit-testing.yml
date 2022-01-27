@@ -141,79 +141,79 @@ jobs:
         timeout-minutes: 2
         run: . ./ui-app/scripts/gh-actions-wait-for-port.sh 3030
 
-      # Prepare Playwright env
-      - name: Install OS dependencies for Playwright
-        run: npx playwright install-deps
-
-      - name: Make e2e testing env vars file visible (required for falnyr/replace-env-vars-action@master)
-        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
-        shell: bash
-
-      - name: Prepate E2E Tests Env Variables
-        uses: falnyr/replace-env-vars-action@master
-        env:
-          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
-          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
-          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
-        with:
-          filename: ui-app/e2e-tests-vars.txt
-
-      - name: Make e2e testing env vars file hidden
-        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
-        shell: bash
-
-      # For debug and monitoring purposes
-      - name: Check Docker containers and ports
-        if: always()
-        run: |
-          docker ps
-          docker network ls
-          sudo lsof -i -P -n | grep LISTEN
-        shell: bash
-
-      # Run e2e tests
-      - name: Run e2e tests
-        shell: bash
-        run: |
-          cd ui-app
-          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
-        env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
-
-      - name: Sleep for 5 seconds
-        run: sleep 5s
-        shell: bash
-
-      - name: Upload trace files
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: traces_screenshots
-          path: ./ui-app/traces
-
-      - name: Upload e2e tests report file
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: e2e_tests_report_html
-          path: ./ui-app/ui-app-e2e-results.html
-
-      - name: Run unit tests
-        if: always()
-        run: |
-          cd ui-app
-          yarn test:ci
-
-      - name: Sleep for 5 seconds
-        run: sleep 5s
-        shell: bash
-
-      - name: Upload unit tests report file
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: unint_tests_report_html
-          path: ./ui-app/ui-app-unit-tests-results.html
+#      # Prepare Playwright env
+#      - name: Install OS dependencies for Playwright
+#        run: npx playwright install-deps
+#
+#      - name: Make e2e testing env vars file visible (required for falnyr/replace-env-vars-action@master)
+#        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
+#        shell: bash
+#
+#      - name: Prepate E2E Tests Env Variables
+#        uses: falnyr/replace-env-vars-action@master
+#        env:
+#          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
+#          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
+#          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
+#        with:
+#          filename: ui-app/e2e-tests-vars.txt
+#
+#      - name: Make e2e testing env vars file hidden
+#        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
+#        shell: bash
+#
+#      # For debug and monitoring purposes
+#      - name: Check Docker containers and ports
+#        if: always()
+#        run: |
+#          docker ps
+#          docker network ls
+#          sudo lsof -i -P -n | grep LISTEN
+#        shell: bash
+#
+#      # Run e2e tests
+#      - name: Run e2e tests
+#        shell: bash
+#        run: |
+#          cd ui-app
+#          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
+#        env:
+#          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+#
+#      - name: Sleep for 5 seconds
+#        run: sleep 5s
+#        shell: bash
+#
+#      - name: Upload trace files
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: traces_screenshots
+#          path: ./ui-app/traces
+#
+#      - name: Upload e2e tests report file
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: e2e_tests_report_html
+#          path: ./ui-app/ui-app-e2e-results.html
+#
+#      - name: Run unit tests
+#        if: always()
+#        run: |
+#          cd ui-app
+#          yarn test:ci
+#
+#      - name: Sleep for 5 seconds
+#        run: sleep 5s
+#        shell: bash
+#
+#      - name: Upload unit tests report file
+#        if: always()
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: unint_tests_report_html
+#          path: ./ui-app/ui-app-unit-tests-results.html
 
       - name: Upload testnet logs
         if: always()
