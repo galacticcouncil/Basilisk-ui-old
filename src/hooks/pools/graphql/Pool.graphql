@@ -61,8 +61,3 @@ extend type Query {
   # otherwise it'd be ignored
   _tradeType: TradeType
 }
-
-type AssetIds {
-  a: String!
-  b: String
-}

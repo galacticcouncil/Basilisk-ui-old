@@ -33,6 +33,12 @@ export type Asset = {
   id: Scalars['String'];
 };
 
+export type AssetIds = {
+  __typename?: 'AssetIds';
+  a: Scalars['String'];
+  b?: Maybe<Scalars['String']>;
+};
+
 export type Balance = {
   __typename?: 'Balance';
   assetId: Scalars['String'];
@@ -98,6 +104,7 @@ export type Pool = LbpPool | XykPool;
 
 export type Query = {
   __typename?: 'Query';
+  _assetIds?: Maybe<AssetIds>;
   _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
   account?: Maybe<Account>;

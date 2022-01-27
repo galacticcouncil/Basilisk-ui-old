@@ -7,7 +7,6 @@ import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
 
-import { useBalanceMutationResolvers } from '../balances/useBalanceMutationResolvers';
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
@@ -42,7 +41,6 @@ export const useResolvers: () => Resolvers = () => {
     Mutation: {
       ...useAccountsMutationResolvers(),
       ...useVestingMutationResolvers(),
-      ...useBalanceMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
     },

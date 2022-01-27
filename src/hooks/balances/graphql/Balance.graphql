@@ -8,4 +8,13 @@ type Balance {
 # This is again useful for strict typing down the line
 extend type Query {
   balance: [Balance!]!
+  # Just to make sure AssetIds makes it through the codegen
+  # otherwise it'd be ignored
+  _assetIds: AssetIds
+}
+
+# this hack is necessary to keep the AssetIds generated type
+type AssetIds {
+  a: String!
+  b: String
 }

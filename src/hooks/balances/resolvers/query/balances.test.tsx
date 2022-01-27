@@ -11,13 +11,14 @@ import { Resolvers, useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
 import { gql } from 'graphql.macro';
-import waitForExpect from 'wait-for-expect';
 import {
   mockUsePolkadotJsContext,
   nativeAssetBalance,
   nonNativeAssetBalance,
 } from '../../../polkadotJs/tests/mockUsePolkadotJsContext';
 import { ApiPromise } from '@polkadot/api';
+import waitForExpect from 'wait-for-expect';
+waitForExpect.defaults.interval = 1;
 
 jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
@@ -227,8 +228,6 @@ describe('hooks/balances/resolvers/query/balances', () => {
     beforeEach(() => {
       jest.resetModules();
       render();
-      waitForExpect.defaults.interval = 20;
-      //waitForExpect.defaults.timeout = 20000
     });
     let data: () => TestQueryResponse | undefined = () =>
       JSON.parse(component.toJSON() as unknown as string);
