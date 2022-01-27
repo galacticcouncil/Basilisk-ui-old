@@ -105,17 +105,25 @@ export const Wallet = ({ account, onActiveAccountClick }: WalletProps) => {
   </div>
 }
 ```
-Our presentation layer testing strategy is based on a combination of storybook `stories`,  and `playwright`. Each presentation layer component _must_ have a useful `.stories.tsx` file to go along with it.  
+### Presentational layer testing strategy
+Our presentation layer testing strategy is based on a combination of storybook `stories`  and `playwright`. Each presentation layer component _must_ have a useful `.stories.tsx` file to go along with it.  
 
-Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit that story to test and screenshot each aspect, variation, and interaction.  
+Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit that story to test and screenshot each aspect, variation, and interaction. 
+
 - Best to look in this repo at the `.stories.test.ts` files and their corresponding `.stories.tsx` files to see how this works  
-- The screenshots must be generated _before_ merging to main branch. 
 
-- You'll see that running a new `stories.test.tsx` file that tests for a screenshot,  but doesn't _have_ a screenshot yet, will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  
+- Generating Screenshots:
+  - If you run a `stories.test.tsx` with a screenshot comparison test,  but a screenshot is missing/deleted, or has not been generated previously then the test will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  You can replace an existing screenshot in this way.
 
-- `yarn storybook:test` after starting storybook to run the `.stories.test` files with Playwright
+  - Find all extant screenshots in `storybook-testing/screenshots-to-test-against`
 
-- `yarn storybook:test:ci` is a one-size-fits-all-script that'll run the entire storybook/playwright testing infrastructure.  
+  - when any screenshot comparison fails,  find results in `storybook-testing/results/screenshot-comparison-fails`
+
+- Scripts:
+
+  - start storybook ( `storybook:start` ),  then run `yarn storybook:test` to run the `.stories.test` files with Playwright
+
+  - `yarn storybook:test:ci` runs the entire storybook/playwright testing infrastructure.  
 
 
 Use Playwrite affordances to run specific `.stories.test`s, if you want:  

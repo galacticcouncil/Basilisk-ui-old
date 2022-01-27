@@ -2,7 +2,8 @@ import { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
   globalTeardown: require.resolve('./teardown'),
-  outputDir: './results',
+  outputDir: './results/screenshot-comparison-fails',
+  snapshotDir: './screenshots-to-test-against',
   testDir: '../src',
   testMatch: /.*\.stories.test\.ts/,
   use: {

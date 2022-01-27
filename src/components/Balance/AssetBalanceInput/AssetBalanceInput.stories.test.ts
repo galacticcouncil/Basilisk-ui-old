@@ -15,7 +15,7 @@ test('inputs accept numbers and "." not other characters', async ({
   const inputs = await page.$$('#root input');
 
   for (const input of inputs) {
-    // typing this '!@#$%^%&*()_+{}|[]:";<>?,./ 100.00 be' string in breaks it..
+    // inputing this '!@#$%^%&*()_+{}|[]:";<>?,./ 100.00 be' string in breaks it..
     await input.type('as 100.00 be', { delay: 100 });
     const value = await input.getProperty('value');
     const valueAsJson = await value.jsonValue();
