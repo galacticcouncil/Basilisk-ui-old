@@ -113,7 +113,7 @@ Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit 
 - Best to look in this repo at the `.stories.test.ts` files and their corresponding `.stories.tsx` files to see how this works  
 
 - Generating Screenshots:
-  - If you run a `stories.test.tsx` with a screenshot comparison test,  but a screenshot is missing/deleted, or has not been generated previously then the test will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  You can replace an existing screenshot in this way.
+  - If you run a `stories.test.tsx` containing a screenshot comparison test,  but a screenshot is missing/deleted, then the test will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  You can replace an existing screenshot in this way.
 
   - Find all extant screenshots in `storybook-testing/screenshots-to-test-against`
 
@@ -121,19 +121,31 @@ Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit 
 
 - Scripts:
 
-  - start storybook ( `storybook:start` ),  then run `yarn storybook:test` to run the `.stories.test` files with Playwright
+  - Running `.stories.test` file(s):
+    - start storybook ( `yarn storybook:start` ), then run <code><pre><span style="color: blue">yarn</span> <span style="color: green">storybook:test</span> <file name(s)> </pre></code>
 
-  - `yarn storybook:test:ci` runs the entire storybook/playwright testing infrastructure.  
+      - example: <code><pre><span style="color: blue">yarn</span> <span style="color: green">storybook:test</span> Button.stories.test AssetBalanceInput</pre></code> 
+        *`AssetBalanceInut` works; the `file-name` doesn't have to be complete
+    
+    <br />
+    
+    - Omit `<file name(s)>` to run _all_ the `.stories.test` files
 
+    <br />
 
-Use Playwrite affordances to run specific `.stories.test`s, if you want:  
-- storybook must be running
-- [Playwright has a CLI](https://playwright.dev/docs/test-cli) 
+  - Debugging: 
+    - append `--headed` flag to the above script to see test execution in-browser,  and when using [`page.pause`](https://playwright.dev/docs/debug#browser-developer-tools)
 
-Links
+    <br />
 
-- https://playwright.dev/
-- https://storybook.js.org/docs/react/writing-stories/introduction
+  - CI:
+    - `yarn storybook:test:ci` starts storybook for you and runs the entire Storybook + Playwright testing infrastructure.  
+
+- Links
+
+  - [Playwright docs](https://playwright.dev/)
+  - [Playwright debugging](https://playwright.dev/docs/debug#browser-developer-tools)
+  - [Intro to writing Storybook stories](https://storybook.js.org/docs/react/writing-stories/introduction)
 
 ### Composition layer
 
