@@ -58,8 +58,8 @@ jobs:
         with:
           node-version: 17.3
 
-      - name: Install Node.js HTTP-Server, wait-port
-        run: yarn global add http-server wait-port
+      - name: Install Node.js HTTP-Server
+        run: yarn global add http-server
 
       - uses: actions/checkout@v2
         with:
@@ -76,10 +76,6 @@ jobs:
         with:
           name: sb-build-files
           path: ./ui-app/storybook-static
-
-      #      - name: Pull Testnet Docker image
-      #        shell: bash
-      #        run: docker pull public.ecr.aws/e4o7i5u6/polkadot-basilisk-testnet:0.1.23
 
       # Prepare Basilisk-api ("develop" branch must be cloned)
       - name: Clone Basilisk-api
@@ -129,8 +125,8 @@ jobs:
       # Double check of testnet status
       - name: Wait for Basilisk Node port :9988
         shell: bash
-        timeout-minutes: 5
-        run: wait-port 9988
+        timeout-minutes: 2
+        run: . ./ui-app/scripts/gh-actions-wait-for-port.sh 9988
 
       # Run UI App
       - name: Run UI application
@@ -142,8 +138,8 @@ jobs:
       # Check of UI app status
       - name: Wait for UI app port :3030
         shell: bash
-        timeout-minutes: 5
-        run: wait-port 3030
+        timeout-minutes: 2
+        run: . ./ui-app/scripts/gh-actions-wait-for-port.sh 3030
 
       # Prepare Playwright env
       - name: Install OS dependencies for Playwright
@@ -167,9 +163,12 @@ jobs:
         shell: bash
 
       # For debug and monitoring purposes
-      - name: Check Docker containers
+      - name: Check Docker containers and ports
         if: always()
-        run: docker ps
+        run: |
+          docker ps
+          docker network ls
+          sudo lsof -i -P -n | grep LISTEN
         shell: bash
 
       # Run e2e tests
