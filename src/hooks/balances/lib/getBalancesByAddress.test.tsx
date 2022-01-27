@@ -1,11 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
 import { AccountId32 } from '@polkadot/types/interfaces';
-import { AssetIds, Balance } from '../../../generated/graphql';
+import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import {
   getBalancesByAddress,
   fetchNativeAssetBalance,
-  objectToArrayWithoutNull,
 } from './getBalancesByAddress';
 
 export const nativeAssetBalance = '10';
@@ -48,7 +47,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        { a: '0' }
+        ['0']
       );
 
       expect(balances).toEqual([
@@ -67,7 +66,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        { a: '1' }
+        ['1']
       );
 
       expect(balances).toEqual([
@@ -86,7 +85,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        { a: '1', b: '2' }
+        ['1', '2']
       );
 
       expect(balances).toEqual([
@@ -109,7 +108,7 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak',
-        { a: '0', b: '1' }
+        ['0', '1']
       );
 
       expect(balances).toEqual([
@@ -145,37 +144,5 @@ describe('hooks/balances/lib/getBalancesByAddress', () => {
 
   describe.skip('fetchNonNativeAssetBalances', () => {
     // TODO
-  });
-
-  describe('objectToArrayWithoutNull', () => {
-    it('can convert an object to an array', () => {
-      const assetIds = {
-        a: '0',
-        b: '1',
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(['0', '1']);
-    });
-
-    it('can convert an object to an array with one null value', () => {
-      const assetIds: AssetIds = {
-        a: '0',
-        b: null,
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(['0']);
-    });
-
-    it('can convert an object to an array with one undefined value', () => {
-      const assetIds: AssetIds = {
-        a: '0',
-        b: undefined,
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(['0']);
-    });
   });
 });

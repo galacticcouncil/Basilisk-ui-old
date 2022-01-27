@@ -1,7 +1,7 @@
 # Query that triggers the local extension resolver
 query GetBalances {
-  account {
-    balances @client {
+  account @client {
+    balances {
       assetId
       balance
     }

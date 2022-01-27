@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { includes } from 'lodash';
-import { AssetIds, Balance } from '../../../generated/graphql';
+import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 
@@ -8,18 +8,17 @@ import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 export const getBalancesByAddress = async (
   apiInstance: ApiPromise,
   address: string,
-  assetIds: AssetIds
+  assetIds: string[]
 ): Promise<Balance[]> => {
-  const assets = objectToArrayWithoutNull(assetIds);
   let balances: Balance[] = [];
 
-  if (includes(assets, constants.nativeAssetId)) {
+  if (includes(assetIds, constants.nativeAssetId)) {
     const nativeBalance = await fetchNativeAssetBalance(apiInstance, address);
     balances.push(nativeBalance);
   }
 
   // make sure that there is no native assetId
-  const nonNativeAssetIds = assets.filter(
+  const nonNativeAssetIds = assetIds.filter(
     (id) => id !== constants.nativeAssetId
   );
   // fetch non-native assets only if needed
@@ -40,6 +39,7 @@ export const fetchNativeAssetBalance = async (
   apiInstance: ApiPromise,
   address: string
 ): Promise<Balance> => {
+  // no handling of undefined because apiInstance returns default value of 0 for native asset
   const nativeAssetBalance = await apiInstance.query.system.account(address);
 
   return {
@@ -81,8 +81,4 @@ export const fetchNonNativeAssetBalances = async (
     };
   });
   return balances;
-};
-
-export const objectToArrayWithoutNull = (obj: object): any[] => {
-  return Object.values(obj).filter((value) => value != null);
 };
