@@ -44,7 +44,6 @@ type LBPPool {
   assetBWeights: LBPAssetWeights!
   startBlock: String!
   endBlock: String!
-  assetIds: AssetIds!
 }
 
 type XYKPool {
@@ -52,7 +51,6 @@ type XYKPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
-  assetIds: AssetIds!
 }
 
 union Pool = LBPPool | XYKPool
