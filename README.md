@@ -87,10 +87,6 @@ between different application layers.
 The presentational layer is used to present and transform the normalized data provided by the *composition layer*. It begins on the *dumb* component level,
 those are fed data via containers through props. Dumb components should be developed in isolation via *storybook* to fit the visual/layout/structural design requirements. Dumb components should only hold local state specific to their own presentational logic (e.g. `isModalOpen`), and should communicate with their respective parent components via props and handlers (e.g. `onClick / handleOnClick`).
 
-#### Testing
-
-Storybook components should be tested via playwright, as explained [here](https://storybook.js.org/docs/react/writing-tests/importing-stories-in-tests#example-with-playwright).
-
 Example:
 
 ```tsx
@@ -109,6 +105,27 @@ export const Wallet = ({ account, onActiveAccountClick }: WalletProps) => {
   </div>
 }
 ```
+Our presentation layer testing strategy is based on a combination of storybook `stories`,  and `playwright`. Each presentation layer component _must_ have a useful `.stories.tsx` file to go along with it.  
+
+Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit that story to test and screenshot each aspect, variation, and interaction.  
+- Best to look in this repo at the `.stories.test.ts` files and their corresponding `.stories.tsx` files to see how this works  
+- The screenshots must be generated _before_ merging to main branch. 
+
+- You'll see that running a new `stories.test.tsx` file that tests for a screenshot,  but doesn't _have_ a screenshot yet, will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  
+
+- `yarn storybook:test` after starting storybook to run the `.stories.test` files with Playwright
+
+- `yarn storybook:test:ci` is a one-size-fits-all-script that'll run the entire storybook/playwright testing infrastructure.  
+
+
+Use Playwrite affordances to run specific `.stories.test`s, if you want:  
+- storybook must be running
+- [Playwright has a CLI](https://playwright.dev/docs/test-cli) 
+
+Links
+
+- https://playwright.dev/
+- https://storybook.js.org/docs/react/writing-stories/introduction
 
 ### Composition layer
 
