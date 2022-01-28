@@ -1,27 +1,27 @@
 query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
-    lastBlock @client {
-        parachainBlockNumber
-    }
-    
-    pool: pools(assetIds: [$assetInId, $assetOutId]) @client {
-        id,
-        assetInId,
-        assetOutId,
-        balances {
-            assetId,
-            balance
-        },
+  lastBlock @client {
+    parachain
+  }
 
-        # TODO: investigate how caching works when these fields are missing for XYK pools
-        # lbp fields,
-        repayTarget,
-        assetAWeights,
-        assetBWeights,
-        startBlock,
-        endBlock,
-        fee {
-            numerator,
-            denominator
-        }
+  pool: pools(assetIds: [$assetInId, $assetOutId]) @client {
+    id
+    assetInId
+    assetOutId
+    balances {
+      assetId
+      balance
     }
+
+    # TODO: investigate how caching works when these fields are missing for XYK pools
+    # lbp fields,
+    repayTarget
+    assetAWeights
+    assetBWeights
+    startBlock
+    endBlock
+    fee {
+      numerator
+      denominator
+    }
+  }
 }

@@ -1,12 +1,12 @@
 query GetConfig {
-    lastBlock @client {
-        parachainBlockNumber
-    },
+  lastBlock @client {
+    parachain
+  }
 
-    config @client {
-        nodeUrl,
-        processorUrl,
-        appName,
-        feePaymentAsset,
-    }
+  config @client {
+    nodeUrl
+    processorUrl
+    appName
+    feePaymentAsset
+  }
 }
