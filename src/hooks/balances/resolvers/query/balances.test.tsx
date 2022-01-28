@@ -18,6 +18,7 @@ import {
 } from '../../../polkadotJs/tests/mockUsePolkadotJsContext';
 import { ApiPromise } from '@polkadot/api';
 import waitForExpect from 'wait-for-expect';
+import errors from '../../../../errors';
 waitForExpect.defaults.interval = 1;
 
 jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
@@ -80,23 +81,50 @@ describe('hooks/balances/resolvers/query/balances', () => {
       // eslint-disable-next-line jest/valid-title
       it(description, async () => {
         const balancesByAddressQueryResolver =
-          await balancesByAddressQueryResolverFactory(mockApiPromise);
+          await balancesByAddressQueryResolverFactory(mockApiInstance);
         const balances = await balancesByAddressQueryResolver(entity, args);
 
         expect(balances).toEqual(expectedBalances);
       });
     }
 
-    let mockApiPromise: ApiPromise;
+    let mockApiInstance: ApiPromise;
     beforeEach(() => {
       jest.resetAllMocks();
-      mockApiPromise = getMockApiPromise();
+      mockApiInstance = getMockApiPromise();
     });
 
     const address = 'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak';
     const entity: Entity = { id: address };
     const assetIdA = '0';
     const assetIdB = '1';
+
+    it('fails to fetch without PolkadotJS ApiPromise', async () => {
+      const brokenApiInstance = undefined as unknown as ApiPromise;
+      const balancesByAddressQueryResolver =
+        await balancesByAddressQueryResolverFactory(brokenApiInstance);
+
+      const balancesByAddressQueryResolverPromise =
+        balancesByAddressQueryResolver(entity, { assetIds: { a: assetIdA } });
+
+      await expect(balancesByAddressQueryResolverPromise).rejects.toMatchObject(
+        Error(errors.apiInstanceNotInitialized)
+      );
+    });
+
+    it('fails to fetch with wrong arguments', async () => {
+      const balancesByAddressQueryResolver =
+        await balancesByAddressQueryResolverFactory(mockApiInstance);
+      const brokenArgs = {
+        assetIds: undefined,
+      } as unknown as BalancesByAddressResolverArgs;
+      const balancesByAddressQueryResolverPromise =
+        balancesByAddressQueryResolver(entity, brokenArgs);
+
+      await expect(balancesByAddressQueryResolverPromise).rejects.toMatchObject(
+        Error(errors.noArgumentsProvidedBalanceQuery)
+      );
+    });
 
     fetchBalancesSuccessCase(
       'can fetch balance for entity with object as parameter (1 assetId)',
@@ -168,27 +196,6 @@ describe('hooks/balances/resolvers/query/balances', () => {
   });
 
   describe('useBalanceQueryResolvers', () => {
-    interface TestQueryResponse {
-      mockEntity: { balances: Balance[] };
-    }
-    const Test = () => {
-      const { data } = useQuery<TestQueryResponse>(
-        gql`
-          query GetBalances {
-            mockEntity @client {
-              balances(assetIds: { a: "0" }) {
-                assetId
-                balance
-              }
-            }
-          }
-        `,
-        { returnPartialData: true }
-      );
-
-      return <>{JSON.stringify(data)}</>;
-    };
-
     const useResolvers = () => {
       return {
         Query: {
@@ -204,8 +211,6 @@ describe('hooks/balances/resolvers/query/balances', () => {
         },
       };
     };
-
-    let component: TestRenderer.ReactTestRenderer;
     // testing helper to wrap a testing component into a provider with configured resolvers
     const resolverProviderFactory =
       (useResolvers: () => Resolvers) =>
@@ -215,6 +220,27 @@ describe('hooks/balances/resolvers/query/balances', () => {
         );
       };
 
+    interface TestQueryResponse {
+      mockEntity: { balances: Balance[] };
+    }
+    const Test = () => {
+      const { data } = useQuery<TestQueryResponse>(
+        gql`
+          query GetBalances {
+            mockEntity @client {
+              balances(assetIds: { a: "0" }) {
+                assetId
+                balance
+              }
+            }
+          }
+        `
+      );
+
+      return <>{JSON.stringify(data)}</>;
+    };
+
+    let component: TestRenderer.ReactTestRenderer;
     // combine resolvers and the 'Test' component and render them
     const render = () => {
       const ResolverProvider = resolverProviderFactory(useResolvers);
@@ -225,12 +251,13 @@ describe('hooks/balances/resolvers/query/balances', () => {
       );
     };
 
+    let data: () => TestQueryResponse | undefined = () =>
+      JSON.parse(component.toJSON() as unknown as string);
+
     beforeEach(() => {
       jest.resetModules();
       render();
     });
-    let data: () => TestQueryResponse | undefined = () =>
-      JSON.parse(component.toJSON() as unknown as string);
 
     it('can resolve the query within the rendered component', async () => {
       await act(async () => {
