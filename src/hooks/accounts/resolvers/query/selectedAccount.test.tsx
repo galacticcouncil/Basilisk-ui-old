@@ -64,11 +64,10 @@ describe('selectedAccount', () => {
   describe('falsy case', () => {
     beforeEach(() => {
       mockUsePersistActiveAccount.mockImplementation(() => [null]);
-      // eslint-disable-next-line testing-library/no-render-in-setup
-      render();
     });
 
     it('should resolve the selectedAccount as null for the', async () => {
+      render();
       await act(async () => {
         await waitForQuery();
         expect(data()?.selectedAccount).toBe(null);
@@ -81,14 +80,12 @@ describe('selectedAccount', () => {
 
     beforeEach(() => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
-      // eslint-disable-next-line testing-library/no-render-in-setup
-      render();
     });
 
     it('should resolve the selectedAccount as null for the', async () => {
+      render();
       await act(async () => {
         await waitForQuery();
-        //expect(usePersistActiveAccount).toBe('ID')
         //expect(data()?.selectedAccount).toBe({ id: "feifjeijfeijfie", __typename: "Account"});
       });
     });
