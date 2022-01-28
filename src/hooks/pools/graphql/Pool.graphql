@@ -1,18 +1,18 @@
 #import './../../balances/graphql/Balance.graphql'
 
 enum PoolType {
-    LBP
-    XYK
+  LBP
+  XYK
 }
 
 enum TradeType {
-    Buy,
-    Sell
+  Buy
+  Sell
 }
 
 # figure out how to create a union between two types
 # that extend an interface, apparently this isnt possible as of now
-# 
+#
 # interface Pool {
 #     poolType: PoolType!,
 #     assetInId: String!,
@@ -22,42 +22,42 @@ enum TradeType {
 # }
 
 type LBPAssetWeights {
-    initial: String!,
-    final: String!,
-    current: String!,
+  initial: String!
+  final: String!
+  current: String!
 }
 
 type Fee {
-    numerator: String!,
-    denominator: String!,
+  numerator: String!
+  denominator: String!
 }
 
 # TODO: figure out which fields are populated at creation and at update
 type LBPPool {
-    id: String!,
-    assetInId: String!,
-    assetOutId: String!,
-    balances: [Balance!]
-    fee: Fee!,
-    repayTargetReached: Boolean!,
-    assetAWeights: LBPAssetWeights!,
-    assetBWeights: LBPAssetWeights!,
-    startBlock: String!,
-    endBlock: String!
+  id: String!
+  assetInId: String!
+  assetOutId: String!
+  balances: [Balance!]
+  fee: Fee!
+  repayTargetReached: Boolean!
+  assetAWeights: LBPAssetWeights!
+  assetBWeights: LBPAssetWeights!
+  startBlock: String!
+  endBlock: String!
 }
 
 type XYKPool {
-    id: String!,
-    assetInId: String!,
-    assetOutId: String!,
-    balances: [Balance!]
+  id: String!
+  assetInId: String!
+  assetOutId: String!
+  balances: [Balance!]
 }
 
 union Pool = LBPPool | XYKPool
 
 extend type Query {
-    pools: [Pool!]
-    # Just to make sure TradeType makes it through the codegen
-    # otherwise it'd be ignored
-    _tradeType: TradeType
+  pools: [Pool!]
+  # Just to make sure TradeType makes it through the codegen
+  # otherwise it'd be ignored
+  _tradeType: TradeType
 }
