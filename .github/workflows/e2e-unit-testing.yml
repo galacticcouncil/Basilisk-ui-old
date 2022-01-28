@@ -219,5 +219,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: testnet_logs
-          path: ./Basilisk-api/testnet-logs
+          name: testnet-sandbox-logs
+          path: ./Basilisk-api/testnet-sandbox-logs
