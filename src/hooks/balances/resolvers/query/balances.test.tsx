@@ -12,7 +12,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
 import { gql } from 'graphql.macro';
 import {
-  mockUsePolkadotJsContext,
+  getMockApiPromise,
   nativeAssetBalance,
   nonNativeAssetBalance,
 } from '../../../polkadotJs/tests/mockUsePolkadotJsContext';
@@ -90,7 +90,7 @@ describe('hooks/balances/resolvers/query/balances', () => {
     let mockApiPromise: ApiPromise;
     beforeEach(() => {
       jest.resetAllMocks();
-      mockApiPromise = mockUsePolkadotJsContext().apiInstance;
+      mockApiPromise = getMockApiPromise();
     });
 
     const address = 'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak';

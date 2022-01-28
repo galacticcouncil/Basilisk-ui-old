@@ -4,8 +4,8 @@ import { AccountId32 } from '@polkadot/types/interfaces';
 export const nativeAssetBalance = '10';
 export const nonNativeAssetBalance = '20';
 
-export const mockUsePolkadotJsContext = () => ({
-  apiInstance: {
+export const getMockApiPromise = () =>
+  ({
     query: {
       system: {
         account: jest.fn((arg: AccountId32 | string | Uint8Array) => {
@@ -26,6 +26,9 @@ export const mockUsePolkadotJsContext = () => ({
         },
       },
     },
-  } as unknown as ApiPromise,
+  } as unknown as ApiPromise);
+
+export const mockUsePolkadotJsContext = () => ({
+  apiInstance: getMockApiPromise(),
   loading: false,
 });
