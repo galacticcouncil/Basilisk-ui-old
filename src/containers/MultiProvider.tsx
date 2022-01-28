@@ -1,5 +1,5 @@
 import { ApolloProvider } from '@apollo/client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useConfigureApolloClient } from '../hooks/apollo/useApollo';
 import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber';
 import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs';
@@ -11,7 +11,15 @@ export const ConfiguredApolloProvider = ({
   children: React.ReactNode;
 }) => {
   const client = useConfigureApolloClient();
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return useMemo(
+    () =>
+      client ? (
+        <ApolloProvider client={client}>{children}</ApolloProvider>
+      ) : (
+        <></>
+      ),
+    [client, children]
+  );
 };
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => (
