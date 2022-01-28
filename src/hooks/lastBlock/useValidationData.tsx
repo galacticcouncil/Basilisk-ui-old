@@ -6,7 +6,7 @@ export const validationDataDataType =
   'Option<PolkadotPrimitivesV1PersistedValidationData>';
 
 export const useValidationData = () => {
-  const { apiInstance } = usePolkadotJsContext();
+  const { apiInstance, loading } = usePolkadotJsContext();
 
   const [validationData, setValidationData] =
     useState<PersistedValidationData | null>();
@@ -16,25 +16,29 @@ export const useValidationData = () => {
       return;
     }
 
+    if (loading) {
+      return;
+    }
+
     const getValidationData = async () => {
-      const validationData =
+      const rawValidationData =
         await apiInstance.query.parachainSystem.validationData();
 
       const validationDataOption = apiInstance.createType(
         validationDataDataType,
-        validationData
+        rawValidationData
       );
 
       if (validationDataOption.isSome) {
-        const validationData =
+        const jsonValidationData =
           validationDataOption.toJSON() as unknown as PersistedValidationData;
 
-        setValidationData(validationData);
+        setValidationData(jsonValidationData);
       }
     };
 
     getValidationData();
-  }, [apiInstance]);
+  }, [apiInstance, loading]);
 
   return validationData;
 };
