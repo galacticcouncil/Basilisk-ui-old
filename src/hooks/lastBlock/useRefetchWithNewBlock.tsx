@@ -37,12 +37,11 @@ export const useRefetchWithNewBlock = (
     if (!client) {
       return;
     }
+
     if (!chainLastBlock) {
       return;
     }
-    if (!validationData) {
-      return;
-    }
+
     if (!validationData) {
       return;
     }

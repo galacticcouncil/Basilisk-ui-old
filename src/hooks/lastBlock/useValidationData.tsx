@@ -5,8 +5,6 @@ import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 export const validationDataDataType =
   'Option<PolkadotPrimitivesV1PersistedValidationData>';
 
-export type ValidationData = PersistedValidationData;
-
 export const useValidationData = () => {
   const { apiInstance } = usePolkadotJsContext();
 
