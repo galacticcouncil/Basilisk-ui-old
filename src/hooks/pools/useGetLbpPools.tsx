@@ -50,8 +50,7 @@ export const mapToPool =
     // TODO this is possibly VERY unsafe and needs to be revisited for type parsing / creation
     const poolData = codec.toJSON() as unknown as PoolData;
     const lastBlockData = readLastBlock(client);
-    const relaychainBlockNumber =
-      lastBlockData?.lastBlock?.relaychainBlockNumber;
+    const relaychainBlockNumber = lastBlockData?.lastBlock?.relaychain;
 
     if (!poolData || !relaychainBlockNumber) return;
 

@@ -1,7 +1,6 @@
 import { ApolloProvider } from '@apollo/client';
 import React, { useMemo } from 'react';
 import { useConfigureApolloClient } from '../hooks/apollo/useApollo';
-import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber';
 import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs';
 import { MathProvider } from '../hooks/math/useMath';
 
@@ -31,11 +30,9 @@ export const MultiProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <PolkadotJsProvider>
       <MathProvider>
-        <LastBlockProvider>
-          <ConfiguredApolloProvider>
-            <QueryProvider>{children}</QueryProvider>
-          </ConfiguredApolloProvider>
-        </LastBlockProvider>
+        <ConfiguredApolloProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </ConfiguredApolloProvider>
       </MathProvider>
     </PolkadotJsProvider>
   );

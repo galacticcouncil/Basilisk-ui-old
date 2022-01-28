@@ -89,8 +89,8 @@ export type LbpPool = {
 export type LastBlock = {
   __typename?: 'LastBlock';
   id: Scalars['String'];
-  parachainBlockNumber?: Maybe<Scalars['String']>;
-  relaychainBlockNumber?: Maybe<Scalars['String']>;
+  parachain: Scalars['String'];
+  relaychain: Scalars['String'];
 };
 
 export type Pool = LbpPool | XykPool;
