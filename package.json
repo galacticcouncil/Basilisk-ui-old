@@ -94,10 +94,12 @@
     "commit": "git-cz",
     "preci": "rm -fr node_modules",
     "ci": "yarn install --frozen-lockfile",
-    "storybook:start": "start-storybook -p 6006 -s public",
-    "storybook:build": "build-storybook -s public",
+    "storybook:start": "start-storybook -p 6006",
+    "storybook:build": "build-storybook",
     "storybook:test": "npx playwright test --config=storybook-testing/playwright.config.ts",
     "storybook:test:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn storybook:start --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn storybook:test\"",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook",
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
     "codegen": "graphql-codegen --config codegen.yml",
@@ -198,8 +200,10 @@
     "@storybook/addon-essentials": "^6.3.11",
     "@storybook/addon-knobs": "^6.3.1",
     "@storybook/addon-links": "^6.4.4",
+    "@storybook/builder-webpack5": "^6.4.17",
+    "@storybook/manager-webpack5": "^6.5.0-alpha.30",
     "@storybook/node-logger": "^6.3.11",
-    "@storybook/preset-create-react-app": "^3.2.0",
+    "@storybook/preset-create-react-app": "^4.0.0",
     "@storybook/preset-scss": "^1.0.3",
     "@storybook/react": "^6.3.11",
     "@testing-library/react-hooks": "^7.0.2",
@@ -225,6 +229,6 @@
     "xunit-viewer": "^7.1.5"
   },
   "resolutions": {
-    "playwright": "^1.18.0"
+    "playwright": "1.17.0-rc1"
   }
 }
