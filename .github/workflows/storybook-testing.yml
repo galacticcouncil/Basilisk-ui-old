@@ -3,6 +3,7 @@ on:
   pull_request:
     branches:
       - develop
+      - 'ci+testing/storybook-addons'
   push:
     branches:
       - 'ci+testing/storybook-addons-gh-actions'
