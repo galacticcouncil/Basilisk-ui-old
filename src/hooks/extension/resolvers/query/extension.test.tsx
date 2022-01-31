@@ -55,7 +55,7 @@ describe('extension', () => {
 
   beforeEach(() => clearMockInjectedWeb3());
 
-  describe('truthy case', () => {
+  describe('falsey case', () => {
     beforeEach(() => {
       // mock the extension resolver internals in order to change the query result
       mockInjectedWeb3(false);
@@ -72,7 +72,7 @@ describe('extension', () => {
     });
   });
 
-  describe('falsey case', () => {
+  describe('truthy case', () => {
     beforeEach(() => {
       mockInjectedWeb3(true);
       // eslint-disable-next-line testing-library/no-render-in-setup
