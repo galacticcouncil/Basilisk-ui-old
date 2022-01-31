@@ -6,7 +6,7 @@ on:
       - 'ci+testing/storybook-addons'
   push:
     branches:
-      - 'ci+testing/storybook-addons-gh-actions'
+      - 'feat/add-storybook-testing-flow'
 
 jobs:
   build_app:
