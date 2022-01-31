@@ -8,4 +8,7 @@ export interface GetLastBlockQueryResponse {
 }
 
 export const useLastBlockQuery = (options?: QueryHookOptions) =>
-  useQuery<GetLastBlockQueryResponse>(GET_LAST_BLOCK, { ...options });
+  useQuery<GetLastBlockQueryResponse>(GET_LAST_BLOCK, {
+    ...options,
+    fetchPolicy: 'cache-only',
+  });
