@@ -828,7 +828,7 @@
             "deprecationReason": null
           },
           {
-            "name": "balance",
+            "name": "balances",
             "description": null,
             "args": [],
             "type": {

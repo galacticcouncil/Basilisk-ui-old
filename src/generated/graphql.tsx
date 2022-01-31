@@ -110,7 +110,7 @@ export type Query = {
   account?: Maybe<Account>;
   accounts: Array<Account>;
   assets?: Maybe<Array<Asset>>;
-  balance: Array<Balance>;
+  balances: Array<Balance>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
