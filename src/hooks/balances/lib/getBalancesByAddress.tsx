@@ -4,9 +4,15 @@ import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 import '@polkadot/api-augment';
-import { FrameSystemAccountInfo } from '@polkadot/types/lookup';
 
-// this function fetches asset balances only for a given set of assetIds
+/**
+ * This function fetches asset balances only for a given set of assetIds.
+ *
+ * @param apiInstance polkadotJs ApiPromise instance
+ * @param address of the entity eg. account, LBPPool, XYKPool
+ * @param assetIds an array of assets
+ * @returns an array of balances
+ */
 export const getBalancesByAddress = async (
   apiInstance: ApiPromise,
   address: string,
@@ -42,8 +48,7 @@ export const fetchNativeAssetBalance = async (
   address: string
 ): Promise<Balance> => {
   // no handling of undefined because apiInstance returns default value of 0 for native asset
-  const nativeAssetBalance: FrameSystemAccountInfo =
-    await apiInstance.query.system.account(address);
+  const nativeAssetBalance = await apiInstance.query.system.account(address);
 
   return {
     assetId: constants.nativeAssetId,
