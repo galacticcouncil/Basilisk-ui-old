@@ -1,0 +1,61 @@
+name: Storybook testing CI flow
+on:
+  pull_request:
+    branches:
+      - develop
+  push:
+    branches:
+      - 'ci+testing/storybook-addons-gh-actions'
+
+jobs:
+  build_app:
+    name: Build UI application
+    runs-on: macos-11
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 17.3
+
+      - name: Install Node.js HTTP-Server
+        run: yarn global add http-server
+
+      - name: Cache Node Modules for ui-app
+        id: cache-node-modules-ui-app
+        uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
+
+      - name: Install Dependencies for ui-app
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: rm -rf node_modules && yarn install --frozen-lockfile
+
+      - name: Update browserslist
+        run: npx browserslist@latest --update-db
+
+      - name: Build Storybook
+        run: yarn storybook:build
+        env:
+          CI: true
+
+      - name: Run storybook server
+        run: http-server storybook-static --port 6006 --silent
+
+      # Check of UI app status
+      - name: Wait for UI app port :6006
+        shell: bash
+        timeout-minutes: 2
+        run: . ./scripts/ci/gh-actions-wait-for-port.sh 6006
+
+      - name: Run storybook tests
+        run: yarn storybook:test
+
+      - name: Upload storybook tests report file
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e_tests_report_html
+          path: ./storybook-testing/results/storybook-testing-results.html
