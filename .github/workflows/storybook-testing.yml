@@ -44,7 +44,7 @@ jobs:
       - name: Run storybook server
         run: http-server storybook-static --port 6006 --silent
 
-      # Check of UI app status
+      # Check of Storybook servers status
       - name: Wait for UI app port :6006
         shell: bash
         timeout-minutes: 2
