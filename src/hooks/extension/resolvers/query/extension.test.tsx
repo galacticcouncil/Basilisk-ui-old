@@ -6,7 +6,11 @@ import {
   GetExtensionQueryResponse,
   useGetExtensionQuery,
 } from '../../queries/useGetExtensionQuery';
-import { mockExtensionDappModule } from '../../lib/getExtension.test';
+import {
+  mockInjectedWeb3,
+  clearMockInjectedWeb3,
+} from '../../lib/getExtension.test';
+import waitForExpect from 'wait-for-expect';
 
 // test component that returns the query result(s)
 const Test = () => {
@@ -32,10 +36,6 @@ export const resolverProviderFactory =
     );
   };
 
-// testing helper to wait for the query to resolve / return data
-export const waitForQuery = async () =>
-  await new Promise((resolve) => setTimeout(resolve, 0));
-
 describe('extension', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
   let component: TestRenderer.ReactTestRenderer;
@@ -53,37 +53,37 @@ describe('extension', () => {
     );
   };
 
-  beforeEach(() => jest.resetModules());
+  beforeEach(() => clearMockInjectedWeb3());
 
   describe('truthy case', () => {
     beforeEach(() => {
       // mock the extension resolver internals in order to change the query result
-      mockExtensionDappModule({
-        isWeb3Injected: false,
-      });
+      mockInjectedWeb3(false);
+      // eslint-disable-next-line testing-library/no-render-in-setup
       render();
     });
 
     it('should resolve the `isAvailable` as false field for the extension entity', async () => {
       await act(async () => {
-        await waitForQuery();
-        expect(data()?.extension.isAvailable).toBe(false);
+        await waitForExpect(() => {
+          expect(data()?.extension.isAvailable).toBe(false);
+        });
       });
     });
   });
 
   describe('falsey case', () => {
     beforeEach(() => {
-      mockExtensionDappModule({
-        isWeb3Injected: true,
-      });
+      mockInjectedWeb3(true);
+      // eslint-disable-next-line testing-library/no-render-in-setup
       render();
     });
 
     it('should resolve the `isAvailable` as true field for the extension entity', async () => {
       await act(async () => {
-        await waitForQuery();
-        expect(data()?.extension.isAvailable).toBe(true);
+        waitForExpect(() => {
+          expect(data()?.extension.isAvailable).toBe(true);
+        });
       });
     });
   });
