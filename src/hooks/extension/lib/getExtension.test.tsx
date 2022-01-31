@@ -26,12 +26,12 @@ describe('getExtension', () => {
   });
 
   describe('extension unavailable', () => {
-    it('should set `isAvailable = true`', () => {
+    it('should set `isAvailable = false`', () => {
       expect(extension.isAvailable).toBe(false);
     });
   });
 
-  describe('extension availale', () => {
+  describe('extension available', () => {
     beforeEach(async () => {
       mockInjectedWeb3(true);
 
