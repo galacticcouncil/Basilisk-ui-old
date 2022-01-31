@@ -15,7 +15,6 @@ jobs:
     name: Build UI application
     runs-on: macos-11
     steps:
-      - uses: actions/checkout@v2
 
       - name: Install Node.js
         uses: actions/setup-node@v1
@@ -24,6 +23,8 @@ jobs:
 
       - name: Install Node.js HTTP-Server
         run: yarn global add http-server
+
+      - uses: actions/checkout@v2
 
       - name: Cache Node Modules for ui-app
         id: cache-node-modules-ui-app
