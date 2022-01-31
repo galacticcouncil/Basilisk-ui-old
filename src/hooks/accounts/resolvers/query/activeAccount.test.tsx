@@ -1,11 +1,11 @@
 import { Resolvers } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import {
-  GetSelectedAccountQueryResponse,
-  useGetSelectedAccountQuery,
-} from '../../queries/useGetSelectedAccountQuery';
+  GetActiveAccountQueryResponse,
+  useGetActiveAccountQuery,
+} from '../../queries/useGetActiveAccountQuery';
 import TestRenderer, { act } from 'react-test-renderer';
-import { useSelectedAccountQueryResolver } from './selectedAccount';
+import { useActiveAccountQueryResolver } from './activeAccount';
 
 const mockUsePersistActiveAccount = jest.fn();
 jest.mock('../../usePersistActiveAccount', () => ({
@@ -14,14 +14,14 @@ jest.mock('../../usePersistActiveAccount', () => ({
 
 // test component that returns the query result(s)
 const Test = () => {
-  const { data } = useGetSelectedAccountQuery();
+  const { data } = useGetActiveAccountQuery();
   return <>{JSON.stringify(data)}</>;
 };
 
 const useResolvers = () => {
   return {
     Query: {
-      ...useSelectedAccountQueryResolver(),
+      ...useActiveAccountQueryResolver(),
       accounts: () => {
         return [{ id: 'mockId', name: 'Mocked Account', balances: [] }];
       },
@@ -42,11 +42,11 @@ export const resolverProviderFactory =
 export const waitForQuery = async () =>
   await new Promise((resolve) => setTimeout(resolve, 10));
 
-describe('useSelectedAccountQueryResolver', () => {
+describe('useActiveAccountQueryResolver', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
   let component: TestRenderer.ReactTestRenderer;
   // function to parse / cast the rendering result of 'Test' into the required testing data
-  let data: () => GetSelectedAccountQueryResponse | undefined = () =>
+  let data: () => GetActiveAccountQueryResponse | undefined = () =>
     JSON.parse(component.toJSON() as unknown as string);
 
   // combine resolvers and the 'Test' component and render them
@@ -64,24 +64,24 @@ describe('useSelectedAccountQueryResolver', () => {
   });
 
   describe('falsy case', () => {
-    it('should resolve the selectedAccount as null when no persistedActiveAccountId if found', async () => {
+    it('should resolve the activeAccount as null when no persistedActiveAccountId if found', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [null]);
       render();
       await act(async () => {
         await waitForQuery();
-        expect(data()?.selectedAccount).toBe(null);
+        expect(data()?.activeAccount).toBe(null);
       });
     });
   });
 
   describe('truthy case', () => {
-    it('should resolve the selectedAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
+    it('should resolve the activeAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
       render();
       await act(async () => {
         await waitForQuery();
-        expect(data()?.selectedAccount).toStrictEqual({
+        expect(data()?.activeAccount).toStrictEqual({
           id: 'mockId',
           name: 'Mocked Account',
           balances: [],
@@ -90,14 +90,14 @@ describe('useSelectedAccountQueryResolver', () => {
       });
     });
 
-    it('should resolve the selectedAccount as null when persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', async () => {
+    it('should resolve the activeAccount as null when persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [
         { id: 'nonExistingMockId' },
       ]);
       render();
       await act(async () => {
         await waitForQuery();
-        expect(data()?.selectedAccount).toStrictEqual(null);
+        expect(data()?.activeAccount).toStrictEqual(null);
       });
     });
   });

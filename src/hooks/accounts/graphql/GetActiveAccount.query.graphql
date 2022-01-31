@@ -1,11 +1,11 @@
-# TODO: fetch only balances for the active fee payment asset
+# Query that triggers the local extension resolver
 query GetActiveAccount {
   lastBlock @client {
     parachainBlockNumber
     relaychainBlockNumber
   }
 
-  account: accounts(isActive: true) @client {
+  activeAccount @client {
     id
     name
     balances {

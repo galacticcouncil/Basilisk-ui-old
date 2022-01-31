@@ -15,11 +15,11 @@ const withTypename = (account: Account) => ({
   ...account,
 });
 
-export const useSelectedAccountQueryResolver = () => {
+export const useActiveAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
 
   return {
-    selectedAccount: useResolverToRef(
+    activeAccount: useResolverToRef(
       useCallback(
         // () => {
         async (
@@ -32,18 +32,18 @@ export const useSelectedAccountQueryResolver = () => {
               query: GET_ACCOUNTS,
               notifyOnNetworkStatusChange: true,
             });
-            const selectedAccount = find(accountsData?.accounts, {
+            const activeAccount = find(accountsData?.accounts, {
               id: persistedActiveAccount?.id,
             });
 
-            return selectedAccount ? withTypename(selectedAccount) : null;
+            return activeAccount ? withTypename(activeAccount) : null;
           } else {
             return null;
           }
         },
         [persistedActiveAccount]
       ),
-      'useSelectedAccountQueryResolver'
+      'useActiveAccountQueryResolver'
     ),
   };
 };

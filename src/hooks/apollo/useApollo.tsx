@@ -4,10 +4,6 @@ import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers
 import { loader } from 'graphql.macro';
 import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
-import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
-
-import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
-import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
@@ -21,8 +17,7 @@ import { usePersistentConfig } from '../config/usePersistentConfig';
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolvers, SelectedAccount } =
-    useAccountsResolvers();
+  const { Query: AccountsQueryResolvers } = useAccountsResolvers();
   const {
     Query: PoolsQueryResolver,
     XYKPool,
@@ -33,7 +28,6 @@ export const useResolvers: () => Resolvers = () => {
     Query: {
       ...AccountsQueryResolvers,
       ...ExtensionQueryResolver,
-      ...useConfigQueryResolvers(),
       ...useFeePaymentAssetsQueryResolvers(),
       ...useBalanceQueryResolvers(),
       ...PoolsQueryResolver,
@@ -41,11 +35,8 @@ export const useResolvers: () => Resolvers = () => {
     },
     Mutation: {
       ...useAccountsMutationResolvers(),
-      ...useVestingMutationResolvers(),
-      ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
     },
-    SelectedAccount,
     XYKPool,
     LBPPool,
   };

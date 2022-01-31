@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useGetAccountsLazyQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
 import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
-import { useGetSelectedAccountQuery } from '../hooks/accounts/queries/useGetSelectedAccountQuery';
+import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
     useGetExtensionQuery();
   const [setActiveAccount] = useSetActiveAccountMutation();
-  const { data: selectedAccountData } = useGetSelectedAccountQuery();
+  const { data: activeAccountData } = useGetActiveAccountQuery();
   const [getAccounts, { data: accountsData }] = useGetAccountsLazyQuery();
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
 
@@ -30,7 +30,7 @@ export const Wallet = () => {
         isExtensionAvailable={!!extensionData?.extension.isAvailable}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
-        account={selectedAccountData?.selectedAccount}
+        account={activeAccountData?.activeAccount}
         onAccountSelected={(account) => console.log(account)}
         modalContainerRef={modalContainerRef}
         setActiveAccount={setActiveAccount}

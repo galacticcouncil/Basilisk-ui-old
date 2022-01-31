@@ -1,17 +1,17 @@
 import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
-import { useSelectedAccountQueryResolver } from './query/selectedAccount';
+import { useActiveAccountQueryResolver } from './query/activeAccount';
 
 /**
  * Used to resolve queries for the `Accounts` (or `selectedAccount`) entity.
  */
 export const useAccountsResolvers = () => {
   const getAccountsQueryResolver = useGetAccountsQueryResolver();
-  const getSelectedAccountQueryResolver = useSelectedAccountQueryResolver();
+  const getActiveAccountQueryResolver = useActiveAccountQueryResolver();
 
   return {
     Query: {
       ...getAccountsQueryResolver,
-      ...getSelectedAccountQueryResolver,
+      ...getActiveAccountQueryResolver,
     },
   };
 };

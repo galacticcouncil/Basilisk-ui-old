@@ -9,7 +9,7 @@ type Account {
 
 extend type Query {
   accounts: [Account!]!
-  selectedAccount: Account!
+  activeAccount: Account!
 }
 
 extend type Mutation {
