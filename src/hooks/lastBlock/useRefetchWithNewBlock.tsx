@@ -9,8 +9,7 @@ import {
   GetLastBlockQueryResponse,
   GET_LAST_BLOCK,
 } from './queries/useLastBlockQuery';
-import { useSubscribeNewBlock } from './useSubscribeNewBlockNumber';
-import { useValidationData } from './useValidationData';
+import { useLastBlock } from './useLastBlock';
 
 export const __typename = 'LastBlock';
 export const id = __typename;
@@ -30,28 +29,14 @@ export const writeLastBlock = (
 export const useRefetchWithNewBlock = (
   client?: ApolloClient<NormalizedCacheObject>
 ) => {
-  const chainLastBlock = useSubscribeNewBlock();
-  const validationData = useValidationData();
+  const lastBlock = useLastBlock();
 
   useEffect(() => {
-    if (!client) {
+    if (!client || !lastBlock) {
       return;
     }
 
-    if (!chainLastBlock) {
-      return;
-    }
-
-    if (!validationData) {
-      return;
-    }
-
-    const lastBlock: LastBlock = {
-      __typename,
-      id,
-      relaychain: validationData.relayParentNumber.toString(),
-      parachain: chainLastBlock.block.header.number.toString(),
-    };
+    console.log({ lastBlock });
 
     const lastBlockData = client.cache.readQuery<GetLastBlockQueryResponse>({
       query: GET_LAST_BLOCK,
@@ -69,5 +54,5 @@ export const useRefetchWithNewBlock = (
         },
       });
     }
-  }, [chainLastBlock, client, validationData]);
+  }, [lastBlock, client]);
 };
