@@ -4,7 +4,7 @@ import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutatio
 import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
-import error from '../../../../errors';
+import errors from '../../../../errors';
 
 export const __typename: Balance['__typename'] = 'Balance';
 
@@ -36,8 +36,8 @@ export const balancesByAddressQueryResolverFactory =
     args: BalancesByAddressResolverArgs
   ): Promise<Balance[] | undefined> => {
     // every component is supposed to have an initialized apiInstance
-    if (!apiInstance) throw Error(error.apiInstanceNotInitialized);
-    if (!args.assetIds) throw Error(error.noArgumentsProvidedBalanceQuery);
+    if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
+    if (!args.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
 
     const assets = objectToArrayWithoutNull(args.assetIds);
 
