@@ -23,9 +23,6 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Set NODE_OPTIONS env var
-        run: export NODE_OPTIONS=--openssl-legacy-provider
-
       - name: Cache Node Modules for ui-app
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -44,6 +41,7 @@ jobs:
         run: yarn storybook:build
         env:
           CI: true
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Run storybook server
         run: http-server storybook-static --port 6006 --silent
