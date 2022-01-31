@@ -77,7 +77,6 @@ describe('useActiveAccountQueryResolver', () => {
   describe('truthy case', () => {
     it('should resolve the activeAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
-      mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
       render();
       await act(async () => {
         await waitForQuery();
