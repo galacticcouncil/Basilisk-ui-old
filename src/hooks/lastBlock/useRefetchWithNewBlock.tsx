@@ -36,8 +36,6 @@ export const useRefetchWithNewBlock = (
       return;
     }
 
-    console.log({ lastBlock });
-
     const lastBlockData = client.cache.readQuery<GetLastBlockQueryResponse>({
       query: GET_LAST_BLOCK,
     });
