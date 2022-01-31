@@ -1,5 +1,4 @@
 import { useBalanceQueryResolvers } from '../../balances/resolvers/query/balances';
-import { useVestingScheduleQueryResolvers } from '../../vesting/useVestingScheduleQueryResolvers';
 import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
 
 /**
@@ -18,7 +17,6 @@ export const useAccountsQueryResolvers = () => {
      */
     Account: {
       ...useBalanceQueryResolvers(),
-      ...useVestingScheduleQueryResolvers(),
     },
   };
 };

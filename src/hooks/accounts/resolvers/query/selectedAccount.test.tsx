@@ -42,7 +42,7 @@ export const resolverProviderFactory =
 export const waitForQuery = async () =>
   await new Promise((resolve) => setTimeout(resolve, 10));
 
-describe('selectedAccount', () => {
+describe('useSelectedAccountQueryResolver', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
   let component: TestRenderer.ReactTestRenderer;
   // function to parse / cast the rendering result of 'Test' into the required testing data
@@ -64,11 +64,8 @@ describe('selectedAccount', () => {
   });
 
   describe('falsy case', () => {
-    beforeEach(() => {
+    it('should resolve the selectedAccount as null when no persistedActiveAccountId if found', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [null]);
-    });
-
-    it('should resolve the selectedAccount as null for the', async () => {
       render();
       await act(async () => {
         await waitForQuery();
@@ -78,11 +75,9 @@ describe('selectedAccount', () => {
   });
 
   describe('truthy case', () => {
-    beforeEach(() => {
+    it('should resolve the selectedAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
-    });
-
-    it('should resolve the selectedAccount as null for the', async () => {
+      mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
       render();
       await act(async () => {
         await waitForQuery();
@@ -92,6 +87,17 @@ describe('selectedAccount', () => {
           balances: [],
           __typename: 'Account',
         });
+      });
+    });
+
+    it('should resolve the selectedAccount as null when persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', async () => {
+      mockUsePersistActiveAccount.mockImplementation(() => [
+        { id: 'nonExistingMockId' },
+      ]);
+      render();
+      await act(async () => {
+        await waitForQuery();
+        expect(data()?.selectedAccount).toStrictEqual(null);
       });
     });
   });

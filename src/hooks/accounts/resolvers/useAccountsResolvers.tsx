@@ -1,9 +1,8 @@
 import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
 import { useSelectedAccountQueryResolver } from './query/selectedAccount';
-import { useVestingScheduleQueryResolvers } from '../../vesting/useVestingScheduleQueryResolvers';
 
 /**
- * Used to resolve queries for the `Account` (or `accounts`) entity.
+ * Used to resolve queries for the `Accounts` (or `selectedAccount`) entity.
  */
 export const useAccountsResolvers = () => {
   const getAccountsQueryResolver = useGetAccountsQueryResolver();
@@ -13,9 +12,6 @@ export const useAccountsResolvers = () => {
     Query: {
       ...getAccountsQueryResolver,
       ...getSelectedAccountQueryResolver,
-    },
-    SelectedAccount: {
-      ...useVestingScheduleQueryResolvers(),
     },
   };
 };

@@ -24,7 +24,6 @@ export type Account = {
   balances: Array<Balance>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
-  vestingSchedule: VestingSchedule;
 };
 
 export type Asset = {
@@ -121,15 +120,6 @@ export enum TradeType {
   Buy = 'Buy',
   Sell = 'Sell',
 }
-
-export type VestingSchedule = {
-  __typename?: 'VestingSchedule';
-  perPeriod?: Maybe<Scalars['String']>;
-  period?: Maybe<Scalars['String']>;
-  periodCount?: Maybe<Scalars['String']>;
-  remainingVestingAmount?: Maybe<Scalars['String']>;
-  start?: Maybe<Scalars['String']>;
-};
 
 export type XykPool = {
   __typename?: 'XYKPool';

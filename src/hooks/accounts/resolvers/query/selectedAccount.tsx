@@ -36,7 +36,7 @@ export const useSelectedAccountQueryResolver = () => {
               id: persistedActiveAccount?.id,
             });
 
-            return withTypename(selectedAccount);
+            return selectedAccount ? withTypename(selectedAccount) : null;
           } else {
             return null;
           }

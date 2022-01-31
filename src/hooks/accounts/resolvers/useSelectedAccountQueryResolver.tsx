@@ -1,7 +1,7 @@
 import { useSelectedAccountQueryResolver } from './query/selectedAccount';
 
 /**
- * Used to resolve queries for the `Account` (or `accounts`) entity.
+ * Used to resolve queries for the `ActiveAccount` entity.
  */
 export const useSelectedAccountQueryResolvers = () => {
   const getSelectedAccountQueryResolver = useSelectedAccountQueryResolver();
@@ -10,12 +10,5 @@ export const useSelectedAccountQueryResolvers = () => {
     Query: {
       selectedAccount: getSelectedAccountQueryResolver,
     },
-    // /**
-    //  * Additional sub-resolvers for the `Account` entity,
-    //  * resolving e.g. the `balances` or `vestingSchedules` fields.
-    //  */
-    // SelectedAccount: {
-    //   ...useBalanceQueryResolvers(),
-    // },
   };
 };
