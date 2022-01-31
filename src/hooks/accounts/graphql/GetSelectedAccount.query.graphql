@@ -12,14 +12,5 @@ query GetSelectedAccount {
       assetId
       balance
     }
-    vestingSchedule {
-      # figure out why this fragment doesnt work
-      # ...VestingScheduleFields,
-      remainingVestingAmount
-      start
-      period
-      periodCount
-      perPeriod
-    }
   }
 }

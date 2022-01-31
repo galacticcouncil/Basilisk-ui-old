@@ -5,7 +5,6 @@ type Account {
   id: String!
   name: String
   balances: [Balance!]!
-  vestingSchedule: VestingSchedule!
 }
 
 extend type Query {

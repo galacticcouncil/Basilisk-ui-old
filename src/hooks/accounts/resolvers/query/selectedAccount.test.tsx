@@ -1,4 +1,3 @@
-// configure resolvers for testing purposes
 import { Resolvers } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import {
@@ -23,6 +22,9 @@ const useResolvers = () => {
   return {
     Query: {
       ...useSelectedAccountQueryResolver(),
+      accounts: () => {
+        return [{ id: 'mockId', name: 'Mocked Account', balances: [] }];
+      },
     },
   };
 };
@@ -38,7 +40,7 @@ export const resolverProviderFactory =
 
 // testing helper to wait for the query to resolve / return data
 export const waitForQuery = async () =>
-  await new Promise((resolve) => setTimeout(resolve, 0));
+  await new Promise((resolve) => setTimeout(resolve, 10));
 
 describe('selectedAccount', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
@@ -76,8 +78,6 @@ describe('selectedAccount', () => {
   });
 
   describe('truthy case', () => {
-    console.log('running truthy test');
-
     beforeEach(() => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
     });
@@ -86,7 +86,12 @@ describe('selectedAccount', () => {
       render();
       await act(async () => {
         await waitForQuery();
-        //expect(data()?.selectedAccount).toBe({ id: "feifjeijfeijfie", __typename: "Account"});
+        expect(data()?.selectedAccount).toStrictEqual({
+          id: 'mockId',
+          name: 'Mocked Account',
+          balances: [],
+          __typename: 'Account',
+        });
       });
     });
   });
