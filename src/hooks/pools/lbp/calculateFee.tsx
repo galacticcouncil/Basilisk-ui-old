@@ -1,33 +1,27 @@
 import { ApiPromise } from '@polkadot/api';
-import { find } from 'lodash';
 import { LbpPool } from '../../../generated/graphql';
-import { getBalancesByAddress } from '../../balances/useGetBalancesByAddress';
 
 /**
  * Fee applied when the repay target has not yet been met
- * 
+ *
  * TODO: fetch from constants (?)
  */
 export const repayFee = {
-    numerator: 2,
-    denominator: 10,
-}
+  numerator: 2,
+  denominator: 10,
+};
 
 /**
- * Determines which fee should be applied depending 
+ * Determines which fee should be applied depending
  * on if the repayTarget has been reached or not.
- * @param apiInstance 
- * @param pool 
+ * @param apiInstance
+ * @param pool
  */
-export const calculateFee = async (
-    apiInstance: ApiPromise,
-    pool: LbpPool,
-) => {
-    const poolAssetIds = [pool.assetInId];
-    // const balances = getBalancesByAddress(apiInstance, pool.feeCollector, poolAssetIds);
-    // const accumulatedAssetBalance = find(balances, {
-    //     assetId: pool.assetInId
-    // });
-
-    // console.log('accumulatedAssetBalance', accumulatedAssetBalance, pool.repayTarget);
-}
+export const calculateFee = async (apiInstance: ApiPromise, pool: LbpPool) => {
+  // const poolAssetIds = [pool.assetInId];
+  // const balances = getBalancesByAddress(apiInstance, pool.feeCollector, poolAssetIds);
+  // const accumulatedAssetBalance = find(balances, {
+  //     assetId: pool.assetInId
+  // });
+  // console.log('accumulatedAssetBalance', accumulatedAssetBalance, pool.repayTarget);
+};
