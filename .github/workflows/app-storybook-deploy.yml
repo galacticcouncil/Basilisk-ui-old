@@ -23,7 +23,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 17.3
 
       - name: Cache Node Modules
         id: cache-node-modules-ui-app-v1
@@ -64,6 +64,7 @@ jobs:
         env:
           CI: false
           REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Upload script files
         uses: actions/upload-artifact@v2
