@@ -342,6 +342,6 @@ Workflow config from default branch will be used for all actions
 
 You have to use legacy openssl provider in node 17+. Set this to node options
 
-```
+```shell
 export NODE_OPTIONS=--openssl-legacy-provider
 ```
