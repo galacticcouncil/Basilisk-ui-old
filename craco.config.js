@@ -21,25 +21,6 @@ module.exports = {
         syncWebAssembly: true,
       };
 
-      // webpackConfig.module.rules.forEach((rule) => {
-      //   (rule.oneOf || []).forEach((oneOf) => {
-      //     if (oneOf.loader && oneOf.loader.indexOf('file-loader') >= 0) {
-      //       oneOf.exclude.push(wasmExtensionRegExp);
-      //     }
-      //   });
-      // });
-
-      // const wasmLoader = {
-      //   // loaders: ['wasm-loader'],
-      //   loader: require.resolve('wasm-loader'),
-      //   options: {
-      //     test: /\.wasm$/,
-      //     exclude: /node_modules/,
-      //   },
-      // };
-      //
-      // addBeforeLoader(webpackConfig, loaderByName('file-loader'), wasmLoader);
-
       return webpackConfig;
     },
   },
