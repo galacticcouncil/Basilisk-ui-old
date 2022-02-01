@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Asset } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../../apollo/useResolverToRef';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs'
 import { useGetAssets } from '../useGetAssets';
 

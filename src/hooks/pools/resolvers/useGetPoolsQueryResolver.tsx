@@ -6,7 +6,7 @@ import log from 'loglevel';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { LbpPool, XykPool } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../../apollo/useResolverToRef';
 import { __typename } from '../../accounts/resolvers/useGetAccountsQueryResolver';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { useGetLbpPool } from '../useGetLbpPool';

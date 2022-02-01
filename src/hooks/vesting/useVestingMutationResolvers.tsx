@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
+import { useResolverToRef } from '../apollo/useResolverToRef'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
