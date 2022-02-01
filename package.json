@@ -98,7 +98,7 @@
     "ci": "yarn install --frozen-lockfile",
     "storybook:test": "npx playwright test --config=storybook-testing/playwright.config.ts",
     "storybook:test:ci": "concurrently -k -s first -n \"SB,TEST\" -c \"magenta,blue\" \"yarn storybook:start --quiet && npx http-server storybook-static --port 6006 --silent\" \"wait-on tcp:6006 && yarn storybook:test\"",
-    "storybook": "start-storybook -p 6006",
+    "storybook:start": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
