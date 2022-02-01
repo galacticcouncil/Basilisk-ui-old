@@ -19,7 +19,7 @@ export const getExtension = async (): Promise<Extension> => {
            */
           // TODO: add polling of the extension availability,
           // that will resolve as soon as this is available, or timeout after a certain time
-          isAvailable: !!(window as any).injectedWeb3['polkadot-js'],
+          isAvailable: !!(window as any).injectedWeb3?.['polkadot-js'],
         });
       }, waitForIsAvailableDuration);
     }
