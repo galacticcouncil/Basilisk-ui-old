@@ -17,7 +17,8 @@ const withTypename = (extension: Extension) => ({
  *
  * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */
-export const extensionQueryResolver = () => withTypename(getExtension());
+export const extensionQueryResolver = async () =>
+  withTypename(await getExtension());
 
 /**
  * For standardization purposes, we expose the resolver as a hook.
