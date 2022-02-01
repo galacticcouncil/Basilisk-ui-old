@@ -44,7 +44,7 @@ jobs:
           NODE_OPTIONS: --openssl-legacy-provider
 
       - name: Run storybook server
-        run: http-server storybook-static --port 6006 --silent
+        run: http-server storybook-static --port 6006 &
 
       # Check of UI app status
       - name: Wait for UI app port :6006
