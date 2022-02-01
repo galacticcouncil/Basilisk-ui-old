@@ -1,4 +1,20 @@
 type Balance {
-    assetId: String!,
-    balance: String!
+  id: String
+  assetId: String!
+  balance: String!
+}
+
+# Specify what entity is returned under the `balance` field when queried
+# This is again useful for strict typing down the line
+extend type Query {
+  balances: [Balance!]!
+  # Just to make sure AssetIds makes it through the codegen
+  # otherwise it'd be ignored
+  _assetIds: AssetIds
+}
+
+# this hack is necessary to keep the AssetIds generated type
+type AssetIds {
+  a: String!
+  b: String
 }

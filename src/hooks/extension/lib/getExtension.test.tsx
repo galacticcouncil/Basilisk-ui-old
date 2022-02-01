@@ -1,39 +1,41 @@
 import { Extension } from '../../../generated/graphql';
 import { getExtension } from './getExtension';
 
-const extensionDappModule = '@polkadot/extension-dapp';
+export const clearMockInjectedWeb3 = () => {
+  delete (window as any).injectedWeb3;
+};
 
-export const mockExtensionDappModule = ({
-  isWeb3Injected,
-}: {
-  isWeb3Injected: boolean;
-}) => {
-  jest.doMock(extensionDappModule, () => ({
-    isWeb3Injected,
-  }));
+export const mockInjectedWeb3 = (injected: boolean) => {
+  const injectedWeb3 = injected
+    ? {
+        'polkadot-js': {},
+      }
+    : {};
+
+  clearMockInjectedWeb3();
+
+  (window as any).injectedWeb3 = injectedWeb3;
 };
 
 describe('getExtension', () => {
   let extension: Extension;
 
-  beforeEach(() => {
-    jest.resetAllMocks();
-    extension = getExtension();
+  beforeEach(async () => {
+    clearMockInjectedWeb3();
+    extension = await getExtension();
   });
 
   describe('extension unavailable', () => {
-    it('should set `isAvailable = true`', () => {
+    it('should set `isAvailable = false`', () => {
       expect(extension.isAvailable).toBe(false);
     });
   });
 
-  describe('extension availale', () => {
-    beforeEach(() => {
-      mockExtensionDappModule({
-        isWeb3Injected: true,
-      });
+  describe('extension available', () => {
+    beforeEach(async () => {
+      mockInjectedWeb3(true);
 
-      extension = getExtension();
+      extension = await getExtension();
     });
 
     it('should set `isAvailable = true`', () => {

@@ -1,21 +1,20 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client';
 import { useAccountsQueryResolvers } from '../accounts/resolvers/useAccountsQueryResolvers';
 import { loader } from 'graphql.macro';
 import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
-import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
 
-import { useBalanceMutationResolvers } from '../balances/useBalanceMutationResolvers';
 import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
-import { useBalanceQueryResolvers } from '../balances/useBalanceQueryResolvers';
+import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
+import { usePersistentConfig } from '../config/usePersistentConfig';
 
 /**
  * Add all local gql resolvers here
@@ -42,7 +41,6 @@ export const useResolvers: () => Resolvers = () => {
     Mutation: {
       ...useAccountsMutationResolvers(),
       ...useVestingMutationResolvers(),
-      ...useBalanceMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
     },
@@ -65,6 +63,7 @@ export const useConfigureApolloClient = () => {
   // therefore we get it from the local storage instead
   const [{ processorUrl }] = usePersistentConfig();
 
+  // todo test if url change triggers query refetch
   const client = useMemo(() => {
     return new ApolloClient({
       uri: processorUrl,
@@ -75,7 +74,15 @@ export const useConfigureApolloClient = () => {
       resolvers,
       typeDefs,
     });
-  }, [processorUrl, cache, resolvers]);
+    // we don't want the client to re-instantiate when the resolvers change,
+    // this is handled below in a separate effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [processorUrl, cache]);
+
+  useEffect(() => {
+    console.log('updating resolvers');
+    client?.setResolvers(resolvers);
+  }, [resolvers, client]);
 
   useRefetchWithNewBlock(client);
 
