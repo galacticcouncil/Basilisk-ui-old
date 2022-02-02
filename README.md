@@ -309,6 +309,20 @@ For running e2e test locally you should:
 4) Run tests with `yarn test:e2e-local`
 
 
+### Storybook testing
+
+#### Watch
+As watcher library we are using [chokidar-cli](https://github.com/open-cli-tools/chokidar-cli) .
+
+For testing storybook in watch mode Storybook server must be running:
+```shell
+yarn storybook:test
+```
+Watcher can be started in separate terminal window:
+```shell
+yarn storybook:test:watch
+```
+
 
 ### Github Actions workflows
 
@@ -331,7 +345,7 @@ Workflow config from default branch will be used for all actions
 
 
 
-### VSCode extensions
+## VSCode extensions
 
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
