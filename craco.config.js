@@ -2,6 +2,14 @@ module.exports = {
   webpack: {
     configure: (webpackConfig) => {
       // support for wasm
+
+      webpackConfig.resolve.extensions.push('.wasm');
+
+      webpackConfig.resolve.fallback = {
+        crypto: require.resolve('crypto-browserify'),
+        stream: require.resolve('stream-browserify'),
+      };
+
       webpackConfig.module.rules.push({
         test: /\.wasm$/,
         type: 'webassembly/sync',
