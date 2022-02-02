@@ -35,3 +35,5 @@ export const mockUsePolkadotJsContext = () => ({
   apiInstance: getMockApiPromise(),
   loading: false,
 });
+
+export const mockedUsePolkadotJsContext = mockUsePolkadotJsContext();

@@ -5,7 +5,7 @@ import { subscribeNewBlock } from './lib/subscribeNewBlock';
 import { getValidationData } from './lib/getValidationData';
 import { setTimeout } from 'timers';
 import {
-  mockUsePolkadotJsContext,
+  mockedUsePolkadotJsContext,
   getMockApiPromise,
 } from '../polkadotJs/tests/mockUsePolkadotJsContext';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
@@ -45,7 +45,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
     jest.resetModules();
 
     (usePolkadotJsContext as jest.Mock).mockReturnValue(
-      mockUsePolkadotJsContext
+      mockedUsePolkadotJsContext
     );
   });
 
