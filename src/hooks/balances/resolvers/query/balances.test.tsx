@@ -29,7 +29,7 @@ jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
     const {
       mockUsePolkadotJsContext,
     } = require('../../../polkadotJs/tests/mockUsePolkadotJsContext');
-    return mockUsePolkadotJsContext();
+    return mockUsePolkadotJsContext;
   },
 }));
 
