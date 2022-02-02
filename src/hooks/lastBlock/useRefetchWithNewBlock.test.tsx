@@ -22,10 +22,6 @@ import { Query } from '../../generated/graphql';
 waitForExpect.defaults.interval = 10;
 waitForExpect.defaults.timeout = 1000;
 
-jest.mock('../polkadotJs/usePolkadotJs', () => ({
-  usePolkadotJsContext: jest.fn(),
-}));
-
 jest.mock('./useLastBlock', () => {
   return {
     useLastBlock: jest.fn(),
