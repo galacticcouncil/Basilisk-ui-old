@@ -15,10 +15,10 @@ export interface WalletProps {
   accounts?: Account[];
   account?: Account;
   onAccountSelected: (account: Account) => void;
+  onAccountCleared: () => void;
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
-  setActiveAccount: Function;
-  setAccountSelectorOpen: Function;
+  setAccountSelectorOpen: (isModalOpen: boolean) => void;
 }
 
 export const Wallet = ({
@@ -26,16 +26,16 @@ export const Wallet = ({
   accounts,
   account,
   onAccountSelected,
+  onAccountCleared,
   extensionLoading,
   isExtensionAvailable,
-  setActiveAccount,
   setAccountSelectorOpen,
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
     onAccountSelected,
+    onAccountCleared,
     account,
-    setActiveAccount,
     isExtensionAvailable,
   });
   const { isModalOpen, toggleModal, modalPortal, toggleId } = useModalPortal(

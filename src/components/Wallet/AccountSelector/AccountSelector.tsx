@@ -7,10 +7,10 @@ import './AccountSelector.scss';
 export interface AccountSelectorProps {
   accounts?: Account[];
   account?: Account;
-  onAccountSelected: (asset: Account) => void;
+  onAccountSelected: (account: Account) => void;
+  onAccountCleared: () => void;
   innerRef: MutableRefObject<HTMLDivElement | null>;
   closeModal: () => void;
-  setActiveAccount: Function;
   isExtensionAvailable: boolean;
 }
 
@@ -20,10 +20,10 @@ export interface AccountSelectorProps {
 export const AccountSelector = ({
   accounts,
   onAccountSelected,
+  onAccountCleared,
   account,
   innerRef,
   closeModal,
-  setActiveAccount,
   isExtensionAvailable,
 }: AccountSelectorProps) => {
   const activeAccount = useMemo(() => account, [account]);
@@ -52,7 +52,6 @@ export const AccountSelector = ({
                     onClick={() => onAccountSelected(account)}
                     active={account.id === activeAccount?.id}
                     account={account}
-                    setActiveAccount={setActiveAccount}
                   />
                 ))}
               </div>
@@ -67,16 +66,7 @@ export const AccountSelector = ({
             )}
             {account && (
               <div className="d-flex mx-3">
-                <Button
-                  kind={ButtonKind.Secondary}
-                  onClick={() =>
-                    setActiveAccount({
-                      variables: {
-                        id: undefined,
-                      },
-                    }).then(() => onAccountSelected(account))
-                  }
-                >
+                <Button kind={ButtonKind.Secondary} onClick={onAccountCleared}>
                   Clear account
                 </Button>
               </div>

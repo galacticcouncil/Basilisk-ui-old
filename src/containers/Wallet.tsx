@@ -1,9 +1,10 @@
 import { Wallet as WalletComponent } from '../components/Wallet/Wallet';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetAccountsLazyQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
 import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
+import { Account } from '../generated/graphql';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
@@ -21,6 +22,17 @@ export const Wallet = () => {
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
+  const onAccountSelected = useCallback(
+    (account: Account) => {
+      setActiveAccount({ variables: { id: account.id } });
+    },
+    [setActiveAccount]
+  );
+
+  const onAccountCleared = useCallback(() => {
+    setActiveAccount({ variables: { id: undefined } });
+  }, [setActiveAccount]);
+
   // request data from the data layer
   // render the component with the provided data
   return (
@@ -31,9 +43,9 @@ export const Wallet = () => {
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
         account={activeAccountData?.activeAccount}
-        onAccountSelected={(account) => console.log(account)}
+        onAccountSelected={onAccountSelected}
+        onAccountCleared={onAccountCleared}
         modalContainerRef={modalContainerRef}
-        setActiveAccount={setActiveAccount}
         setAccountSelectorOpen={setAccountSelectorOpen}
       />
     </>

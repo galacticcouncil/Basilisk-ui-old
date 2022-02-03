@@ -10,15 +10,15 @@ import { WalletProps } from '../../Wallet';
 export type ModalPortalElement = ({
   accounts,
   onAccountSelected,
+  onAccountCleared,
   account,
-  setActiveAccount,
   isExtensionAvailable,
 }: Pick<
   WalletProps,
   | 'accounts'
   | 'onAccountSelected'
+  | 'onAccountCleared'
   | 'account'
-  | 'setActiveAccount'
   | 'isExtensionAvailable'
 >) => ModalPortalElementFactory;
 export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
@@ -26,8 +26,8 @@ export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
 export const useModalPortalElement: ModalPortalElement = ({
   accounts,
   onAccountSelected,
+  onAccountCleared,
   account,
-  setActiveAccount,
   isExtensionAvailable,
 }) => {
   const handleAccountSelected = useCallback(
@@ -38,6 +38,14 @@ export const useModalPortalElement: ModalPortalElement = ({
     [onAccountSelected]
   );
 
+  const handleAccountCleared = useCallback(
+    (closeModal: CloseModal) => () => {
+      closeModal();
+      onAccountCleared();
+    },
+    [onAccountCleared]
+  );
+
   return useCallback(
     ({ closeModal, elementRef, isModalOpen }) => {
       return isModalOpen ? (
@@ -46,8 +54,8 @@ export const useModalPortalElement: ModalPortalElement = ({
           accounts={accounts}
           account={account}
           onAccountSelected={handleAccountSelected(closeModal)}
+          onAccountCleared={handleAccountCleared(closeModal)}
           closeModal={closeModal}
-          setActiveAccount={setActiveAccount}
           isExtensionAvailable={isExtensionAvailable}
         />
       ) : (
@@ -58,8 +66,8 @@ export const useModalPortalElement: ModalPortalElement = ({
       accounts,
       account,
       handleAccountSelected,
-      setActiveAccount,
       isExtensionAvailable,
+      handleAccountCleared,
     ]
   );
 };

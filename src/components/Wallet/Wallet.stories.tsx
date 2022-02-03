@@ -34,7 +34,10 @@ export default {
         vestingSchedule: {},
       },
     ],
-    setActiveAccount: () => {
+    onAccountSelected: () => {
+      return Promise.resolve();
+    },
+    onAccountCleared: () => {
       return Promise.resolve();
     },
     setAccountSelectorOpen: () => {

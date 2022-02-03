@@ -7,17 +7,11 @@ import './AccountItem.scss';
 import Identicon from '@polkadot/react-identicon';
 export interface AccountItemProps {
   account: Account;
-  onClick: () => void;
+  onClick: (account: Account) => void;
   active: boolean;
-  setActiveAccount: Function;
 }
 
-export const AccountItem = ({
-  account,
-  onClick,
-  active,
-  setActiveAccount,
-}: AccountItemProps) => {
+export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
   return (
     <div
       className={
@@ -27,7 +21,7 @@ export const AccountItem = ({
         })
       }
       onClick={() => {
-        setActiveAccount({ variables: { id: account.id } }).then(onClick);
+        onClick(account);
       }}
     >
       <div className="d-flex flex-align-space">
