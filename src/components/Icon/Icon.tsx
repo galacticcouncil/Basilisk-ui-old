@@ -1,7 +1,7 @@
-import { ReactComponent as HelpIcon } from './svg/HelpIcon.svg';
-import { ReactComponent as NotificationActiveIcon } from './svg/NotificationActiveIcon.svg';
-import { ReactComponent as NotificationInactiveIcon } from './svg/NotificationInactiveIcon.svg';
-import { ReactComponent as DropdownArrowIcon } from './svg/DropdownArrowIcon.svg';
+import { ReactComponent as HelpIcon } from './assets/HelpIcon.svg';
+import { ReactComponent as NotificationActiveIcon } from './assets/NotificationActiveIcon.svg';
+import { ReactComponent as NotificationInactiveIcon } from './assets/NotificationInactiveIcon.svg';
+import { ReactComponent as DropdownArrowIcon } from './assets/DropdownArrowIcon.svg';
 
 export enum IconType {
   HELP = 'HELP',
