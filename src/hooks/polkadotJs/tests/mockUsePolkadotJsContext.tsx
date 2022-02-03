@@ -28,7 +28,7 @@ export const getMockApiPromise = () =>
     },
   } as unknown as ApiPromise);
 
-export const mockUsePolkadotJsContext = () => ({
+export const mockUsePolkadotJsContext = {
   apiInstance: getMockApiPromise(),
   loading: false,
-});
+};
