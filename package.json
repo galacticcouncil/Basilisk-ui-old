@@ -98,7 +98,7 @@
     "ci": "yarn install --frozen-lockfile",
     "storybook:start": "start-storybook -p 6006",
     "storybook:test": "npx playwright test --config=storybook-testing/playwright.config.ts",
-    "storybook:test:watch": "yarn chokidar \"src/**/*.{stories,stories.test}.ts*\" -c 'yarn storybook:test --retries=0 && {path}'",
+    "storybook:test:watch": "yarn chokidar \"src/**/*.{ts*,scss}\" -c 'yarn storybook:test --retries=0 && {path}'",
     "build-storybook": "build-storybook",
     "translations:extract": "formatjs extract 'src/**/*.ts*' --out-file src/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --ignore **/*.d.ts",
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
