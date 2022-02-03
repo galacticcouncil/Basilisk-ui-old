@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import './Button.scss';
+import { ReactNode } from 'react';
 
 export enum ButtonKind {
   Primary = 'Primary',
@@ -7,7 +8,7 @@ export enum ButtonKind {
 }
 
 export interface ButtonProps {
-  children: string;
+  children: ReactNode;
   kind?: ButtonKind;
   onClick?: () => void;
 }

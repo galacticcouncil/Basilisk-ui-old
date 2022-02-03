@@ -7,6 +7,7 @@ import Identicon from '@polkadot/react-identicon';
 import './Wallet.scss';
 import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPortal';
 import { useModalPortalElement } from './AccountSelector/hooks/useModalPortalElement';
+import { FormattedMessage } from 'react-intl';
 
 const horizontalBar = '―';
 
@@ -95,12 +96,16 @@ export const Wallet = ({
             ) : (
               <>
                 <div className="wallet__select-account-icon" />
-                <div className="wallet__info">Connect account</div>
+                <div className="wallet__info">
+                  <FormattedMessage id="Wallet.ConnectAccount" />
+                </div>
               </>
             )}
           </>
         ) : (
-          <div className="wallet__info">Install extension</div>
+          <div className="wallet__info">
+            <FormattedMessage id="Wallet.InstallExtension" />
+          </div>
         )}
         <div>
           <Icon type={IconType.DROPDOWN_ARROW} />

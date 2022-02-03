@@ -8,8 +8,19 @@
   "TradeGraph.poolTypeLabel.XYK": {
     "defaultMessage": "XYK"
   },
-  "greeting": {
-    "defaultMessage": "Today is {ts, date, ::yyyyMMdd}",
-    "description": "Application wide greeting"
+  "Wallet.InstallExtension": {
+    "defaultMessage": "Install extension"
+  },
+  "Wallet.ConnectAccount": {
+    "defaultMessage": "Connect account"
+  },
+  "Wallet.ClearAccount": {
+    "defaultMessage": "Clear account"
+  },
+  "Wallet.SelectAccount": {
+    "defaultMessage": "Select an account"
+  },
+  "Wallet.NoAccountsAvailable": {
+    "defaultMessage": "No accounts available"
   }
 }

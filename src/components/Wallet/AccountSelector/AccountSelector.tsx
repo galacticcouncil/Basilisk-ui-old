@@ -3,6 +3,7 @@ import { Account } from '../../../generated/graphql';
 import { AccountItem } from './AccountItem/AccountItem';
 import { Button, ButtonKind } from '../../Button/Button';
 import './AccountSelector.scss';
+import { FormattedMessage } from 'react-intl';
 
 export interface AccountSelectorProps {
   accounts?: Account[];
@@ -33,7 +34,11 @@ export const AccountSelector = ({
       <div className="account-selector__content-wrapper">
         <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
           <div>
-            {isExtensionAvailable ? 'Select an account' : 'Install extension'}
+            {isExtensionAvailable ? (
+              <FormattedMessage id="Wallet.SelectAccount" />
+            ) : (
+              <FormattedMessage id="Wallet.InstallExtension" />
+            )}
           </div>
           <div
             className="account-selector__close-modal-btn"
@@ -68,7 +73,7 @@ export const AccountSelector = ({
             {account && (
               <div className="d-flex mx-3">
                 <Button kind={ButtonKind.Secondary} onClick={onAccountCleared}>
-                  Clear account
+                  <FormattedMessage id="Wallet.ClearAccount" />
                 </Button>
               </div>
             )}
@@ -97,7 +102,6 @@ export const AccountSelector = ({
                   window.location.reload();
                 }}
               >
-                {' '}
                 reload the page
               </a>{' '}
               once you're done with the installation.
