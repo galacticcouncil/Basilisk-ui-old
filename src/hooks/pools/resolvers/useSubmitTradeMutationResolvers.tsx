@@ -4,7 +4,7 @@ import { gql } from 'graphql.macro';
 import { useCallback } from 'react'
 import { PoolType } from '../../../components/Chart/shared';
 import { Maybe, TradeType } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers'
+import { withErrorHandler } from '../../apollo/withErrorHandler'
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation';
 import { buy as buyLbp } from '../lbp/buy';
@@ -60,7 +60,7 @@ export const applyTradeFee = (
 export const useSubmitTradeMutationResolver = () => {
     const { apiInstance } = usePolkadotJsContext();
 
-    return useResolverToRef(
+    return withErrorHandler(
         useCallback(async (
             _obj,
             args: Maybe<SubmitTradeMutationVariables>,

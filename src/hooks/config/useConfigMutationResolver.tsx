@@ -1,7 +1,7 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
+import { withErrorHandler } from '../apollo/withErrorHandler'
 import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../accounts/queries/useGetActiveAccountQuery';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { gracefulExtensionCancelationErrorHandler, reject, resolve, vestingClaimHandler, withGracefulErrors } from '../vesting/useVestingMutationResolvers';
@@ -16,9 +16,9 @@ export const setCurrencyHandler = (resolve: resolve, reject: reject) => {
 
 export const useConfigMutationResolvers = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
-    const [_persistedConfig, setPersistedConfig] = usePersistentConfig();
+    const [, setPersistedConfig] = usePersistentConfig();
 
-    const setConfig = useResolverToRef(
+    const setConfig = withErrorHandler(
         useCallback(async (
             _obj,
             args: SetConfigMutationVariables,
@@ -36,7 +36,7 @@ export const useConfigMutationResolvers = () => {
                 if (!address) return resolve();
 
                 const { signer } = await web3FromAddress(address);
-                
+
                 await apiInstance.tx.multiTransactionPayment.setCurrency(
                     args.config?.feePaymentAsset || defaultAssetId
                 )
@@ -48,12 +48,12 @@ export const useConfigMutationResolvers = () => {
             }, [
                 gracefulExtensionCancelationErrorHandler
             ]);
-            
+
             const persistableConfig = args.config;
             // there's no point in persisting the feePaymentAsset since it will
             // be refetched from the node anyways
             delete persistableConfig?.feePaymentAsset;
-            
+
             setPersistedConfig(() => persistableConfig || defaultConfigValue);
         }, [apiInstance, loading])
     );

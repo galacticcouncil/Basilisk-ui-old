@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
+import { withErrorHandler } from '../apollo/withErrorHandler'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
@@ -103,7 +103,7 @@ export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet';
 export const useVestingMutationResolvers = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
 
-    const claimVestedAmount = useResolverToRef(
+    const claimVestedAmount = withErrorHandler(
         useCallback(async (
             _obj,
             variables: ClaimVestedAmountMutationVariables,
