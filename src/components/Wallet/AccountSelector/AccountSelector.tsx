@@ -35,9 +35,15 @@ export const AccountSelector = ({
         <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
           <div>
             {isExtensionAvailable ? (
-              <FormattedMessage id="Wallet.SelectAccount" />
+              <FormattedMessage
+                id="Wallet.SelectAccount"
+                defaultMessage="Select account"
+              />
             ) : (
-              <FormattedMessage id="Wallet.InstallExtension" />
+              <FormattedMessage
+                id="Wallet.InstallExtension"
+                defaultMessage="Install extension"
+              />
             )}
           </div>
           <div
@@ -63,7 +69,12 @@ export const AccountSelector = ({
             ) : (
               //TODO update href param when we know where to send user
               <div className="mx-3 my-5 text-center">
-                <h4>No accounts available</h4>
+                <h4>
+                  <FormattedMessage
+                    id="Wallet.NoAccountsAvailable"
+                    defaultMessage="No accounts available"
+                  />
+                </h4>
                 <a href="/#" className="account-selector__create-account-link">
                   Need help creating an account? <br />
                   Click here
@@ -73,7 +84,10 @@ export const AccountSelector = ({
             {account && (
               <div className="d-flex mx-3">
                 <Button kind={ButtonKind.Secondary} onClick={onAccountCleared}>
-                  <FormattedMessage id="Wallet.ClearAccount" />
+                  <FormattedMessage
+                    id="Wallet.ClearAccount"
+                    defaultMessage="Clear account"
+                  />
                 </Button>
               </div>
             )}
@@ -81,30 +95,44 @@ export const AccountSelector = ({
         ) : (
           <div className="mx-3 my-5 text-center">
             <p>
-              To connect your account, please{' '}
-              <a
-                href="https://polkadot.js.org/extension/"
-                title=""
-                className="account-selector__create-account-link"
-                target="_blank"
-                rel="noreferrer"
-              >
-                install or enable the polkadot.js extension.
-              </a>
+              <FormattedMessage
+                id="Wallet.InstallInstructions"
+                values={{
+                  link: (
+                    <a
+                      href="https://polkadot.js.org/extension/"
+                      title=""
+                      className="account-selector__create-account-link"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <FormattedMessage id="Wallet.InstallLinkText" />
+                    </a>
+                  ),
+                }}
+              />
             </p>
             <p>
-              You can{' '}
-              <a
-                href="/#"
-                className="account-selector__create-account-link"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.reload();
+              <FormattedMessage
+                id="Wallet.ReloadInstructions"
+                values={{
+                  link: (
+                    <a
+                      href="/#"
+                      className="account-selector__create-account-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.location.reload();
+                      }}
+                    >
+                      <FormattedMessage
+                        id="Wallet.ReloadLinkText"
+                        defaultMessage="reload the page"
+                      />
+                    </a>
+                  ),
                 }}
-              >
-                reload the page
-              </a>{' '}
-              once you're done with the installation.
+              />
             </p>
           </div>
         )}

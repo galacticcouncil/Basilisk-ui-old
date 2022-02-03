@@ -20,6 +20,18 @@
   "Wallet.SelectAccount": {
     "defaultMessage": "Select an account"
   },
+  "Wallet.InstallInstructions": {
+    "defaultMessage": "To connect your account, please {link}."
+  },
+  "Wallet.InstallLinkText": {
+    "defaultMessage": "install or enable the polkadot.js extension"
+  },
+  "Wallet.ReloadInstructions": {
+    "defaultMessage": "You can {link} once you're done with the installation."
+  },
+  "Wallet.ReloadLinkText": {
+    "defaultMessage": "reload the page"
+  },
   "Wallet.NoAccountsAvailable": {
     "defaultMessage": "No accounts available"
   }

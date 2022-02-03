@@ -97,14 +97,20 @@ export const Wallet = ({
               <>
                 <div className="wallet__select-account-icon" />
                 <div className="wallet__info">
-                  <FormattedMessage id="Wallet.ConnectAccount" />
+                  <FormattedMessage
+                    id="Wallet.ConnectAccount"
+                    defaultMessage="Connect account"
+                  />
                 </div>
               </>
             )}
           </>
         ) : (
           <div className="wallet__info">
-            <FormattedMessage id="Wallet.InstallExtension" />
+            <FormattedMessage
+              id="Wallet.InstallExtension"
+              defaultMessage="Install extension"
+            />
           </div>
         )}
         <div>
