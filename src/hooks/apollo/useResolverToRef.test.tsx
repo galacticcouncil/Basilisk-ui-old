@@ -26,11 +26,12 @@ describe('hooks/apollo/useResolverToRef', () => {
   });
 
   it('resolver finished successfully', async () => {
-    const resolver = jest.fn();
+    const result = 'mocked-result';
+    const resolver = jest.fn().mockResolvedValue(result);
 
     render(resolver);
 
-    await expect(resolverFromRef()).resolves.toBeUndefined();
+    await expect(resolverFromRef()).resolves.toEqual(result);
   });
 
   it('resolver finished with error, the error propagates, onError middleware is called', async () => {
@@ -68,18 +69,20 @@ describe('hooks/apollo/useResolverToRef', () => {
   });
 
   it('updates resolver function', async () => {
-    const resolver = jest.fn();
-    const updatedResolver = jest.fn();
+    const result = 'mocked-result';
+    const resolver = jest.fn().mockResolvedValue(result);
+    const updatedResult = 'updated-mocked-result';
+    const updatedResolver = jest.fn().mockResolvedValue(updatedResult);
 
     render(resolver);
 
-    await expect(resolverFromRef()).resolves.toBeUndefined();
+    await expect(resolverFromRef()).resolves.toEqual(result);
     expect(resolver).toBeCalledTimes(1);
 
     act(() => {
       component.update(<Test resolver={updatedResolver} />);
     });
-    await expect(resolverFromRef()).resolves.toBeUndefined();
+    await expect(resolverFromRef()).resolves.toEqual(updatedResult);
     expect(updatedResolver).toBeCalledTimes(1);
   });
 });

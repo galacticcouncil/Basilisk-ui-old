@@ -20,15 +20,11 @@ export const useResolverToRef = (resolver: Resolver, name?: string) => {
     // TODO is there a better way to debug resolvers? Since the function name
     // is not visible in the apollo error
     log.debug('Running resolver', name);
-    // execute the wrapper resolver ref, with the given arguments from Apollo
-    const errorWrappedResolver = () =>
-      Promise.resolve()
-        .then(() => resolverRef.current.apply(undefined, args as any))
-        .catch(async (e) => {
-          await onError({ error: e, name });
-          throw e;
-        });
-
-    return errorWrappedResolver();
+    return Promise.resolve()
+      .then(() => resolverRef.current.apply(undefined, args as any))
+      .catch(async (e) => {
+        await onError({ error: e, name });
+        throw e;
+      });
   };
 };
