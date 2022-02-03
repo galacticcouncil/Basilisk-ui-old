@@ -1,12 +1,12 @@
 import { useCallback } from 'react'
 import { FeePaymentAsset } from '../../generated/graphql';
-import { useResolverToRef } from '../apollo/useResolverToRef'
+import { withErrorHandler } from '../apollo/withErrorHandler'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 
 export const __typename: FeePaymentAsset['__typename'] = 'FeePaymentAsset';
 export const useFeePaymentAssetsQueryResolvers = () => {
     const { apiInstance, loading } = usePolkadotJsContext();
-    const feePaymentAssets = useResolverToRef(
+    const feePaymentAssets = withErrorHandler(
         useCallback(async () => {
             if (!apiInstance || loading) return;
 

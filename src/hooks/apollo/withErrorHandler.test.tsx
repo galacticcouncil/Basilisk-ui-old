@@ -1,16 +1,16 @@
 import TestRenderer, { act } from 'react-test-renderer';
 import { onError } from './onError';
-import { useResolverToRef } from './useResolverToRef';
+import { withErrorHandler } from './withErrorHandler';
 
 jest.mock('./onError', () => {
   return { onError: jest.fn() };
 });
 
-describe('hooks/apollo/useResolverToRef', () => {
+describe('hooks/apollo/withErrorHandler', () => {
   let resolverFromRef: any;
 
   const Test = ({ resolver }: { resolver?: any }) => {
-    resolverFromRef = useResolverToRef(resolver);
+    resolverFromRef = withErrorHandler(resolver);
 
     return <></>;
   };

@@ -2,7 +2,7 @@ import { isArray } from 'lodash';
 import { useCallback } from 'react';
 import { useGetAccounts } from '../useGetAccounts';
 import { usePersistActiveAccount } from '../usePersistActiveAccount';
-import { useResolverToRef } from '../../apollo/useResolverToRef';
+import { withErrorHandler } from '../../apollo/withErrorHandler';
 
 export interface AccountsQueryResolverArgs {
     isActive?: boolean
@@ -14,7 +14,7 @@ export const useGetAccountsQueryResolver = () => {
     const [persistedActiveAccount] = usePersistActiveAccount();
     const getAccounts = useGetAccounts();
 
-    return useResolverToRef(
+    return withErrorHandler(
         useCallback(async (
             _obj,
             args: AccountsQueryResolverArgs 
