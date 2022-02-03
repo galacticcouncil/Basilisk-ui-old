@@ -28,7 +28,17 @@ export const getMockApiPromise = () =>
           ),
         },
       },
+      parachainSystem: {
+        validationData: jest.fn(),
+      },
     },
+    derive: {
+      chain: {
+        subscribeNewBlocks: jest.fn(),
+      },
+    },
+    createType: jest.fn(),
+    at: jest.fn(),
   } as unknown as ApiPromise);
 
 export const mockUsePolkadotJsContext = () => ({
