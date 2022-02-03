@@ -56,6 +56,7 @@ export const AccountSelector = ({
                 ))}
               </div>
             ) : (
+              //TODO update href param when we know where to send user
               <div className="mx-3 my-5 text-center">
                 <h4>No accounts available</h4>
                 <a href="/#" className="account-selector__create-account-link">
