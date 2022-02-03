@@ -14,12 +14,9 @@ export interface AccountItemProps {
 export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
   return (
     <div
-      className={
-        'account-item ' +
-        classNames({
-          'account-item--active': active,
-        })
-      }
+      className={classNames('account-item', {
+        'account-item--active': active,
+      })}
       onClick={() => {
         onClick(account);
       }}
