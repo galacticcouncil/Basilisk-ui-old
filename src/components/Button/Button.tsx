@@ -25,8 +25,6 @@ export const Button = ({
         'button ' +
         classNames({
           'button--primary': kind === ButtonKind.Primary,
-        }) +
-        classNames({
           'button--secondary': kind === ButtonKind.Secondary,
         })
       }
