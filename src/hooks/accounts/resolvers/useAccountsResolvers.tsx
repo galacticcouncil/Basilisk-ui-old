@@ -31,7 +31,7 @@ export const useAccountsResolvers = () => {
  * This is necessary to reflect changes made to functions within hooks
  * within the Apollo resolvers configuration.
  *
- * TODO//
+ * TODO Might be possible to remove: "I think that we might get rid of useResolverToRef since i've updated how resolvers are set on the apollo instance after the resolvers update (e.g. dependencies have loaded)."
  */
 export const useResolverToRef = (resolver: Resolver, name?: string) => {
   const resolverRef = useRef(resolver);
