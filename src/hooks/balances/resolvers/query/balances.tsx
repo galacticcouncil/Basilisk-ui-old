@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { AssetIds, Balance, Scalars } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import errors from '../../../../errors';
+import { useResolverToRef } from '../../../accounts/resolvers/useAccountsResolvers';
 
 export const __typename: Balance['__typename'] = 'Balance';
 

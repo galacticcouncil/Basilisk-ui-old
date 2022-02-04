@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useGetAccounts } from '../../lib/useGetAccounts';
-import { useResolverToRef } from '../mutation/useAccountsMutationResolvers';
 import { Account } from '../../../../generated/graphql';
+import { useResolverToRef } from '../useAccountsResolvers';
 
 export const __typename: Account['__typename'] = 'Account';
 

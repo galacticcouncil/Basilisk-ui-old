@@ -4,12 +4,12 @@ import log from 'loglevel';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { LbpPool, XykPool } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { useGetLbpPool } from '../useGetLbpPool';
 import { useGetLbpPools } from '../useGetLbpPools';
 import { useGetXykPool } from '../useGetXykPool';
 import { useGetXykPools } from '../useGetXykPools';
+import { useResolverToRef } from '../../accounts/resolvers/useAccountsResolvers';
 
 export interface PoolQueryResolverArgs {
   poolId?: string;

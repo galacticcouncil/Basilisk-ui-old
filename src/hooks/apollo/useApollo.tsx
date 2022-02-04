@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client';
 import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers';
 import { loader } from 'graphql.macro';
-import { useAccountsMutationResolvers } from '../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
@@ -17,7 +16,8 @@ import { usePersistentConfig } from '../config/usePersistentConfig';
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolvers } = useAccountsResolvers();
+  const { Query: AccountsQueryResolvers, Mutation: AccountsMutationResolvers } =
+    useAccountsResolvers();
   const {
     Query: PoolsQueryResolver,
     XYKPool,
@@ -34,7 +34,7 @@ export const useResolvers: () => Resolvers = () => {
       ...useAssetsQueryResolvers(),
     },
     Mutation: {
-      ...useAccountsMutationResolvers(),
+      ...AccountsMutationResolvers,
       ...usePoolsMutationResolvers(),
     },
     XYKPool,

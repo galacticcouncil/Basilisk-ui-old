@@ -3,13 +3,13 @@ import BigNumber from 'bignumber.js';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { Maybe, TradeType } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation';
 import { buy as buyLbp } from '../lbp/buy';
 import { sell as sellLbp } from '../lbp/sell';
 import { buy as buyXyk } from '../xyk/buy';
 import { sell as sellXyk } from '../xyk/sell';
+import { useResolverToRef } from '../../accounts/resolvers/useAccountsResolvers';
 
 // this is for buy, for sell we need to use minus, not plus
 export const applyAllowedSlippage = (

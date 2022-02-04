@@ -1,7 +1,6 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react';
-import { useResolverToRef } from '../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,
@@ -16,6 +15,7 @@ import {
 } from '../vesting/useVestingMutationResolvers';
 import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig';
 import { SetConfigMutationVariables } from './useSetConfigMutation';
+import { useResolverToRef } from '../accounts/resolvers/useAccountsResolvers';
 
 export const defaultAssetId = '0';
 

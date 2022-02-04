@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Extension } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { getExtension } from '../../lib/getExtension';
+import { useResolverToRef } from '../../../accounts/resolvers/useAccountsResolvers';
 
 // make sure the __typename is well typed
 export const __typename: Extension['__typename'] = 'Extension';
