@@ -6,7 +6,7 @@ import { useEffect, useRef } from 'react';
 import log from 'loglevel';
 
 /**
- * Used to resolve queries for the `Accounts` (or `selectedAccount`) entity.
+ * Used to resolve queries for the `Accounts` (or `activeAccount`) entity.
  */
 export const useAccountsResolvers = () => {
   const getAccountsQueryResolver = useGetAccountsQueryResolver();

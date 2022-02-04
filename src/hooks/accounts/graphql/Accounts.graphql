@@ -4,6 +4,7 @@
 type Account {
   id: String!
   name: String
+  source: String
   balances: [Balance!]!
 }
 

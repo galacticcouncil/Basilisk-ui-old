@@ -17,6 +17,7 @@ export default {
       id: 'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH',
       isActive: true,
       vestingSchedule: {},
+      source: 'polkadot-js',
     },
     accounts: [
       {
@@ -25,6 +26,7 @@ export default {
         id: 'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH',
         isActive: true,
         vestingSchedule: {},
+        source: 'polkadot-js',
       },
       {
         name: 'Kusama snekmaster',
@@ -32,6 +34,7 @@ export default {
         id: 'E7ncQKp4xayUoUdpraxBjT7NzxaayLJA4TuPcKKboBkJ5GH',
         isActive: false,
         vestingSchedule: {},
+        source: 'polkadot-js',
       },
     ],
     accountsLoading: false,

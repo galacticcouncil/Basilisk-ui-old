@@ -8,7 +8,7 @@ import TestRenderer, { act } from 'react-test-renderer';
 import { useActiveAccountQueryResolver } from './activeAccount';
 
 const mockUsePersistActiveAccount = jest.fn();
-jest.mock('../../usePersistActiveAccount', () => ({
+jest.mock('../../lib/usePersistActiveAccount', () => ({
   usePersistActiveAccount: () => mockUsePersistActiveAccount(),
 }));
 
@@ -23,7 +23,14 @@ const useResolvers = () => {
     Query: {
       ...useActiveAccountQueryResolver(),
       accounts: () => {
-        return [{ id: 'mockId', name: 'Mocked Account', balances: [] }];
+        return [
+          {
+            id: 'mockId',
+            name: 'Mocked Account',
+            source: 'polkadot-js',
+            balances: [],
+          },
+        ];
       },
     },
   };

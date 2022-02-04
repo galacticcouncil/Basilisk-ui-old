@@ -28,6 +28,7 @@ export const useGetAccounts = () =>
           return {
             id: address,
             name: account.meta.name,
+            source: account.meta.source,
             balances: [],
           };
         })

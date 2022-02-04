@@ -24,6 +24,7 @@ export type Account = {
   balances: Array<Balance>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
+  source?: Maybe<Scalars['String']>;
 };
 
 export type Asset = {
