@@ -1,12 +1,12 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
+import { withErrorHandler } from '../apollo/withErrorHandler';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,
 } from '../accounts/queries/useGetActiveAccountQuery';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { usePersistentConfig } from './usePersistentConfig';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsResolvers';
 
 export const accountCurrencyMapDataType = 'Option<u32>';
 
@@ -19,7 +19,7 @@ export const useConfigQueryResolvers = () => {
   const [persistedConfig] = usePersistentConfig();
   const { apiInstance, loading } = usePolkadotJsContext();
 
-  const config = useResolverToRef(
+  const config = withErrorHandler(
     useCallback(
       async (
         _obj,

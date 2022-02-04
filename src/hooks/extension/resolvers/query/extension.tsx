@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { Extension } from '../../../../generated/graphql';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getExtension } from '../../lib/getExtension';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsResolvers';
 
 // make sure the __typename is well typed
 export const __typename: Extension['__typename'] = 'Extension';
@@ -13,7 +13,7 @@ const withTypename = (extension: Extension) => ({
 
 /**
  * Resolver for the `Extension` entity which uses the standalone lib/getExtension
- * function to resolve the requested data.
+ * function to resolve the reqested data.
  *
  * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */
@@ -27,7 +27,7 @@ export const extensionQueryResolver = async () =>
  */
 export const useExtensionQueryResolver = () => ({
   // key is the entity, value is the resolver
-  extension: useResolverToRef(
+  extension: withErrorHandler(
     // practically we dont have to wrap this in useCallback
     // since it does not have any contextual dependencies
     useCallback(extensionQueryResolver, []),

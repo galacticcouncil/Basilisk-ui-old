@@ -2,11 +2,10 @@ import {
   balancesByAddressQueryResolverFactory,
   BalancesByAddressResolverArgs,
   Entity,
-  objectToArrayWithoutNull,
+  objectToArrayWithFilter,
   useBalanceQueryResolvers,
 } from './balances';
-
-import { AssetIds, Balance } from '../../../../generated/graphql';
+import { Balance } from '../../../../generated/graphql';
 import { Resolvers, useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
@@ -17,13 +16,16 @@ import {
   nonNativeAssetBalance,
 } from '../../../polkadotJs/tests/mockUsePolkadotJsContext';
 import { ApiPromise } from '@polkadot/api';
-import waitForExpect from 'wait-for-expect';
 import errors from '../../../../errors';
-waitForExpect.defaults.interval = 1;
+import waitForExpect from 'wait-for-expect';
 
 jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
-    // jest executes before imports, that's why require is here
+    /**
+     * Jest.mock executes before any import. Requiring a module inside a mock is
+     * what makes this work, if the mock-module or value is defined/required
+     * outside of jest.mock(...) then this mock does not work.
+     */
     const {
       mockUsePolkadotJsContext,
     } = require('../../../polkadotJs/tests/mockUsePolkadotJsContext');
@@ -31,64 +33,44 @@ jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
   },
 }));
 
-describe('hooks/balances/resolvers/query/balances', () => {
-  describe('objectToArrayWithoutNull', () => {
-    it('can convert an object to an array', () => {
-      const assetIds = {
-        a: '0',
-        b: '1',
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
+describe('balances', () => {
+  describe('objectToArrayWithFilter', () => {
+    describe.each([
+      [
+        {
+          a: '0',
+          b: '1',
+        },
+        ['0', '1'],
+      ],
+      [
+        {
+          a: '0',
+          b: null,
+        },
+        ['0'],
+      ],
+      [
+        {
+          a: '0',
+          b: undefined,
+        },
+        ['0'],
+      ],
+      [
+        ['0', '1', '2'],
+        ['0', '1', '2'],
+      ],
+    ])('can convert an object to an array', (assetIds, expectedAssetIds) => {
+      const assetIdsFilteredTransformed = objectToArrayWithFilter(assetIds);
 
-      expect(assets).toEqual(['0', '1']);
-    });
-
-    it('can convert an object to an array with one null value', () => {
-      const assetIds: AssetIds = {
-        a: '0',
-        b: null,
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(['0']);
-    });
-
-    it('can convert an object to an array with one undefined value', () => {
-      const assetIds: AssetIds = {
-        a: '0',
-        b: undefined,
-      };
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(['0']);
-    });
-
-    it('does transform when an array is passed', () => {
-      const assetIds = ['0', '1', '2'];
-      const assets = objectToArrayWithoutNull(assetIds);
-
-      expect(assets).toEqual(assetIds);
+      expect(assetIdsFilteredTransformed).toEqual(expectedAssetIds);
     });
   });
 
   describe('balancesByAddressQueryResolver', () => {
-    function fetchBalancesSuccessCase(
-      description: string,
-      entity: Entity,
-      args: BalancesByAddressResolverArgs,
-      expectedBalances: any
-    ) {
-      // eslint-disable-next-line jest/valid-title
-      it(description, async () => {
-        const balancesByAddressQueryResolver =
-          await balancesByAddressQueryResolverFactory(mockApiInstance);
-        const balances = await balancesByAddressQueryResolver(entity, args);
-
-        expect(balances).toEqual(expectedBalances);
-      });
-    }
-
     let mockApiInstance: ApiPromise;
+
     beforeEach(() => {
       jest.resetAllMocks();
       mockApiInstance = getMockApiPromise();
@@ -98,6 +80,69 @@ describe('hooks/balances/resolvers/query/balances', () => {
     const entity: Entity = { id: address };
     const assetIdA = '0';
     const assetIdB = '1';
+
+    describe.each([
+      [
+        'can fetch balance for entity with object as parameter (1 assetId)',
+        entity,
+        { assetIds: { a: assetIdA } },
+        [
+          [assetIdA, nativeAssetBalance], // tuple
+        ],
+      ],
+      [
+        'can fetch balance for entity with object as parameter (2 assetIds)',
+        entity,
+        { assetIds: { a: assetIdA, b: assetIdB } },
+        [
+          [assetIdA, nativeAssetBalance],
+          [assetIdB, nonNativeAssetBalance],
+        ],
+      ],
+      [
+        'can fetch balance entity with array as parameter (1 assetId)',
+        entity,
+        { assetIds: [assetIdA] },
+        [[assetIdA, nativeAssetBalance]],
+      ],
+      [
+        'can fetch balance entity with array as parameter (2 assetIds)',
+        entity,
+        { assetIds: [assetIdA, assetIdB] },
+        [
+          [assetIdA, nativeAssetBalance],
+          [assetIdB, nonNativeAssetBalance],
+        ],
+      ],
+    ])(
+      'balancesByAddressQueryResolver',
+      (
+        description: string,
+        entity: Entity,
+        args: BalancesByAddressResolverArgs,
+        expected: any
+      ) => {
+        // eslint-disable-next-line jest/valid-title
+        test(description, async () => {
+          const balancesByAddressQueryResolver =
+            await balancesByAddressQueryResolverFactory(mockApiInstance);
+
+          const balances = await balancesByAddressQueryResolver(entity, args);
+
+          const expectedBalances = expected.map(
+            (expectedBalance: [string, string]) => {
+              return {
+                __typename: 'Balance',
+                assetId: expectedBalance[0],
+                balance: expectedBalance[1],
+                id: `${address}-${expectedBalance[0]}`,
+              };
+            }
+          );
+          expect(balances).toEqual(expectedBalances);
+        });
+      }
+    );
 
     it('fails to fetch without PolkadotJS ApiPromise', async () => {
       const brokenApiInstance = undefined as unknown as ApiPromise;
@@ -125,74 +170,6 @@ describe('hooks/balances/resolvers/query/balances', () => {
         Error(errors.noArgumentsProvidedBalanceQuery)
       );
     });
-
-    fetchBalancesSuccessCase(
-      'can fetch balance for entity with object as parameter (1 assetId)',
-      entity,
-      { assetIds: { a: assetIdA } },
-      [
-        {
-          __typename: 'Balance',
-          assetId: assetIdA,
-          balance: nativeAssetBalance,
-          id: `${address}-${assetIdA}`,
-        },
-      ]
-    );
-
-    fetchBalancesSuccessCase(
-      'can fetch balance for entity with object as parameter (2 assetIds)',
-      entity,
-      { assetIds: { a: assetIdA, b: assetIdB } },
-      [
-        {
-          __typename: 'Balance',
-          assetId: assetIdA,
-          balance: nativeAssetBalance,
-          id: `${address}-${assetIdA}`,
-        },
-        {
-          __typename: 'Balance',
-          assetId: assetIdB,
-          balance: nonNativeAssetBalance,
-          id: `${address}-${assetIdB}`,
-        },
-      ]
-    );
-
-    fetchBalancesSuccessCase(
-      'can fetch balance entity with array as parameter (1 assetId)',
-      entity,
-      { assetIds: [assetIdA] },
-      [
-        {
-          __typename: 'Balance',
-          assetId: assetIdA,
-          balance: nativeAssetBalance,
-          id: `${address}-${assetIdA}`,
-        },
-      ]
-    );
-
-    fetchBalancesSuccessCase(
-      'can fetch balance entity with array as parameter (2 assetIds)',
-      entity,
-      { assetIds: [assetIdA, assetIdB] },
-      [
-        {
-          __typename: 'Balance',
-          assetId: assetIdA,
-          balance: nativeAssetBalance,
-          id: `${address}-${assetIdA}`,
-        },
-        {
-          __typename: 'Balance',
-          assetId: assetIdB,
-          balance: nonNativeAssetBalance,
-          id: `${address}-${assetIdB}`,
-        },
-      ]
-    );
   });
 
   describe('useBalanceQueryResolvers', () => {
@@ -260,6 +237,7 @@ describe('hooks/balances/resolvers/query/balances', () => {
 
     it('can resolve the query within the rendered component', async () => {
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.mockEntity.balances).toEqual([

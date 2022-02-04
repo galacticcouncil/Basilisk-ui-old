@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -109,7 +108,7 @@ export type Query = {
   accounts: Array<Account>;
   activeAccount: Account;
   assets?: Maybe<Array<Asset>>;
-  balance: Array<Balance>;
+  balances: Array<Balance>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;

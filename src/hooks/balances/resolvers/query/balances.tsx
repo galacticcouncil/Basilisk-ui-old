@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { AssetIds, Balance, Scalars } from '../../../../generated/graphql';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import errors from '../../../../errors';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsResolvers';
 
 export const __typename: Balance['__typename'] = 'Balance';
 
@@ -22,15 +22,21 @@ export interface Entity {
 }
 
 /**
- * Returns all values of an object as array and filters out null values.
+ * Returns all values of an object as an array and filters out null and undefined values.
  * When an array is passed, an array is returned.
  */
-export const objectToArrayWithoutNull = (obj: object): any[] => {
-  return Object.values(obj).filter((value) => value != null);
+export const objectToArrayWithFilter = (obj: object): any[] => {
+  return Object.values(obj).filter((value) => value);
 };
 
 export const balancesByAddressQueryResolverFactory =
   (apiInstance?: ApiPromise) =>
+  /**
+   *
+   * @param _obj Any entity that has the address as id. Eg. LBPPool, XYKPool, Account
+   * @param args AssetIds or string[]
+   * @returns
+   */
   async (
     _obj: Entity,
     args: BalancesByAddressResolverArgs
@@ -39,7 +45,7 @@ export const balancesByAddressQueryResolverFactory =
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
     if (!args.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
 
-    const assets = objectToArrayWithoutNull(args.assetIds);
+    const assets = objectToArrayWithFilter(args.assetIds);
 
     return (await getBalancesByAddress(apiInstance, _obj.id, assets))?.map(
       (balance: Balance) => {
@@ -60,7 +66,7 @@ export const useBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    balances: useResolverToRef(
+    balances: withErrorHandler(
       // practically we dont have to wrap this in useCallback
       // since it does not have any contextual dependencies
       useMemo(

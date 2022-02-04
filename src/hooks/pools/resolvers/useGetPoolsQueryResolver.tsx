@@ -4,12 +4,12 @@ import log from 'loglevel';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { LbpPool, XykPool } from '../../../generated/graphql';
+import { withErrorHandler } from '../../apollo/withErrorHandler';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { useGetLbpPool } from '../useGetLbpPool';
 import { useGetLbpPools } from '../useGetLbpPools';
 import { useGetXykPool } from '../useGetXykPool';
 import { useGetXykPools } from '../useGetXykPools';
-import { useResolverToRef } from '../../accounts/resolvers/useAccountsResolvers';
 
 export interface PoolQueryResolverArgs {
   poolId?: string;
@@ -53,7 +53,7 @@ export const useGetPoolsQueryResolver = () => {
   const getXykPool = useGetXykPool();
   const getLbpPool = useGetLbpPool();
 
-  return useResolverToRef(
+  return withErrorHandler(
     useCallback(
       async (
         _obj,

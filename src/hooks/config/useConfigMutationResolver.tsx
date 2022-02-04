@@ -1,6 +1,7 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react';
+import { withErrorHandler } from '../apollo/withErrorHandler';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,
@@ -15,7 +16,6 @@ import {
 } from '../vesting/useVestingMutationResolvers';
 import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig';
 import { SetConfigMutationVariables } from './useSetConfigMutation';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsResolvers';
 
 export const defaultAssetId = '0';
 
@@ -27,14 +27,14 @@ export const useConfigMutationResolvers = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
   const [, setPersistedConfig] = usePersistentConfig();
 
-  const setConfig = useResolverToRef(
+  const setConfig = withErrorHandler(
     useCallback(
       async (
         _obj,
         args: SetConfigMutationVariables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
-        // TODO: error handling?
+        // todo: error handling?
         if (!apiInstance || loading) return;
 
         // TODO: return an optimistic update to the cache with the new config
