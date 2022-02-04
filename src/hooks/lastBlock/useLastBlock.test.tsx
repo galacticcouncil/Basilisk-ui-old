@@ -10,9 +10,6 @@ import {
 } from '../polkadotJs/tests/mockUsePolkadotJsContext';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 
-waitForExpect.defaults.interval = 10;
-waitForExpect.defaults.timeout = 1000;
-
 jest.mock('../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: jest.fn(),
 }));
@@ -43,7 +40,6 @@ describe('hooks/lastBlock/useLastBlock', () => {
 
   beforeEach(() => {
     jest.resetModules();
-
     (usePolkadotJsContext as jest.Mock).mockReturnValue(
       mockedUsePolkadotJsContext
     );
