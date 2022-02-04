@@ -16,20 +16,20 @@ export const useGetAccounts = () =>
     await web3Enable('basilisk-ui');
 
     // get all the accounts from the polkadot.js extension
-    const accounts = (await web3Accounts())
-      // transform the returned accounts into the required entity format
-      .map((account) => {
-        const address = encodeAddress(
-          decodeAddress(account.address),
-          basiliskAddressPrefix
-        );
-        return {
-          id: address,
-          name: account.meta.name,
-          balances: [],
-        };
-      });
-
     // return all retrieved accounts
-    return accounts;
+    return (
+      (await web3Accounts())
+        // transform the returned accounts into the required entity format
+        .map((account) => {
+          const address = encodeAddress(
+            decodeAddress(account.address),
+            basiliskAddressPrefix
+          );
+          return {
+            id: address,
+            name: account.meta.name,
+            balances: [],
+          };
+        })
+    );
   }, []);
