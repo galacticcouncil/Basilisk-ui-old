@@ -82,12 +82,12 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "craco start --openssl-legacy-provider",
-    "build": "craco build",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && craco start --openssl-legacy-provider",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && craco build",
     "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
-    "test": "craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/' --testPathIgnorePatterns './*\\.stories.test\\.ts$'",
-    "test:ci": "CI=true craco test --transformIgnorePatterns 'node_modules/(?!@polkadot)/' --testPathIgnorePatterns './*\\.stories.test\\.ts$'",
-    "test:debug": "craco --inspect-brk test --runInBand --no-cache --transformIgnorePatterns 'node_modules/(?!@polkadot)/' --testPathIgnorePatterns './*\\.stories.test\\.ts$'",
+    "test": "craco test",
+    "test:ci": "CI=true craco test",
+    "test:debug": "craco --inspect-brk test --runInBand --no-cache",
     "test:e2e-ci": "CI=true npx playwright test /e2e-tests/tests",
     "test:e2e-local": "CI=false npx playwright test /e2e-tests/tests",
     "eject": "craco eject",
