@@ -106,6 +106,9 @@
     "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql",
     "prepare": "husky install"
   },
+  "engines": {
+    "node": ">=17"
+  },
   "prettier": {
     "singleQuote": true
   },
