@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Extension } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { getExtension } from '../../lib/getExtension';
 
 // make sure the __typename is well typed

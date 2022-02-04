@@ -1,7 +1,7 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client';
 import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers';
 import { loader } from 'graphql.macro';
-import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
+import { useAccountsMutationResolvers } from '../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';

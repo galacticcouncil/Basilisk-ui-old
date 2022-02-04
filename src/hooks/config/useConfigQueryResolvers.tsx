@@ -1,6 +1,6 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,

@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { Account } from '../../../../generated/graphql';
-import { useResolverToRef } from '../useAccountsMutationResolvers';
+import { useResolverToRef } from '../mutation/useAccountsMutationResolvers';
 import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery';
-import { usePersistActiveAccount } from '../../usePersistActiveAccount';
+import { usePersistActiveAccount } from '../../lib/usePersistActiveAccount';
 import { find } from 'lodash';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 

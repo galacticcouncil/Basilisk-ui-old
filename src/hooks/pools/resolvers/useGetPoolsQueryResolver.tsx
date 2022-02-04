@@ -1,13 +1,10 @@
 import { ApolloClient } from '@apollo/client';
 import { ApiPromise } from '@polkadot/api';
-import { Codec } from '@polkadot/types/types';
-import { isArray, isObject } from 'lodash';
 import log from 'loglevel';
 import { useCallback } from 'react';
 import { PoolType } from '../../../components/Chart/shared';
 import { LbpPool, XykPool } from '../../../generated/graphql';
-import { useResolverToRef } from '../../accounts/resolvers/useAccountsMutationResolvers';
-import { __typename } from '../../accounts/resolvers/useGetAccountsQueryResolver';
+import { useResolverToRef } from '../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
 import { useGetLbpPool } from '../useGetLbpPool';
 import { useGetLbpPools } from '../useGetLbpPools';
@@ -15,117 +12,152 @@ import { useGetXykPool } from '../useGetXykPool';
 import { useGetXykPools } from '../useGetXykPools';
 
 export interface PoolQueryResolverArgs {
-    poolId?: string,
-    assetIds?: string[],
-    poolType?: PoolType
+  poolId?: string;
+  assetIds?: string[];
+  poolType?: PoolType;
 }
 // Filter those out, until the following issue is implemented
 // https://github.com/galacticcouncil/Basilisk-node/issues/248
-export const defaultLbpPoolId = 'bXnAY36Vvd3HdWTX5v1Cgej2tYFsq1UpzShWyAQAr5HQ9FaJx';
-export const defaultXykPoolId = 'bXnAY36Vvd3HdWTX5v1Cgej2tYFsq1UpzShWyAQAr5HQ9FaJx';
+export const defaultLbpPoolId =
+  'bXnAY36Vvd3HdWTX5v1Cgej2tYFsq1UpzShWyAQAr5HQ9FaJx';
+export const defaultXykPoolId =
+  'bXnAY36Vvd3HdWTX5v1Cgej2tYFsq1UpzShWyAQAr5HQ9FaJx';
 
 export interface PoolIds {
-    lbpPoolId?: string,
-    xykPoolId?: string
+  lbpPoolId?: string;
+  xykPoolId?: string;
 }
 
-export const getPoolIdsByAssetIds = async (apiInstance: ApiPromise, assetIds: string[]) => {
-    let lbpPoolId: string | undefined = (await (apiInstance.rpc as any).lbp.getPoolAccount(
-        assetIds[0], assetIds[1]
-    )).toHuman();
-    
-    let xykPoolId: string | undefined = (await (apiInstance.rpc as any).xyk.getPoolAccount(
-        assetIds[0], assetIds[1]
-    )).toHuman();
+export const getPoolIdsByAssetIds = async (
+  apiInstance: ApiPromise,
+  assetIds: string[]
+) => {
+  let lbpPoolId: string | undefined = (
+    await (apiInstance.rpc as any).lbp.getPoolAccount(assetIds[0], assetIds[1])
+  ).toHuman();
 
-    return {
-        lbpPoolId,
-        xykPoolId
-    }
-}
+  let xykPoolId: string | undefined = (
+    await (apiInstance.rpc as any).xyk.getPoolAccount(assetIds[0], assetIds[1])
+  ).toHuman();
+
+  return {
+    lbpPoolId,
+    xykPoolId,
+  };
+};
 
 export const useGetPoolsQueryResolver = () => {
-    const { apiInstance, loading } = usePolkadotJsContext();
-    const getLbpPools = useGetLbpPools();
-    const getXykPools = useGetXykPools();
-    const getXykPool = useGetXykPool();
-    const getLbpPool = useGetLbpPool();
+  const { apiInstance, loading } = usePolkadotJsContext();
+  const getLbpPools = useGetLbpPools();
+  const getXykPools = useGetXykPools();
+  const getXykPool = useGetXykPool();
+  const getLbpPool = useGetLbpPool();
 
-    return useResolverToRef(
-        useCallback(async (
-            _obj,
-            args?: PoolQueryResolverArgs,
-            context?: { client: ApolloClient<object> }
-        ) => {
-            if (!apiInstance || loading || !context?.client) return;
-            log.debug('useGetPoolsQueryResolver', 'fetching pools', args);
+  return useResolverToRef(
+    useCallback(
+      async (
+        _obj,
+        args?: PoolQueryResolverArgs,
+        context?: { client: ApolloClient<object> }
+      ) => {
+        if (!apiInstance || loading || !context?.client) return;
+        log.debug('useGetPoolsQueryResolver', 'fetching pools', args);
 
-            // use the provided poolId
-            let poolId = args?.poolId;
-            let poolIds: PoolIds = {
-                lbpPoolId: poolId,
-                xykPoolId: poolId
-            };
+        // use the provided poolId
+        let poolId = args?.poolId;
+        let poolIds: PoolIds = {
+          lbpPoolId: poolId,
+          xykPoolId: poolId,
+        };
 
-            // if we're querying by assetIds, find the poolIds via RPC
-            if (args?.assetIds) {
-                poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
-                log.debug('useGetPoolsQueryResolver', 'found poolIDs', poolIds, apiInstance);
+        // if we're querying by assetIds, find the poolIds via RPC
+        if (args?.assetIds) {
+          poolIds = await getPoolIdsByAssetIds(apiInstance, args.assetIds);
+          log.debug(
+            'useGetPoolsQueryResolver',
+            'found poolIDs',
+            poolIds,
+            apiInstance
+          );
+        }
+
+        // if the poolId is specified, try resolving with a single pool
+        if (poolIds.xykPoolId || poolIds.lbpPoolId) {
+          let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
+          let xykPool = await getXykPool(poolIds.xykPoolId);
+
+          log.debug(
+            'useGetPoolsQueryResolver',
+            'found pools by poolIDs',
+            lbpPool,
+            xykPool
+          );
+
+          // if the assets are matching, its a default value which means the pool was not found
+          if (xykPool?.assetInId === xykPool?.assetOutId) xykPool = undefined;
+          if (lbpPool?.assetInId === lbpPool?.assetOutId) lbpPool = undefined;
+
+          log.debug(
+            'useGetPoolsQueryResolver',
+            'eliminated default value pools',
+            lbpPool,
+            xykPool
+          );
+
+          // TODO: which pool should have priority if both types exist for the same assets?
+          const pool = xykPool || lbpPool;
+
+          log.debug(
+            'useGetPoolsQueryResolver',
+            'returning a single pool',
+            pool
+          );
+
+          return (
+            pool && {
+              ...pool,
+              __typename: xykPool
+                ? ('XYKPool' as XykPool['__typename'])
+                : lbpPool
+                ? ('LBPPool' as LbpPool['__typename'])
+                : undefined,
             }
+          );
+        }
 
-            // if the poolId is specified, try resolving with a single pool
-            if (poolIds.xykPoolId || poolIds.lbpPoolId) {
-                let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
-                let xykPool = await getXykPool(poolIds.xykPoolId);
-        
-                log.debug('useGetPoolsQueryResolver', 'found pools by poolIDs', lbpPool, xykPool);
+        // if no extra args were provided, get all the pools
+        const [lbpPools, xykPools] = await Promise.all([
+          getLbpPools(context.client),
+          getXykPools(),
+        ]);
 
-                // if the assets are matching, its a default value which means the pool was not found
-                if (xykPool?.assetInId === xykPool?.assetOutId) xykPool = undefined;
-                if (lbpPool?.assetInId === lbpPool?.assetOutId) lbpPool = undefined;
+        log.debug('useGetPoolsQueryResolver', 'returning multiple pools', [
+          lbpPools,
+          xykPools,
+        ]);
 
-                log.debug('useGetPoolsQueryResolver', 'eliminated default value pools', lbpPool, xykPool);
-
-                // TODO: which pool should have priority if both types exist for the same assets?
-                const pool = xykPool || lbpPool;
-                
-                log.debug('useGetPoolsQueryResolver', 'returning a single pool', pool);
-
-                return pool && ({
-                    ...pool,
-                    __typename: xykPool 
-                        ? 'XYKPool' as XykPool['__typename']
-                        : lbpPool
-                            ? 'LBPPool' as LbpPool['__typename']
-                            : undefined
-                })
-            }
-
-            // if no extra args were provided, get all the pools
-            const [lbpPools, xykPools] = await Promise.all([
-                getLbpPools(context.client),
-                getXykPools()
-            ]);
-            
-            log.debug('useGetPoolsQueryResolver', 'returning multiple pools', [lbpPools, xykPools]);
-
-            return ([] as (LbpPool | XykPool)[])
-                .concat(
-                    lbpPools
-                        ?.map(pool => ({
-                            ...pool,
-                            __typename: 'LBPPool'
-                        }) as LbpPool)
-                )
-                .concat(
-                    xykPools
-                        ?.map(pool => ({
-                            ...pool,
-                            __typename: 'XYKPool'
-                        }) as XykPool)
-                )
-
-        }, [getLbpPools]),
-        'pools'
-    )
-}
+        return ([] as (LbpPool | XykPool)[])
+          .concat(
+            lbpPools?.map(
+              (pool) =>
+                ({
+                  ...pool,
+                  __typename: 'LBPPool',
+                } as LbpPool)
+            )
+          )
+          .concat(
+            xykPools?.map(
+              (pool) =>
+                ({
+                  ...pool,
+                  __typename: 'XYKPool',
+                } as XykPool)
+            )
+          );
+      },
+      [apiInstance, getLbpPool, getLbpPools, getXykPool, getXykPools, loading]
+    ),
+    'pools'
+  );
+};

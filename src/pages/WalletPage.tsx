@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { Account as AccountModel } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsLazyQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
-import { usePersistActiveAccount } from '../hooks/accounts/usePersistActiveAccount';
+import { usePersistActiveAccount } from '../hooks/accounts/lib/usePersistActiveAccount';
 
 export const Account = ({ account }: { account?: AccountModel }) => {
   // TODO: you can get the loading state of the mutation here as well
@@ -82,15 +82,13 @@ export const WalletPage = () => {
       <br />
       <br />
 
-      {true ? (
+      {
         <div>
           {accountsData?.accounts?.map((account, i) => (
             <Account key={i} account={account} />
           ))}
         </div>
-      ) : (
-        <p>Extension unavailable</p>
-      )}
+      }
     </div>
   );
 };

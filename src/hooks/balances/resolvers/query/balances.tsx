@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { AssetIds, Balance, Scalars } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
+import { useResolverToRef } from '../../../accounts/resolvers/mutation/useAccountsMutationResolvers';
 import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';

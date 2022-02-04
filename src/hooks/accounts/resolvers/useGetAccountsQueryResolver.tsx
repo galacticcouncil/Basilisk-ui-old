@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useGetAccounts } from '../useGetAccounts';
-import { useResolverToRef } from './useAccountsMutationResolvers';
+import { useGetAccounts } from '../lib/useGetAccounts';
+import { useResolverToRef } from './mutation/useAccountsMutationResolvers';
 import { Account } from '../../../generated/graphql';
 
 // make sure the __typename is well typed
