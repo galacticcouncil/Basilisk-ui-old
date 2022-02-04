@@ -19,6 +19,8 @@ import { useLastBlock } from './useLastBlock';
 import { useEffect } from 'react';
 import { Query } from '../../generated/graphql';
 
+const useLastBlockMock = useLastBlock as jest.Mock;
+
 waitForExpect.defaults.interval = 10;
 waitForExpect.defaults.timeout = 1000;
 
@@ -84,7 +86,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '100',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
       });
@@ -112,7 +114,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '100',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
       });
@@ -135,7 +137,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '100',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleNextLastBlock,
       });
@@ -204,7 +206,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '100',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
       });
@@ -293,7 +295,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '100',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
       });
@@ -319,7 +321,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         parachain: '101',
       };
 
-      (useLastBlock as jest.Mock).mockReturnValue({
+      useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleNextLastBlock,
       });
