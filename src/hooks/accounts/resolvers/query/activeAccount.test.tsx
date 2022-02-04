@@ -90,6 +90,7 @@ describe('useActiveAccountQueryResolver', () => {
         expect(data()?.activeAccount).toStrictEqual({
           id: 'mockId',
           name: 'Mocked Account',
+          source: 'polkadot-js',
           balances: [],
           __typename: 'Account',
         });
