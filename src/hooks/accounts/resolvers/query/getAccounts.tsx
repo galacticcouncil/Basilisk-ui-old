@@ -1,10 +1,14 @@
 import { useCallback } from 'react';
-import { useGetAccounts } from '../lib/useGetAccounts';
-import { useResolverToRef } from './mutation/useAccountsMutationResolvers';
-import { Account } from '../../../generated/graphql';
+import { useGetAccounts } from '../../lib/useGetAccounts';
+import { useResolverToRef } from '../mutation/useAccountsMutationResolvers';
+import { Account } from '../../../../generated/graphql';
 
-// make sure the __typename is well typed
 export const __typename: Account['__typename'] = 'Account';
+
+const withTypename = (account: Account) => ({
+  __typename,
+  ...account,
+});
 
 export const useGetAccountsQueryResolver = () => {
   const getAccounts = useGetAccounts();
@@ -21,10 +25,7 @@ export const useGetAccountsQueryResolver = () => {
             return null;
           }
 
-          return accounts.map((account) => ({
-            ...account,
-            __typename,
-          }));
+          return accounts.map((account) => withTypename(account));
         },
         [getAccounts]
       ),

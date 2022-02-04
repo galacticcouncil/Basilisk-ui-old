@@ -1,5 +1,5 @@
-import { useGetAccountsQueryResolver } from './useGetAccountsQueryResolver';
 import { useActiveAccountQueryResolver } from './query/activeAccount';
+import { useGetAccountsQueryResolver } from './query/getAccounts';
 
 /**
  * Used to resolve queries for the `Accounts` (or `selectedAccount`) entity.
