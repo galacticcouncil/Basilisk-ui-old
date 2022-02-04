@@ -7,6 +7,7 @@ import { FormattedMessage } from 'react-intl';
 
 export interface AccountSelectorProps {
   accounts?: Account[];
+  accountsLoading: boolean;
   account?: Account;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
@@ -20,6 +21,7 @@ export interface AccountSelectorProps {
  */
 export const AccountSelector = ({
   accounts,
+  accountsLoading,
   onAccountSelected,
   onAccountCleared,
   account,
@@ -55,41 +57,58 @@ export const AccountSelector = ({
         </div>
         {isExtensionAvailable ? (
           <>
-            {accounts?.length ? (
-              <div className="account-selector__accounts-list">
-                {accounts?.map((account, i) => (
-                  <AccountItem
-                    key={i}
-                    onClick={() => onAccountSelected(account)}
-                    active={account.id === activeAccount?.id}
-                    account={account}
-                  />
-                ))}
+            {accountsLoading ? (
+              <div className="mx-3 my-5 text-center">
+                <FormattedMessage
+                  id="Wallet.Loading"
+                  defaultMessage="Loading..."
+                />
               </div>
             ) : (
-              //TODO update href param when we know where to send user
-              <div className="mx-3 my-5 text-center">
-                <h4>
-                  <FormattedMessage
-                    id="Wallet.NoAccountsAvailable"
-                    defaultMessage="No accounts available"
-                  />
-                </h4>
-                <a href="/#" className="account-selector__create-account-link">
-                  Need help creating an account? <br />
-                  Click here
-                </a>
-              </div>
-            )}
-            {account && (
-              <div className="d-flex mx-3">
-                <Button kind={ButtonKind.Secondary} onClick={onAccountCleared}>
-                  <FormattedMessage
-                    id="Wallet.ClearAccount"
-                    defaultMessage="Clear account"
-                  />
-                </Button>
-              </div>
+              <>
+                {accounts?.length ? (
+                  <div className="account-selector__accounts-list">
+                    {accounts?.map((account, i) => (
+                      <AccountItem
+                        key={i}
+                        onClick={() => onAccountSelected(account)}
+                        active={account.id === activeAccount?.id}
+                        account={account}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  //TODO update href param when we know where to send user
+                  <div className="mx-3 my-5 text-center">
+                    <h4>
+                      <FormattedMessage
+                        id="Wallet.NoAccountsAvailable"
+                        defaultMessage="No accounts available"
+                      />
+                    </h4>
+                    <a
+                      href="/#"
+                      className="account-selector__create-account-link"
+                    >
+                      Need help creating an account? <br />
+                      Click here
+                    </a>
+                  </div>
+                )}
+                {account && (
+                  <div className="d-flex mx-3">
+                    <Button
+                      kind={ButtonKind.Secondary}
+                      onClick={onAccountCleared}
+                    >
+                      <FormattedMessage
+                        id="Wallet.ClearAccount"
+                        defaultMessage="Clear account"
+                      />
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </>
         ) : (

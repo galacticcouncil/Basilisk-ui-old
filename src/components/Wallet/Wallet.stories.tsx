@@ -34,6 +34,7 @@ export default {
         vestingSchedule: {},
       },
     ],
+    accountsLoading: false,
     onAccountSelected: () => {
       return Promise.resolve();
     },
@@ -81,6 +82,10 @@ export const Default = Template.bind({});
 export const NoAccountConnected = Template.bind({});
 NoAccountConnected.args = {
   account: undefined,
+};
+export const AccountsLoading = Template.bind({});
+AccountsLoading.args = {
+  accountsLoading: true,
 };
 export const NoAccountsAvailable = Template.bind({});
 NoAccountsAvailable.args = {

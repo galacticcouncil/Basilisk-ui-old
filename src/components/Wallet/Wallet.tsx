@@ -14,6 +14,7 @@ const horizontalBar = '―';
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   accounts?: Account[];
+  accountsLoading: boolean;
   account?: Account;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
@@ -25,6 +26,7 @@ export interface WalletProps {
 export const Wallet = ({
   modalContainerRef,
   accounts,
+  accountsLoading,
   account,
   onAccountSelected,
   onAccountCleared,
@@ -34,6 +36,7 @@ export const Wallet = ({
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
+    accountsLoading,
     onAccountSelected,
     onAccountCleared,
     account,
@@ -71,7 +74,10 @@ export const Wallet = ({
         data-modal-portal-toggle={toggleId}
       >
         {extensionLoading ? (
-          <div className="wallet__info">Loading...</div>
+          <div className="wallet__info">
+            {' '}
+            <FormattedMessage id="Wallet.Loading" defaultMessage="Loading..." />
+          </div>
         ) : isExtensionAvailable ? (
           <>
             {account ? (

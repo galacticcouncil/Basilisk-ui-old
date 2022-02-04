@@ -11,7 +11,8 @@ export const Wallet = () => {
     useGetExtensionQuery();
   const [setActiveAccount] = useSetActiveAccountMutation();
   const { data: activeAccountData } = useGetActiveAccountQuery();
-  const [getAccounts, { data: accountsData }] = useGetAccountsLazyQuery();
+  const [getAccounts, { data: accountsData, loading: accountsLoading }] =
+    useGetAccountsLazyQuery();
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
 
   useEffect(() => {
@@ -42,6 +43,7 @@ export const Wallet = () => {
         isExtensionAvailable={!!extensionData?.extension.isAvailable}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
+        accountsLoading={accountsLoading}
         account={activeAccountData?.activeAccount}
         onAccountSelected={onAccountSelected}
         onAccountCleared={onAccountCleared}

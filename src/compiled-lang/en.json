@@ -7,6 +7,7 @@
   "Wallet.InstallExtension": "Install extension",
   "Wallet.InstallInstructions": "To connect your account, please {link}.",
   "Wallet.InstallLinkText": "install or enable the polkadot.js extension",
+  "Wallet.Loading": "Loading...",
   "Wallet.NoAccountsAvailable": "No accounts available",
   "Wallet.ReloadInstructions": "You can {link} once you're done with the installation.",
   "Wallet.ReloadLinkText": "reload the page",

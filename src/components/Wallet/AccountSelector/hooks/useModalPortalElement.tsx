@@ -9,6 +9,7 @@ import { WalletProps } from '../../Wallet';
 
 export type ModalPortalElement = ({
   accounts,
+  accountsLoading,
   onAccountSelected,
   onAccountCleared,
   account,
@@ -16,6 +17,7 @@ export type ModalPortalElement = ({
 }: Pick<
   WalletProps,
   | 'accounts'
+  | 'accountsLoading'
   | 'onAccountSelected'
   | 'onAccountCleared'
   | 'account'
@@ -25,6 +27,7 @@ export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
 
 export const useModalPortalElement: ModalPortalElement = ({
   accounts,
+  accountsLoading,
   onAccountSelected,
   onAccountCleared,
   account,
@@ -52,6 +55,7 @@ export const useModalPortalElement: ModalPortalElement = ({
         <AccountSelector
           innerRef={elementRef}
           accounts={accounts}
+          accountsLoading={accountsLoading}
           account={account}
           onAccountSelected={handleAccountSelected(closeModal)}
           onAccountCleared={handleAccountCleared(closeModal)}
@@ -64,6 +68,7 @@ export const useModalPortalElement: ModalPortalElement = ({
     },
     [
       accounts,
+      accountsLoading,
       account,
       handleAccountSelected,
       isExtensionAvailable,
