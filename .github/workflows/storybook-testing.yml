@@ -3,10 +3,6 @@ on:
   pull_request:
     branches:
       - develop
-      - 'feat/ci_testing_storybook_addons'
-  push:
-    branches:
-      - 'feat/add-storybook-testing-flow'
 
 jobs:
   build_app:
@@ -41,7 +37,7 @@ jobs:
         run: npx browserslist@latest --update-db
 
       - name: Build Storybook
-        run: yarn build-storybook
+        run: yarn storybook:build
         env:
           CI: true
           NODE_OPTIONS: --openssl-legacy-provider
