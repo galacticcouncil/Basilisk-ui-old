@@ -1,7 +1,7 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { useCallback } from 'react';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers';
+import { withErrorHandler } from '../apollo/withErrorHandler';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,
@@ -27,7 +27,7 @@ export const useConfigMutationResolvers = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
   const { setPersistedConfig } = usePersistentConfig();
 
-  const setConfig = useResolverToRef(
+  const setConfig = withErrorHandler(
     useCallback(
       async (
         _obj,

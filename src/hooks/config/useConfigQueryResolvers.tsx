@@ -1,6 +1,6 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers';
+import { withErrorHandler } from '../apollo/withErrorHandler';
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT,
@@ -19,7 +19,7 @@ export const useConfigQueryResolvers = () => {
   const { persistedConfig } = usePersistentConfig();
   const { apiInstance, loading } = usePolkadotJsContext();
 
-  const config = useResolverToRef(
+  const config = withErrorHandler(
     useCallback(
       async (
         _obj,
