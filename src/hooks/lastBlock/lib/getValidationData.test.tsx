@@ -23,7 +23,7 @@ export const getMockApiPromise = (): ApiPromise =>
     createType: jest.fn(() => {
       return {
         isSome: true,
-        toJSON: () => ({ mockJsonValidationData }),
+        unwrap: () => ({ mockJsonValidationData }),
       };
     }),
     at: jest.fn(() => getMockApiPromise()),
