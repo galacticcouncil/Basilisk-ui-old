@@ -21,16 +21,13 @@ import { Query } from '../../generated/graphql';
 
 const useLastBlockMock = useLastBlock as jest.Mock;
 
-waitForExpect.defaults.interval = 10;
-waitForExpect.defaults.timeout = 1000;
-
 jest.mock('./useLastBlock', () => {
   return {
     useLastBlock: jest.fn(),
   };
 });
 
-describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
+describe('useRefetchWithNewBlock', () => {
   const resolverProviderFactory =
     (useResolvers: () => Resolvers) =>
     ({ children }: { children: React.ReactNode }): JSX.Element => {
@@ -39,13 +36,23 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       );
     };
 
+  const exampleLastBlock = {
+    __typename: 'LastBlock',
+    relaychain: '10',
+    parachain: '100',
+  };
+
+  const exampleNextLastBlock = {
+    __typename: 'LastBlock',
+    relaychain: '10',
+    parachain: '101',
+  };
+
   describe('writes to cache and potentially refetch queries', () => {
     let spyApolloCache: jest.SpyInstance;
     let spyApolloRefetchQueries: jest.SpyInstance;
 
-    const useResolvers = () => {
-      return {};
-    };
+    const useResolvers = () => ({});
     const ResolverProvider = resolverProviderFactory(useResolvers);
 
     const Test = () => {
@@ -61,9 +68,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
 
       return <>{JSON.stringify(data)}</>;
     };
-
     let component: TestRenderer.ReactTestRenderer;
-
     const render = () => {
       component = TestRenderer.create(
         <ResolverProvider>
@@ -79,13 +84,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       jest.resetModules();
     });
 
-    it('can resolve lastBlock query', async () => {
-      const exampleLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '100',
-      };
-
+    it('can resolve lastBlock query, not calling refetch queries', async () => {
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
@@ -107,13 +106,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       expect(spyApolloRefetchQueries).not.toBeCalled();
     });
 
-    it('can resolve lastBlock query 2', async () => {
-      const exampleLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '100',
-      };
-
+    it('can resolve lastBlock query twice, calls refetch queries', async () => {
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
@@ -130,12 +123,6 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       });
 
       expect(spyApolloCache).toHaveBeenCalledTimes(1);
-
-      const exampleNextLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '100',
-      };
 
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
@@ -155,7 +142,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
         });
       });
 
-      expect(spyApolloCache).toHaveBeenCalledTimes(2);
+      expect(spyApolloCache).toHaveBeenCalledTimes(3);
       expect(spyApolloRefetchQueries).toHaveBeenCalledTimes(1);
     });
   });
@@ -200,12 +187,6 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
     });
 
     it('hits only cache, not resolver', async () => {
-      const exampleLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '100',
-      };
-
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
@@ -233,7 +214,6 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       __typename: 'MockEntity',
     };
     let mockedQueryResolver: jest.Mock;
-
     const useResolvers = () => {
       mockedQueryResolver = jest
         .fn()
@@ -288,13 +268,7 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       jest.resetModules();
     });
 
-    it('mocked query resolver is triggered only once', async () => {
-      const exampleLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '100',
-      };
-
+    it('triggers mocked query resolver only once', async () => {
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
         ...exampleLastBlock,
@@ -314,12 +288,6 @@ describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
       });
 
       expect(mockedQueryResolver).toHaveBeenCalledTimes(1);
-
-      const exampleNextLastBlock = {
-        __typename: 'LastBlock',
-        relaychain: '10',
-        parachain: '101',
-      };
 
       useLastBlockMock.mockReturnValue({
         id: 'LastBlock',
