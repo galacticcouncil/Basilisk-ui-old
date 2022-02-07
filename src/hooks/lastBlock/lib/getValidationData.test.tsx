@@ -51,21 +51,17 @@ describe('getValidationData', () => {
     );
   });
 
-  it.only(`doesn't get validation data from parachain block head`, async () => {
-    // prepare
+  it(`doesn't get validation data from parachain block head`, async () => {
     (mockApiInstance.createType as jest.Mock).mockReturnValueOnce({
       isSome: false,
     });
 
-    // test
-    // variables should be descriptive, avoid using "u"
-    // const u = await getValidationData(
-    //   mockedUsePolkadotJsContext.apiInstance,
-    //   signedBlock
-    // );
+    const jsonValidationData = await getValidationData(
+      mockApiInstance,
+      parachainBlock
+    );
 
-    // assert
-    // expect(mockedUsePolkadotJsContext.apiInstance.at).toHaveBeenCalled();
-    // expect(u).toBeNull();
+    expect(mockApiInstance.at).toHaveBeenCalled();
+    expect(jsonValidationData).toBeNull();
   });
 });
