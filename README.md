@@ -311,16 +311,36 @@ For running e2e test locally you should:
 
 ### Storybook testing
 
+For running tests Storybook server must be running:
+```shell
+yarn storybook:start
+```
+Storybook built can used by any other server in porn `6006`. For instance:
+```shell
+yarn storybook:build
+
+#use node.js server library http-server
+http-server storybook-static --port 6006
+```
+
+Run tests:
+```shell
+yarn storybook:test
+```
+
 #### Watch
 As watcher library we are using [chokidar-cli](https://github.com/open-cli-tools/chokidar-cli) .
 
 For testing storybook in watch mode Storybook server must be running:
 ```shell
-yarn storybook:test
+yarn storybook:start
 ```
 Watcher can be started in separate terminal window:
 ```shell
 yarn storybook:test:watch
+
+#or in --headed mode
+yarn storybook:test:watch-headed
 ```
 
 
