@@ -4,14 +4,16 @@ import { useLastBlock, __typename, id } from './useLastBlock';
 import { subscribeNewBlock } from './lib/subscribeNewBlock';
 import { getValidationData } from './lib/getValidationData';
 import { setTimeout } from 'timers';
-import {
-  mockedUsePolkadotJsContext,
-  getMockApiPromise,
-} from '../polkadotJs/tests/mockUsePolkadotJsContext';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
+import { ApiPromise } from '@polkadot/api';
+import { useEffect } from 'react';
+import { LastBlock } from '../../generated/graphql';
 
-waitForExpect.defaults.interval = 10;
-waitForExpect.defaults.timeout = 1000;
+const subscribeNewBlockMock = subscribeNewBlock as jest.Mock;
+const getValidationDataMock = getValidationData as jest.Mock;
+
+export const getMockApiPromise = (): ApiPromise =>
+  ({} as unknown as ApiPromise);
 
 jest.mock('../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: jest.fn(),
@@ -27,13 +29,22 @@ jest.mock('./lib/getValidationData', () => {
   };
 });
 
-describe('hooks/lastBlock/useLastBlock', () => {
-  let lastBlock: any = {};
+describe('useLastBlock', () => {
+  let lastBlock: LastBlock | undefined = undefined;
+  let lastBlockChanged = jest.fn();
   const Test = () => {
-    lastBlock = useLastBlock();
+    const _lastBlock = useLastBlock();
+
+    useEffect(() => {
+      lastBlock = _lastBlock;
+      if (lastBlock) {
+        lastBlockChanged(lastBlock);
+      }
+    }, [_lastBlock]);
 
     return <></>;
   };
+  const unsubscribe = jest.fn();
 
   let component: TestRenderer.ReactTestRenderer;
   const render = () => {
@@ -43,10 +54,10 @@ describe('hooks/lastBlock/useLastBlock', () => {
 
   beforeEach(() => {
     jest.resetModules();
-
-    (usePolkadotJsContext as jest.Mock).mockReturnValue(
-      mockedUsePolkadotJsContext
-    );
+    (usePolkadotJsContext as jest.Mock).mockReturnValue({
+      apiInstance: getMockApiPromise(),
+      loading: false,
+    });
   });
 
   it('returns relay and parachain number', async () => {
@@ -57,20 +68,17 @@ describe('hooks/lastBlock/useLastBlock', () => {
       parachain: '100',
     };
 
-    const unsubscribe = jest.fn();
-    (getValidationData as jest.Mock).mockImplementation(async () => {
+    getValidationDataMock.mockImplementation(async () => {
       return { relayParentNumber: expectedLastBlock.relaychain };
     });
 
-    (subscribeNewBlock as jest.Mock).mockImplementation(
-      async (_apiInstance, callback) => {
-        callback({
-          block: { header: { number: expectedLastBlock.parachain } },
-        });
+    subscribeNewBlockMock.mockImplementation(async (_apiInstance, callback) => {
+      callback({
+        block: { header: { number: expectedLastBlock.parachain } },
+      });
 
-        return unsubscribe;
-      }
-    );
+      return unsubscribe;
+    });
 
     render();
 
@@ -88,6 +96,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
     expect(getValidationData).toBeCalledWith(expect.any(Object), {
       block: { header: { number: expectedLastBlock.parachain } },
     });
+    expect(lastBlockChanged).toBeCalledTimes(1);
   });
 
   it('returns relay and parachain number multiple times, once subscription returns new parachain number', async () => {
@@ -97,23 +106,19 @@ describe('hooks/lastBlock/useLastBlock', () => {
       relaychain: '10',
       parachain: '100',
     };
-
     const expectedLastBlock = {
       __typename,
       id,
       relaychain: '11',
       parachain: '101',
     };
-
-    const unsubscribe = jest.fn();
-    (getValidationData as jest.Mock).mockImplementationOnce(async () => {
+    getValidationDataMock.mockImplementationOnce(async () => {
       return { relayParentNumber: expectedPrevLastBlock.relaychain };
     });
-    (getValidationData as jest.Mock).mockImplementationOnce(async () => {
+    getValidationDataMock.mockImplementationOnce(async () => {
       return { relayParentNumber: expectedLastBlock.relaychain };
     });
-
-    (subscribeNewBlock as jest.Mock).mockImplementationOnce(
+    subscribeNewBlockMock.mockImplementationOnce(
       async (_apiInstance, callback) => {
         callback({
           block: { header: { number: expectedPrevLastBlock.parachain } },
@@ -124,6 +129,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
             block: { header: { number: expectedLastBlock.parachain } },
           });
         }, 100);
+
         return unsubscribe;
       }
     );
@@ -146,6 +152,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
     expect(getValidationData).toBeCalledWith(expect.any(Object), {
       block: { header: { number: expectedLastBlock.parachain } },
     });
+    expect(lastBlockChanged).toBeCalledTimes(2);
   });
 
   it('does not throw exception if polkadot hook empty apiInstance', async () => {
@@ -163,6 +170,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
 
     expect(getValidationData).not.toBeCalled();
     expect(subscribeNewBlock).not.toBeCalled();
+    expect(lastBlockChanged).not.toBeCalled();
   });
 
   it('unsubscribes as cleanup process if polkadot apiInstance changes', async () => {
@@ -172,21 +180,16 @@ describe('hooks/lastBlock/useLastBlock', () => {
       relaychain: '10',
       parachain: '100',
     };
-
-    const unsubscribe = jest.fn();
-    (getValidationData as jest.Mock).mockImplementation(async () => {
+    getValidationDataMock.mockImplementation(async () => {
       return { relayParentNumber: expectedLastBlock.relaychain };
     });
+    subscribeNewBlockMock.mockImplementation(async (_apiInstance, callback) => {
+      callback({
+        block: { header: { number: expectedLastBlock.parachain } },
+      });
 
-    (subscribeNewBlock as jest.Mock).mockImplementation(
-      async (_apiInstance, callback) => {
-        callback({
-          block: { header: { number: expectedLastBlock.parachain } },
-        });
-
-        return unsubscribe;
-      }
-    );
+      return unsubscribe;
+    });
 
     render();
 
@@ -195,14 +198,12 @@ describe('hooks/lastBlock/useLastBlock', () => {
         expect(lastBlock).toMatchObject(expectedLastBlock);
       });
     });
-
     act(() => {
       // update mocked apiInstance
       (usePolkadotJsContext as jest.Mock).mockReturnValue({
         apiInstance: getMockApiPromise(),
         loading: false,
       });
-
       component.update(<Test />);
     });
 
@@ -211,7 +212,7 @@ describe('hooks/lastBlock/useLastBlock', () => {
         expect(lastBlock).toMatchObject(expectedLastBlock);
       });
     });
-
     expect(unsubscribe).toBeCalledTimes(1);
+    expect(lastBlockChanged).toBeCalledTimes(2);
   });
 });

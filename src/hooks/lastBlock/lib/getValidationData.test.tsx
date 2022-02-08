@@ -1,86 +1,67 @@
-import { mockUsePolkadotJsContext } from '../../polkadotJs/tests/mockUsePolkadotJsContext';
+import { ApiPromise } from '@polkadot/api';
+import { SignedBlock } from '@polkadot/types/interfaces';
 import { getValidationData, validationDataDataType } from './getValidationData';
 
-const mockedUsePolkadotJsContext = mockUsePolkadotJsContext();
+const rawValidationData = 'mockedRawValidationData';
+const mockJsonValidationData = 'result';
+const parachainBlock = {
+  block: { header: { hash: 'hash' } },
+} as unknown as SignedBlock;
 
-describe('hooks/lastBlock/lib/getValidationData', () => {
-  it('get validation data from parachain block head', async () => {
-    expect.assertions(4);
+export const getMockApiPromise = (): ApiPromise =>
+  ({
+    query: {
+      parachainSystem: {
+        validationData: jest.fn(() => rawValidationData),
+      },
+    },
+    derive: {
+      chain: {
+        subscribeNewBlocks: jest.fn(),
+      },
+    },
+    createType: jest.fn(() => {
+      return {
+        isSome: true,
+        unwrap: () => ({ mockJsonValidationData }),
+      };
+    }),
+    at: jest.fn(() => getMockApiPromise()),
+  } as unknown as ApiPromise);
 
-    const rawValidationData = 'mockedRawValidationData';
-    const result = 'result';
+describe('getValidationData', () => {
+  let mockApiInstance: ApiPromise;
 
-    (mockedUsePolkadotJsContext.apiInstance.at as jest.Mock).mockResolvedValue(
-      mockedUsePolkadotJsContext.apiInstance
-    );
-    (
-      mockedUsePolkadotJsContext.apiInstance.query.parachainSystem
-        .validationData as any as jest.Mock
-    ).mockResolvedValue(rawValidationData);
-    (
-      mockedUsePolkadotJsContext.apiInstance.createType as jest.Mock
-    ).mockImplementationOnce(
-      (validationDataDataTypeAttr, rawValidationDataAttr) => {
-        expect(rawValidationDataAttr).toEqual(rawValidationData);
-        expect(validationDataDataTypeAttr).toEqual(validationDataDataType);
-
-        return {
-          isSome: true,
-          toJSON: () => ({ result }),
-        };
-      }
-    );
-
-    const hash = '123';
-    const signedBlock: any = {
-      block: { header: { hash } },
-    };
-
-    const u = await getValidationData(
-      mockedUsePolkadotJsContext.apiInstance,
-      signedBlock
-    );
-
-    expect(mockedUsePolkadotJsContext.apiInstance.at).toHaveBeenCalled();
-    expect(u).toEqual({ result });
+  beforeEach(() => {
+    jest.resetAllMocks();
+    mockApiInstance = getMockApiPromise();
   });
 
-  it('doesnt get validation data from parachain block head', async () => {
-    expect.assertions(4);
-
-    const rawValidationData = 'mockedRawValidationData';
-
-    (mockedUsePolkadotJsContext.apiInstance.at as jest.Mock).mockResolvedValue(
-      mockedUsePolkadotJsContext.apiInstance
-    );
-    (
-      mockedUsePolkadotJsContext.apiInstance.query.parachainSystem
-        .validationData as any as jest.Mock
-    ).mockResolvedValue(rawValidationData);
-    (
-      mockedUsePolkadotJsContext.apiInstance.createType as jest.Mock
-    ).mockImplementationOnce(
-      (validationDataDataTypeAttr, rawValidationDataAttr) => {
-        expect(rawValidationDataAttr).toEqual(rawValidationData);
-        expect(validationDataDataTypeAttr).toEqual(validationDataDataType);
-
-        return {
-          isNone: true,
-        };
-      }
+  it('gets validation data from parachain block head', async () => {
+    const jsonValidationData = await getValidationData(
+      mockApiInstance,
+      parachainBlock
     );
 
-    const hash = '123';
-    const signedBlock: any = {
-      block: { header: { hash } },
-    };
+    expect(jsonValidationData).toEqual({ mockJsonValidationData });
+    expect(mockApiInstance.at).toHaveBeenCalled();
+    expect(mockApiInstance.createType).toHaveBeenCalledWith(
+      validationDataDataType,
+      rawValidationData
+    );
+  });
 
-    const u = await getValidationData(
-      mockedUsePolkadotJsContext.apiInstance,
-      signedBlock
+  it(`doesn't get validation data from parachain block head`, async () => {
+    (mockApiInstance.createType as jest.Mock).mockReturnValueOnce({
+      isSome: false,
+    });
+
+    const jsonValidationData = await getValidationData(
+      mockApiInstance,
+      parachainBlock
     );
 
-    expect(mockedUsePolkadotJsContext.apiInstance.at).toHaveBeenCalled();
-    expect(u).toBeNull();
+    expect(mockApiInstance.at).toHaveBeenCalled();
+    expect(jsonValidationData).toBeNull();
   });
 });

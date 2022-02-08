@@ -1,28 +1,39 @@
-import { mockUsePolkadotJsContext } from '../../polkadotJs/tests/mockUsePolkadotJsContext';
+import { ApiPromise } from '@polkadot/api';
 import { subscribeNewBlock } from './subscribeNewBlock';
 
-const mockedUsePolkadotJsContext = mockUsePolkadotJsContext();
+export const getMockApiPromise = (): ApiPromise =>
+  ({
+    derive: {
+      chain: {
+        subscribeNewBlocks: jest.fn(),
+      },
+    },
+  } as unknown as ApiPromise);
 
-describe('hooks/lastBlock/lib/subscribeNewBlock', () => {
+describe('subscribeNewBlock', () => {
+  let mockApiInstance: ApiPromise;
+
+  beforeEach(() => {
+    jest.resetAllMocks();
+    mockApiInstance = getMockApiPromise();
+  });
+
   it('subscribes with a callback', async () => {
-    expect.assertions(2);
     const callback = jest.fn();
     const unsubscribe = jest.fn();
 
     (
-      mockedUsePolkadotJsContext.apiInstance.derive.chain
-        .subscribeNewBlocks as jest.Mock
-    ).mockImplementationOnce((cb) => {
-      expect(cb).toEqual(callback);
+      mockApiInstance.derive.chain.subscribeNewBlocks as jest.Mock
+    ).mockResolvedValue(unsubscribe);
 
-      return unsubscribe;
-    });
-
-    const u = await subscribeNewBlock(
-      mockedUsePolkadotJsContext.apiInstance,
+    const returnedUnsubscribe = await subscribeNewBlock(
+      mockApiInstance,
       callback
     );
 
-    expect(u).toEqual(unsubscribe);
+    expect(returnedUnsubscribe).toEqual(unsubscribe);
+    expect(
+      mockApiInstance.derive.chain.subscribeNewBlocks
+    ).toHaveBeenCalledWith(callback);
   });
 });

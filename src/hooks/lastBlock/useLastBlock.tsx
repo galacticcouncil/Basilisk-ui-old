@@ -24,21 +24,31 @@ export const getParachainNumber = (chainLastBlock: SignedBlock) =>
 
 export const useLastBlock = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
-  const [validationData, setValidationData] =
-    useState<PersistedValidationData | null>();
-  const [lastParachainBlock, setLastParachainBlock] =
-    useState<SignedBlock | null>();
-  const [lastBlock, setLastBlock] = useState<LastBlock | null>();
+  const [lastBlock, setLastBlock] = useState<LastBlock>();
 
   const subscribeNewBlocks = useCallback(async () => {
     if (!apiInstance || loading) {
       return;
     }
 
-    const unsubscribe = await subscribeNewBlock(
-      apiInstance,
-      setLastParachainBlock
-    );
+    const unsubscribe = await subscribeNewBlock(apiInstance, (block) => {
+      const parachain = getParachainNumber(block);
+
+      getValidationData(apiInstance, block).then((validationData) => {
+        if (!validationData) {
+          return;
+        }
+
+        const relaychain = getRelaychainNumber(validationData);
+
+        setLastBlock({
+          __typename,
+          id,
+          relaychain,
+          parachain,
+        });
+      });
+    });
 
     return unsubscribe;
   }, [apiInstance, loading]);
@@ -56,27 +66,6 @@ export const useLastBlock = () => {
       }
     };
   }, [subscribeNewBlocks]);
-
-  useEffect(() => {
-    if (!apiInstance || loading || !lastParachainBlock) {
-      return;
-    }
-
-    getValidationData(apiInstance, lastParachainBlock).then(setValidationData);
-  }, [apiInstance, loading, lastParachainBlock]);
-
-  useEffect(() => {
-    if (!lastParachainBlock || !validationData) {
-      return;
-    }
-
-    setLastBlock({
-      __typename,
-      id,
-      relaychain: getRelaychainNumber(validationData),
-      parachain: getParachainNumber(lastParachainBlock),
-    });
-  }, [lastParachainBlock, validationData]);
 
   return lastBlock;
 };
