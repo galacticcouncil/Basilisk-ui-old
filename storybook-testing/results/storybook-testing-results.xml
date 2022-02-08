@@ -1,0 +1,14 @@
+<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="0" time="8.371">
+<testsuite name="components/Balance/AssetBalanceInput/AssetBalanceInput.stories.test.ts" timestamp="1643889695232" hostname="" tests="2" failures="0" skipped="0" time="7.861" errors="0">
+<testcase name="Default AssetBalanceInput" classname="components/Balance/AssetBalanceInput/AssetBalanceInput.stories.test.ts:3:1 › Default AssetBalanceInput" time="1.877">
+</testcase>
+<testcase name="inputs accept numbers and &quot;.&quot; not other characters" classname="components/Balance/AssetBalanceInput/AssetBalanceInput.stories.test.ts:10:1 › inputs accept numbers and &quot;.&quot; not other characters" time="5.984">
+</testcase>
+</testsuite>
+<testsuite name="components/Button/Button.stories.test.ts" timestamp="1643889695232" hostname="" tests="2" failures="0" skipped="0" time="2.691" errors="0">
+<testcase name="Default Button" classname="components/Button/Button.stories.test.ts:3:1 › Default Button" time="1.893">
+</testcase>
+<testcase name="Secondary Button" classname="components/Button/Button.stories.test.ts:8:1 › Secondary Button" time="0.798">
+</testcase>
+</testsuite>
+</testsuites>

@@ -31,22 +31,20 @@ export const useLastBlock = () => {
       return;
     }
 
-    const unsubscribe = await subscribeNewBlock(apiInstance, (block) => {
+    const unsubscribe = await subscribeNewBlock(apiInstance, async (block) => {
       const parachain = getParachainNumber(block);
 
-      getValidationData(apiInstance, block).then((validationData) => {
-        if (!validationData) {
-          return;
-        }
+      const validationData = await getValidationData(apiInstance, block);
 
-        const relaychain = getRelaychainNumber(validationData);
+      if (!validationData) return;
 
-        setLastBlock({
-          __typename,
-          id,
-          relaychain,
-          parachain,
-        });
+      const relaychain = getRelaychainNumber(validationData);
+
+      setLastBlock({
+        __typename,
+        id,
+        relaychain,
+        parachain,
       });
     });
 
@@ -56,9 +54,9 @@ export const useLastBlock = () => {
   const unsubsribeRef: MutableRefObject<VoidFn | undefined> = useRef(undefined);
 
   useEffect(() => {
-    subscribeNewBlocks().then((unsubscribe) => {
-      unsubsribeRef.current = unsubscribe;
-    });
+    (async () => {
+      unsubsribeRef.current = await subscribeNewBlocks();
+    })();
 
     return () => {
       if (unsubsribeRef.current) {
