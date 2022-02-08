@@ -28,7 +28,7 @@ const getBlockHashString = (signedBlock: SignedBlock) => {
 export const getValidationData = async (
   apiInstance: ApiPromise,
   parachainBlock: SignedBlock
-) => {
+): Promise<PersistedValidationData | null> => {
   const blockHash = getBlockHashString(parachainBlock);
   const apiInstanceForSpecificBlock = await getApiInstanceForSpecificBlock(
     apiInstance,
