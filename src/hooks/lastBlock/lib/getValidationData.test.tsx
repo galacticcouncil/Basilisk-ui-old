@@ -3,9 +3,9 @@ import { SignedBlock } from '@polkadot/types/interfaces';
 import { Codec } from '@polkadot/types/types';
 import { getValidationData, validationDataDataType } from './getValidationData';
 
-const rawValidationData = 'mockedRawValidationData';
-const mockJsonValidationData = 'result';
-const parachainBlock = {
+const mockRawValidationData = 'mockedRawValidationData';
+const mockUnwrappedValidationData = 'result';
+const mockParachainBlock = {
   block: { header: { hash: 'hash' } },
 } as unknown as SignedBlock;
 
@@ -13,7 +13,7 @@ export const getMockApiPromise = (): jest.Mocked<ApiPromise> =>
   ({
     query: {
       parachainSystem: {
-        validationData: jest.fn(() => rawValidationData),
+        validationData: jest.fn(() => mockRawValidationData),
       },
     },
     derive: {
@@ -24,7 +24,7 @@ export const getMockApiPromise = (): jest.Mocked<ApiPromise> =>
     createType: jest.fn(() => {
       return {
         isSome: true,
-        unwrap: () => ({ mockJsonValidationData }),
+        unwrap: () => mockUnwrappedValidationData,
       };
     }),
     at: jest.fn(() => getMockApiPromise()),
@@ -41,14 +41,14 @@ describe('getValidationData', () => {
   it('gets validation data from parachain block head', async () => {
     const jsonValidationData = await getValidationData(
       mockApiInstance,
-      parachainBlock
+      mockParachainBlock
     );
 
-    expect(jsonValidationData).toEqual({ mockJsonValidationData });
+    expect(jsonValidationData).toEqual(mockUnwrappedValidationData);
     expect(mockApiInstance.at).toHaveBeenCalled();
     expect(mockApiInstance.createType).toHaveBeenCalledWith(
       validationDataDataType,
-      rawValidationData
+      mockRawValidationData
     );
   });
 
@@ -59,7 +59,7 @@ describe('getValidationData', () => {
 
     const jsonValidationData = await getValidationData(
       mockApiInstance,
-      parachainBlock
+      mockParachainBlock
     );
 
     expect(mockApiInstance.at).toHaveBeenCalled();
