@@ -1,5 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { SignedBlock } from '@polkadot/types/interfaces';
+import { Codec } from '@polkadot/types/types';
 import { getValidationData, validationDataDataType } from './getValidationData';
 
 const rawValidationData = 'mockedRawValidationData';
@@ -8,7 +9,7 @@ const parachainBlock = {
   block: { header: { hash: 'hash' } },
 } as unknown as SignedBlock;
 
-export const getMockApiPromise = (): ApiPromise =>
+export const getMockApiPromise = (): jest.Mocked<ApiPromise> =>
   ({
     query: {
       parachainSystem: {
@@ -27,10 +28,10 @@ export const getMockApiPromise = (): ApiPromise =>
       };
     }),
     at: jest.fn(() => getMockApiPromise()),
-  } as unknown as ApiPromise);
+  } as unknown as jest.Mocked<ApiPromise>);
 
 describe('getValidationData', () => {
-  let mockApiInstance: ApiPromise;
+  let mockApiInstance: jest.Mocked<ApiPromise>;
 
   beforeEach(() => {
     jest.resetAllMocks();
@@ -52,9 +53,9 @@ describe('getValidationData', () => {
   });
 
   it(`doesn't get validation data from parachain block head`, async () => {
-    (mockApiInstance.createType as jest.Mock).mockReturnValueOnce({
+    mockApiInstance.createType.mockReturnValueOnce({
       isSome: false,
-    });
+    } as any as Codec);
 
     const jsonValidationData = await getValidationData(
       mockApiInstance,
