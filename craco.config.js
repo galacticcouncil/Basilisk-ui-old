@@ -24,7 +24,14 @@ module.exports = {
           'default',
           ['jest-junit', { outputFile: 'ui-app-unit-tests-results.xml' }],
         ],
-        // testResultsProcessor:
+        collectCoverage: true,
+        collectCoverageFrom: ['./src/**'],
+        // "coverageThreshold": {
+        //   "global": {
+        //     "lines": 90
+        //   }
+        // },
+        coverageReporters: ['text', 'lcov'],
       };
     },
   },
