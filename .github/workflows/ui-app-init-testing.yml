@@ -43,3 +43,4 @@ jobs:
           lcov-file: ./coverage/lcov.info
           title: "Unit tests code coverage"
           github-token: ${{ secrets.GH_TOKEN }}
+          filter-changed-files: true
