@@ -38,9 +38,10 @@ jobs:
           path: ./ui-app-unit-tests-results.html
 
       - name: Post coverage report in PR
-        uses: romeovs/lcov-reporter-action@v0.2.16
+        id: code-coverage
+        uses: barecheck/code-coverage-action@v0.5.1
         with:
-          lcov-file: ./coverage/lcov.info
-          title: "Unit tests code coverage"
           github-token: ${{ secrets.GH_TOKEN }}
-          filter-changed-files: true
+          lcov-file: "./coverage/lcov.info"
+          send-summary-comment: true
+          show-annotations: "warning"
