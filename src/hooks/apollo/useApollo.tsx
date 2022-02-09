@@ -11,6 +11,7 @@ import { useConfigMutationResolvers } from '../config/useConfigMutationResolver'
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
+import { useRepayFeeQueryResolver } from '../constants/resolvers/query/lbp/repayFee';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
@@ -35,6 +36,7 @@ export const useResolvers: () => Resolvers = () => {
       ...useConfigQueryResolvers(),
       ...useFeePaymentAssetsQueryResolvers(),
       ...useBalanceQueryResolvers(),
+      ...useRepayFeeQueryResolver(),
       ...PoolsQueryResolver,
       ...useAssetsQueryResolvers(),
     },

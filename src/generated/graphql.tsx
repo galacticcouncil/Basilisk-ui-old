@@ -54,6 +54,11 @@ export type Config = {
   processorUrl: Scalars['String'];
 };
 
+export type Constants = {
+  __typename?: 'Constants';
+  lbp?: Maybe<LbpConstants>;
+};
+
 export type Extension = {
   __typename?: 'Extension';
   id: Scalars['String'];
@@ -77,6 +82,11 @@ export type LbpAssetWeights = {
   current: Scalars['String'];
   final: Scalars['String'];
   initial: Scalars['String'];
+};
+
+export type LbpConstants = {
+  __typename?: 'LBPConstants';
+  repayFee?: Maybe<Fee>;
 };
 
 export type LbpPool = {
@@ -112,6 +122,7 @@ export type Query = {
   assets?: Maybe<Array<Asset>>;
   balances: Array<Balance>;
   config: Config;
+  constants: Constants;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
