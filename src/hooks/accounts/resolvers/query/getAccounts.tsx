@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useGetAccounts } from '../../lib/useGetAccounts';
+import { getAccounts } from '../../lib/getAccounts';
 import { Account } from '../../../../generated/graphql';
 import { useResolverToRef } from '../useAccountsResolvers';
 
@@ -11,24 +11,19 @@ const withTypename = (account: Account) => ({
 });
 
 export const useGetAccountsQueryResolver = () => {
-  const getAccounts = useGetAccounts();
-
   return {
     accounts: useResolverToRef(
-      useCallback(
-        async (_obj) => {
-          const accounts = await getAccounts();
+      useCallback(async (_obj) => {
+        const accounts = await getAccounts();
 
-          // if no results were found, return undefined/null
-          // this is useful when un-setting the active account
-          if (!accounts) {
-            return null;
-          }
+        // if no results were found, return undefined/null
+        // this is useful when un-setting the active account
+        if (!accounts) {
+          return null;
+        }
 
-          return accounts.map((account) => withTypename(account));
-        },
-        [getAccounts]
-      ),
+        return accounts.map((account) => withTypename(account));
+      }, []),
       'accounts'
     ),
   };
