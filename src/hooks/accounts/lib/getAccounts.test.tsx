@@ -26,7 +26,7 @@ describe('getAccounts', () => {
   });
 
   it('can retrieve accounts', async () => {
-    const accounts: Account[] | null = await getAccounts();
+    const accounts: Account[] = await getAccounts();
 
     expect(accounts).toEqual([
       {
