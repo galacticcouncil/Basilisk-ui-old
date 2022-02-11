@@ -50,7 +50,9 @@ const typesAlias = {
  * then re-create the PolkadotJs instance
  */
 export const useConfigurePolkadotJs = () => {
-  const [{ nodeUrl }] = usePersistentConfig();
+  const {
+    persistedConfig: { nodeUrl },
+  } = usePersistentConfig();
   const [apiInstance, setApiInstance] = useState<ApiPromise | undefined>(
     undefined
   );
