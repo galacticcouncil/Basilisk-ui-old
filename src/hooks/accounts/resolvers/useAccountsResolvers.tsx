@@ -1,5 +1,5 @@
 import { useActiveAccountQueryResolver } from './query/activeAccount';
-import { useGetAccountsQueryResolver } from './query/getAccounts';
+import { useGetAccountsQueryResolver } from './query/accounts';
 import { useSetActiveAccountMutationResolver } from './mutation/setActiveAccount';
 import { Resolver } from '@apollo/client';
 import { useEffect, useRef } from 'react';

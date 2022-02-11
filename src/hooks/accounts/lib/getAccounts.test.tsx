@@ -1,17 +1,19 @@
 import { Account } from '../../../generated/graphql';
 import { getAccounts } from './getAccounts';
 
-const mockAccount = {
-  address: '5DwWSMW7kqBUU4Eo6s5dDvpJvKpXRgVZc24DUqqVXHH6UmFt',
-  meta: {
-    name: 'name',
-    source: 'source',
+const mockAccounts = [
+  {
+    address: '5DwWSMW7kqBUU4Eo6s5dDvpJvKpXRgVZc24DUqqVXHH6UmFt',
+    meta: {
+      name: 'name',
+      source: 'source',
+    },
   },
-};
+];
 
 jest.mock('@polkadot/extension-dapp', () => ({
   web3Accounts: async () => {
-    return [mockAccount];
+    return mockAccounts;
   },
   web3Enable: async () => {
     return true;

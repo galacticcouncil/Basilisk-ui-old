@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { getAccounts } from '../../lib/getAccounts';
 import { Account } from '../../../../generated/graphql';
-import { useResolverToRef } from '../useAccountsResolvers';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 
 export const __typename: Account['__typename'] = 'Account';
 
@@ -12,7 +12,7 @@ const withTypename = (account: Account) => ({
 
 export const useGetAccountsQueryResolver = () => {
   return {
-    accounts: useResolverToRef(
+    accounts: withErrorHandler(
       useCallback(async (_obj) => {
         const accounts = await getAccounts();
 

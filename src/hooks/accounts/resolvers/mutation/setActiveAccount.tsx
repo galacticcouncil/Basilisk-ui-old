@@ -1,4 +1,3 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
 import { useSetActiveAccount } from '../../lib/useSetActiveAccount';
 import { SetActiveAccountMutationVariables } from '../../mutations/useSetActiveAccountMutation';
@@ -10,11 +9,8 @@ export const useSetActiveAccountMutationResolver = () => {
   return {
     setActiveAccount: useResolverToRef(
       useCallback(
-        async (
-          _obj,
-          args: SetActiveAccountMutationVariables,
-          { client }: { client: ApolloClient<NormalizedCacheObject> }
-        ) => setActiveAccount(client, args.id),
+        async (_obj, args: SetActiveAccountMutationVariables) =>
+          setActiveAccount(args.id),
         [setActiveAccount]
       ),
       'setActiveAccount'

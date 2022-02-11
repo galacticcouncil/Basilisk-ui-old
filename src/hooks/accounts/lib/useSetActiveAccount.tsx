@@ -1,4 +1,3 @@
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { useCallback } from 'react';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 
@@ -6,10 +5,7 @@ export const useSetActiveAccount = () => {
   const [, setPersistedActiveAccount] = usePersistActiveAccount();
 
   return useCallback(
-    async (
-      client: ApolloClient<NormalizedCacheObject>,
-      address: string | undefined
-    ) => {
+    async (address: string | undefined) => {
       setPersistedActiveAccount({
         id: address,
       });

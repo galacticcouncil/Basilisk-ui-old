@@ -21,7 +21,6 @@ export const useActiveAccountQueryResolver = () => {
   return {
     activeAccount: useResolverToRef(
       useCallback(
-        // () => {
         async (
           _obj,
           _args,
