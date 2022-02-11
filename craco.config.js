@@ -33,7 +33,7 @@ module.exports = {
           ['jest-junit', { outputFile: 'ui-app-unit-tests-results.xml' }],
         ],
         collectCoverage: true,
-        collectCoverageFrom: ["**/*.{ts,tsx}", '!**/node_modules/**'],
+        collectCoverageFrom: ["src/**/*.{ts,tsx}", '!**/node_modules/**'],
         // "coverageThreshold": {
         //   "global": {
         //     "lines": 90
