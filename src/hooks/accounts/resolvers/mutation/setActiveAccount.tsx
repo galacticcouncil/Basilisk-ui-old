@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 import { useSetActiveAccount } from '../../lib/useSetActiveAccount';
 import { SetActiveAccountMutationVariables } from '../../mutations/useSetActiveAccountMutation';
-import { useResolverToRef } from '../useAccountsResolvers';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 
 export const useSetActiveAccountMutationResolver = () => {
   const setActiveAccount = useSetActiveAccount();
 
   return {
-    setActiveAccount: useResolverToRef(
+    setActiveAccount: withErrorHandler(
       useCallback(
         async (_obj, args: SetActiveAccountMutationVariables) =>
           setActiveAccount(args.id),

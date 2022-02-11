@@ -4,7 +4,7 @@ import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../../lib/usePersistActiveAccount';
 import { find } from 'lodash';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { useResolverToRef } from '../useAccountsResolvers';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 
 // make sure the __typename is well typed
 export const __typename: Account['__typename'] = 'Account';
@@ -19,7 +19,7 @@ export const useActiveAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
 
   return {
-    activeAccount: useResolverToRef(
+    activeAccount: withErrorHandler(
       useCallback(
         async (
           _obj,
