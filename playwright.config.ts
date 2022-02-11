@@ -7,7 +7,7 @@ env.config({
 });
 
 const config: PlaywrightTestConfig = {
-  globalTeardown: require.resolve('./global-teardown-e2e'),
+  globalTeardown: require.resolve('../global-teardown.ts'),
   timeout: 60000,
   expect: {
     timeout: 60 * 1000,

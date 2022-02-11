@@ -77,7 +77,3 @@ export const useBalanceQueryResolvers = () => {
     ),
   };
 };
-
-export const testBumpFunction = () => {
-  console.log('bump');
-};

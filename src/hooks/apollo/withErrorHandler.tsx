@@ -14,5 +14,5 @@ export function withErrorHandler(resolver: Resolver, name?: string) {
         await onError({ error: e, name });
         throw e;
       });
-  }
-};
+  };
+}
