@@ -1,8 +1,8 @@
 import { ApolloCache } from '@apollo/client';
 import { ApiPromise } from '@polkadot/api';
-import { ApiTypes, SubmittableExtrinsic } from '@polkadot/api/types';
+import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { DispatchError } from '@polkadot/types/interfaces';
+import { DispatchError, EventRecord } from '@polkadot/types/interfaces';
 import {
   Callback,
   ISubmittableResult,
@@ -10,12 +10,39 @@ import {
 } from '@polkadot/types/types';
 import { readActiveAccount } from '../accounts/lib/readActiveAccount';
 
-export type Errors = (RegistryError | DispatchError)[];
+export type ExtrinsicErrors = RegistryError | DispatchError;
+
+export const parseExtrinsicErrors = (
+  events: EventRecord[],
+  apiInstance: ApiPromise
+): ExtrinsicErrors[] =>
+  events
+    .filter(({ event }) => apiInstance.events.system.ExtrinsicFailed.is(event))
+    // we know that data for system.ExtrinsicFailed is
+    // (DispatchError, DispatchInfo)
+    .reduce((acc: ExtrinsicErrors[], { event: { data } }) => {
+      const error: DispatchError = data[0] as DispatchError;
+      if (error.isModule) {
+        // for module errors, we have the section indexed, lookup
+        const decoded = apiInstance.registry.findMetaError(error.asModule);
+        acc.push(decoded);
+
+        const { docs, method, section } = decoded;
+        console.error(`${section}.${method}: ${docs.join(' ')}`);
+      } else {
+        // Other, CannotLookup, BadOrigin, no extra info
+        acc.push(error);
+
+        console.error(error.toString());
+      }
+
+      return acc;
+    }, []);
 
 export const signAndSend = async (
   cache: ApolloCache<object>,
-  transaction: SubmittableExtrinsic<ApiTypes, ISubmittableResult>,
-  api: ApiPromise
+  transaction: SubmittableExtrinsic<'promise', ISubmittableResult>,
+  apiInstance: ApiPromise
 ) => {
   const address = readActiveAccount(cache);
   // if for some reason the UI tries to send a transaction, and there is no active account selected
@@ -24,51 +51,31 @@ export const signAndSend = async (
   }
   const { signer } = await web3FromAddress(address.id);
 
-  let reject: (value: { errors: Errors }) => void;
-  let resolve: (value?: unknown) => void;
-  const resultPromise = new Promise((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
+  return new Promise<null>(async (resolve, reject) => {
+    const statusHandler: Callback<ISubmittableResult> = ({
+      status,
+      events,
+    }) => {
+      if (!status.isInBlock) {
+        return;
+      }
+      const errors = parseExtrinsicErrors(events, apiInstance);
+
+      if (errors.length > 0) {
+        reject({ errors });
+      } else {
+        resolve(null);
+      }
+
+      if (unsub) {
+        unsub();
+      }
+    };
+
+    const unsub = await transaction.signAndSend(
+      address.id,
+      { signer },
+      statusHandler
+    );
   });
-
-  const statusHandler: Callback<ISubmittableResult> = ({ status, events }) => {
-    if (!status.isInBlock) {
-      return;
-    }
-
-    const errors = events
-      .filter(({ event }) => api.events.system.ExtrinsicFailed.is(event))
-      // we know that data for system.ExtrinsicFailed is
-      // (DispatchError, DispatchInfo)
-      .reduce((acc: Errors, { event: { data } }) => {
-        const error: DispatchError = data[0] as DispatchError;
-        if (error.isModule) {
-          // for module errors, we have the section indexed, lookup
-          const decoded = api.registry.findMetaError(error.asModule);
-          acc.push(decoded);
-
-          const { docs, method, section } = decoded;
-          console.error(`${section}.${method}: ${docs.join(' ')}`);
-        } else {
-          // Other, CannotLookup, BadOrigin, no extra info
-          acc.push(error);
-
-          console.error(error.toString());
-        }
-
-        return acc;
-      }, []);
-
-    if (errors.length > 0) {
-      reject({ errors });
-    } else {
-      resolve();
-    }
-  };
-
-  const sub = transaction.signAndSend(address.id, { signer }, statusHandler);
-
-  console.log({ sub });
-
-  return resultPromise;
 };
