@@ -10,7 +10,7 @@ const withTypename = (account: Account) => ({
   ...account,
 });
 
-export const useGetAccountsQueryResolver = () => {
+export const useAccountsQueryResolver = () => {
   return {
     accounts: withErrorHandler(
       useCallback(async (_obj) => {

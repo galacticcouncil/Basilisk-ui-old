@@ -6,6 +6,7 @@ import {
 } from '../../queries/useGetActiveAccountQuery';
 import TestRenderer, { act } from 'react-test-renderer';
 import { useActiveAccountQueryResolver } from './activeAccount';
+import waitForExpect from 'wait-for-expect';
 
 const mockUsePersistActiveAccount = jest.fn();
 jest.mock('../../lib/usePersistActiveAccount', () => ({
@@ -45,10 +46,6 @@ export const resolverProviderFactory =
     );
   };
 
-// testing helper to wait for the query to resolve / return data
-export const waitForQuery = async () =>
-  await new Promise((resolve) => setTimeout(resolve, 10));
-
 describe('useActiveAccountQueryResolver', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
   let component: TestRenderer.ReactTestRenderer;
@@ -75,8 +72,9 @@ describe('useActiveAccountQueryResolver', () => {
       mockUsePersistActiveAccount.mockImplementation(() => [null]);
       render();
       await act(async () => {
-        await waitForQuery();
-        expect(data()?.activeAccount).toBe(null);
+        await waitForExpect(() => {
+          expect(data()?.activeAccount).toBe(null);
+        });
       });
     });
   });
@@ -86,13 +84,14 @@ describe('useActiveAccountQueryResolver', () => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
       render();
       await act(async () => {
-        await waitForQuery();
-        expect(data()?.activeAccount).toStrictEqual({
-          id: 'mockId',
-          name: 'Mocked Account',
-          source: 'polkadot-js',
-          balances: [],
-          __typename: 'Account',
+        await waitForExpect(() => {
+          expect(data()?.activeAccount).toStrictEqual({
+            id: 'mockId',
+            name: 'Mocked Account',
+            source: 'polkadot-js',
+            balances: [],
+            __typename: 'Account',
+          });
         });
       });
     });
@@ -103,8 +102,9 @@ describe('useActiveAccountQueryResolver', () => {
       ]);
       render();
       await act(async () => {
-        await waitForQuery();
-        expect(data()?.activeAccount).toStrictEqual(null);
+        await waitForExpect(() => {
+          expect(data()?.activeAccount).toStrictEqual(null);
+        });
       });
     });
   });
