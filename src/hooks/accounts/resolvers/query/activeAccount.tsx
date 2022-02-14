@@ -5,6 +5,7 @@ import { find } from 'lodash';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { withTypename } from '../../types';
+import { Account } from '../../../../generated/graphql';
 
 export const useActiveAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
@@ -16,7 +17,7 @@ export const useActiveAccountQueryResolver = () => {
           _obj,
           _args,
           { client }: { client: ApolloClient<NormalizedCacheObject> }
-        ) => {
+        ): Promise<Account | null> => {
           if (persistedActiveAccount?.id) {
             const { data: accountsData } = await client.query({
               query: GET_ACCOUNTS,
@@ -33,7 +34,7 @@ export const useActiveAccountQueryResolver = () => {
         },
         [persistedActiveAccount]
       ),
-      'useActiveAccountQueryResolver'
+      'activeAccount'
     ),
   };
 };
