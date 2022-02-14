@@ -19,7 +19,7 @@ describe('getAccounts', () => {
   it('can retrieve accounts', async () => {
     mockWeb3Accounts.mockImplementation(() => [
       {
-        address: '5DwWSMW7kqBUU4Eo6s5dDvpJvKpXRgVZc24DUqqVXHH6UmFt',
+        address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
         meta: {
           name: 'name',
           source: 'source',
