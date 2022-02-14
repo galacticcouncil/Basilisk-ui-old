@@ -82,7 +82,7 @@ describe('useAccountsQueryResolver', () => {
   });
 
   describe('truthy case', () => {
-    it('should resolve accounts as array with when no accounts are found', async () => {
+    it('should resolve accounts as an array with typename when accounts are found', async () => {
       mockGetAccounts.mockImplementation(() => [
         {
           id: 'mockId',
