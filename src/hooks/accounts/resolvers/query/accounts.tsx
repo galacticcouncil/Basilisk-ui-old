@@ -1,14 +1,7 @@
 import { useCallback } from 'react';
 import { getAccounts } from '../../lib/getAccounts';
-import { Account } from '../../../../generated/graphql';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
-
-export const __typename: Account['__typename'] = 'Account';
-
-const withTypename = (account: Account) => ({
-  __typename,
-  ...account,
-});
+import { withTypename } from '../../types';
 
 export const useAccountsQueryResolver = () => {
   return {

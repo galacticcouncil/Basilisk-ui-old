@@ -1,19 +1,10 @@
 import { useCallback } from 'react';
-import { Account } from '../../../../generated/graphql';
 import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../../lib/usePersistActiveAccount';
 import { find } from 'lodash';
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
-
-// make sure the __typename is well typed
-export const __typename: Account['__typename'] = 'Account';
-
-// helper function to decorate the extension entity for normalised caching
-const withTypename = (account: Account) => ({
-  __typename,
-  ...account,
-});
+import { withTypename } from '../../types';
 
 export const useActiveAccountQueryResolver = () => {
   const [persistedActiveAccount] = usePersistActiveAccount();
