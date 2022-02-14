@@ -26,6 +26,7 @@ describe('getAccounts', () => {
         },
       },
     ]);
+
     const accounts: Account[] = await getAccounts();
 
     expect(accounts).toEqual([
@@ -42,6 +43,7 @@ describe('getAccounts', () => {
 
   it('returns empty array when on accounts returned from polkadot', async () => {
     mockWeb3Accounts.mockImplementation(() => []);
+
     const accounts: Account[] = await getAccounts();
 
     expect(accounts).toEqual([]);

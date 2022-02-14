@@ -70,7 +70,9 @@ describe('useActiveAccountQueryResolver', () => {
   describe('falsy case', () => {
     it('should resolve the activeAccount as null when no persistedActiveAccountId if found', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [null]);
+
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.activeAccount).toBe(null);
@@ -82,7 +84,9 @@ describe('useActiveAccountQueryResolver', () => {
   describe('truthy case', () => {
     it('should resolve the activeAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
+
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.activeAccount).toStrictEqual({
@@ -100,7 +104,9 @@ describe('useActiveAccountQueryResolver', () => {
       mockUsePersistActiveAccount.mockImplementation(() => [
         { id: 'nonExistingMockId' },
       ]);
+
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.activeAccount).toStrictEqual(null);

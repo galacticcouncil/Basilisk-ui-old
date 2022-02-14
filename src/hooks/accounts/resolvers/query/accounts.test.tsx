@@ -70,7 +70,9 @@ describe('useAccountsQueryResolver', () => {
   describe('falsy case', () => {
     it('should resolve accounts as null when no accounts are found', async () => {
       mockGetAccounts.mockImplementation(() => null);
+
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.accounts).toBe(null);
@@ -89,7 +91,9 @@ describe('useAccountsQueryResolver', () => {
           balances: [],
         },
       ]);
+
       render();
+
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.accounts).toStrictEqual([
