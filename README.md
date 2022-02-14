@@ -295,7 +295,8 @@ We are using conventional commits and pull-requests naming strategy. Specificati
 found [here](https://www.conventionalcommits.org/en/v1.0.0/#specification).
 
 **Commits:**
-For making conventional commits, you can run `yarn commit` and go through commit flow.
+For making conventional commits, you can run `yarn commit` and go through commit flow or add
+conventional commit message manually.
 
 **Pull-request:**
 Each pull-request name must fit to Conventional Commits messaging strategy.
@@ -306,6 +307,18 @@ For successful merge of any PR it must fit to the next requirements:
 - working branch must be up to date before merge;
 - all conversation must be resolved;
 - [Semantic Pull Requests](https://github.com/zeke/semantic-pull-requests) check must be successfully passed. 
+Next types for pull-requests are supported:
+  - `feat`
+  - `fix`
+  - `docs`
+  - `style`
+  - `refactor`
+  - `perf`
+  - `test`
+  - `build`
+  - `ci`
+  - `chore`
+  - `revert`
 
 
 ## Testing
