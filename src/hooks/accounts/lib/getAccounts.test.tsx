@@ -16,38 +16,90 @@ describe('getAccounts', () => {
     jest.clearAllMocks();
   });
 
-  it('can retrieve accounts', async () => {
-    mockWeb3Accounts.mockImplementation(() => [
-      {
-        address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
-        meta: {
-          name: 'name',
-          source: 'source',
-        },
-      },
-    ]);
+  describe('account(s) are present in the wallet', () => {
+    describe('one account in the wallet', () => {
+      beforeEach(() => {
+        mockWeb3Accounts.mockImplementation(() => [
+          {
+            address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+            meta: {
+              name: 'name',
+              source: 'source',
+            },
+          },
+        ]);
+      });
 
-    const accounts: Account[] = await getAccounts();
+      it('can retrieve one account', async () => {
+        const accounts: Account[] = await getAccounts();
 
-    expect(accounts).toEqual([
-      {
-        name: 'name',
-        source: 'source',
-        balances: [],
-        id: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
-      },
-    ]);
-    expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
-    expect(mockWeb3Enable).toHaveBeenCalledTimes(1);
+        expect(accounts).toEqual([
+          {
+            name: 'name',
+            source: 'source',
+            balances: [],
+            id: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+          },
+        ]);
+        expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
+        expect(mockWeb3Enable).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('multiple accounts in the wallet', () => {
+      beforeEach(() => {
+        mockWeb3Accounts.mockImplementation(() => [
+          {
+            address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+            meta: {
+              name: 'name',
+              source: 'source',
+            },
+          },
+          {
+            address: 'bXikYFVEuifjmPT3j41zwqwrGAJTzMv69weEqrvAotP9VfHxS',
+            meta: {
+              name: 'name2',
+              source: 'source',
+            },
+          },
+        ]);
+      });
+
+      it('can retrieve multiple accounts', async () => {
+        const accounts: Account[] = await getAccounts();
+
+        expect(accounts).toEqual([
+          {
+            name: 'name',
+            source: 'source',
+            balances: [],
+            id: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+          },
+          {
+            name: 'name2',
+            source: 'source',
+            balances: [],
+            id: 'bXikYFVEuifjmPT3j41zwqwrGAJTzMv69weEqrvAotP9VfHxS',
+          },
+        ]);
+        expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
+        expect(mockWeb3Enable).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
-  it('returns empty array when on accounts returned from polkadot', async () => {
-    mockWeb3Accounts.mockImplementation(() => []);
+  describe('accounts are not present in the wallet', () => {
+    beforeEach(() => {
+      mockWeb3Accounts.mockImplementation(() => []);
+    });
 
-    const accounts: Account[] = await getAccounts();
+    it('returns an empty array when no accounts are returned from wallet', async () => {
+      const accounts: Account[] = await getAccounts();
 
-    expect(accounts).toEqual([]);
-    expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
-    expect(mockWeb3Enable).toHaveBeenCalledTimes(1);
+      expect(accounts).toEqual([]);
+      expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
+      expect(mockWeb3Enable).toHaveBeenCalledTimes(1);
+    });
   });
 });
