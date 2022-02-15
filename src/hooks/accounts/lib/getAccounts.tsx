@@ -8,7 +8,7 @@ import constants from '../../../constants';
  */
 export const getAccounts = async (): Promise<Account[]> => {
   // ensure we're connected to the polkadot.js extension
-  await web3Enable('basilisk-ui');
+  await web3Enable(constants.basiliskWeb3ProviderName);
 
   // get all the accounts from the polkadot.js extension
   // return all retrieved accounts

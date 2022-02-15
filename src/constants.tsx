@@ -9,4 +9,5 @@ export default {
   } as Fee,
   nativeAssetId: '0',
   basiliskAddressPrefix: 10041, // prefix for the ss58 address formatting of substrate addresses
+  basiliskWeb3ProviderName: 'basilisk-ui',
 };
