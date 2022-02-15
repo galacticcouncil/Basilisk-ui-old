@@ -3,7 +3,16 @@ import { getAccounts } from './getAccounts';
 
 const mockWeb3Accounts = jest.fn();
 const mockWeb3Enable = jest.fn(async () => {
-  return true;
+  return [
+    {
+      name: 'polkadot-js',
+      version: '0.42.2',
+      accounts: {},
+      metadata: {},
+      provider: {},
+      signer: {},
+    },
+  ];
 });
 
 jest.mock('@polkadot/extension-dapp', () => ({
