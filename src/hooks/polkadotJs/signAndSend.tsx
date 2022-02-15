@@ -26,14 +26,9 @@ export const parseExtrinsicErrors = (
         // for module errors, we have the section indexed, lookup
         const decoded = apiInstance.registry.findMetaError(error.asModule);
         acc.push(decoded);
-
-        // const { docs, method, section } = decoded;
-        // console.error(`${section}.${method}: ${docs.join(' ')}`);
       } else {
         // Other, CannotLookup, BadOrigin, no extra info
         acc.push(error);
-
-        error.toString();
       }
 
       return acc;

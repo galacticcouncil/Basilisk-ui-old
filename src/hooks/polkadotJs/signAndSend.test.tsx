@@ -105,5 +105,23 @@ describe('signAndSend', () => {
       });
       expect(unsubscribe).toBeCalledTimes(1);
     });
+
+    it('rejects with other error', async () => {
+      const mockedError = {
+        error: 'mocked-error',
+        isModule: false,
+      };
+      setupTransactionSignAndSendMock({
+        status: { isInBlock: true },
+        events: [{ event: { data: [mockedError] } }],
+      });
+
+      await expect(
+        signAndSend(apolloCache, transaction, mockApiInstance)
+      ).rejects.toEqual({
+        errors: expect.arrayContaining([mockedError]),
+      });
+      expect(unsubscribe).toBeCalledTimes(1);
+    });
   });
 });
