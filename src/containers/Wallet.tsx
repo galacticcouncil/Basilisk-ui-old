@@ -1,6 +1,6 @@
 import { Wallet as WalletComponent } from '../components/Wallet/Wallet';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useGetAccountsLazyQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
+import { useCallback, useRef, useState } from 'react';
+import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
 import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
@@ -11,15 +11,10 @@ export const Wallet = () => {
     useGetExtensionQuery();
   const [setActiveAccount] = useSetActiveAccountMutation();
   const { data: activeAccountData } = useGetActiveAccountQuery();
-  const [getAccounts, { data: accountsData, loading: accountsLoading }] =
-    useGetAccountsLazyQuery();
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
-
-  useEffect(() => {
-    if (extensionData?.extension.isAvailable && isAccountSelectorOpen) {
-      getAccounts();
-    }
-  }, [extensionData, isAccountSelectorOpen, getAccounts]);
+  const { data: accountsData, loading: accountsLoading } = useGetAccountsQuery(
+    !(extensionData?.extension.isAvailable && isAccountSelectorOpen)
+  );
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 

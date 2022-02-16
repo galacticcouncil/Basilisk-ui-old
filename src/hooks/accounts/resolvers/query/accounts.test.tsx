@@ -3,11 +3,10 @@ import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
 import {
   GetAccountsQueryResponse,
-  useGetAccountsLazyQuery,
+  useGetAccountsQuery,
 } from '../../queries/useGetAccountsQuery';
 import { useAccountsQueryResolver } from './accounts';
 import waitForExpect from 'wait-for-expect';
-import { useEffect } from 'react';
 
 const mockGetAccounts = jest.fn();
 jest.mock('../../lib/getAccounts.tsx', () => ({
@@ -16,11 +15,7 @@ jest.mock('../../lib/getAccounts.tsx', () => ({
 
 // test component that returns the query result(s)
 const Test = () => {
-  const [getAccounts, { data }] = useGetAccountsLazyQuery();
-
-  useEffect(() => {
-    getAccounts();
-  }, [getAccounts]);
+  const { data } = useGetAccountsQuery();
 
   return <>{JSON.stringify(data)}</>;
 };
