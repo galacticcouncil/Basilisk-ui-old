@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { signAndSend } from './signAndSend';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { readActiveAccount } from '../accounts/lib/readActiveAccount';
+import { readActiveAccount } from '../accounts/readActiveAccount';
 import { InMemoryCache } from '@apollo/client';
 import { SubmittableExtrinsic } from '@polkadot/api/types';
 import { ISubmittableResult } from '@polkadot/types/types';
@@ -12,7 +12,7 @@ const readActiveAccountMocked = readActiveAccount as jest.Mock;
 jest.mock('@polkadot/extension-dapp', () => {
   return { web3FromAddress: jest.fn() };
 });
-jest.mock('../accounts/lib/readActiveAccount', () => {
+jest.mock('../accounts/readActiveAccount', () => {
   return { readActiveAccount: jest.fn() };
 });
 
