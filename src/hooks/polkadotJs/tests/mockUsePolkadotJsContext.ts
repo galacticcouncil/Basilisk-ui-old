@@ -1,5 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 
+export const mockedRepayFee = ['2', '10'];
+
 export const nativeAssetBalance = '10';
 export const nonNativeAssetBalance = '20';
 
@@ -15,6 +17,11 @@ const mockedAccountInfoNonNativeBalance = {
 
 export const getMockApiPromise = () =>
   ({
+    consts: {
+      lbp: {
+        getRepayFee: mockedRepayFee,
+      },
+    },
     query: {
       system: {
         account: jest.fn(() => mockedAccountInfoNativeBalance),

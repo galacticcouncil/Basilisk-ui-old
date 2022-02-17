@@ -1,0 +1,16 @@
+type Fee {
+  numerator: String!
+  denominator: String!
+}
+
+type LBPConstants {
+  repayFee: Fee!
+}
+
+type Constants {
+  lbp: LBPConstants!
+}
+
+extend type Query {
+  constants: Constants!
+}

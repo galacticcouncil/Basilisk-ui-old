@@ -1,0 +1,3 @@
+query FetchConstants {
+  constants @client
+}
