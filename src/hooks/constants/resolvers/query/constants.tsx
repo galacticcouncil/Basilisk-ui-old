@@ -1,14 +1,23 @@
 import { useCallback } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Constants } from '../../../../generated/graphql';
+import { Constants, LbpConstants, Fee } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { fetchConstants } from '../../lib/fetchConstants';
 
-export const __typename: Constants['__typename'] = 'Constants';
+export const __typenameConstants: Constants['__typename'] = 'Constants';
+export const __typenameLbpConstants: LbpConstants['__typename'] =
+  'LBPConstants';
+export const __typenameFee: Fee['__typename'] = 'Fee';
 const withTypename = (constants: Constants) => ({
-  __typename,
-  ...constants,
+  __typename: __typenameConstants,
+  lbp: {
+    __typename: __typenameLbpConstants,
+    repayFee: {
+      __typename: __typenameFee,
+      ...constants.lbp.repayFee,
+    },
+  },
 });
 
 /**
