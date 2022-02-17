@@ -60,7 +60,7 @@ jobs:
       - name: Build App and Storybook
         run: |
           yarn run build
-          yarn run build-storybook -- -o sb-build-files
+          yarn run storybook:build -- -o sb-build-files
         env:
           CI: false
           REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}

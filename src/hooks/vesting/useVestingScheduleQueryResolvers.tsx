@@ -1,19 +1,19 @@
-import { useCallback } from 'react'
+import { useCallback } from 'react';
 import { Account } from '../../generated/graphql';
-import { useResolverToRef } from '../accounts/resolvers/useAccountsMutationResolvers'
+import { withErrorHandler } from '../apollo/withErrorHandler';
 import { useGetVestingScheduleByAddress } from './useGetVestingScheduleByAddress';
 
 export const useVestingScheduleQueryResolvers = () => {
-    const getVestingScheduleByAddress = useGetVestingScheduleByAddress();
-    const vestingSchedule = useResolverToRef(
-        useCallback(
-            async (account: Account) => await getVestingScheduleByAddress(account.id), 
-            [getVestingScheduleByAddress]
-        ),
-        'vestingSchedule'
-    );
+  const getVestingScheduleByAddress = useGetVestingScheduleByAddress();
+  const vestingSchedule = withErrorHandler(
+    useCallback(
+      async (account: Account) => await getVestingScheduleByAddress(account.id),
+      [getVestingScheduleByAddress]
+    ),
+    'vestingSchedule'
+  );
 
-    return {
-        vestingSchedule
-    }
-}
+  return {
+    vestingSchedule,
+  };
+};

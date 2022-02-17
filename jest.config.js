@@ -15,4 +15,6 @@ module.exports = {
   ],
   coverageDirectory: './coverage/unit-tests/report',
   reporters: ['jest-junit'],
+  testPathIgnorePatterns: ['./*.stories.test.ts$'],
+  transformIgnorePatterns: ['node_modules/(?!@polkadot)/'],
 };

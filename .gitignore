@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/storybook-testing/results
 /traces
 
 # production

@@ -87,10 +87,6 @@ between different application layers.
 The presentational layer is used to present and transform the normalized data provided by the *composition layer*. It begins on the *dumb* component level,
 those are fed data via containers through props. Dumb components should be developed in isolation via *storybook* to fit the visual/layout/structural design requirements. Dumb components should only hold local state specific to their own presentational logic (e.g. `isModalOpen`), and should communicate with their respective parent components via props and handlers (e.g. `onClick / handleOnClick`).
 
-#### Testing
-
-Storybook components should be tested via playwright, as explained [here](https://storybook.js.org/docs/react/writing-tests/importing-stories-in-tests#example-with-playwright).
-
 Example:
 
 ```tsx
@@ -109,6 +105,47 @@ export const Wallet = ({ account, onActiveAccountClick }: WalletProps) => {
   </div>
 }
 ```
+### Presentational layer testing strategy
+Our presentation layer testing strategy is based on a combination of storybook `stories`  and `playwright`. Each presentation layer component _must_ have a useful `.stories.tsx` file to go along with it.  
+
+Storybook serves the  `.stories.tsx` file,  and then we use Playwright to visit that story to test and screenshot each aspect, variation, and interaction. 
+
+- Best to look in this repo at the `.stories.test.ts` files and their corresponding `.stories.tsx` files to see how this works  
+
+- Generating Screenshots:
+  - If you run a `stories.test.tsx` containing a screenshot comparison test,  but a screenshot is missing/deleted, then the test will fail. _But_ even though it fails, Playwrite will take a screenshot of whatever is there,  and use it for comparison subsequently. It will tell you it did that in the console.  You can replace an existing screenshot in this way.
+
+  - Find all screenshots in `storybook-testing/screenshots-to-test-against`
+
+  - when any screenshot comparison fails,  find results in `storybook-testing/results/screenshot-comparison-fails`
+
+- Scripts:
+
+  - Running `.stories.test` file(s):
+    - start storybook ( `yarn storybook:start` ), then run <code><pre><span style="color: blue">yarn</span> <span style="color: green">storybook:test</span> <file name(s)> </pre></code>
+
+      - example: <code><pre><span style="color: blue">yarn</span> <span style="color: green">storybook:test</span> Button.stories.test AssetBalanceInput</pre></code> 
+        *`AssetBalanceInut` works; the `file-name` doesn't have to be complete
+    
+    <br />
+    
+    - Omit `<file name(s)>` to run _all_ the `.stories.test` files
+
+    <br />
+
+  - Debugging: 
+    - append `--headed` flag to the above script to see test execution in-browser,  and when using [`page.pause`](https://playwright.dev/docs/debug#browser-developer-tools)
+
+    <br />
+
+  - CI:
+    - `yarn storybook:test:ci` starts storybook for you and runs the entire Storybook + Playwright testing infrastructure.  
+
+- Links
+
+  - [Playwright docs](https://playwright.dev/)
+  - [Playwright debugging](https://playwright.dev/docs/debug#browser-developer-tools)
+  - [Intro to writing Storybook stories](https://storybook.js.org/docs/react/writing-stories/introduction)
 
 ### Composition layer
 
@@ -272,6 +309,40 @@ For running e2e test locally you should:
 4) Run tests with `yarn test:e2e-local`
 
 
+### Storybook testing
+
+For running tests Storybook server must be running:
+```shell
+yarn storybook:start
+```
+Storybook built can used by any other server in porn `6006`. For instance:
+```shell
+yarn storybook:build
+
+#use node.js server library http-server
+http-server storybook-static --port 6006
+```
+
+Run tests:
+```shell
+yarn storybook:test
+```
+
+#### Watch
+As watcher library we are using [chokidar-cli](https://github.com/open-cli-tools/chokidar-cli) .
+
+For testing storybook in watch mode Storybook server must be running:
+```shell
+yarn storybook:start
+```
+Watcher can be started in separate terminal window:
+```shell
+yarn storybook:test:watch
+
+#or in --headed mode
+yarn storybook:test:watch-headed
+```
+
 
 ### Github Actions workflows
 
@@ -294,7 +365,7 @@ Workflow config from default branch will be used for all actions
 
 
 
-### VSCode extensions
+## VSCode extensions
 
 - [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
 - [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
@@ -305,6 +376,6 @@ Workflow config from default branch will be used for all actions
 
 You have to use legacy openssl provider in node 17+. Set this to node options
 
-```
+```shell
 export NODE_OPTIONS=--openssl-legacy-provider
 ```
