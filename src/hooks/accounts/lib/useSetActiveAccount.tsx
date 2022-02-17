@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { usePersistActiveAccount } from './usePersistActiveAccount';
 
 export const useSetActiveAccount = () => {
-  const [, setPersistedActiveAccount] = usePersistActiveAccount();
+  const { setPersistedActiveAccount } = usePersistActiveAccount();
 
   return useCallback(
     async (address: string | undefined) => {

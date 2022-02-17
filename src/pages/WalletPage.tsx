@@ -10,7 +10,7 @@ export const Account = ({ account }: { account?: AccountModel }) => {
   // in order to share the loading state accross multiple mutation hook calls
   const [setActiveAccount] = useSetActiveAccountMutation();
 
-  const [persistedActiveAccount] = usePersistActiveAccount();
+  const { persistedActiveAccount } = usePersistActiveAccount();
 
   return (
     <div

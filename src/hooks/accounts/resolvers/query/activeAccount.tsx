@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery';
 import {
-  PersistedAccount,
+  Account as PersistedAccount,
   usePersistActiveAccount,
 } from '../../lib/usePersistActiveAccount';
 import { find } from 'lodash';
@@ -48,7 +48,7 @@ export const activeAccountQueryResolverFactory =
  * and thus need to apply the useContext hook.
  */
 export const useActiveAccountQueryResolver = () => {
-  const [persistedActiveAccount] = usePersistActiveAccount();
+  const { persistedActiveAccount } = usePersistActiveAccount();
 
   return {
     activeAccount: withErrorHandler(
