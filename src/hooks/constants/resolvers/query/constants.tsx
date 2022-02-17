@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { Constants } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { fetchConstants } from '../../lib/fetchConstants';
 
 export const __typename: Constants['__typename'] = 'Constants';
@@ -24,7 +24,7 @@ export const useConstantsQueryResolver = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
 
   return {
-    constants: useResolverToRef(
+    constants: withErrorHandler(
       useCallback(() => {
         if (!apiInstance || loading) return;
         return constantsQueryResolver(apiInstance);
