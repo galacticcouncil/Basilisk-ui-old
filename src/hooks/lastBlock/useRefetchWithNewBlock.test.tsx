@@ -28,7 +28,7 @@ jest.mock('./useLastBlock', () => {
   };
 });
 
-describe('hooks/lastBlock/useRefetchWithNewBlock', () => {
+describe.skip('hooks/lastBlock/useRefetchWithNewBlock', () => {
   const resolverProviderFactory =
     (useResolvers: () => Resolvers) =>
     ({ children }: { children: React.ReactNode }): JSX.Element => {

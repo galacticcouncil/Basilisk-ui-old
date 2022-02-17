@@ -10,10 +10,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { LastBlock } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
-import { getValidationData } from './lib/getValidationData';
-import { subscribeNewBlock } from './lib/subscribeNewBlock';
+import { Callback, PartialLastBlock } from './lib/handleNotifyNewBlock';
+import { makeSubscribeNewBlocks } from './lib/subscribeNewBlocks';
 
 export const __typename = 'LastBlock';
 export const id = __typename;
@@ -23,43 +22,40 @@ export const getParachainNumber = (chainLastBlock: SignedBlock) =>
   chainLastBlock.block.header.number.toString();
 
 export const useLastBlock = () => {
+  console.log('useLastBlock', 'render');
   const { apiInstance, loading } = usePolkadotJsContext();
-  const [lastBlock, setLastBlock] = useState<LastBlock>();
+  const [lastBlock, setLastBlock] = useState<PartialLastBlock>();
 
-  const subscribeNewBlocks = useCallback(async () => {
-    if (!apiInstance || loading) {
-      return;
-    }
-
-    const unsubscribe = await subscribeNewBlock(apiInstance, async (block) => {
-      const parachain = getParachainNumber(block);
-
-      const validationData = await getValidationData(apiInstance, block);
-
-      if (!validationData) return;
-
-      const relaychain = getRelaychainNumber(validationData);
-
-      setLastBlock({
-        __typename,
-        id,
-        relaychain,
-        parachain,
-      });
-    });
-
-    return unsubscribe;
-  }, [apiInstance, loading]);
+  const subscribeNewBlocks = useCallback(
+    (callback: Callback) => {
+      if (!apiInstance || loading) return;
+      return makeSubscribeNewBlocks({ apiInstance })(callback);
+    },
+    [apiInstance, loading]
+  );
 
   const unsubsribeRef: MutableRefObject<VoidFn | undefined> = useRef(undefined);
 
   useEffect(() => {
     (async () => {
-      unsubsribeRef.current = await subscribeNewBlocks();
+      console.log(
+        'useLastBlock',
+        'subscribeNewBlocks',
+        'starting subscription',
+        subscribeNewBlocks
+      );
+      unsubsribeRef.current = await subscribeNewBlocks(setLastBlock);
     })();
 
     return () => {
+      console.log(
+        'useLastBlock',
+        'subscribeNewBlocks',
+        'trying to unsubscribe',
+        unsubsribeRef
+      );
       if (unsubsribeRef.current) {
+        console.log('useLastBlock', 'subscribeNewBlocks', 'unsubscribing');
         unsubsribeRef.current();
       }
     };

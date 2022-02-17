@@ -18,7 +18,7 @@ describe('getBalancesByAddress', () => {
   let mockApiInstance: ApiPromise;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    // jest.clearAllMocks();
     mockApiInstance = getMockApiPromise();
   });
 
