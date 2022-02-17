@@ -25,7 +25,7 @@ export const setCurrencyHandler = (resolve: resolve, reject: reject) => {
 
 export const useConfigMutationResolvers = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
-  const [, setPersistedConfig] = usePersistentConfig();
+  const { setPersistedConfig } = usePersistentConfig();
 
   const setConfig = withErrorHandler(
     useCallback(
@@ -34,7 +34,7 @@ export const useConfigMutationResolvers = () => {
         args: SetConfigMutationVariables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
-        // todo: error handling?
+        // TODO: error handling?
         if (!apiInstance || loading) return;
 
         // TODO: return an optimistic update to the cache with the new config
@@ -64,7 +64,7 @@ export const useConfigMutationResolvers = () => {
         // be refetched from the node anyways
         delete persistableConfig?.feePaymentAsset;
 
-        setPersistedConfig(() => persistableConfig || defaultConfigValue);
+        setPersistedConfig(persistableConfig || defaultConfigValue);
       },
       [apiInstance, loading, setPersistedConfig]
     )

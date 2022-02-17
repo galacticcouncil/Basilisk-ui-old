@@ -16,7 +16,7 @@ export const id = __typename;
 export const nativeAssetId = '0';
 
 export const useConfigQueryResolvers = () => {
-  const [persistedConfig] = usePersistentConfig();
+  const { persistedConfig } = usePersistentConfig();
   const { apiInstance, loading } = usePolkadotJsContext();
 
   const config = withErrorHandler(

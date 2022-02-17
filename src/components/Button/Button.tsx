@@ -22,13 +22,10 @@ export const Button = ({
   return (
     <button
       onClick={onClick}
-      className={classNames(
-        'button',
-        {
-          'button--primary': kind === ButtonKind.Primary,
-        },
-        { 'button--secondary': kind === ButtonKind.Secondary }
-      )}
+      className={classNames('button', {
+        'button--primary': kind === ButtonKind.Primary,
+        'button--secondary': kind === ButtonKind.Secondary,
+      })}
     >
       {children}
     </button>

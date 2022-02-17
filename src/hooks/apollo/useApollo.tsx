@@ -57,7 +57,9 @@ export const useConfigureApolloClient = () => {
   const cache = useMemo(() => new InMemoryCache(), []);
   // can't get the config from a query before we setup apollo
   // therefore we get it from the local storage instead
-  const [{ processorUrl }] = usePersistentConfig();
+  const {
+    persistedConfig: { processorUrl },
+  } = usePersistentConfig();
 
   // todo test if url change triggers query refetch
   const client = useMemo(() => {
