@@ -3,6 +3,7 @@
   "TradeGraph.poolTypeLabel.LBP": "LBP",
   "TradeGraph.poolTypeLabel.XYK": "XYK",
   "Wallet.ClearAccount": "Clear account",
+  "Wallet.ClickHere": "Click here",
   "Wallet.ConnectAccount": "Connect account",
   "Wallet.InstallExtension": "Install extension",
   "Wallet.InstallInstructions": "To connect your account, please {link}.",
@@ -11,5 +12,6 @@
   "Wallet.NoAccountsAvailable": "No accounts available",
   "Wallet.ReloadInstructions": "You can {link} once you're done with the installation.",
   "Wallet.ReloadLinkText": "reload the page",
-  "Wallet.SelectAccount": "Select an account"
+  "Wallet.SelectAccount": "Select an account",
+  "Wallet.SelectAccountHelp": "Need help creating an account?"
 }

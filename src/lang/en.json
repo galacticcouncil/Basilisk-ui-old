@@ -37,5 +37,11 @@
   },
   "Wallet.Loading": {
     "defaultMessage": "Loading..."
+  },
+  "Wallet.SelectAccountHelp": {
+    "defaultMessage": "Need help creating an account?"
+  },
+  "Wallet.ClickHere": {
+    "defaultMessage": "Click here"
   }
 }

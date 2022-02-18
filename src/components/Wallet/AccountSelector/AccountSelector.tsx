@@ -90,8 +90,14 @@ export const AccountSelector = ({
                       href="/#"
                       className="account-selector__create-account-link"
                     >
-                      Need help creating an account? <br />
-                      Click here
+                      <FormattedMessage
+                        id="Wallet.SelectAccountHelp"
+                        defaultMessage="Need help creating an account?"
+                      />
+                      <br />
+                      <a href="/#" title="" target="_blank">
+                        <FormattedMessage id="Wallet.ClickHere" />
+                      </a>
                     </a>
                   </div>
                 )}
