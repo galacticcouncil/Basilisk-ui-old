@@ -1,0 +1,12 @@
+type LockedBalance {
+  id: String
+  assetId: String!
+  balance: String!
+  lockId: String!
+}
+
+# Specify what entity is returned under the `lockedBalance` field when queried
+# This is again useful for strict typing down the line
+extend type Query {
+  lockedBalances: [LockedBalance!]!
+}

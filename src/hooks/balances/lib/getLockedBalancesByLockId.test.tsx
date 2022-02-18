@@ -1,10 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
+import { LockedBalance } from '../../../generated/graphql';
 import {
-  filterBalancesWithLockId,
+  filterBalancesByLockId,
   getLockedBalancesByLockId,
   getNativeLockedBalances,
   getNonNativeLockedBalances,
-  LockedBalance,
 } from './getLockedBalancesByLockId';
 
 const address = 'bXmoSgp2Vtvctj5c292YDYu1vcYC4A5Hs1gdMjRhfXUf7Ht6x';
@@ -25,7 +25,7 @@ export const getMockApiPromise = () =>
   } as unknown as ApiPromise);
 
 // helper function to assert mock values in API with returned values
-const assertNativeLockedBalances = (
+export const assertNativeLockedBalances = (
   mockBalances: any[],
   returnedBalances: LockedBalance[]
 ) => {
@@ -64,6 +64,7 @@ describe('getLockedBalancesByLockId', () => {
     ],
   ];
 
+  // TODO write a function that extracts lockedNonNativeBalances from mockLockedNonNativeBalancesApi
   const lockedNonNativeBalances = [
     { lockId: 'lockId1', assetId: 'assetId', balance: '100' },
     { lockId: 'lockId2', assetId: 'assetId', balance: '200' },
@@ -78,7 +79,9 @@ describe('getLockedBalancesByLockId', () => {
   describe('getNativeLockedBalance', () => {
     describe('locked balances exists', () => {
       beforeEach(() => {
-        mockedLockedNativeBalances.mockReturnValue(mockLockedNativeBalancesApi);
+        mockedLockedNativeBalances.mockReturnValueOnce(
+          mockLockedNativeBalancesApi
+        );
       });
 
       it('can fetch locked balances for native tokens', async () => {
@@ -145,10 +148,10 @@ describe('getLockedBalancesByLockId', () => {
       });
     });
 
-    describe('filterBalancesWithLockId', () => {
+    describe('filterBalancesByLockId', () => {
       it('can filter array by lockId', () => {
         const lockId = 'lockId1';
-        const filteredBalances = filterBalancesWithLockId(
+        const filteredBalances = filterBalancesByLockId(
           lockedNonNativeBalances,
           lockId
         );
@@ -161,7 +164,7 @@ describe('getLockedBalancesByLockId', () => {
 
       it('can return empty array for not found lockId', () => {
         const lockId = 'unknownLockId';
-        const filteredBalances = filterBalancesWithLockId(
+        const filteredBalances = filterBalancesByLockId(
           lockedNonNativeBalances,
           lockId
         );
@@ -172,8 +175,10 @@ describe('getLockedBalancesByLockId', () => {
 
     describe('getLockedBalancesByLockId', () => {
       beforeEach(() => {
-        mockedLockedNativeBalances.mockReturnValue(mockLockedNativeBalancesApi);
-        mockedNonNativeLockedBalances.mockReturnValue(
+        mockedLockedNativeBalances.mockReturnValueOnce(
+          mockLockedNativeBalancesApi
+        );
+        mockedNonNativeLockedBalances.mockReturnValueOnce(
           mockLockedNonNativeBalancesApi
         );
       });

@@ -1,13 +1,22 @@
 import { ApiPromise } from '@polkadot/api';
-import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { StorageKey, Vec } from '@polkadot/types';
 import { OrmlBalanceLock } from '@open-web3/orml-types/interfaces';
-import { AnyTuple } from '@polkadot/types/types';
+import { lockedBalanceStorageKey } from '../types';
+import { LockedBalance } from '../../../generated/graphql';
 import '@polkadot/api-augment';
 
-export type LockedBalance = Balance & { lockId: string };
-
+/**
+ * This function returns the assetId and balance for a given lockId.
+ * If locks for native and non native assets are present and match
+ * the given lockId, the native asset lock takes precedence and non native assets
+ * are not returned.
+ *
+ * @param apiInstance polkadotJs ApiPromise instance
+ * @param address of the entity eg. account, LBPPool, XYKPool
+ * @param lockId identifier of the lock scheme
+ * @returns locked balance and assetId
+ */
 export const getLockedBalancesByLockId = async (
   apiInstance: ApiPromise,
   address: string,
@@ -40,7 +49,7 @@ async function getNativeBalanceByLockId(
     address
   );
 
-  const nativeBalanceForLockId = filterBalancesWithLockId(
+  const nativeBalanceForLockId = filterBalancesByLockId(
     nativeLockedBalances,
     lockId
   );
@@ -73,7 +82,7 @@ export const getNativeLockedBalances = async (
  * @param lockId search parameter
  * @returns locked balance(s) or empty array
  */
-export const filterBalancesWithLockId = (
+export const filterBalancesByLockId = (
   lockedBalances: LockedBalance[],
   lockId: string
 ): LockedBalance[] => {
@@ -92,18 +101,12 @@ async function getNonNativeBalanceByLockId(
     address
   );
 
-  const nonNativeBalanceForLockId = filterBalancesWithLockId(
+  const nonNativeBalanceForLockId = filterBalancesByLockId(
     nonNativeLockedBalances,
     lockId
   );
 
   return nonNativeBalanceForLockId;
-}
-
-type address = string;
-type assetId = string;
-interface lockedBalanceStorageKey extends AnyTuple {
-  args?: [address, assetId];
 }
 
 export const getNonNativeLockedBalances = async (
