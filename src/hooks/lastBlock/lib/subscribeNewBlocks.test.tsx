@@ -83,7 +83,7 @@ describe('subscribeNewBlocks', () => {
 
     it('should not invoke the callback, before the subscription notification arrives', async () => {
       expect(mockedCallback).not.toBeCalled();
-      jest.runAllTimers();
+      // reset the timers back to normal, after checking that the callback was not executed yet
       jest.useRealTimers();
       await waitForExpect(() => expect(mockedCallback).toHaveBeenCalled());
     });
