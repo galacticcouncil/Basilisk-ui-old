@@ -10,29 +10,7 @@ import { useUnmount } from 'react-use';
 import log from 'loglevel';
 import { usePrevious } from 'use-hooks';
 import { usePersistentConfig } from '../config/usePersistentConfig';
-
-const getPoolAccount = {
-  description: 'Get pool account id by asset IDs',
-  params: [
-    {
-      name: 'assetInId',
-      type: 'u32',
-    },
-    {
-      name: 'assetOutId',
-      type: 'u32',
-    },
-  ],
-  type: 'AccountId',
-};
-const rpc = {
-  xyk: {
-    getPoolAccount,
-  },
-  lbp: {
-    getPoolAccount,
-  },
-};
+import { rpc } from '../pools/rpcDecorators';
 
 const types = {
   ...typesConfig.types[0],
