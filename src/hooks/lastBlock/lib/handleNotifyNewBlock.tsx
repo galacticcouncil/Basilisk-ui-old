@@ -11,10 +11,11 @@ export type HandleNotifyNewBlockDeps = {
   apiInstance: ApiPromise;
 };
 
-export const makeHandleNotifyNewBlock =
-  ({ apiInstance }: HandleNotifyNewBlockDeps) =>
-  (callback: Callback) =>
-  async (block: SignedBlock) => {
+export const handleNotifyNewBlock = (
+  { apiInstance }: HandleNotifyNewBlockDeps,
+  callback: Callback
+) => {
+  return async (block: SignedBlock) => {
     console.log('useLastBlock', 'subscribeNewBlocks', 'new block');
 
     const parachain = getParachainNumber(block);
@@ -30,3 +31,4 @@ export const makeHandleNotifyNewBlock =
       parachain,
     });
   };
+};
