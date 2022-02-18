@@ -2,7 +2,7 @@ import { MutableRefObject, useCallback, useEffect } from 'react';
 import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
 import { Account } from '../../generated/graphql';
 import { UnitStyle } from '../Balance/metricUnit';
-import { Icon, IconType } from '../Icon/Icon';
+import Icon from '../Icon/Icon';
 import Identicon from '@polkadot/react-identicon';
 import './Wallet.scss';
 import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPortal';
@@ -62,10 +62,10 @@ export const Wallet = ({
 
       <div className="wallet__icons-wrapper">
         <span className="wallet__icon">
-          <Icon type={IconType.HELP} />
+          <Icon name="Help" />
         </span>
         <span className="wallet__icon">
-          <Icon type={IconType.NOTIFICATION_INACTIVE} />
+          <Icon name="NotificationInactive" />
         </span>
       </div>
       <div
@@ -120,7 +120,7 @@ export const Wallet = ({
           </div>
         )}
         <div>
-          <Icon type={IconType.DROPDOWN_ARROW} />
+          <Icon name="DropdownArrow" />
         </div>
       </div>
     </div>
