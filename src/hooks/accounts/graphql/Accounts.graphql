@@ -10,9 +10,9 @@ type Account {
 
 extend type Query {
   accounts: [Account!]!
-  activeAccount: Account!
+  activeAccount: Account
 }
 
 extend type Mutation {
-  setActiveAccount: Account
+  setActiveAccount: Boolean
 }
