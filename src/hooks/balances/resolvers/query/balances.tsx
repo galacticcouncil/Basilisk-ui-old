@@ -38,7 +38,7 @@ export const balancesByAddressQueryResolverFactory =
    * @returns
    */
   async (
-    _obj: Entity,
+    obj: Entity,
     args: BalancesByAddressResolverArgs
   ): Promise<Balance[] | undefined> => {
     // every component is supposed to have an initialized apiInstance
@@ -47,10 +47,10 @@ export const balancesByAddressQueryResolverFactory =
 
     const assets = objectToArrayWithFilter(args.assetIds);
 
-    return (await getBalancesByAddress(apiInstance, _obj.id, assets))?.map(
+    return (await getBalancesByAddress(apiInstance, obj.id, assets))?.map(
       (balance: Balance) => {
         // add id and typename to each balance
-        balance.id = `${_obj.id}-${balance.assetId}`;
+        balance.id = `${obj.id}-${balance.assetId}`;
         return withTypename(balance);
       }
     );
