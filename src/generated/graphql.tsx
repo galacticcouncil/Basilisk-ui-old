@@ -1,3 +1,4 @@
+import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = {
@@ -106,7 +107,7 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
   accounts: Array<Account>;
-  activeAccount: Account;
+  activeAccount?: Maybe<Account>;
   assets?: Maybe<Array<Asset>>;
   balances: Array<Balance>;
   config: Config;
