@@ -15,7 +15,7 @@ export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   accounts?: Account[];
   accountsLoading: boolean;
-  account?: Account;
+  account?: Account | null;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
   extensionLoading: boolean;

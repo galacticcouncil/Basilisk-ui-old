@@ -8,7 +8,7 @@ import { FormattedMessage } from 'react-intl';
 export interface AccountSelectorProps {
   accounts?: Account[];
   accountsLoading: boolean;
-  account?: Account;
+  account?: Account | null;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
   innerRef: MutableRefObject<HTMLDivElement | null>;
