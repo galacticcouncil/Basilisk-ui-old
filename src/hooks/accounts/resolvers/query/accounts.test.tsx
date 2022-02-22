@@ -63,9 +63,11 @@ describe('useAccountsQueryResolver', () => {
   });
 
   describe('falsy case', () => {
-    it('should resolve accounts as null when no accounts are found', async () => {
-      mockGetAccounts.mockImplementation(() => null);
+    beforeEach(() => {
+      mockGetAccounts.mockImplementationOnce(() => null);
+    });
 
+    it('should resolve accounts as null when no accounts are found', async () => {
       render();
 
       await act(async () => {
@@ -77,26 +79,24 @@ describe('useAccountsQueryResolver', () => {
   });
 
   describe('truthy case', () => {
-    it('should resolve accounts as an array with typename when accounts are found', async () => {
-      mockGetAccounts.mockImplementation(() => [
-        {
-          id: 'mockId',
-          name: 'Mocked Account',
-          source: 'polkadot-js',
-          balances: [],
-        },
-      ]);
+    const mockAccount = {
+      id: 'mockId',
+      name: 'Mocked Account',
+      source: 'polkadot-js',
+      balances: [],
+    };
+    beforeEach(() => {
+      mockGetAccounts.mockImplementationOnce(() => [mockAccount]);
+    });
 
+    it('should resolve accounts as an array with typename when accounts are found', async () => {
       render();
 
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.accounts).toStrictEqual([
             {
-              id: 'mockId',
-              name: 'Mocked Account',
-              source: 'polkadot-js',
-              balances: [],
+              ...mockAccount,
               __typename: 'Account',
             },
           ]);

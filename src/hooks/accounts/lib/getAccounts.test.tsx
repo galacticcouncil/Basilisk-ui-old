@@ -1,24 +1,27 @@
 import { Account } from '../../../generated/graphql';
 import { getAccounts } from './getAccounts';
+import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 
-const mockWeb3Accounts = jest.fn();
-const mockWeb3Enable = jest.fn(async () => {
-  return [
-    {
-      name: 'polkadot-js',
-      version: '0.42.2',
-      accounts: {},
-      metadata: {},
-      provider: {},
-      signer: {},
+const mockedWeb3AccountsResponse = [
+  {
+    address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+    meta: {
+      name: 'name',
+      source: 'source',
     },
-  ];
-});
+  },
+  {
+    address: 'bXikYFVEuifjmPT3j41zwqwrGAJTzMv69weEqrvAotP9VfHxS',
+    meta: {
+      name: 'name2',
+      source: 'source',
+    },
+  },
+];
 
-jest.mock('@polkadot/extension-dapp', () => ({
-  web3Accounts: () => mockWeb3Accounts(),
-  web3Enable: () => mockWeb3Enable(),
-}));
+jest.mock('@polkadot/extension-dapp');
+const mockWeb3Accounts = web3Accounts as jest.Mock;
+const mockWeb3Enable = web3Enable as jest.Mock;
 
 describe('getAccounts', () => {
   beforeEach(() => {
@@ -28,26 +31,21 @@ describe('getAccounts', () => {
   describe('account(s) are present in the wallet', () => {
     describe('one account in the wallet', () => {
       beforeEach(() => {
-        mockWeb3Accounts.mockImplementation(() => [
-          {
-            address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
-            meta: {
-              name: 'name',
-              source: 'source',
-            },
-          },
+        mockWeb3Accounts.mockImplementationOnce(() => [
+          mockedWeb3AccountsResponse[0],
         ]);
       });
 
       it('can retrieve one account', async () => {
         const accounts: Account[] = await getAccounts();
+        const expectedAccount = mockedWeb3AccountsResponse[0];
 
         expect(accounts).toEqual([
           {
-            name: 'name',
-            source: 'source',
+            name: expectedAccount.meta.name,
+            source: expectedAccount.meta.source,
             balances: [],
-            id: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+            id: expectedAccount.address,
           },
         ]);
         expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
@@ -57,22 +55,9 @@ describe('getAccounts', () => {
 
     describe('multiple accounts in the wallet', () => {
       beforeEach(() => {
-        mockWeb3Accounts.mockImplementation(() => [
-          {
-            address: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
-            meta: {
-              name: 'name',
-              source: 'source',
-            },
-          },
-          {
-            address: 'bXikYFVEuifjmPT3j41zwqwrGAJTzMv69weEqrvAotP9VfHxS',
-            meta: {
-              name: 'name2',
-              source: 'source',
-            },
-          },
-        ]);
+        mockWeb3Accounts.mockImplementationOnce(
+          () => mockedWeb3AccountsResponse
+        );
       });
 
       it('can retrieve multiple accounts', async () => {
@@ -80,16 +65,16 @@ describe('getAccounts', () => {
 
         expect(accounts).toEqual([
           {
-            name: 'name',
-            source: 'source',
+            name: mockedWeb3AccountsResponse[0].meta.name,
+            source: mockedWeb3AccountsResponse[0].meta.source,
             balances: [],
-            id: 'bXiUDcztNS6ZAgjy5zUzMHoUMbsz3hQ2Xh1sxyhvxKfoTHvK9',
+            id: mockedWeb3AccountsResponse[0].address,
           },
           {
-            name: 'name2',
-            source: 'source',
+            name: mockedWeb3AccountsResponse[1].meta.name,
+            source: mockedWeb3AccountsResponse[1].meta.source,
             balances: [],
-            id: 'bXikYFVEuifjmPT3j41zwqwrGAJTzMv69weEqrvAotP9VfHxS',
+            id: mockedWeb3AccountsResponse[1].address,
           },
         ]);
         expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);
@@ -100,7 +85,7 @@ describe('getAccounts', () => {
 
   describe('accounts are not present in the wallet', () => {
     beforeEach(() => {
-      mockWeb3Accounts.mockImplementation(() => []);
+      mockWeb3Accounts.mockImplementationOnce(() => []);
     });
 
     it('returns an empty array when no accounts are returned from wallet', async () => {

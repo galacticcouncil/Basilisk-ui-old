@@ -7,11 +7,10 @@ import {
 import TestRenderer, { act } from 'react-test-renderer';
 import { useActiveAccountQueryResolver } from './activeAccount';
 import waitForExpect from 'wait-for-expect';
+import { usePersistActiveAccount } from '../../lib/usePersistActiveAccount';
 
-const mockUsePersistActiveAccount = jest.fn();
-jest.mock('../../lib/usePersistActiveAccount', () => ({
-  usePersistActiveAccount: () => mockUsePersistActiveAccount(),
-}));
+jest.mock('../../lib/usePersistActiveAccount');
+const mockUsePersistActiveAccount = usePersistActiveAccount as jest.Mock;
 
 // test component that returns the query result(s)
 const Test = () => {
@@ -19,19 +18,19 @@ const Test = () => {
   return <>{JSON.stringify(data)}</>;
 };
 
+const expectedAccountMock = {
+  id: 'mockId',
+  name: 'Mocked Account',
+  source: 'polkadot-js',
+  balances: [],
+};
+
 const useResolvers = () => {
   return {
     Query: {
       ...useActiveAccountQueryResolver(),
       accounts: () => {
-        return [
-          {
-            id: 'mockId',
-            name: 'Mocked Account',
-            source: 'polkadot-js',
-            balances: [],
-          },
-        ];
+        return [expectedAccountMock];
       },
     },
   };
@@ -68,9 +67,11 @@ describe('useActiveAccountQueryResolver', () => {
   });
 
   describe('falsy case', () => {
-    it('should resolve the activeAccount as null when no persistedActiveAccountId if found', async () => {
-      mockUsePersistActiveAccount.mockImplementation(() => [null]);
+    beforeEach(() => {
+      mockUsePersistActiveAccount.mockImplementationOnce(() => [null]);
+    });
 
+    it('should resolve the activeAccount as null when no persistedActiveAccountId if found', async () => {
       render();
 
       await act(async () => {
@@ -82,36 +83,40 @@ describe('useActiveAccountQueryResolver', () => {
   });
 
   describe('truthy case', () => {
-    it('should resolve the activeAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
-      mockUsePersistActiveAccount.mockImplementation(() => {
-        return { persistedActiveAccount: { id: 'mockId' } };
+    describe('persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', () => {
+      beforeEach(() => {
+        mockUsePersistActiveAccount.mockImplementationOnce(() => {
+          return { persistedActiveAccount: { id: 'mockId' } };
+        });
       });
 
-      render();
+      it('should resolve the activeAccount as account object when', async () => {
+        render();
 
-      await act(async () => {
-        await waitForExpect(() => {
-          expect(data()?.activeAccount).toStrictEqual({
-            id: 'mockId',
-            name: 'Mocked Account',
-            source: 'polkadot-js',
-            balances: [],
-            __typename: 'Account',
+        await act(async () => {
+          await waitForExpect(() => {
+            expect(data()?.activeAccount).toStrictEqual({
+              ...expectedAccountMock,
+              __typename: 'Account',
+            });
           });
         });
       });
     });
+    describe('persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', () => {
+      beforeEach(() => {
+        mockUsePersistActiveAccount.mockImplementationOnce(() => [
+          { id: 'nonExistingMockId' },
+        ]);
+      });
 
-    it('should resolve the activeAccount as null when persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', async () => {
-      mockUsePersistActiveAccount.mockImplementation(() => [
-        { id: 'nonExistingMockId' },
-      ]);
+      it('should resolve the activeAccount as null', async () => {
+        render();
 
-      render();
-
-      await act(async () => {
-        await waitForExpect(() => {
-          expect(data()?.activeAccount).toStrictEqual(null);
+        await act(async () => {
+          await waitForExpect(() => {
+            expect(data()?.activeAccount).toStrictEqual(null);
+          });
         });
       });
     });
