@@ -231,6 +231,7 @@ describe('balances', () => {
           query GetBalances {
             mockEntity @client {
               balances(assetIds: { a: "0" }) {
+                id
                 assetId
                 balance
               }
@@ -268,6 +269,7 @@ describe('balances', () => {
           expect(data()?.mockEntity.balances).toEqual([
             {
               __typename: 'Balance',
+              id: 'address-0',
               assetId: '0',
               balance: nativeAssetBalance,
             },
