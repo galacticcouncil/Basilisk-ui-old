@@ -6,20 +6,51 @@ import {
   fetchNativeAssetBalance,
   fetchNonNativeAssetBalances,
 } from './getBalancesByAddress';
-import {
-  getMockApiPromise,
-  nativeAssetBalance,
-  nonNativeAssetBalance,
-} from '../../polkadotJs/tests/mockUsePolkadotJsContext';
 
-const address = 'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak';
+const nativeAssetBalance = '10';
+const nonNativeAssetBalance = '20';
+const mockedAccountInfoNativeBalanceReturn = {
+  data: {
+    free: nativeAssetBalance,
+  },
+};
+const mockedAccountInfoNonNativeBalanceReturn = {
+  free: nonNativeAssetBalance,
+};
+const mockedAccountInfoNativeBalance = jest.fn();
+const mockedAccountInfoNonNativeBalance = jest.fn();
+
+const getMockApiPromise = () =>
+  ({
+    query: {
+      system: {
+        account: mockedAccountInfoNativeBalance,
+      },
+      tokens: {
+        accounts: { multi: mockedAccountInfoNonNativeBalance },
+      },
+    },
+  } as unknown as ApiPromise);
 
 describe('getBalancesByAddress', () => {
+  const address = 'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak';
   let mockApiInstance: ApiPromise;
+  const nativeAssetId = '0';
+  const nonNativeAssetIdA = '1';
+  const nonNativeAssetIdB = '2';
 
   beforeEach(() => {
-    jest.clearAllMocks();
     mockApiInstance = getMockApiPromise();
+
+    mockedAccountInfoNativeBalance.mockReturnValueOnce(
+      mockedAccountInfoNativeBalanceReturn
+    );
+    mockedAccountInfoNonNativeBalance.mockImplementationOnce(
+      (arg: (unknown[] | unknown)[]) =>
+        arg.map((_arg) => {
+          return mockedAccountInfoNonNativeBalanceReturn;
+        })
+    );
   });
 
   describe('getBalancesByAddress', () => {
@@ -27,15 +58,18 @@ describe('getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         address,
-        ['0']
+        [nativeAssetId]
       );
 
       expect(balances).toEqual([
         {
-          assetId: '0',
+          assetId: nativeAssetId,
           balance: nativeAssetBalance,
         },
       ]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
+        address
+      );
       expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(1);
       expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         0
@@ -46,35 +80,38 @@ describe('getBalancesByAddress', () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         address,
-        ['1']
+        [nonNativeAssetIdA]
       );
 
       expect(balances).toEqual([
         {
-          assetId: '1',
-          balance: '20',
+          assetId: nonNativeAssetIdA,
+          balance: nonNativeAssetBalance,
         },
       ]);
       expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
       expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         1
       );
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledWith([
+        [address, nonNativeAssetIdA],
+      ]);
     });
 
     it('can retrieve multiple non-native asset balances', async () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         address,
-        ['1', '2']
+        [nonNativeAssetIdA, nonNativeAssetIdB]
       );
 
       expect(balances).toEqual([
         {
-          assetId: '1',
+          assetId: nonNativeAssetIdA,
           balance: nonNativeAssetBalance,
         },
         {
-          assetId: '2',
+          assetId: nonNativeAssetIdB,
           balance: nonNativeAssetBalance,
         },
       ]);
@@ -82,29 +119,39 @@ describe('getBalancesByAddress', () => {
       expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         1
       );
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledWith([
+        [address, nonNativeAssetIdA],
+        [address, nonNativeAssetIdB],
+      ]);
     });
 
     it('can retrieve 1 native and 1 non-native asset balances', async () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         address,
-        ['0', '1']
+        [nativeAssetId, nonNativeAssetIdA]
       );
 
       expect(balances).toEqual([
         {
-          assetId: '0',
+          assetId: nativeAssetId,
           balance: nativeAssetBalance,
         },
         {
-          assetId: '1',
+          assetId: nonNativeAssetIdA,
           balance: nonNativeAssetBalance,
         },
       ]);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
+        address
+      );
       expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(1);
       expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         1
       );
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledWith([
+        [address, nonNativeAssetIdA],
+      ]);
     });
   });
 
@@ -119,6 +166,9 @@ describe('getBalancesByAddress', () => {
         assetId: constants.nativeAssetId,
         balance: nativeAssetBalance,
       });
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
+        address
+      );
     });
   });
 
@@ -127,19 +177,23 @@ describe('getBalancesByAddress', () => {
       const balance: Balance[] = await fetchNonNativeAssetBalances(
         mockApiInstance,
         address,
-        ['1', '2']
+        [nonNativeAssetIdA, nonNativeAssetIdB]
       );
 
       expect(balance).toEqual([
         {
-          assetId: '1',
+          assetId: nonNativeAssetIdA,
           balance: nonNativeAssetBalance,
         },
-        { assetId: '2', balance: nonNativeAssetBalance },
+        { assetId: nonNativeAssetIdB, balance: nonNativeAssetBalance },
       ]);
       // assigns assetId in the correct order
-      expect(balance[0].assetId).not.toEqual('2');
-      expect(balance[1].assetId).not.toEqual('1');
+      expect(balance[0].assetId).not.toEqual(nonNativeAssetIdB);
+      expect(balance[1].assetId).not.toEqual(nonNativeAssetIdA);
+      expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledWith([
+        [address, nonNativeAssetIdA],
+        [address, nonNativeAssetIdB],
+      ]);
     });
   });
 });

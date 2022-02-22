@@ -10,30 +10,55 @@ import { Resolvers, useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
 import { gql } from 'graphql.macro';
-import {
-  getMockApiPromise,
-  nativeAssetBalance,
-  nonNativeAssetBalance,
-} from '../../../polkadotJs/tests/mockUsePolkadotJsContext';
 import { ApiPromise } from '@polkadot/api';
 import errors from '../../../../errors';
 import waitForExpect from 'wait-for-expect';
 
+const nativeAssetBalance = '10';
+const nonNativeAssetBalance = '20';
+const mockedAccountInfoNativeBalanceReturn = {
+  data: {
+    free: nativeAssetBalance,
+  },
+};
+const mockedAccountInfoNonNativeBalanceReturn = {
+  free: nonNativeAssetBalance,
+};
+
+const mockedAccountInfoNativeBalance = jest.fn();
+const mockedAccountInfoNonNativeBalance = jest.fn();
+
+const getMockApiPromise = () =>
+  ({
+    query: {
+      system: {
+        account: mockedAccountInfoNativeBalance,
+      },
+      tokens: {
+        accounts: { multi: mockedAccountInfoNonNativeBalance },
+      },
+    },
+  } as unknown as ApiPromise);
+
 jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
-    /**
-     * Jest.mock executes before any import. Requiring a module inside a mock is
-     * what makes this work, if the mock-module or value is defined/required
-     * outside of jest.mock(...) then this mock does not work.
-     */
-    const {
-      mockUsePolkadotJsContext,
-    } = require('../../../polkadotJs/tests/mockUsePolkadotJsContext');
-    return mockUsePolkadotJsContext();
+    return { apiInstance: getMockApiPromise() };
   },
 }));
 
 describe('balances', () => {
+  beforeEach(() => {
+    mockedAccountInfoNativeBalance.mockReturnValueOnce(
+      mockedAccountInfoNativeBalanceReturn
+    );
+    mockedAccountInfoNonNativeBalance.mockImplementationOnce(
+      (arg: (unknown[] | unknown)[]) =>
+        arg.map((_arg) => {
+          return mockedAccountInfoNonNativeBalanceReturn;
+        })
+    );
+  });
+
   describe('objectToArrayWithFilter', () => {
     describe.each([
       [
@@ -72,7 +97,6 @@ describe('balances', () => {
     let mockApiInstance: ApiPromise;
 
     beforeEach(() => {
-      jest.resetAllMocks();
       mockApiInstance = getMockApiPromise();
     });
 
@@ -163,6 +187,7 @@ describe('balances', () => {
       const brokenArgs = {
         assetIds: undefined,
       } as unknown as BalancesByAddressResolverArgs;
+
       const balancesByAddressQueryResolverPromise =
         balancesByAddressQueryResolver(entity, brokenArgs);
 
@@ -241,7 +266,11 @@ describe('balances', () => {
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.mockEntity.balances).toEqual([
-            { __typename: 'Balance', assetId: '0', balance: '10' },
+            {
+              __typename: 'Balance',
+              assetId: '0',
+              balance: nativeAssetBalance,
+            },
           ]);
         });
       });
