@@ -66,14 +66,18 @@ export const useBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    balances: withErrorHandler(
-      // practically we dont have to wrap this in useCallback
-      // since it does not have any contextual dependencies
+    balances:
+      /**
+       * practically we dont have to wrap this in useCallback
+       * since it does not have any contextual dependencies
+       */
       useMemo(
-        () => balancesByAddressQueryResolverFactory(apiInstance),
+        () =>
+          withErrorHandler(
+            balancesByAddressQueryResolverFactory(apiInstance),
+            'balances'
+          ),
         [apiInstance]
       ),
-      'balances'
-    ),
   };
 };
