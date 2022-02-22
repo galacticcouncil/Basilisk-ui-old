@@ -103,6 +103,7 @@ describe('useActiveAccountQueryResolver', () => {
         });
       });
     });
+
     describe('persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', () => {
       beforeEach(() => {
         mockUsePersistActiveAccount.mockImplementationOnce(() => [
