@@ -1,0 +1,27 @@
+{
+  "files": {
+    "main.css": "./static/css/main.0fc953cd.css",
+    "main.js": "./static/js/main.78bc5cc6.js",
+    "static/js/949.b650be63.chunk.js": "./static/js/949.b650be63.chunk.js",
+    "static/js/749.c36f6f8d.chunk.js": "./static/js/749.c36f6f8d.chunk.js",
+    "static/js/651.42d1b8f7.chunk.js": "./static/js/651.42d1b8f7.chunk.js",
+    "static/media/bootstrap-icons.woff?": "./static/media/bootstrap-icons.c1d7432ee75fa194e499.woff",
+    "static/media/bootstrap-icons.woff2?": "./static/media/bootstrap-icons.a13b815539b49de48d23.woff2",
+    "module.wasm": "./4305f3fc15b9bf66ebbc.module.wasm",
+    "static/media/HelpIcon.svg": "./static/media/HelpIcon.e78a43b1dd5ae8ef65b92bf436ebbdac.svg",
+    "static/media/NotificationActiveIcon.svg": "./static/media/NotificationActiveIcon.c184ef16914bc03030a8c25550065dd5.svg",
+    "static/media/NotificationInactiveIcon.svg": "./static/media/NotificationInactiveIcon.71a03dbb33d9bc2edd9074de70f82cf7.svg",
+    "index.html": "./index.html",
+    "static/media/index.cjs": "./static/media/index.f2b6f7ffc9a430272d20.cjs",
+    "static/media/DropdownArrowIcon.svg": "./static/media/DropdownArrowIcon.288e1cd4b82626ccb2291f3b21a18110.svg",
+    "main.0fc953cd.css.map": "./static/css/main.0fc953cd.css.map",
+    "main.78bc5cc6.js.map": "./static/js/main.78bc5cc6.js.map",
+    "949.b650be63.chunk.js.map": "./static/js/949.b650be63.chunk.js.map",
+    "749.c36f6f8d.chunk.js.map": "./static/js/749.c36f6f8d.chunk.js.map",
+    "651.42d1b8f7.chunk.js.map": "./static/js/651.42d1b8f7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0fc953cd.css",
+    "static/js/main.78bc5cc6.js"
+  ]
+}
