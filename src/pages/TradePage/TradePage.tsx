@@ -1,94 +1,46 @@
-import { find, isEqual } from 'lodash';
-import { useMemo, useState } from 'react';
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
-import {
-  TradeForm,
-  TradeFormProps,
-} from '../../containers/TradeForm/TradeForm';
-import { PoolLiquidity, TradeChart } from '../../containers/TradeChart';
-import log from 'loglevel';
-import { useSpotPrice } from './hooks/useSpotPrice';
-import { Pool } from '../../generated/graphql';
+import { useApolloClient } from "@apollo/client";
+import classNames from "classnames";
+import { find } from "lodash";
+import { Dispatch, SetStateAction, useState, useCallback, useEffect, useMemo } from "react";
+import { Control, useForm, UseFormReturn, } from "react-hook-form";
+import { useSearchParams } from "react-router-dom"
+import { TradeForm } from "../../components/Trade/TradeForm/TradeForm";
+import { AssetIds, Balance, Pool, TradeType } from "../../generated/graphql";
+import { readActiveAccount } from "../../hooks/accounts/lib/readActiveAccount";
+import { useGetActiveAccountQuery } from "../../hooks/accounts/queries/useGetActiveAccountQuery";
+import { useMath } from "../../hooks/math/useMath";
+import { useGetPoolByAssetsQuery } from "../../hooks/pools/queries/useGetPoolByAssetsQuery";
+import { useAssetIdsWithUrl } from "./hooks/useAssetIdsWithUrl";
 
-export interface SpotPrice {
-  aToB?: string;
-  bToA?: string;
+export interface TradeAssetIds {
+  assetIn: string | null,
+  assetOut: string | null
 }
 
-/**
- * Trade page responsible for fetching pool data
- * @returns
- */
 export const TradePage = () => {
-  // TODO default values here should come from the router where query args are parsed
-  const [assetIds, setAssetIds] = useState<TradeFormProps['assetIds']>({
-    assetInId: '0',
-    assetOutId: '2',
+  // taking assetIn/assetOut from search params / query url
+  const [assetIds, setAssetIds] = useAssetIdsWithUrl();
+  const { data: activeAccountData } = useGetActiveAccountQuery({
+    fetchPolicy: 'cache-only'
   });
 
-  // automatically fetch a pool by the given assets
-  const {
-    data: poolData,
-    loading: poolLoading,
-    error: poolError,
-  } = useGetPoolByAssetsQuery(assetIds);
-  log.debug('TradePage.useGetPoolByAssetsQuery', assetIds);
+  const { data: poolData, loading: poolLoading } = useGetPoolByAssetsQuery({
+    assetInId: assetIds.assetIn || undefined,
+    assetOutId: assetIds.assetOut || undefined
+  })
 
-  const pool: Pool | undefined = useMemo(
-    () => poolData?.pool,
-    [poolData?.pool]
-  );
+  const isActiveAccountConnected = useMemo(() => {
+    return !!activeAccountData?.activeAccount;
+  }, [activeAccountData]);
 
-  // if there was a problem fetching the pool, log it
-  poolError && log.error(poolError);
-
-  // combined loading state from all the required queries
-  const loading = useMemo(() => {
-    const loading = poolLoading;
-    log.debug('TradePage.loading', loading);
-    return loading;
-  }, [poolLoading]);
-
-  log.debug('TradePage.poolData.pool', poolData?.pool);
-
-  // when the underlying form's assetIds change, update the state
-  const handleAssetIdsChange = (assetInId: string, assetOutId?: string) => {
-    const newIds = { assetInId, assetOutId };
-    log.debug(
-      'TradePage.handleAssetIdsChange',
-      isEqual(assetIds, newIds),
-      newIds
-    );
-    if (!isEqual(assetIds, newIds)) setAssetIds(newIds);
-  };
-
-  const spotPrice = useSpotPrice(assetIds, poolData?.pool);
-
-  const poolLiquidity: PoolLiquidity = useMemo(() => {
-    return {
-      assetABalance: find(pool?.balances, { assetId: assetIds.assetInId })
-        ?.balance,
-      assetBBalance: find(pool?.balances, { assetId: assetIds.assetOutId })
-        ?.balance,
-    };
-  }, [pool, assetIds.assetInId, assetIds.assetOutId]);
-
-  return (
-    <div>
-      <h1>Trade</h1>
-
-      <br />
-      <br />
-
-      <TradeChart poolLiquidity={poolLiquidity} spotPrice={spotPrice} />
-
-      <TradeForm
-        onAssetIdsChange={handleAssetIdsChange}
-        assetIds={assetIds}
-        loading={loading}
-        pool={pool}
-        spotPrice={spotPrice}
-      />
-    </div>
-  );
-};
+  return <>
+    <p>TradeChart</p>
+    <TradeForm
+      assetIds={assetIds}
+      onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+      isActiveAccountConnected={isActiveAccountConnected}
+      pool={poolData?.pool}
+      isPoolLoading={poolLoading}
+    />
+  </>
+}

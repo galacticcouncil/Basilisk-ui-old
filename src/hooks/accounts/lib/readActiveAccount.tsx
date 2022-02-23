@@ -14,5 +14,6 @@ export const readActiveAccount = (cache: ApolloCache<object>) => {
      * accept only partial data below.
      */
     returnPartialData: true,
+    
   })?.activeAccount;
 };

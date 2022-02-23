@@ -5,9 +5,9 @@ query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
     
     pool: pools(assetIds: [$assetInId, $assetOutId]) @client {
         id,
-        assetInId,
-        assetOutId,
-        balances {
+        assetInId @export(as: "assetInId"),
+        assetOutId @export(as: "assetOutId"),
+        balances(assetIds: [$assetInId, $assetOutId]) {
             assetId,
             balance
         },

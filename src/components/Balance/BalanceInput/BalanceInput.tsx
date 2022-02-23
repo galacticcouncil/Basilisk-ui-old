@@ -1,6 +1,6 @@
 import log from 'loglevel';
-import { useMemo, useState } from 'react';
-import MaskedInput from 'react-text-mask';
+import React, { MutableRefObject, Ref, useMemo, useState } from 'react';
+import MaskedInput, { MaskedInputProps } from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { useFormContext, Controller } from 'react-hook-form';
 import {  MetricUnit } from '../metricUnit';
@@ -34,12 +34,35 @@ export const currencyMaskOptions = {
     allowLeadingZeroes: false,
 }
 
+const MaskedInputWithRef = React.forwardRef((topLevelProps: MaskedInputProps, ref: Ref<HTMLInputElement>) => {
+    return (
+      <MaskedInput
+        render={(textMaskRef, props) => (
+          <input
+            {...props}
+            ref={(node) => {
+              if (node) {
+                console.log('node', node)
+                textMaskRef(node);
+                if (ref) {
+                    console.log('i ref', ref);
+                  (ref as MutableRefObject<HTMLInputElement>).current = node;
+                }
+              }
+            }}
+          />
+        )}
+        {...topLevelProps}
+      />
+    );
+  });
+
 export const BalanceInput = ({
     name,
     defaultUnit = MetricUnit.NONE,
     showMetricUnitSelector = true,
 }: BalanceInputProps) => {
-    const { control, setValue, getValues } = useFormContext();
+    const { control, register, setValue, getValues } = useFormContext();
     const [rawValue, setRawValue] = useState<string | undefined>();
     const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
@@ -58,9 +81,11 @@ export const BalanceInput = ({
                 name={name}
                 render={
                     (({ field }) => (
-                        <MaskedInput 
+                        <MaskedInput
                             mask={currencyMask}
-                            ref={field.ref}
+                            ref={(ref) => {
+                                field.ref(ref?.inputElement);
+                            }}
                             onChange={e => handleOnChange(field, e)}
                         />
                     ))
