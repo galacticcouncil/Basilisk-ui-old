@@ -1,9 +1,13 @@
+import BigNumber from "bignumber.js";
 import classNames from "classnames";
 import { find, times } from "lodash";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Control, FormProvider, useForm } from "react-hook-form";
 import { Balance, Pool, TradeType } from "../../../generated/graphql";
+import { fromPrecision12 } from "../../../hooks/math/useFromPrecision";
 import { useMath } from "../../../hooks/math/useMath";
+import { percentageChange } from "../../../hooks/math/usePercentageChange";
+import { toPrecision12 } from "../../../hooks/math/useToPrecision";
 import { TradeAssetIds } from "../../../pages/TradePage/TradePage";
 import { AssetBalanceInput } from "../../Balance/AssetBalanceInput/AssetBalanceInput";
 import { TradeInfo } from "./TradeInfo/TradeInfo";
@@ -39,14 +43,18 @@ export const TradeFormSettings = ({
     // if you want automatic slippage, override the previous user's input
     useEffect(() => {
         if (getValues('autoSlippage')) {
-            setValue('allowedSlippage', '0.2')
+            // default is 3%
+            setValue('allowedSlippage', '3')
         }
     }, watch(['autoSlippage']))
 
     return <>
         <form>
+            <label>Allowed slippage (%)</label>
             <input
-                {...register('allowedSlippage')}
+                {...register('allowedSlippage', {
+                    setValueAs: value => value && new BigNumber(value).dividedBy('100').toFixed(3)
+                })}
                 // disabled if using auto slippage
                 disabled={getValues('autoSlippage')}
                 type="text"
@@ -64,6 +72,12 @@ export interface TradeFormProps {
     onAssetIdsChange: (assetIds: TradeAssetIds) => void,
     isActiveAccountConnected?: boolean,
     pool?: Pool,
+    assetInLiquidity?: string,
+    assetOutLiquidity?: string,
+    spotPrice?: {
+        outIn?: string, 
+        inOut?: string,
+    },
     isPoolLoading: boolean
 }
 
@@ -101,7 +115,10 @@ export const TradeForm = ({
     onAssetIdsChange,
     isActiveAccountConnected,
     pool,
-    isPoolLoading
+    isPoolLoading,
+    assetInLiquidity,
+    assetOutLiquidity,
+    spotPrice
 }: TradeFormProps) => {
     // TODO: include math into loading form state
     const { math, loading: mathLoading } = useMath();
@@ -160,16 +177,6 @@ export const TradeForm = ({
         setTradeType(TradeType.Buy)
     }, [assetOutAmountInput]);
 
-    const assetOutLiquidity = useMemo(() => {
-        const assetId = getValues('assetOut') || undefined;
-        return find<Balance | null>(pool?.balances, { assetId })?.balance
-    }, [pool, watch('assetOut')]);
-
-    const assetInLiquidity = useMemo(() => {
-        const assetId = getValues('assetIn') || undefined;
-        return find<Balance | null>(pool?.balances, { assetId })?.balance
-    }, [pool, watch('assetIn')]);
-
     useEffect(() => {
         const assetOutAmount = getValues('assetOutAmount') || '0';
         console.log('assetOutAmount', assetOutAmount)
@@ -179,8 +186,11 @@ export const TradeForm = ({
         console.log('assetOutAmount using math', assetOutAmount)
 
         const amount = math.xyk.calculate_in_given_out(
-            assetOutLiquidity,
+            // which combination is correct?
+            // assetOutLiquidity,
+            // assetInLiquidity,
             assetInLiquidity,
+            assetOutLiquidity,
             assetOutAmount
         );
         // return
@@ -193,7 +203,6 @@ export const TradeForm = ({
         console.log('assetInAmount', assetInAmount);
         if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
         if (tradeType !== TradeType.Sell) return;
-
 
         const amount = math.xyk.calculate_out_given_in(
             assetInLiquidity,
@@ -224,6 +233,62 @@ export const TradeForm = ({
 
     const modalContainerRef = useRef<HTMLDivElement | null>(null)
 
+    const tradeLimit = useMemo(() => {
+        const assetInAmount = getValues('assetInAmount');
+        const assetOutAmount = getValues('assetOutAmount');
+
+        if (!assetInAmount || !assetOutAmount || !spotPrice?.inOut || !spotPrice?.outIn || !allowedSlippage) return;
+
+        switch (tradeType) {
+            case TradeType.Sell:
+                return new BigNumber(assetInAmount)
+                    .multipliedBy(spotPrice?.outIn)
+                    .multipliedBy(
+                        new BigNumber('1')
+                            .minus(allowedSlippage)
+                    )
+                    .toFixed(0)
+            case TradeType.Buy:
+                return new BigNumber(assetOutAmount)
+                    .multipliedBy(spotPrice?.inOut)
+                    .multipliedBy(
+                        new BigNumber('1')
+                            .plus(allowedSlippage)
+                    )
+                    .toFixed(0)
+        }
+    }, [spotPrice, tradeType, allowedSlippage, getValues, ...watch(['assetInAmount', 'assetOutAmount'])]);
+
+    const slippage = useMemo(() => {
+        const assetInAmount = getValues('assetInAmount');
+        const assetOutAmount = getValues('assetOutAmount');
+
+        if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage) return;
+
+        console.log('slipige', assetInAmount, spotPrice.inOut) // continue here, spot price * in/out amount produce too big of a number
+
+        switch (tradeType) {
+            case TradeType.Sell:
+                return percentageChange( 
+                    new BigNumber(assetInAmount)
+                        .multipliedBy(
+                            fromPrecision12(spotPrice.outIn) || '1'
+                        ),
+                    assetOutAmount
+                )
+            case TradeType.Buy:
+                return percentageChange(
+                    new BigNumber(assetOutAmount)
+                        .multipliedBy(
+                            fromPrecision12(spotPrice.inOut) || '1'
+                        ),
+                    assetInAmount
+                )
+        }
+    }, [tradeType, getValues, spotPrice, ...watch(['assetInAmount', 'assetOutAmount'])]);
+
+    console.log('slippage', slippage?.toFixed(5));
+
     return <>
         <div ref={modalContainerRef}></div>
         <TradeFormSettings
@@ -244,8 +309,8 @@ export const TradeForm = ({
                     />
                 </div>
 
-                {/* <p>asset switcher</p>
-                <p>spot price: -</p> */}
+                <p>asset switcher goes here</p>
+                <p>spot price goes here</p>
 
                 <div>
                     <br/>
@@ -282,6 +347,11 @@ export const TradeForm = ({
             <p>Liquidity (out/in): [{getValues('assetOut')}] {assetOutLiquidity} /  [{getValues('assetIn')}] {assetInLiquidity}</p>
             <p>Trade type: {tradeType}</p>
             <p>Asset IDs: {JSON.stringify(assetIds)}</p>
+            <p>Allowed slippage: {allowedSlippage}</p>
+            <p>Spot Price (outIn / inOut): {spotPrice?.outIn} / {spotPrice?.inOut}</p>
+            <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
+            <p>Amounts (out / in): {getValues('assetOutAmount')} / {getValues('assetInAmount')}</p>
+            <p>Slippage: {slippage && new BigNumber(slippage).multipliedBy(100).toFixed(3)}%</p>
         </div>
         
     </>

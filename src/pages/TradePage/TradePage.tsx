@@ -23,23 +23,47 @@ export const TradePage = () => {
   const { data: activeAccountData } = useGetActiveAccountQuery({
     fetchPolicy: 'cache-only'
   });
+  const { math } = useMath();
 
   const { data: poolData, loading: poolLoading } = useGetPoolByAssetsQuery({
     assetInId: assetIds.assetIn || undefined,
     assetOutId: assetIds.assetOut || undefined
-  })
+  });
+
+  const pool = useMemo(() => poolData?.pool, [poolData]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
+
+  const assetOutLiquidity = useMemo(() => {
+    const assetId = assetIds.assetOut || undefined;
+      return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds]);
+
+  const assetInLiquidity = useMemo(() => {
+    const assetId = assetIds.assetIn || undefined;
+      return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds]);
+
+  const spotPrice = useMemo(() => {
+      if (!assetOutLiquidity || !assetInLiquidity || !math) return;
+      return {
+          inOut: math.xyk.get_spot_price(assetOutLiquidity, assetInLiquidity, '1000000000000'),
+          outIn: math.xyk.get_spot_price(assetInLiquidity, assetOutLiquidity, '1000000000000')
+      }
+  }, [assetOutLiquidity, assetInLiquidity, math]);
 
   return <>
     <TradeForm
       assetIds={assetIds}
       onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
       isActiveAccountConnected={isActiveAccountConnected}
-      pool={poolData?.pool}
+      pool={pool}
       isPoolLoading={poolLoading}
+      assetInLiquidity={assetInLiquidity}
+      assetOutLiquidity={assetOutLiquidity}
+      spotPrice={spotPrice}
     />
   </>
 }
