@@ -34,7 +34,6 @@ export const TradePage = () => {
   }, [activeAccountData]);
 
   return <>
-    <p>TradeChart</p>
     <TradeForm
       assetIds={assetIds}
       onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
