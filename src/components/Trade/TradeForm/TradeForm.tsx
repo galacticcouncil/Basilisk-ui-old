@@ -270,19 +270,19 @@ export const TradeForm = ({
         switch (tradeType) {
             case TradeType.Sell:
                 return percentageChange( 
-                    assetOutAmount,
                     new BigNumber(assetInAmount)
                         .multipliedBy(
                             fromPrecision12(spotPrice.outIn) || '1'
                         ),
+                    assetOutAmount
                 )
             case TradeType.Buy:
                 return percentageChange(
-                    assetInAmount,
                     new BigNumber(assetOutAmount)
                         .multipliedBy(
                             fromPrecision12(spotPrice.inOut) || '1'
                         ),
+                    assetInAmount,
                 )
         }
     }, [tradeType, getValues, spotPrice, ...watch(['assetInAmount', 'assetOutAmount'])]);
@@ -349,6 +349,12 @@ export const TradeForm = ({
             <p>Asset IDs: {JSON.stringify(assetIds)}</p>
             <p>Allowed slippage: {allowedSlippage}</p>
             <p>Spot Price (outIn / inOut): {spotPrice?.outIn} / {spotPrice?.inOut}</p>
+            <p>
+                Spot Price: 
+                1 IN [{getValues('assetIn')}] = {fromPrecision12(spotPrice?.outIn)} OUT [{getValues('assetOut')}] 
+                /
+                1 OUT [{getValues('assetOut')}] = {fromPrecision12(spotPrice?.inOut)} IN [{getValues('assetIn')}] 
+            </p>
             <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
             <p>Amounts (out / in): {getValues('assetOutAmount')} / {getValues('assetInAmount')}</p>
             <p>Slippage: {slippage && new BigNumber(slippage).multipliedBy(100).toFixed(3)}%</p>
