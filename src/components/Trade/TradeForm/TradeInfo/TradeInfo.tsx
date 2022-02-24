@@ -12,10 +12,7 @@ export const TradeInfo = ({
     error
 }: TradeInfoProps) => {
     return <>
-        {error
-            ? 'error'
-            : 'test'
-        }
+        
         <p>trade info</p>
     </>
 }

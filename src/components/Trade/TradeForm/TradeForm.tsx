@@ -160,8 +160,6 @@ export const TradeForm = ({
         setTradeType(TradeType.Buy)
     }, [assetOutAmountInput]);
 
-    // console.log('submit', useListenForInput(control, 'submit'))
-
     const assetOutLiquidity = useMemo(() => {
         const assetId = getValues('assetOut') || undefined;
         return find<Balance | null>(pool?.balances, { assetId })?.balance
@@ -232,34 +230,32 @@ export const TradeForm = ({
             allowedSlippage={allowedSlippage}
             onAllowedSlippageChange={(allowedSlippage) => setAllowedSlippage(allowedSlippage)}
         />
+        <br/>
         <FormProvider {...form}>
             <form onSubmit={handleSubmit(_handleSubmit)}>
                 <div>
+                    <br/>
                     <AssetBalanceInput
                         balanceInputName='assetOutAmount'
                         assetInputName='assetOut'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetOutAmountInputRef}
                         assets={assets}
-                        // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
-                    <input type="text" {...register('assetOut')}/>
-                    {/* <input type="text" {...register('assetOutAmount')}/> */}
                 </div>
 
-                <p>asset switcher</p>
-                <p>spot price: -</p>
+                {/* <p>asset switcher</p>
+                <p>spot price: -</p> */}
 
                 <div>
-                <AssetBalanceInput
+                    <br/>
+                    <AssetBalanceInput
                         balanceInputName='assetInAmount'
                         assetInputName='assetIn'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetInAmountInputRef}
                         assets={assets}
-                        // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
-                    <input type="text" {...register('assetIn')}/>
                 </div>
 
                 <TradeInfo />
@@ -272,15 +268,21 @@ export const TradeForm = ({
                                 activeAccount: () => isActiveAccountConnected,
                             }
                         })}
-                        // disabled={!isValid}
+                        disabled={!isValid}
                         value={getSubmitText()}
                     />
                 </div>
             </form>
-            <button onClick={() => setValue('assetInAmount', '0')}>click</button>
-        </FormProvider>
 
-        <p>Trade type: {tradeType}</p>
-        <p>{JSON.stringify(assetIds)}</p>
+        </FormProvider>
+        
+        <div>
+            <br/>
+            <h3>Debug box</h3>
+            <p>Liquidity (out/in): [{getValues('assetOut')}] {assetOutLiquidity} /  [{getValues('assetIn')}] {assetInLiquidity}</p>
+            <p>Trade type: {tradeType}</p>
+            <p>Asset IDs: {JSON.stringify(assetIds)}</p>
+        </div>
+        
     </>
 }
