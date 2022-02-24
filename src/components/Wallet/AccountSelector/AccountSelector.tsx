@@ -34,31 +34,33 @@ export const AccountSelector = ({
   return (
     <div className="account-selector" ref={innerRef}>
       <div className="account-selector__content-wrapper">
-        <div className="d-flex flex-align-space mx-3 my-3 account-selector__heading">
-          <div>
-            {isExtensionAvailable ? (
-              <FormattedMessage
-                id="Wallet.SelectAccount"
-                defaultMessage="Select account"
-              />
-            ) : (
-              <FormattedMessage
-                id="Wallet.InstallExtension"
-                defaultMessage="Install extension"
-              />
-            )}
-          </div>
-          <div
-            className="account-selector__close-modal-btn"
-            onClick={() => closeModal()}
-          >
-            x
+        <div className="d-flex account-selector__heading">
+          <div className="d-flex flex-align-space account-selector__heading-info">
+            <div>
+              {isExtensionAvailable ? (
+                <FormattedMessage
+                  id="Wallet.SelectAccount"
+                  defaultMessage="Select account"
+                />
+              ) : (
+                <FormattedMessage
+                  id="Wallet.InstallExtension"
+                  defaultMessage="Install extension"
+                />
+              )}
+            </div>
+            <div
+              className="account-selector__close-modal-btn"
+              onClick={() => closeModal()}
+            >
+              x
+            </div>
           </div>
         </div>
         {isExtensionAvailable ? (
           <>
             {accountsLoading ? (
-              <div className="mx-3 my-5 text-center">
+              <div className="text-center">
                 <FormattedMessage
                   id="Wallet.Loading"
                   defaultMessage="Loading..."
@@ -67,7 +69,7 @@ export const AccountSelector = ({
             ) : (
               <>
                 {accounts?.length ? (
-                  <div className="account-selector__accounts-list">
+                  <div className="d-flex account-selector__accounts-list">
                     {accounts?.map((account, i) => (
                       <AccountItem
                         key={i}
@@ -79,7 +81,7 @@ export const AccountSelector = ({
                   </div>
                 ) : (
                   //TODO update href param when we know where to send user
-                  <div className="mx-3 my-5 text-center">
+                  <div className="text-center">
                     <h4>
                       <FormattedMessage
                         id="Wallet.NoAccountsAvailable"
@@ -102,7 +104,7 @@ export const AccountSelector = ({
                   </div>
                 )}
                 {account && (
-                  <div className="d-flex mx-3">
+                  <div className="account-selector__clear-button">
                     <Button
                       kind={ButtonKind.Secondary}
                       onClick={onAccountCleared}
@@ -118,7 +120,7 @@ export const AccountSelector = ({
             )}
           </>
         ) : (
-          <div className="mx-3 my-5 text-center">
+          <div className="text-center">
             <p>
               <FormattedMessage
                 id="Wallet.InstallInstructions"

@@ -8,7 +8,7 @@
   height: 100%;
   top: 0;
   left: 0;
-  background: $page-background;
+  background: rgba(0,0,0,0.5);
   z-index: 2;
   font-weight: bold;
   display: flex;
@@ -16,22 +16,38 @@
   align-items: center;
 
   &__content-wrapper {
-    width: 360px;
-    height: 50vh;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    width: 460px;
+    min-height: 500px;
+    max-height: 75vh;
     background-color: $gray2;
     border-radius: $border-radius;
+    overflow: hidden;
   }
 
   &__heading {
-    font-size: 2rem;
+    flex-direction: column;
+    background-color: $gray3;
+    font-size: 14px;
+    padding: 14px;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: $green1;
   }
 
   &__close-modal-btn {
     cursor: pointer;
   }
+  
   &__accounts-list {
     overflow-y: scroll;
-    height: calc(50vh - 8rem);
+    margin: 0 8px;
+
+    flex-direction: column;
+    gap: 8px;
 
     &::-webkit-scrollbar {
       width: 6px;
@@ -41,22 +57,34 @@
     &::-webkit-scrollbar-track {
       background-color: $gray3;
     }
-    &::-webkit-scrollbar-track:hover {
-      background-color: $gray1;
-    }
 
     /* Handle */
     &::-webkit-scrollbar-thumb {
-      background: transparent url('../../../misc/images/scrollbar.png')
+      background: transparent url('../../../misc/images/scrollbar.svg')
         no-repeat;
-      background-size: 6px 84px;
-      display: block;
-      width: 6px;
+      background-position: bottom;
     }
   }
-  &__clear-btn {
-    width: 100%;
+
+  &__clear-button  {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 8px;
+
+    button {
+      width: auto;
+      color: $gray5;
+      background: none;
+      line-height: 16px;
+      padding-bottom: 8px;
+
+      &:hover {
+        background: none;
+        color:$green1;
+      }
+    }
   }
+
   &__create-account-link {
     text-decoration: none;
     font-weight: normal;
