@@ -270,19 +270,19 @@ export const TradeForm = ({
         switch (tradeType) {
             case TradeType.Sell:
                 return percentageChange( 
+                    assetOutAmount,
                     new BigNumber(assetInAmount)
                         .multipliedBy(
                             fromPrecision12(spotPrice.outIn) || '1'
                         ),
-                    assetOutAmount
                 )
             case TradeType.Buy:
                 return percentageChange(
+                    assetInAmount,
                     new BigNumber(assetOutAmount)
                         .multipliedBy(
                             fromPrecision12(spotPrice.inOut) || '1'
                         ),
-                    assetInAmount
                 )
         }
     }, [tradeType, getValues, spotPrice, ...watch(['assetInAmount', 'assetOutAmount'])]);
