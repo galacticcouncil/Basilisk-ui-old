@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { find } from "lodash";
+import { find, times } from "lodash";
 import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Control, FormProvider, useForm } from "react-hook-form";
 import { Balance, Pool, TradeType } from "../../../generated/graphql";
@@ -111,8 +111,8 @@ export const TradeForm = ({
         reValidateMode: 'onBlur',
         mode: 'all',
         defaultValues: {
-            // assetIn: assetIds.assetIn,
-            // assetOut: assetIds.assetOut
+            assetIn: assetIds.assetIn,
+            assetOut: assetIds.assetOut
         }
     });
     const { register, handleSubmit, watch, getValues, setValue, trigger, control, formState: { errors, isValid } } = form;
@@ -120,6 +120,9 @@ export const TradeForm = ({
     const assetOutAmountInputRef = useRef<HTMLInputElement>(null)
     const assetInAmountInputRef = useRef<HTMLInputElement>(null)
 
+    const assets = useMemo(() => (
+        times(10).map((id) => ({ id: `${id}` }))
+    ), []);
 
     // trigger form field validation right away
     useEffect(() => {
@@ -237,6 +240,7 @@ export const TradeForm = ({
                         assetInputName='assetOut'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetOutAmountInputRef}
+                        assets={assets}
                         // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
                     <input type="text" {...register('assetOut')}/>
@@ -252,6 +256,7 @@ export const TradeForm = ({
                         assetInputName='assetIn'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetInAmountInputRef}
+                        assets={assets}
                         // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
                     <input type="text" {...register('assetIn')}/>
