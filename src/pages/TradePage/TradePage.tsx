@@ -9,6 +9,7 @@ import { AssetIds, Balance, Pool, TradeType } from "../../generated/graphql";
 import { readActiveAccount } from "../../hooks/accounts/lib/readActiveAccount";
 import { useGetActiveAccountQuery } from "../../hooks/accounts/queries/useGetActiveAccountQuery";
 import { useMath } from "../../hooks/math/useMath";
+import { useSubmitTradeMutation } from "../../hooks/pools/mutations/useSubmitTradeMutation";
 import { useGetPoolByAssetsQuery } from "../../hooks/pools/queries/useGetPoolByAssetsQuery";
 import { useAssetIdsWithUrl } from "./hooks/useAssetIdsWithUrl";
 
@@ -35,6 +36,12 @@ export const TradePage = () => {
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
+
+  const [submitTrade, { loading, error }] = useSubmitTradeMutation();
+
+  const handleSubmitTrade = useCallback((variables) => {
+    submitTrade({ variables })
+  }, [submitTrade]);
 
   const assetOutLiquidity = useMemo(() => {
     const assetId = assetIds.assetOut || undefined;
@@ -64,6 +71,13 @@ export const TradePage = () => {
       assetInLiquidity={assetInLiquidity}
       assetOutLiquidity={assetOutLiquidity}
       spotPrice={spotPrice}
+      onSubmitTrade={handleSubmitTrade}
     />
+
+    <div>
+      <h3>[Trade Page] Debug Box</h3>
+      <p>Trade loading: {loading ? 'true': 'false'}</p>
+      <p>Trade error: {error ? error : '-'}</p>
+    </div>
   </>
 }

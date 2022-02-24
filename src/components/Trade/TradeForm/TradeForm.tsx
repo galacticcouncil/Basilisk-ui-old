@@ -8,8 +8,10 @@ import { fromPrecision12 } from "../../../hooks/math/useFromPrecision";
 import { useMath } from "../../../hooks/math/useMath";
 import { percentageChange } from "../../../hooks/math/usePercentageChange";
 import { toPrecision12 } from "../../../hooks/math/useToPrecision";
+import { SubmitTradeMutationVariables } from "../../../hooks/pools/mutations/useSubmitTradeMutation";
 import { TradeAssetIds } from "../../../pages/TradePage/TradePage";
 import { AssetBalanceInput } from "../../Balance/AssetBalanceInput/AssetBalanceInput";
+import { PoolType } from "../../Chart/shared";
 import { TradeInfo } from "./TradeInfo/TradeInfo";
 
 export interface TradeFormSettingsProps {
@@ -78,7 +80,8 @@ export interface TradeFormProps {
         outIn?: string, 
         inOut?: string,
     },
-    isPoolLoading: boolean
+    isPoolLoading: boolean,
+    onSubmitTrade: (trade: SubmitTradeMutationVariables) => void
 }
 
 export interface TradeFormFields {
@@ -118,21 +121,24 @@ export const TradeForm = ({
     isPoolLoading,
     assetInLiquidity,
     assetOutLiquidity,
-    spotPrice
+    spotPrice,
+    onSubmitTrade
 }: TradeFormProps) => {
     // TODO: include math into loading form state
     const { math, loading: mathLoading } = useMath();
     const [tradeType, setTradeType] = useState<TradeType>(TradeType.Buy);
     const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
     const form = useForm<TradeFormFields>({
-        reValidateMode: 'onBlur',
-        mode: 'all',
+        reValidateMode: 'onChange',
+        mode: 'onTouched',
         defaultValues: {
             assetIn: assetIds.assetIn,
             assetOut: assetIds.assetOut
         }
     });
-    const { register, handleSubmit, watch, getValues, setValue, trigger, control, formState: { errors, isValid } } = form;
+    const { register, handleSubmit, watch, getValues, setValue, trigger, control, formState } = form;
+
+    const { isValid, isDirty, errors} = formState;
 
     const assetOutAmountInputRef = useRef<HTMLInputElement>(null)
     const assetInAmountInputRef = useRef<HTMLInputElement>(null)
@@ -143,17 +149,13 @@ export const TradeForm = ({
 
     // trigger form field validation right away
     useEffect(() => {
-        trigger();
+        trigger('submit');
     }, []);
 
     useEffect(() => {
-        trigger();
+        // must provide input name otherwise it does not validate appropriately
+        trigger('submit');
     }, [isActiveAccountConnected, pool, isPoolLoading]);
-
-    // handle submit of the form
-    const _handleSubmit = useCallback((data: TradeFormFields) => {
-        console.log('submit', data)
-    }, []);
 
     // when the assetIds change, propagate the change to the parent
     useEffect(() => {
@@ -287,7 +289,25 @@ export const TradeForm = ({
         }
     }, [tradeType, getValues, spotPrice, ...watch(['assetInAmount', 'assetOutAmount'])]);
 
-    console.log('slippage', slippage?.toFixed(5));
+    console.log('form', errors, isDirty, isValid);
+
+
+    // handle submit of the form
+    const _handleSubmit = useCallback((data: TradeFormFields) => {
+        if (!data.assetIn || !data.assetOut || !data.assetInAmount || !data.assetOutAmount || !tradeLimit) {
+            throw new Error('Unable to submit trade due to missing data');
+        }
+
+        onSubmitTrade({
+            assetInId: data.assetIn,
+            assetOutId: data.assetOut,
+            assetInAmount: data.assetInAmount,
+            assetOutAmount: data.assetOutAmount,
+            poolType: PoolType.XYK,
+            tradeType: tradeType,
+            amountWithSlippage: tradeLimit
+        })
+    }, [tradeType, tradeLimit]);
 
     return <>
         <div ref={modalContainerRef}></div>
@@ -325,6 +345,14 @@ export const TradeForm = ({
 
                 <TradeInfo />
                 
+                {JSON.stringify({
+                    assetIn: errors.assetIn?.type,
+                    assetOut: errors.assetOut?.type,
+                    assetInAmount: errors.assetInAmount?.type,
+                    assetOutAmount: errors.assetOutAmount?.type,
+                    submit: errors.submit?.type
+                })}
+
                 <div>
                     <input type="submit"
                         {...register('submit', {
@@ -343,7 +371,7 @@ export const TradeForm = ({
         
         <div>
             <br/>
-            <h3>Debug box</h3>
+            <h3>[Trade Form] Debug box</h3>
             <p>Liquidity (out/in): [{getValues('assetOut')}] {assetOutLiquidity} /  [{getValues('assetIn')}] {assetInLiquidity}</p>
             <p>Trade type: {tradeType}</p>
             <p>Asset IDs: {JSON.stringify(assetIds)}</p>
@@ -358,6 +386,7 @@ export const TradeForm = ({
             <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
             <p>Amounts (out / in): {getValues('assetOutAmount')} / {getValues('assetInAmount')}</p>
             <p>Slippage: {slippage && new BigNumber(slippage).multipliedBy(100).toFixed(3)}%</p>
+            <p>Form is valid?: {isValid ? 'true' : 'false'}</p>
         </div>
         
     </>
