@@ -17,7 +17,8 @@ export interface AssetBalanceInputProps {
     asset?: Asset,
     assets?: Asset[],
     isAssetSelectable?: boolean,
-    onAssetSelected: (asset: Asset) => void
+    onAssetSelected: (asset: Asset) => void,
+    balanceInputRef?: MutableRefObject<HTMLInputElement | null>
 }
 
 export const AssetBalanceInput = ({
@@ -27,7 +28,8 @@ export const AssetBalanceInput = ({
     asset,
     assets,
     isAssetSelectable = true,
-    onAssetSelected
+    onAssetSelected,
+    balanceInputRef
 }: AssetBalanceInputProps) => {
     const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
     const { toggleModal, modalPortal, toggleId } = useModalPortal(
@@ -54,6 +56,7 @@ export const AssetBalanceInput = ({
                 name={name}
                 defaultUnit={unit}
                 showMetricUnitSelector={false}
+                inputRef={balanceInputRef}
             />
         </div>
         <div className='asset-balance-input__info flex-container column'>

@@ -1,15 +1,17 @@
 import log from 'loglevel';
-import React, { MutableRefObject, Ref, useMemo, useState } from 'react';
+import React, { forwardRef, MutableRefObject, Ref, useMemo, useRef, useState } from 'react';
 import MaskedInput, { MaskedInputProps } from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
 import { useFormContext, Controller } from 'react-hook-form';
-import {  MetricUnit } from '../metricUnit';
+import {  formatToSIWithPrecision12, MetricUnit } from '../metricUnit';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { useDefaultUnit } from './hooks/useDefaultUnit';
 import { useHandleOnChange } from './hooks/useHandleOnChange';
 import classNames from 'classnames';
 
 import './BalanceInput.scss';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import BigNumber from 'bignumber.js';
 
 log.setDefaultLevel('debug')
 // TODO Make default unit non-required?
@@ -17,7 +19,36 @@ export interface BalanceInputProps {
     defaultUnit?: MetricUnit,
     name: string,
     showMetricUnitSelector?: boolean
+    /**
+     * This whole property exists due to my inability to figure out
+     * how to pass an actual input ref through react-hook-form controller's field.ref
+     * 
+     * field.ref ends up being a wrapper for validationa and input focusing, without the ability to
+     * retrieve the actual input element from the form state
+     */
+    inputRef?: MutableRefObject<HTMLInputElement | null>
 }
+
+const MaskedInputWithRef = React.forwardRef((topLevelProps: MaskedInputProps, ref: Ref<HTMLInputElement>) => {
+    return (
+      <MaskedInput
+        render={(textMaskRef, props) => (
+          <input
+            {...props}
+            ref={(node) => {
+              if (node) {
+                textMaskRef(node);
+                if (ref) {
+                  (ref as MutableRefObject<HTMLInputElement>).current = node;
+                }
+              }
+            }}
+          />
+        )}
+        {...topLevelProps}
+      />
+    );
+  });
 
 export const thousandsSeparatorSymbol = ' ';
 export const currencyMaskOptions = {
@@ -34,33 +65,11 @@ export const currencyMaskOptions = {
     allowLeadingZeroes: false,
 }
 
-const MaskedInputWithRef = React.forwardRef((topLevelProps: MaskedInputProps, ref: Ref<HTMLInputElement>) => {
-    return (
-      <MaskedInput
-        render={(textMaskRef, props) => (
-          <input
-            {...props}
-            ref={(node) => {
-              if (node) {
-                console.log('node', node)
-                textMaskRef(node);
-                if (ref) {
-                    console.log('i ref', ref);
-                  (ref as MutableRefObject<HTMLInputElement>).current = node;
-                }
-              }
-            }}
-          />
-        )}
-        {...topLevelProps}
-      />
-    );
-  });
-
 export const BalanceInput = ({
     name,
     defaultUnit = MetricUnit.NONE,
     showMetricUnitSelector = true,
+    inputRef
 }: BalanceInputProps) => {
     const { control, register, setValue, getValues } = useFormContext();
     const [rawValue, setRawValue] = useState<string | undefined>();
@@ -70,25 +79,35 @@ export const BalanceInput = ({
         ...currencyMaskOptions
     }), [unit])
 
-    const handleOnChange = useHandleOnChange({ setValue, unit, name });
+    const handleOnChange = useHandleOnChange({ setValue, unit, name, inputRef });
 
     return <div className={'balance-input flex-container ' + classNames({
         'no-selector': !showMetricUnitSelector
     })}>
         <div className='balance-input__input-wrapper'>
-            <Controller 
+            <Controller
                 control={control}
                 name={name}
                 render={
-                    (({ field }) => (
-                        <MaskedInput
-                            mask={currencyMask}
-                            ref={(ref) => {
-                                field.ref(ref?.inputElement);
-                            }}
-                            onChange={e => handleOnChange(field, e)}
-                        />
-                    ))
+                    ({ field }) => (
+                        <>
+                            <MaskedInputWithRef
+                                mask={currencyMask}
+                                // TODO: get rid of this
+                                value={
+                                    new BigNumber(
+                                        formatToSIWithPrecision12(field.value, unit) || ''
+                                    ).toString()
+                                }
+                                onBlur={field.onBlur}
+                                ref={inputRef}
+                                onChange={e => handleOnChange(field, e)}
+                            />
+                            {(() => {
+                                console.log('field.value', field.value);
+                            })()}
+                        </>
+                    )
                 }
             />
         </div>

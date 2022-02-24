@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { find } from "lodash";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Control, FormProvider, useForm } from "react-hook-form";
 import { Balance, Pool, TradeType } from "../../../generated/graphql";
 import { useMath } from "../../../hooks/math/useMath";
@@ -81,19 +81,16 @@ export interface TradeFormFields {
  * @param field 
  * @returns 
  */
-export const useListenForInput = (control: Control<TradeFormFields>, field: string) => {
-    const [state, setState] = useState<boolean>(false);
-
-    const inputRef = (control._fields[field] as any)?._f?.ref;
-
-    console.log('control', control);
+export const useListenForInput = (inputRef: MutableRefObject<HTMLInputElement | null>) => {
+    const [state, setState] = useState<boolean>();
 
     useEffect(() => {
         if (!inputRef) return;
-        const listener = inputRef
-            ?.addEventListener('input', () => setState(state => !state));
+        // TODO: figure out why using the 'input' broke the mask
+        const listener = inputRef.current
+            ?.addEventListener('keydown', () => setState(state => !state));
 
-        return () => inputRef?.removeEventListener('input', listener);
+        return () => listener && inputRef.current?.removeEventListener('keydown', listener);
     }, [inputRef])
 
     return state;
@@ -113,8 +110,16 @@ export const TradeForm = ({
     const form = useForm<TradeFormFields>({
         reValidateMode: 'onBlur',
         mode: 'all',
+        defaultValues: {
+            // assetIn: assetIds.assetIn,
+            // assetOut: assetIds.assetOut
+        }
     });
     const { register, handleSubmit, watch, getValues, setValue, trigger, control, formState: { errors, isValid } } = form;
+
+    const assetOutAmountInputRef = useRef<HTMLInputElement>(null)
+    const assetInAmountInputRef = useRef<HTMLInputElement>(null)
+
 
     // trigger form field validation right away
     useEffect(() => {
@@ -136,21 +141,23 @@ export const TradeForm = ({
         onAssetIdsChange({ assetIn, assetOut });
     }, watch(['assetIn', 'assetOut']))
 
+    const assetInAmountInput = useListenForInput(assetInAmountInputRef);
     useEffect(() => {
-        if (tradeType === TradeType.Sell) return;
-        console.log('setting trade type to sell')
+        if (tradeType === TradeType.Sell && assetInAmountInput !== undefined) return;
+        console.log('setting trade type to sell', assetInAmountInput)
 
         setTradeType(TradeType.Sell)
-    }, [useListenForInput(control, 'assetInAmount')]);
+    }, [assetInAmountInput]);
 
+    const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
     useEffect(() => {
-        if (tradeType === TradeType.Buy) return;
-        console.log('setting trade type to buy')
+        if (tradeType === TradeType.Buy && assetOutAmountInput !== undefined) return;
+        console.log('setting trade type to buy', assetOutAmountInput)
 
         setTradeType(TradeType.Buy)
-    }, [useListenForInput(control, 'assetOutAmount')]);
+    }, [assetOutAmountInput]);
 
-    console.log('submit', useListenForInput(control, 'submit'))
+    // console.log('submit', useListenForInput(control, 'submit'))
 
     const assetOutLiquidity = useMemo(() => {
         const assetId = getValues('assetOut') || undefined;
@@ -163,11 +170,13 @@ export const TradeForm = ({
     }, [pool, watch('assetIn')]);
 
     useEffect(() => {
-        const assetOutAmount = getValues('assetOutAmount');
+        const assetOutAmount = getValues('assetOutAmount') || '0';
+        console.log('assetOutAmount', assetOutAmount)
         if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
         if (tradeType !== TradeType.Buy) return;
 
-        if (!assetOutAmount) return;
+        console.log('assetOutAmount using math', assetOutAmount)
+
         const amount = math.xyk.calculate_in_given_out(
             assetOutLiquidity,
             assetInLiquidity,
@@ -179,11 +188,12 @@ export const TradeForm = ({
     }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')])
 
     useEffect(() => {
-        const assetInAmount = getValues('assetInAmount');
+        const assetInAmount = getValues('assetInAmount') || '0';
+        console.log('assetInAmount', assetInAmount);
         if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
         if (tradeType !== TradeType.Sell) return;
 
-        if (!assetInAmount) return;
+
         const amount = math.xyk.calculate_out_given_in(
             assetInLiquidity,
             assetOutLiquidity,
@@ -213,6 +223,8 @@ export const TradeForm = ({
 
     const modalContainerRef = useRef<HTMLDivElement | null>(null)
 
+    console.log('control', form)
+
     return <>
         <div ref={modalContainerRef}></div>
         <TradeFormSettings
@@ -222,30 +234,31 @@ export const TradeForm = ({
         <FormProvider {...form}>
             <form onSubmit={handleSubmit(_handleSubmit)}>
                 <div>
-                    {/* <AssetBalanceInput
+                    <AssetBalanceInput
                         name='assetOutAmount'
                         modalContainerRef={modalContainerRef}
+                        balanceInputRef={assetOutAmountInputRef}
                         onAssetSelected={(asset) => console.log('asset', asset)}
-                    /> */}
+                    />
                     <input type="text" {...register('assetOut')}/>
-                    <input type="text" {...register('assetOutAmount')}/>
+                    {/* <input type="text" {...register('assetOutAmount')}/> */}
                 </div>
 
                 <p>asset switcher</p>
                 <p>spot price: -</p>
 
                 <div>
-                    {/* <AssetBalanceInput
+                <AssetBalanceInput
                         name='assetInAmount'
                         modalContainerRef={modalContainerRef}
+                        balanceInputRef={assetInAmountInputRef}
                         onAssetSelected={(asset) => console.log('asset', asset)}
-                    /> */}
+                    />
                     <input type="text" {...register('assetIn')}/>
-                    <input type="text" {...register('assetInAmount')}/>
                 </div>
 
                 <TradeInfo />
-
+                
                 <div>
                     <input type="submit"
                         {...register('submit', {
@@ -254,11 +267,12 @@ export const TradeForm = ({
                                 activeAccount: () => isActiveAccountConnected,
                             }
                         })}
-                        disabled={!isValid}
+                        // disabled={!isValid}
                         value={getSubmitText()}
                     />
                 </div>
             </form>
+            <button onClick={() => setValue('assetInAmount', '0')}>click</button>
         </FormProvider>
 
         <p>Trade type: {tradeType}</p>
