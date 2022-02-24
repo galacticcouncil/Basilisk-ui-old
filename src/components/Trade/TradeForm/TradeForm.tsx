@@ -223,8 +223,6 @@ export const TradeForm = ({
 
     const modalContainerRef = useRef<HTMLDivElement | null>(null)
 
-    console.log('control', form)
-
     return <>
         <div ref={modalContainerRef}></div>
         <TradeFormSettings
@@ -235,10 +233,11 @@ export const TradeForm = ({
             <form onSubmit={handleSubmit(_handleSubmit)}>
                 <div>
                     <AssetBalanceInput
-                        name='assetOutAmount'
+                        balanceInputName='assetOutAmount'
+                        assetInputName='assetOut'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetOutAmountInputRef}
-                        onAssetSelected={(asset) => console.log('asset', asset)}
+                        // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
                     <input type="text" {...register('assetOut')}/>
                     {/* <input type="text" {...register('assetOutAmount')}/> */}
@@ -249,10 +248,11 @@ export const TradeForm = ({
 
                 <div>
                 <AssetBalanceInput
-                        name='assetInAmount'
+                        balanceInputName='assetInAmount'
+                        assetInputName='assetIn'
                         modalContainerRef={modalContainerRef}
                         balanceInputRef={assetInAmountInputRef}
-                        onAssetSelected={(asset) => console.log('asset', asset)}
+                        // onAssetSelected={(asset) => console.log('asset', asset)}
                     />
                     <input type="text" {...register('assetIn')}/>
                 </div>

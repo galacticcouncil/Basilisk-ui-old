@@ -9,29 +9,32 @@ import './AssetBalanceInput.scss';
 import { MetricUnit } from '../metricUnit';
 import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUnitSelector';
 import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
+import { useFormContext } from 'react-hook-form';
 
 export interface AssetBalanceInputProps {
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
-    name: BalanceInputProps['name'],
+    balanceInputName: BalanceInputProps['name'],
+    assetInputName: string,
     defaultUnit?: BalanceInputProps['defaultUnit']
-    asset?: Asset,
     assets?: Asset[],
+    defaultAsset?: Asset,
     isAssetSelectable?: boolean,
-    onAssetSelected: (asset: Asset) => void,
+    // onAssetSelected: (asset: Asset) => void,
     balanceInputRef?: MutableRefObject<HTMLInputElement | null>
 }
 
 export const AssetBalanceInput = ({
     modalContainerRef,
-    name,
+    balanceInputName,
+    assetInputName,
     defaultUnit = MetricUnit.NONE,
-    asset,
     assets,
+    defaultAsset,
     isAssetSelectable = true,
-    onAssetSelected,
+    // onAssetSelected,
     balanceInputRef
 }: AssetBalanceInputProps) => {
-    const modalPortalElement = useModalPortalElement({ assets, onAssetSelected, asset });
+    const modalPortalElement = useModalPortalElement({ assets, defaultAsset, assetInputName });
     const { toggleModal, modalPortal, toggleId } = useModalPortal(
         modalPortalElement,
         modalContainerRef,
@@ -39,6 +42,8 @@ export const AssetBalanceInput = ({
     );
     const { unit, setUnit } = useDefaultUnit(defaultUnit);
     const handleAssetSelectorClick = useCallback(() => isAssetSelectable && toggleModal(), [isAssetSelectable, toggleModal]);
+
+    const methods = useFormContext();
 
     return <div className='asset-balance-input flex-container'>
         {/* This portal will be rendered at it's container ref as defined above */}
@@ -49,11 +54,11 @@ export const AssetBalanceInput = ({
             onClick={_ => handleAssetSelectorClick()}
             data-modal-portal-toggle={toggleId}
         >
-            <div>{asset?.id}</div>
+            <div>{methods.getValues(assetInputName)}</div>
         </div>
         <div className='asset-balance-input__input-wrapper'>
             <BalanceInput 
-                name={name}
+                name={balanceInputName}
                 defaultUnit={unit}
                 showMetricUnitSelector={false}
                 inputRef={balanceInputRef}
@@ -65,7 +70,7 @@ export const AssetBalanceInput = ({
                 onUnitSelected={setUnit}
             />
             <div className='asset-balance-input__asset-suffix'>
-                <div>{asset?.id}</div>
+                <div>{methods.getValues(assetInputName)}</div>
             </div>
         </div>
     </div>
