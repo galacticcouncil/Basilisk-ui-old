@@ -97,7 +97,7 @@ export const BalanceInput = ({
   return (
     <div
       className={
-        'balance-input flex-container ' +
+        'balance-input ' +
         classNames({
           'no-selector': !showMetricUnitSelector,
         })
@@ -127,7 +127,7 @@ export const BalanceInput = ({
         />
       </div>
       {showMetricUnitSelector ? (
-        <div className="balance-input__info flex-container column">
+        <div className="balance-input__info">
           <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
         </div>
       ) : (

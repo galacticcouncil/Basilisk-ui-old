@@ -2,39 +2,39 @@
 @import '../../../misc/misc.module.scss';
 
 .asset-balance-input {
-    position: relative;
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  height: 60px;
+  padding: 14px 16px 16px 16px;
+
+  background-color: $gray1;
+  border-radius: $border-radius;
+
+  .balance-input {
+    border-radius: 0;
+  }
+
+  &__asset-info {
+    height: 2rem;
+
+    display: flex;
     align-items: center;
+    justify-content: center;
 
-    background-color: $gray1;
-    border-radius: $border-radius;
+    width: 4rem;
 
-    &__info {
-        width: 4.5rem;
-        align-items: center;
-        font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    &:hover {
+      color: $green1;
     }
+  }
 
-    &__asset-icon {
-        height: 2rem;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        width: 4rem;
-
-        font-size: 0.95rem;
-        font-weight: bold;
-        cursor: pointer;
-
-        box-shadow: -1px 0 0 $gray2 inset;
-
-        &:hover {
-            color: $green1;
-        }
-    }
-
-    &__input-wrapper {
-        flex-grow: 1;
-    }
+  &__input-wrapper {
+    flex-grow: 1;
+  }
 }

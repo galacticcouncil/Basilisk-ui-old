@@ -2,79 +2,82 @@
 @import '../../../../misc/misc.module.scss';
 
 .metric-unit-selector {
-    position: relative;
+  position: relative;
 
-    font-weight: bold;
-    width: 100%;
+  display: flex;
+  flex-shrink: 1;
+  justify-content: right;
+
+  font-weight: bold;
+
+  min-width: 100px;
+  cursor: pointer;
+
+  &__select {
+    display: flex;
+    font-size: 0.65em;
 
     justify-content: center;
     align-items: center;
-    display: flex;
 
-    cursor: pointer;
+    color: $gray4;
 
-    padding: 0 0.5rem;
-
-    &__select {
-        width: 100%;
-        font-size: 0.65em;
-
-        justify-content: center;
-        align-items: center;
-
-        color: $gray4;
-
-        > div {
-            display: inline;
-        }
-
-        &:hover {
-            color: $green1;
-        }
+    > div {
+      display: inline;
     }
 
-    &__icon {
-        padding-left: 0.5em;
-        font-size: 0.8em;
-        line-height: 0.8em;
+    &:hover {
+      color: $green1;
     }
+  }
 
-    &__unit {
-        text-transform: uppercase;
+  &__icon {
+    display: block;
+    position: relative;
+    height: 10px;
+    line-height: 6px;
+    text-align: center;
+
+    svg {
+      height: 6px;
     }
+  }
 
-    &__unit-list {
-        position: absolute;
-        width: 100%;
+  &__unit {
+    text-transform: uppercase;
+  }
 
-        top:100%;
-        left: 0;
+  &__unit-list {
+    position: absolute;
 
-        background-color: $gray1;
+    top: 100%;
+    right: 0;
+    padding: 0em 1em 0.2em 1em;
 
-        border-bottom-left-radius: $border-radius;
-        border-bottom-right-radius: $border-radius;
+    background-color: $gray1;
 
-        z-index: 1;
+    border-bottom-left-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
 
-        font-size: 0.65em;
+    z-index: 1;
 
-        .metric-unit-list-item {
-            text-transform: uppercase;
-            padding: 0.35em 0.5em;
-            text-align: center;
+    font-size: 0.65em;
 
-            &.active {
-                color: $green1;
-            }
+    .metric-unit-list-item {
+      text-transform: uppercase;
+      text-align: center;
 
-            &:hover {
-                color: $green1;
-            }
-    
-            &:last-child {
-                padding-bottom: 0.6em;
-            }
-        }
+      &.active {
+        color: $green1;
+      }
+
+      &:hover {
+        color: $green1;
+      }
+
+      &:last-child {
+        padding-bottom: 0.6em;
+      }
     }
+  }
 }

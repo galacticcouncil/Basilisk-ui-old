@@ -4,63 +4,64 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { MetricUnit } from '../metricUnit';
 import { AssetBalanceInput } from './AssetBalanceInput';
 
-import cssColors from './../../../misc/colors.module.scss'
+import cssColors from './../../../misc/colors.module.scss';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 import './AssetBalanceInput2.scss';
 
 export default {
-    title: 'components/Balance/AssetBalanceInput',
-    component: AssetBalanceInput,
-    args: {
-        defaultAsset: {
-            id: 'BSX'
-        },
-        assets: [
-            {
-                id: 'BSX',
-            },
-            {
-                id: 'kUSD'
-            }
-        ],
-        defaultUnit: MetricUnit.k,
-        balanceInputName: 'test-input',
-        assetInputName: 'test-input-asset'
-    }
-} as ComponentMeta<typeof AssetBalanceInput>
+  title: 'components/Balance/AssetBalanceInput',
+  component: AssetBalanceInput,
+  args: {
+    defaultAsset: {
+      id: 'BSX',
+    },
+    assets: [
+      {
+        id: 'BSX',
+      },
+      {
+        id: 'kUSD',
+      },
+    ],
+    defaultUnit: MetricUnit.k,
+    balanceInputName: 'test-input',
+    assetInputName: 'test-input-asset',
+  },
+} as ComponentMeta<typeof AssetBalanceInput>;
 
 const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
-    const modalContainerRef = useRef<HTMLDivElement | null>(null);
-    const methods = useForm();
-    const balanceInputRef = useRef(null);
+  const modalContainerRef = useRef<HTMLDivElement | null>(null);
+  const methods = useForm();
+  const balanceInputRef = useRef(null);
 
-    useEffect(() => {
-        console.log('form', methods.getValues());
-        console.log('balanceInputRef', balanceInputRef.current)
-    }, [methods.watch()])
+  useEffect(() => {
+    console.log('form', methods.getValues());
+    console.log('balanceInputRef', balanceInputRef.current);
+  }, [methods.watch()]);
 
-    return <StorybookWrapper>
-        <div style={{
-            margin: '-1rem',
-            padding: '1rem',
-            backgroundColor: cssColors.gray2
-        }} >
-            {/* This is where the underlying modal should be rendered */}
-            <div ref={modalContainerRef}></div>
+  return (
+    <StorybookWrapper>
+      <div
+        style={{
+          backgroundColor: cssColors.gray2,
+        }}
+      >
+        {/* This is where the underlying modal should be rendered */}
+        <div ref={modalContainerRef}></div>
 
-            <FormProvider {...methods}>
-                <form onSubmit={methods.handleSubmit(() => {})}>
-                    {/* 
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(() => {})}>
+            {/* 
                         Pass the ref to the element above, so that the TokenBalanceInput
                         can render the modal there.
                     */}
-                    <AssetBalanceInput 
-                        {...args} 
-                        modalContainerRef={modalContainerRef}
-                        balanceInputRef={balanceInputRef}
-                    />
-                    {/* <br/>
+            <AssetBalanceInput
+              {...args}
+              modalContainerRef={modalContainerRef}
+              balanceInputRef={balanceInputRef}
+            />
+            {/* <br/>
                     <div className='style2'>
                         <AssetBalanceInput 
                             {...args} 
@@ -86,10 +87,11 @@ const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
                         />
                     </div>
                     </div> */}
-                </form>
-            </FormProvider>
-        </div>
+          </form>
+        </FormProvider>
+      </div>
     </StorybookWrapper>
-}
+  );
+};
 
 export const Default = Template.bind({});
