@@ -29,6 +29,8 @@ export const Wallet = () => {
     setActiveAccount({ variables: { id: undefined } });
   }, [setActiveAccount]);
 
+  console.log('activeAccount', activeAccountData?.activeAccount);
+
   // request data from the data layer
   // render the component with the provided data
   return (

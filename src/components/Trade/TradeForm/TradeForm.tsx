@@ -372,11 +372,11 @@ export const TradeForm = ({
         <div>
             <br/>
             <h3>[Trade Form] Debug box</h3>
-            <p>Liquidity (out/in): [{getValues('assetOut')}] {assetOutLiquidity} /  [{getValues('assetIn')}] {assetInLiquidity}</p>
+            <p>Liquidity (out/in): [{getValues('assetOut')}] {fromPrecision12(assetOutLiquidity)} /  [{getValues('assetIn')}] {fromPrecision12(assetInLiquidity)}</p>
             <p>Trade type: {tradeType}</p>
             <p>Asset IDs: {JSON.stringify(assetIds)}</p>
-            <p>Allowed slippage: {allowedSlippage}</p>
-            <p>Spot Price (outIn / inOut): {spotPrice?.outIn} / {spotPrice?.inOut}</p>
+            <p>Allowed slippage: {new BigNumber(allowedSlippage || '0').multipliedBy(100).toFixed(3)} %</p>
+            <p>Spot Price (outIn / inOut): {fromPrecision12(spotPrice?.outIn)} / {fromPrecision12(spotPrice?.inOut)}</p>
             <p>
                 Spot Price: 
                 1 IN [{getValues('assetIn')}] = {fromPrecision12(spotPrice?.outIn)} OUT [{getValues('assetOut')}] 
@@ -384,7 +384,7 @@ export const TradeForm = ({
                 1 OUT [{getValues('assetOut')}] = {fromPrecision12(spotPrice?.inOut)} IN [{getValues('assetIn')}] 
             </p>
             <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
-            <p>Amounts (out / in): {getValues('assetOutAmount')} / {getValues('assetInAmount')}</p>
+            <p>Amounts (out / in): {fromPrecision12(getValues('assetOutAmount') || undefined)} / {fromPrecision12(getValues('assetInAmount') || undefined)}</p>
             <p>Slippage: {slippage && new BigNumber(slippage).multipliedBy(100).toFixed(3)}%</p>
             <p>Form is valid?: {isValid ? 'true' : 'false'}</p>
         </div>

@@ -39,11 +39,11 @@ export const balancesByAddressQueryResolverFactory =
    */
   async (
     _obj: Entity,
-    args: BalancesByAddressResolverArgs
+    args: BalancesByAddressResolverArgs | undefined
   ): Promise<Balance[] | undefined> => {
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!args.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
+    if (!args?.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
 
     const assets = objectToArrayWithFilter(args.assetIds);
 

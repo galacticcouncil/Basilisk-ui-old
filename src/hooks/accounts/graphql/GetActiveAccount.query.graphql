@@ -9,7 +9,7 @@ query GetActiveAccount {
     id
     name
     source
-    balances {
+    balances(assetIds: ["0"]) {
       assetId
       balance
     }

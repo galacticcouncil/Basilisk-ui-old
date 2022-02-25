@@ -43,6 +43,9 @@ export const useResolvers: () => Resolvers = () => {
     },
     XYKPool,
     LBPPool,
+    Account: {
+      ...useBalanceQueryResolvers()
+    }
   };
 };
 
