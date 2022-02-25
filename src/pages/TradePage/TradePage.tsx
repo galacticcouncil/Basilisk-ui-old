@@ -56,8 +56,8 @@ export const TradePage = () => {
   const spotPrice = useMemo(() => {
       if (!assetOutLiquidity || !assetInLiquidity || !math) return;
       return {
-          inOut: math.xyk.get_spot_price(assetOutLiquidity, assetInLiquidity, '1000000000000'),
-          outIn: math.xyk.get_spot_price(assetInLiquidity, assetOutLiquidity, '1000000000000')
+          outIn: math.xyk.get_spot_price(assetOutLiquidity, assetInLiquidity, '1000000000000'),
+          inOut: math.xyk.get_spot_price(assetInLiquidity, assetOutLiquidity, '1000000000000')
       }
   }, [assetOutLiquidity, assetInLiquidity, math]);
 

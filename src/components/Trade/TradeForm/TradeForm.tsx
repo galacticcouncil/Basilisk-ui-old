@@ -246,7 +246,7 @@ export const TradeForm = ({
         switch (tradeType) {
             case TradeType.Sell:
                 return new BigNumber(assetInAmount)
-                    .multipliedBy(spotPrice?.outIn)
+                    .multipliedBy(spotPrice?.inOut)
                     .multipliedBy(
                         new BigNumber('1')
                             .minus(allowedSlippage)
@@ -254,7 +254,7 @@ export const TradeForm = ({
                     .toFixed(0)
             case TradeType.Buy:
                 return new BigNumber(assetOutAmount)
-                    .multipliedBy(spotPrice?.inOut)
+                    .multipliedBy(spotPrice?.outIn)
                     .multipliedBy(
                         new BigNumber('1')
                             .plus(allowedSlippage)
@@ -276,7 +276,7 @@ export const TradeForm = ({
                 return percentageChange( 
                     new BigNumber(assetInAmount)
                         .multipliedBy(
-                            fromPrecision12(spotPrice.outIn) || '1'
+                            fromPrecision12(spotPrice.inOut) || '1'
                         ),
                     assetOutAmount
                 )
@@ -284,7 +284,7 @@ export const TradeForm = ({
                 return percentageChange(
                     new BigNumber(assetOutAmount)
                         .multipliedBy(
-                            fromPrecision12(spotPrice.inOut) || '1'
+                            fromPrecision12(spotPrice.outIn) || '1'
                         ),
                     assetInAmount,
                 )
@@ -336,13 +336,13 @@ export const TradeForm = ({
                     {
                         (() => {
                             switch (tradeType) {
-                                case TradeType.Buy:
-                                    return (
-                                        `1 [${getValues('assetIn')}] = ${fromPrecision12(spotPrice?.outIn)} [${getValues('assetOut')}]`
-                                    )
                                 case TradeType.Sell:
                                     return (
-                                        `1 [${getValues('assetOut')}] = ${fromPrecision12(spotPrice?.inOut)} [${getValues('assetIn')}]`
+                                        `1 [${getValues('assetIn')}] = ${fromPrecision12(spotPrice?.inOut)} [${getValues('assetOut')}]`
+                                    )
+                                case TradeType.Buy:
+                                    return (
+                                        `1 [${getValues('assetOut')}] = ${fromPrecision12(spotPrice?.outIn)} [${getValues('assetIn')}]`
                                     )
                             }
                         })()
@@ -399,10 +399,18 @@ export const TradeForm = ({
             <p>Allowed slippage: {new BigNumber(allowedSlippage || '0').multipliedBy(100).toFixed(3)} %</p>
             <p>Spot Price (outIn / inOut): {fromPrecision12(spotPrice?.outIn)} / {fromPrecision12(spotPrice?.inOut)}</p>
             <p>
-                Spot Price: 
-                1 IN [{getValues('assetIn')}] = {fromPrecision12(spotPrice?.outIn)} OUT [{getValues('assetOut')}] 
-                /
-                1 OUT [{getValues('assetOut')}] = {fromPrecision12(spotPrice?.inOut)} IN [{getValues('assetIn')}] 
+                {(() => {
+                    switch (tradeType) {
+                        case TradeType.Sell:
+                            return (
+                                `1 [${getValues('assetIn')}] = ${fromPrecision12(spotPrice?.inOut)} [${getValues('assetOut')}]`
+                            )
+                        case TradeType.Buy:
+                            return (
+                                `1 [${getValues('assetOut')}] = ${fromPrecision12(spotPrice?.outIn)} [${getValues('assetIn')}]`
+                            )
+                    }
+                })()}
             </p>
             <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
             <p>Amounts (out / in): {fromPrecision12(getValues('assetOutAmount') || undefined)} / {fromPrecision12(getValues('assetInAmount') || undefined)}</p>
