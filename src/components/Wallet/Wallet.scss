@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: fit-content;
+  width: auto;
 
   max-width: 550px;
   gap: 12px;
@@ -58,7 +58,7 @@
   }
 
   &__account-btn {
-    min-width: 50px;
+    min-width: 90px;
 
     padding: 8px 12px;
 
@@ -69,6 +69,8 @@
     color: $l-gray2;
     background-color: $d-gray5;
     border-radius: $border-radius;
+
+    text-align: center;
 
     overflow: hidden;
     text-overflow: ellipsis;

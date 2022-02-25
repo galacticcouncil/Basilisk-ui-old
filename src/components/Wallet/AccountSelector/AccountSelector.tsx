@@ -61,7 +61,7 @@ export const AccountSelector = ({
         {isExtensionAvailable ? (
           <>
             {accountsLoading ? (
-              <div className="text-center">
+              <div className="account-selector__message">
                 <FormattedMessage
                   id="Wallet.Loading"
                   defaultMessage="Loading..."
@@ -82,7 +82,7 @@ export const AccountSelector = ({
                   </div>
                 ) : (
                   //TODO update href param when we know where to send user
-                  <div className="text-center">
+                  <div className="account-selector__message">
                     <h5>
                       <FormattedMessage
                         id="Wallet.NoAccountsAvailable"
@@ -121,7 +121,7 @@ export const AccountSelector = ({
             )}
           </>
         ) : (
-          <div className="text-center">
+          <div className="account-selector__message">
             <p>
               <FormattedMessage
                 id="Wallet.InstallInstructions"
