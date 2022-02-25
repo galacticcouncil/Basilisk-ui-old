@@ -41,6 +41,7 @@ export const balancesByAddressQueryResolverFactory =
     _obj: Entity,
     args: BalancesByAddressResolverArgs | undefined
   ): Promise<Balance[] | undefined> => {
+    // TODO: add apiInstance loading handling, this isnt sufficient
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
     if (!args?.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);

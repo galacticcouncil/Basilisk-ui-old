@@ -14,14 +14,14 @@ query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
 
         # TODO: investigate how caching works when these fields are missing for XYK pools
         # lbp fields,
-        repayTarget,
-        assetAWeights,
-        assetBWeights,
-        startBlock,
-        endBlock,
-        fee {
-            numerator,
-            denominator
-        }
+        # repayTarget,
+        # assetAWeights,
+        # assetBWeights,
+        # startBlock,
+        # endBlock,
+        # fee {
+        #     numerator,
+        #     denominator
+        # }
     }
 }

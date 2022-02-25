@@ -19,10 +19,12 @@ export const useSubscribeNewBlock = () => {
   const [unsubscribe, setUnsubscribe] = useState<() => void | undefined>();
 
   const subscribeNewBlocks = useCallback(async () => {
-    if (!apiInstance) return;
+    if (!apiInstance || loading) return;
     // TODO: how to unsubscribe?
+    console.log('lastBlock subscribing', apiInstance);
     const unsubscribe = await apiInstance.derive.chain.subscribeNewBlocks(
       async (block) => {
+        console.log('lastBlock black', block.block.header.number.toString())
         const validationData =
           await apiInstance.query.parachainSystem.validationData();
 
@@ -44,12 +46,15 @@ export const useSubscribeNewBlock = () => {
       }
     );
     setUnsubscribe(unsubscribe);
-  }, [apiInstance]);
+  }, [apiInstance, loading]);
 
   useEffect(() => {
     if (loading) return;
     subscribeNewBlocks();
-    return () => unsubscribe && unsubscribe();
+    return () => {
+      console.log('lastBlock unsubscribing', unsubscribe);
+      unsubscribe && unsubscribe();
+    }
   }, [loading, subscribeNewBlocks, unsubscribe]);
 
   return lastBlock;
