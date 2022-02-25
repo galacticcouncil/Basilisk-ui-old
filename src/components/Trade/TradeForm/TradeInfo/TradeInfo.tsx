@@ -1,18 +1,27 @@
+import BigNumber from "bignumber.js";
+import { FieldErrors } from "react-hook-form"
 import { Fee } from "../../../../generated/graphql"
+import { TradeFormFields } from "../TradeForm"
+import constants from './../../../../constants';
 
 export interface TradeInfoProps {
     transactionFee?: string,
     tradeFee?: Fee,
     tradeLimit?: string,
     expectedSlippage?: string,
-    error?: string
+    errors?: FieldErrors<TradeFormFields>
 }
 
 export const TradeInfo = ({
-    error
+    errors,
+    expectedSlippage,
+    tradeLimit,
+    tradeFee = constants.xykFee
 }: TradeInfoProps) => {
     return <>
-        
-        <p>trade info</p>
+        <h3>Trade info</h3>
+        <p>Expected slippage: {expectedSlippage}</p>
+        <p>Trade limit: {tradeLimit}</p>
+        <p>Trade fee (%): {new BigNumber(tradeFee.numerator).dividedBy(tradeFee.denominator).toFixed(3)}%</p>
     </>
 }

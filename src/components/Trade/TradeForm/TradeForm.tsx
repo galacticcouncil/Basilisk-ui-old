@@ -241,6 +241,8 @@ export const TradeForm = ({
 
         if (!assetInAmount || !assetOutAmount || !spotPrice?.inOut || !spotPrice?.outIn || !allowedSlippage) return;
 
+        console.log('tradeLimit', assetOutAmount, spotPrice?.inOut, allowedSlippage);
+
         switch (tradeType) {
             case TradeType.Sell:
                 return new BigNumber(assetInAmount)
@@ -343,7 +345,11 @@ export const TradeForm = ({
                     />
                 </div>
 
-                <TradeInfo />
+                <TradeInfo 
+                    tradeLimit={tradeLimit}
+                    expectedSlippage={slippage?.multipliedBy(100).toFixed(3)}
+                    errors={errors}
+                />
                 
                 {JSON.stringify({
                     assetIn: errors.assetIn?.type,
