@@ -1,6 +1,5 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { useRef } from 'react';
-import cssColors from './../../misc/colors.module.scss';
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
 import { Wallet } from './Wallet';
 import { toPrecision12 } from '../../hooks/math/useToPrecision';
@@ -12,8 +11,11 @@ export default {
     extensionLoading: false,
     isExtensionAvailable: true,
     account: {
-      name: 'Alice 1',
-      balances: [{ assetId: '0', balance: toPrecision12('100200') }],
+      name: 'LOOOOOOOONG snekmaster sdkaoskaodkosadkassdksadkoajdjdaosdjasoj',
+      balances: [
+        { assetId: '0', balance: toPrecision12('100213') },
+        { assetId: '1', balance: toPrecision12('300213') },
+      ],
       id: 'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH',
       isActive: true,
       vestingSchedule: {},
@@ -22,7 +24,7 @@ export default {
     accounts: [
       {
         name: 'Alice 1',
-        balances: [{ assetId: '0', balance: toPrecision12('100200') }],
+        balances: [{ assetId: '0', balance: toPrecision12('100213') }],
         id: 'E7ncQKp4xayUoUdpraxBjT7NzLoayLJA4TuPcKKboBkJ5GH',
         isActive: true,
         vestingSchedule: {},
@@ -30,7 +32,28 @@ export default {
       },
       {
         name: 'Kusama snekmaster',
-        balances: [{ assetId: '0', balance: toPrecision12('0') }],
+        balances: [],
+        id: 'E7ncQKp4xayUoUdpraxBjT7NzxaayLJA4TuPcKKboBkJ5GH',
+        isActive: false,
+        vestingSchedule: {},
+        source: 'polkadot-js',
+      },
+      {
+        name: 'Kusama snekmaster',
+        balances: [{ assetId: '2', balance: toPrecision12('1') }],
+        id: 'E7ncQKp4xayUoUdpraxBjT7NzxaayLJA4TuPcKKboBkJ5GH',
+        isActive: false,
+        vestingSchedule: {},
+        source: 'polkadot-js',
+      },
+      {
+        name: 'LOOOOOOOONG snekmaster sdkaoskaodkosadkassdksadkoajdjdaosdjasoj',
+        balances: [
+          {
+            assetId: '0',
+            balance: toPrecision12('10010101001000003203302023'),
+          },
+        ],
         id: 'E7ncQKp4xayUoUdpraxBjT7NzxaayLJA4TuPcKKboBkJ5GH',
         isActive: false,
         vestingSchedule: {},
@@ -55,13 +78,7 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
 
   return (
     <StorybookWrapper>
-      <div
-        style={{
-          margin: '-1rem',
-          padding: '1rem',
-          backgroundColor: cssColors.gray2,
-        }}
-      >
+      <div>
         {/* This is where the underlying modal should be rendered */}
         <div ref={modalContainerRef} />
 
@@ -69,11 +86,7 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
                         Pass the ref to the element above, so that the Wallet
                         can render the modal there.
                     */}
-        <div
-          style={{
-            width: '360px',
-          }}
-        >
+        <div>
           <Wallet {...args} modalContainerRef={modalContainerRef} />
         </div>
       </div>

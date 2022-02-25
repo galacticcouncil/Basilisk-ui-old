@@ -4,6 +4,7 @@ import { AccountItem } from './AccountItem/AccountItem';
 import { Button, ButtonKind } from '../../Button/Button';
 import './AccountSelector.scss';
 import { FormattedMessage } from 'react-intl';
+import Icon from '../../Icon/Icon';
 
 export interface AccountSelectorProps {
   accounts?: Account[];
@@ -34,8 +35,8 @@ export const AccountSelector = ({
   return (
     <div className="account-selector" ref={innerRef}>
       <div className="account-selector__content-wrapper">
-        <div className="d-flex account-selector__heading">
-          <div className="d-flex flex-align-space account-selector__heading-info">
+        <div className="account-selector__heading">
+          <div className="account-selector__heading__info">
             <div>
               {isExtensionAvailable ? (
                 <FormattedMessage
@@ -53,7 +54,7 @@ export const AccountSelector = ({
               className="account-selector__close-modal-btn"
               onClick={() => closeModal()}
             >
-              x
+              <Icon name="Cancel" />
             </div>
           </div>
         </div>
@@ -82,12 +83,12 @@ export const AccountSelector = ({
                 ) : (
                   //TODO update href param when we know where to send user
                   <div className="text-center">
-                    <h4>
+                    <h5>
                       <FormattedMessage
                         id="Wallet.NoAccountsAvailable"
                         defaultMessage="No accounts available"
                       />
-                    </h4>
+                    </h5>
                     <a
                       href="/#"
                       className="account-selector__create-account-link"

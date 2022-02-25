@@ -2,34 +2,81 @@
 @import '../../misc/misc.module.scss';
 
 .wallet {
-  background-color: $gray3;
-  border-radius: $border-radius;
-  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: fit-content;
 
-  &__info-wrapper {
-    align-items: center;
-    gap: 0.75rem;
-    cursor: pointer;
+  max-width: 550px;
+  gap: 12px;
+
+  background-color: $d-gray4;
+  border-radius: $border-radius;
+  padding: 16px 20px;
+
+  &__icons-wrapper {
+    display: flex;
+    gap: 12px;
+
+    &__icon:hover {
+      cursor: pointer;
+
+      svg {
+        path {
+          fill: $green1;
+        }
+      }
+    }
   }
-  &__fiat-balance {
-    font-size: 0.75rem;
-  }
-  &__icon {
-    display: inline-flex;
-    margin: 0.75rem 0.75rem 0.75rem 0;
-    cursor: pointer;
-  }
-  &__account-name {
-    font-weight: bold;
-  }
-  &__select-account-icon {
-    border-radius: 50%;
-    height: 28px;
-    width: 28px;
-    background-color: $green1;
-  }
+
   &__info {
-    color: $green1;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 100px;
+
+    &__account {
+      display: flex;
+      flex-direction: column;
+      min-width: 100px;
+    }
+
+    // TODO: Hack for snek identicon - should do generic
+    svg {
+      transform: scale(125%);
+    }
+  }
+
+  &__address {
+    font-size: 12px;
+    line-height: 12px;
+    min-width: 100px;
+    flex-shrink: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__account-btn {
+    min-width: 50px;
+
+    padding: 8px 12px;
+
+    font-weight: 500;
+    line-height: 16px;
+    font-size: 16px;
+
+    color: $l-gray2;
+    background-color: $d-gray5;
+    border-radius: $border-radius;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      color: $green1;
+      cursor: pointer;
+    }
   }
 }

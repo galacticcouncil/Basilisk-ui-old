@@ -1,51 +1,30 @@
 @import './colors.module.scss';
 @import './misc.module.scss';
 
-html, body {
-    font-family: 'Roboto', sans-serif;
-    /* Better Font Rendering */
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background: $page-background;
-    color: $white1;
+html,
+body {
+  font-family: 'Roboto', sans-serif;
+  /* Better Font Rendering */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: $page-background;
+  color: $white1;
+
+  min-width: 360px;
+  min-height: 400px;
 }
 
 div {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 input {
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
-    color: $white1;
-    outline: none;
-    border: none;
-    background-color: $gray1;
-    box-sizing: border-box;
-}
-
-.flex-container {
-    display: flex;
-    flex: 0 0 auto;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-.flex-align-right {
-    justify-content: right;
-}
-
-.flex-align-space {
-    justify-content: space-between;
-}
-
-.column {
-    flex-direction: column;
-}
-
-.text-end {
-    text-align: right !important;
+  font-family: 'Roboto', sans-serif;
+  font-weight: bold;
+  color: $white1;
+  outline: none;
+  border: none;
+  background-color: $gray1;
+  box-sizing: border-box;
 }
