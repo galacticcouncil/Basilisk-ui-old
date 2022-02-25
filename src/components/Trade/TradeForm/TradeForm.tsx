@@ -332,7 +332,22 @@ export const TradeForm = ({
                 </div>
 
                 <p>asset switcher goes here</p>
-                <p>spot price goes here</p>
+                <p>
+                    {
+                        (() => {
+                            switch (tradeType) {
+                                case TradeType.Buy:
+                                    return (
+                                        `1 [${getValues('assetIn')}] = ${fromPrecision12(spotPrice?.outIn)} [${getValues('assetOut')}]`
+                                    )
+                                case TradeType.Sell:
+                                    return (
+                                        `1 [${getValues('assetOut')}] = ${fromPrecision12(spotPrice?.inOut)} [${getValues('assetIn')}]`
+                                    )
+                            }
+                        })()
+                    }
+                </p>
 
                 <div>
                     <br/>
