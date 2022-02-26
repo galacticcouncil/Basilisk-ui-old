@@ -236,12 +236,13 @@ export const TradeForm = ({
     const modalContainerRef = useRef<HTMLDivElement | null>(null)
 
     const tradeLimit = useMemo(() => {
-        const assetInAmount = getValues('assetInAmount');
-        const assetOutAmount = getValues('assetOutAmount');
+        // convert from precision, otherwise the math doesnt work
+        const assetInAmount = fromPrecision12(getValues('assetInAmount') || '0');
+        const assetOutAmount = fromPrecision12(getValues('assetOutAmount') || '0');
 
         if (!assetInAmount || !assetOutAmount || !spotPrice?.inOut || !spotPrice?.outIn || !allowedSlippage) return;
 
-        console.log('tradeLimit', assetOutAmount, spotPrice?.inOut, allowedSlippage);
+        console.log('tradeLimit', assetOutAmount, spotPrice?.outIn, allowedSlippage);
 
         switch (tradeType) {
             case TradeType.Sell:
