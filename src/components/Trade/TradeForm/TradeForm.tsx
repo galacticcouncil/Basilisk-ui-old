@@ -282,7 +282,7 @@ export const TradeForm = ({
                             fromPrecision12(spotPrice.inOut) || '1'
                         ),
                     assetOutAmount
-                )
+                )?.abs()
             case TradeType.Buy:
                 return percentageChange(
                     new BigNumber(assetOutAmount)
@@ -290,7 +290,7 @@ export const TradeForm = ({
                             fromPrecision12(spotPrice.outIn) || '1'
                         ),
                     assetInAmount,
-                )
+                )?.abs()
         }
     }, [tradeType, getValues, spotPrice, ...watch(['assetInAmount', 'assetOutAmount'])]);
 
@@ -314,6 +314,18 @@ export const TradeForm = ({
         })
     }, [tradeType, tradeLimit]);
 
+    const handleSwitchAssets = useCallback(() => {
+        onAssetIdsChange({
+            assetIn: assetIds.assetOut,
+            assetOut: assetIds.assetIn
+        })
+    }, [assetIds]);
+
+    useEffect(() => {
+        setValue('assetIn', assetIds.assetIn);
+        setValue('assetOut', assetIds.assetOut);
+    }, [assetIds]);
+
     return <>
         <div ref={modalContainerRef}></div>
         <TradeFormSettings
@@ -334,7 +346,9 @@ export const TradeForm = ({
                     />
                 </div>
 
-                <p>asset switcher goes here</p>
+                <button onClick={handleSwitchAssets}>
+                    Switch assets
+                </button>
                 <p>
                     {
                         (() => {
