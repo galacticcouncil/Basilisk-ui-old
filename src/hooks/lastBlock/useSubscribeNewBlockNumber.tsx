@@ -22,11 +22,11 @@ export const useSubscribeNewBlock = () => {
     if (!apiInstance || loading) return;
     // TODO: how to unsubscribe?
     console.log('lastBlock subscribing', apiInstance);
-    const unsubscribe = await apiInstance.derive.chain.subscribeNewBlocks(
-      async (block) => {
-        console.log('lastBlock black', block.block.header.number.toString())
+     await apiInstance.derive.chain.bestNumber(
+      async (number) => {
+        console.log('lastBlock black', number.toString())
         const validationData =
-          await apiInstance.query.parachainSystem.validationData();
+         await apiInstance.query.parachainSystem.validationData();
 
         const validationDataOption = apiInstance.createType(
           validationDataDataType,
@@ -38,14 +38,14 @@ export const useSubscribeNewBlock = () => {
           const validationData =
             validationDataOption.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData;
           setLastBlock({
-            parachainBlockNumber: block.block.header.number.toString(),
+            parachainBlockNumber: number.toString(),
             relaychainBlockNumber:
               '821' || validationData.relayParentNumber.toString(),
           });
         }
       }
     );
-    setUnsubscribe(unsubscribe);
+    //setUnsubscribe(unsubscribe);
   }, [apiInstance, loading]);
 
   useEffect(() => {
