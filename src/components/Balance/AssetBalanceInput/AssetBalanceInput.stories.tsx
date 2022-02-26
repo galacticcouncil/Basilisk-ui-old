@@ -7,8 +7,6 @@ import { AssetBalanceInput } from './AssetBalanceInput';
 import cssColors from './../../../misc/colors.module.scss';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
-import './AssetBalanceInput2.scss';
-
 export default {
   title: 'components/Balance/AssetBalanceInput',
   component: AssetBalanceInput,

@@ -358,7 +358,9 @@ export const TradeForm = ({
     [tradeType, tradeLimit]
   );
 
-  const handleSwitchAssets = useCallback(() => {
+  const handleSwitchAssets = useCallback((event: any) => {
+    // prevent form submit
+    event.preventDefault();
     onAssetIdsChange({
       assetIn: assetIds.assetOut,
       assetOut: assetIds.assetIn,
