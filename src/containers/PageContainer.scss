@@ -1,0 +1,18 @@
+@import './../misc/colors.module.scss';
+@import './../misc/misc.module.scss';
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  width: 100%;
+  padding: 16px;
+
+  background-color: $d-gray3;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+  }
+}

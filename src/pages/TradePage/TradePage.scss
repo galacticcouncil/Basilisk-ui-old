@@ -1,0 +1,11 @@
+.trade-page {
+  display: flex;
+
+  width: 100%;
+  max-width: 960px;
+}
+
+.trade-chart {
+  flex-grow: 1;
+  display: block;
+}
