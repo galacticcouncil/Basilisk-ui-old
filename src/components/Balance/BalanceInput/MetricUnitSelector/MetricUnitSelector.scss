@@ -20,7 +20,7 @@
     justify-content: center;
     align-items: center;
 
-    color: $gray4;
+    color: $l-gray2;
 
     > div {
       display: inline;
@@ -28,6 +28,12 @@
 
     &:hover {
       color: $green1;
+
+      svg {
+        path {
+          fill: $green1;
+        }
+      }
     }
   }
 
@@ -35,16 +41,16 @@
     display: block;
     position: relative;
     height: 10px;
-    line-height: 6px;
+    line-height: 8px;
     text-align: center;
 
     svg {
-      height: 6px;
+      height: 4px;
+      width: 10px;
+      path {
+        fill: $l-gray2;
+      }
     }
-  }
-
-  &__unit {
-    text-transform: uppercase;
   }
 
   &__unit-list {
@@ -52,7 +58,6 @@
 
     top: 100%;
     right: 0;
-    padding: 0em 1em 0.2em 1em;
 
     background-color: $gray1;
 
@@ -63,16 +68,24 @@
 
     font-size: 0.65em;
 
+    overflow: hidden;
+
     .metric-unit-list-item {
       text-transform: uppercase;
       text-align: center;
+
+      line-height: 1em;
+      white-space: pre;
+
+      padding: 0.3em 1em 0.3em 1em;
 
       &.active {
         color: $green1;
       }
 
       &:hover {
-        color: $green1;
+        background-color: $green2;
+        color: $white1;
       }
 
       &:last-child {

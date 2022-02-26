@@ -69,7 +69,13 @@ export const AssetBalanceInput = ({
         </div>
       </div>
       <div className="asset-balance-input__input-wrapper">
-        <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
+        <div className="asset-balance-input__input-wrapper__unit-selector">
+          <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
+          <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
+            {methods.getValues(assetInputName)}
+          </div>
+        </div>
+
         <BalanceInput
           name={balanceInputName}
           defaultUnit={unit}
