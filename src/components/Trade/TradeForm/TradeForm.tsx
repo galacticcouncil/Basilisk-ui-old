@@ -104,8 +104,10 @@ export const useListenForInput = (inputRef: MutableRefObject<HTMLInputElement | 
     useEffect(() => {
         if (!inputRef) return;
         // TODO: figure out why using the 'input' broke the mask
+        // 'keydown' also doesnt work bcs its triggered by copy/paste, which then 
+        // changes the trade type (which this hook is primarily)
         const listener = inputRef.current
-            ?.addEventListener('keydown', () => setState(state => !state));
+            ?.addEventListener('keypress', () => setState(state => !state));
 
         return () => listener && inputRef.current?.removeEventListener('keydown', listener);
     }, [inputRef])
