@@ -22,7 +22,6 @@ export const App = () => {
             <Router />
           </PageContainer>
         </IntlProvider>
-        .
       </HashRouter>
     </MultiProvider>
   );
