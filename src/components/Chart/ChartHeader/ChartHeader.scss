@@ -1,123 +1,137 @@
-@import "../../../misc/colors.module.scss";
+@import '../../../misc/colors.module.scss';
 
 $disabledOpacity: 0.3;
 
 // TODO: break down css into multiple files
 .chart-header {
+  &__pair-symbols {
+    width: fit-content;
 
-    &__pair-symbols {
-        width: fit-content;
+    div {
+      font-size: 1.75rem;
+      font-weight: 500;
+    }
+  }
 
-        div {
-            font-size: 1.75rem;
-            font-weight: 500;
-        }
+  &__type-label {
+    font-weight: 500;
+    font-size: 0.875rem;
+    margin-left: 0.75rem;
+    align-self: center;
+  }
+
+  &__data {
+    display: flex;
+    flex-direction: column;
+    font-weight: 500;
+
+    &__in-asset {
+      font-size: 24px;
     }
 
-    &__type-label {
+    &__breakdown {
+      display: flex;
+      gap: 4px;
+
+      font-size: 14px;
+
+      &__granularity {
+        opacity: 1;
+        // TODO: revisit animations/transitions
+        transition: opacity ease-in-out 80ms;
+        position: relative;
+
+        //TODO: change indicator seems to be changing size when disabled (??)
+        &.disabled {
+          opacity: $disabledOpacity;
+        }
+      }
+    }
+  }
+
+  &__pool-info {
+    display: flex;
+    justify-content: space-between;
+
+    &__assets {
+      display: flex;
+      flex-direction: column;
+
+      font-weight: 500;
+
+      &__symbols {
+        font-size: 24px;
+      }
+
+      &__full-name {
+        font-size: 14px;
+      }
+    }
+  }
+
+  &__controls {
+    margin-top: 0.5rem;
+    user-select: none;
+
+    &__granularity,
+    &__graph-type {
+      line-height: 0.625rem;
+
+      &__individual {
+        display: inline-block;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
+        border-left: 0.0625rem solid $gray1;
+        font-size: 0.625rem;
         font-weight: 500;
-        font-size: 0.875rem;
-        margin-left: 0.75rem;
-        align-self: center;
+        line-height: 0.625rem;
+        text-align: center;
+        color: $gray4;
+
+        &:first-of-type {
+          text-align: left;
+          padding-left: 0rem;
+          border-left: none;
+        }
+
+        &:last-of-type {
+          text-align: right;
+          padding-right: 0rem;
+        }
+
+        &:hover {
+          // TODO: animations for color changes
+          color: $white1;
+          cursor: pointer;
+        }
+
+        &.active {
+          color: $pink1;
+        }
+
+        &.disabled {
+          cursor: default;
+          color: rgba($gray4, 0.3);
+          cursor: not-allowed;
+
+          &:hover {
+            color: rgba($gray4, 0.3);
+          }
+        }
+      }
     }
 
-    &__pair-full-names {
-        div {
-            font-size: 0.875rem;
-            font-weight: bold;
-
-            display: block;
+    &__graph-type {
+      &__individual {
+        &:first-of-type {
+          text-align: left;
+          padding-left: 0rem;
         }
+        &:last-of-type {
+          text-align: right;
+          padding-right: 0rem;
+        }
+      }
     }
-
-    &__data {
-        &__in-asset {
-            font-size: 1.75rem;
-            font-weight: bold;
-        }
-        &__breakdown {
-            font-size: 0.875rem;
-            font-weight: bold;
-            gap: 0.3em;
-
-            &__granularity {
-                opacity: 1;
-                // TODO: revisit animations/transitions
-                transition: opacity ease-in-out 80ms;
-                position: relative;
-
-                //TODO: change indicator seems to be changing size when disabled (??)
-                &.disabled {
-                    opacity: $disabledOpacity;
-                }
-            }
-        }
-    }
-
-    &__controls {
-        margin-top: .5rem;
-        user-select: none;
-
-        &__granularity,
-        &__graph-type {
-            line-height: 0.625rem;
-
-            &__individual {
-                display: inline-block;
-                padding-right: 0.5rem;
-                padding-left: 0.5rem;
-                border-left: 0.0625rem solid $gray1;
-                font-size: 0.625rem;
-                font-weight: 500;
-                line-height: 0.625rem;
-                text-align: center;
-                color: $gray4;
-
-                &:first-of-type {
-                    text-align: left;
-                    padding-left: 0rem;
-                    border-left: none;
-                }
-
-                &:last-of-type {
-                    text-align: right;
-                    padding-right: 0rem;
-                }
-
-                &:hover {
-                    // TODO: animations for color changes
-                    color: $white1;
-                    cursor: pointer;
-                }
-
-                &.active {
-                    color: $pink1;
-                    
-                }
-
-                &.disabled {
-                    cursor: default;
-                    color: rgba($gray4, .3);
-                    cursor: not-allowed;
-
-                    &:hover {
-                        color: rgba($gray4, .3);
-                    }
-                }
-            }
-        }
-
-        &__graph-type {
-            &__individual {
-                &:first-of-type {
-                    text-align: left;
-                    padding-left: 0rem;
-                }
-                &:last-of-type {
-                    text-align: right;
-                    padding-right: 0rem;
-                }
-            }
-        }
-    }
+  }
 }
