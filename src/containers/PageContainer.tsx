@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery';
 import { Wallet } from './Wallet';
+import Icon from '../components/Icon/Icon';
 import './PageContainer.scss';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
@@ -9,7 +10,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="page-container">
       <div className="page-header">
-        <div>Basilisk</div>
+        <Icon name="BasiliskLogoFull" />
         <Wallet />
       </div>
       <div className="">{children}</div>

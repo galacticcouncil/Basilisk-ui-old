@@ -9,10 +9,19 @@
   width: 100%;
   padding: 16px;
 
+  gap: 24px;
+
+  max-width: 1100px;
+
+  left: 0;
+  right: 0;
+  margin: auto;
+
   background-color: $d-gray3;
 
   .page-header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 }
