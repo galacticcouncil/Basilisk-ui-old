@@ -3,56 +3,58 @@
 $chart-height: 25rem;
 
 .trade-chart {
-    background: $gray2;
-    padding: 1.5rem;
-    height: $chart-height;
-    position: relative;
+  display: flex;
+  flex-direction: column;
 
-    &__chart-wrapper {
-        display: flex;
-        flex:0 0 auto;
-        flex-grow: 1;
-        
-        flex-direction: column;
+  background: $gray2;
+  padding: 1.5rem;
+  position: relative;
+  height: 100%;
 
-        &__chart-jail {
-            padding: 3rem 0 1.5rem 0;
-            flex-grow: 1;
-        }
+  &__chart-wrapper {
+    display: flex;
+    flex-grow: 1;
+
+    flex-direction: column;
+
+    &__chart-jail {
+      position: relative;
+      flex-grow: 1;
+      padding: 10% 0 5% 0;
     }
+  }
 
-    &__error-wrapper {
-        flex-grow: 1;
-        display: flex;
+  &__error-wrapper {
+    flex-grow: 1;
+    display: flex;
+  }
+
+  &__tooltip {
+    $tooltipColor: $gray1;
+
+    height: 90%;
+    width: 0.0625rem;
+    border-right: 0.0625rem $pink1 dashed;
+    position: absolute;
+    top: 10%;
+    z-index: 0;
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity ease-in 100ms;
+
+    &__label {
+      background: $tooltipColor;
+      border: 0.063rem solid $pink1;
+      color: $pink1;
+      position: absolute;
+      top: 10%;
+      min-width: 240px;
+      text-align: center;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: opacity ease-in 100ms;
+      z-index: 1;
     }
-
-    &__tooltip {
-
-        $tooltipColor: $gray1;
-        
-        height: 90%;
-        width: 0.0625rem;
-        border-right: 0.0625rem $pink1 dashed;
-        position: absolute;
-        top: 10%;
-        z-index: 0;
-        opacity: 1;
-        pointer-events: none;
-        transition: opacity ease-in 100ms;
-
-        &__label {
-            background: $tooltipColor;
-            border: 0.063rem solid $pink1;
-            color: $pink1;
-            position: absolute;
-            top: 10%;
-            min-width: 240px;
-            text-align: center;
-            padding: 0.5rem 0.75rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: opacity ease-in 100ms;
-            z-index: 1;
-        }
-    }
+  }
 }
