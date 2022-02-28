@@ -41,7 +41,7 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue } = useForm<
+  const { register, watch, getValues, setValue, handleSubmit } = useForm<
     TradeFormSettingsFormFields
   >({
     defaultValues: {
@@ -64,7 +64,7 @@ export const TradeFormSettings = ({
   }, watch(['autoSlippage']));
 
   return (
-    <form className="trade-settings">
+    <form className="trade-settings" onSubmit={handleSubmit(() => {})}>
       <button onClick={closeModal}>close</button>
       <label>Allowed slippage (%)</label>
       <input
@@ -86,19 +86,22 @@ export const useModalPortalElement = ({
   setAllowedSlippage
 }: any) => {
   return useCallback(({ closeModal, elementRef, isModalOpen }) => {
-    console.log('useModalPortalElement', isModalOpen);
-    return isModalOpen
-      ? (
+    console.log('useModalPortalElement', allowedSlippage);
+    return (
+      <div className={classNames({
+        'trade-settings-wrapper hidden': !isModalOpen
+      })}>
         <TradeFormSettings
           closeModal={closeModal}
           allowedSlippage={allowedSlippage}
-          onAllowedSlippageChange={(allowedSlippage) =>
+          onAllowedSlippageChange={(allowedSlippage) => {
+            console.log('onAllowedSlippageChange', allowedSlippage);
             setAllowedSlippage(allowedSlippage)
-          }
+          }}
         />
-      )
-      : <></>
-  }, []);
+      </div>
+    )
+  }, [allowedSlippage]);
 }
 
 
@@ -414,7 +417,10 @@ export const TradeForm = ({
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
       {modalPortal}
-      <button onClick={toggleModal}>settings</button>
+      <button onClick={(e) => {
+        e.preventDefault() 
+        toggleModal()
+      }}>settings</button>
       <FormProvider {...form}>
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
           <div className="trade-form-heading">You get</div>

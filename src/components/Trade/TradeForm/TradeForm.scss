@@ -99,6 +99,8 @@
   }
 }
 
-.trade-settings {
-  // display: none;
+.trade-settings-wrapper {
+   &.hidden {
+     display: none
+   }
 }
