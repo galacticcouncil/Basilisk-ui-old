@@ -31,6 +31,7 @@ import {
   PoolType,
 } from '../../components/Chart/shared';
 import BigNumber from 'bignumber.js';
+import { useLoading } from '../../hooks/misc/useLoading';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -173,14 +174,20 @@ export const TradePage = () => {
   });
   const { math } = useMath();
 
+  const depsLoading = useLoading();
   const {
     data: poolData,
     loading: poolLoading,
     networkStatus: poolNetworkStatus,
-  } = useGetPoolByAssetsQuery({
-    assetInId: assetIds.assetIn || undefined,
-    assetOutId: assetIds.assetOut || undefined,
-  });
+  } = useGetPoolByAssetsQuery(
+    {
+      assetInId: assetIds.assetIn || undefined,
+      assetOutId: assetIds.assetOut || undefined,
+    },
+    depsLoading
+  );
+
+  console.log('network status pool deps', depsLoading);
 
   const pool = useMemo(() => poolData?.pool, [poolData]);
 
@@ -236,7 +243,8 @@ export const TradePage = () => {
         // first load and each time the asset ids (variables) change
         isPoolLoading={
           poolNetworkStatus === NetworkStatus.loading ||
-          poolNetworkStatus === NetworkStatus.setVariables
+          poolNetworkStatus === NetworkStatus.setVariables ||
+          depsLoading
         }
         assetInLiquidity={assetInLiquidity}
         assetOutLiquidity={assetOutLiquidity}

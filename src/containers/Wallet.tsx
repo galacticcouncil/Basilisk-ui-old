@@ -6,15 +6,19 @@ import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetA
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { Account } from '../generated/graphql';
 import { NetworkStatus } from '@apollo/client';
+import { useLoading } from '../hooks/misc/useLoading';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
     useGetExtensionQuery();
   const [setActiveAccount] = useSetActiveAccountMutation();
-  const { data: activeAccountData } = useGetActiveAccountQuery();
+  const depsLoading = useLoading();
+  const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } = useGetActiveAccountQuery({
+    skip: depsLoading
+  });
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
   const { data: accountsData, loading: accountsLoading, networkStatus: accountsNetworkStatus } = useGetAccountsQuery(
-    !(extensionData?.extension.isAvailable && isAccountSelectorOpen)
+    !(extensionData?.extension.isAvailable && isAccountSelectorOpen) || depsLoading
   );
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +36,7 @@ export const Wallet = () => {
 
   console.log('network status acc', accountsNetworkStatus);
 
+  
 
   // request data from the data layer
   // render the component with the provided data
@@ -39,10 +44,11 @@ export const Wallet = () => {
     <>
       <div ref={modalContainerRef} />
       <WalletComponent
+        activeAccountLoading={depsLoading || activeAccountNetworkStatus === NetworkStatus.loading || activeAccountNetworkStatus === NetworkStatus.setVariables}
         isExtensionAvailable={!!extensionData?.extension.isAvailable}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
-        accountsLoading={accountsNetworkStatus === NetworkStatus.loading}
+        accountsLoading={accountsNetworkStatus === NetworkStatus.loading || depsLoading}
         account={activeAccountData?.activeAccount}
         onAccountSelected={onAccountSelected}
         onAccountCleared={onAccountCleared}
