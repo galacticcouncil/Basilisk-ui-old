@@ -5,7 +5,7 @@ $chart-height: 25rem;
 .trade-chart {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
+  flex-grow: 100;
   flex-shrink: 1;
 
   min-width: 260px;
