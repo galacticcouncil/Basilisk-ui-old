@@ -397,7 +397,7 @@ export const TradeForm = ({
           />
 
           <div className="asset-switch">
-            <hr className="asset-switch-divider"></hr>
+            <hr className="divider asset-switch-divider"></hr>
             <div className="asset-switch-icon" onClick={handleSwitchAssets}>
               <Icon name="AssetSwitch" />
             </div>
@@ -426,6 +426,10 @@ export const TradeForm = ({
             balanceInputRef={assetInAmountInputRef}
             assets={assets}
           />
+
+          <div className="divider-wrapper">
+            <hr className="divider"></hr>
+          </div>
 
           <TradeInfo
             tradeLimit={tradeLimit}
