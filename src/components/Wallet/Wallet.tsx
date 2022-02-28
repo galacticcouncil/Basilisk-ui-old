@@ -19,6 +19,7 @@ export interface WalletProps {
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
   setAccountSelectorOpen: (isModalOpen: boolean) => void;
+  activeAccountLoading: boolean
 }
 
 export const Wallet = ({
@@ -31,6 +32,7 @@ export const Wallet = ({
   extensionLoading,
   isExtensionAvailable,
   setAccountSelectorOpen,
+  activeAccountLoading
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
@@ -67,7 +69,7 @@ export const Wallet = ({
         </span> */}
       </div>
       <div className="wallet__info" data-modal-portal-toggle={toggleId}>
-        {extensionLoading ? (
+        {extensionLoading || activeAccountLoading ? (
           <div
             className="wallet__info__account wallet__account-btn"
             onClick={(_) => handleAccountSelectorClick()}
