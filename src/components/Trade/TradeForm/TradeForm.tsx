@@ -358,14 +358,17 @@ export const TradeForm = ({
     [tradeType, tradeLimit]
   );
 
-  const handleSwitchAssets = useCallback((event: any) => {
-    // prevent form submit
-    event.preventDefault();
-    onAssetIdsChange({
-      assetIn: assetIds.assetOut,
-      assetOut: assetIds.assetIn,
-    });
-  }, [assetIds]);
+  const handleSwitchAssets = useCallback(
+    (event: any) => {
+      // prevent form submit
+      event.preventDefault();
+      onAssetIdsChange({
+        assetIn: assetIds.assetOut,
+        assetOut: assetIds.assetIn,
+      });
+    },
+    [assetIds]
+  );
 
   useEffect(() => {
     setValue('assetIn', assetIds.assetIn);
@@ -395,7 +398,7 @@ export const TradeForm = ({
             />
           </div>
 
-          <button onClick={handleSwitchAssets}>Switch assets</button>
+          <div onClick={handleSwitchAssets}>Switch assets</div>
           <p>
             {(() => {
               switch (tradeType) {
