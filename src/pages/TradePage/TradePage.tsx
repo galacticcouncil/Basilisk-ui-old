@@ -25,7 +25,11 @@ import { Line } from 'react-chartjs-2';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
 import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart';
 import './TradePage.scss';
-import { ChartGranularity, ChartType, PoolType } from '../../components/Chart/shared';
+import {
+  ChartGranularity,
+  ChartType,
+  PoolType,
+} from '../../components/Chart/shared';
 import BigNumber from 'bignumber.js';
 
 export interface TradeAssetIds {
@@ -101,7 +105,9 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
               ),
             };
 
-            return parseFloat(new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3))
+            return parseFloat(
+              new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)
+            );
           })(),
         };
       }
@@ -110,7 +116,9 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
       x: new Date().getTime(),
-      y: parseFloat(new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)),
+      y: parseFloat(
+        new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)
+      ),
     });
 
     setDataset(dataset);
@@ -136,41 +144,24 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   console.log('dataset', dataset);
 
   return (
-    <div className="trade-chart">
-      {/* <p>
-        {assetIds.assetOut}/{assetIds.assetIn}
-      </p>
-      <p>{fromPrecision12(spotPrice?.outIn)}</p>
-      <Line
-        data={{
-          datasets: [
-            {
-              label: 'spot price',
-              data: dataset,
-            },
-          ],
-        }}
-      /> */}
-      <TradeChartComponent 
-        assetPair={{
-          assetA: {
-            symbol: assetIds.assetOut || undefined,
-            fullName: assetIds.assetOut || undefined
-          },
-          assetB: {
-            symbol: assetIds.assetIn || undefined,
-            fullName: assetIds.assetIn || undefined
-          },
-        }}
-        poolType={PoolType.XYK}
-        granularity={ChartGranularity.H24}
-        chartType={ChartType.PRICE}
-        primaryDataset={dataset as any}
-        onChartTypeChange={() => {}}
-        onGranularityChange={() => {}}
-      />
-
-    </div>
+    <TradeChartComponent
+      assetPair={{
+        assetA: {
+          symbol: assetIds.assetOut || undefined,
+          fullName: assetIds.assetOut || undefined,
+        },
+        assetB: {
+          symbol: assetIds.assetIn || undefined,
+          fullName: assetIds.assetIn || undefined,
+        },
+      }}
+      poolType={PoolType.XYK}
+      granularity={ChartGranularity.H24}
+      chartType={ChartType.PRICE}
+      primaryDataset={dataset as any}
+      onChartTypeChange={() => {}}
+      onGranularityChange={() => {}}
+    />
   );
 };
 
@@ -182,7 +173,11 @@ export const TradePage = () => {
   });
   const { math } = useMath();
 
-  const { data: poolData, loading: poolLoading, networkStatus: poolNetworkStatus } = useGetPoolByAssetsQuery({
+  const {
+    data: poolData,
+    loading: poolLoading,
+    networkStatus: poolNetworkStatus,
+  } = useGetPoolByAssetsQuery({
     assetInId: assetIds.assetIn || undefined,
     assetOutId: assetIds.assetOut || undefined,
   });
@@ -239,7 +234,10 @@ export const TradePage = () => {
         isActiveAccountConnected={isActiveAccountConnected}
         pool={pool}
         // first load and each time the asset ids (variables) change
-        isPoolLoading={(poolNetworkStatus === NetworkStatus.loading) || poolNetworkStatus === NetworkStatus.setVariables}
+        isPoolLoading={
+          poolNetworkStatus === NetworkStatus.loading ||
+          poolNetworkStatus === NetworkStatus.setVariables
+        }
         assetInLiquidity={assetInLiquidity}
         assetOutLiquidity={assetOutLiquidity}
         spotPrice={spotPrice}
@@ -252,7 +250,5 @@ export const TradePage = () => {
         <p>Trade error: {error ? error : '-'}</p>
       </div>
     </div>
-
-
   );
 };

@@ -5,11 +5,15 @@ $chart-height: 25rem;
 .trade-chart {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  min-width: 260px;
+  flex-basis: 260px;
 
   background: $gray2;
   padding: 1.5rem;
   position: relative;
-  height: 100%;
 
   &__chart-wrapper {
     display: flex;

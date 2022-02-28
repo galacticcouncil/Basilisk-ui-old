@@ -1,10 +1,6 @@
 .trade-page {
   display: flex;
+  flex-wrap: wrap-reverse;
 
   width: 100%;
-}
-
-.trade-chart {
-  flex-grow: 1;
-  display: block;
 }
