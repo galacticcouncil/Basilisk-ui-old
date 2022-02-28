@@ -39,8 +39,7 @@ export const useSubscribeNewBlock = () => {
             validationDataOption.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData;
           setLastBlock({
             parachainBlockNumber: number.toString(),
-            relaychainBlockNumber:
-              '821' || validationData.relayParentNumber.toString(),
+            relaychainBlockNumber: validationData.relayParentNumber.toString(),
           });
         }
       }

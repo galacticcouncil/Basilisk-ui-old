@@ -1,12 +1,13 @@
 query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
     lastBlock @client {
         parachainBlockNumber
+        relaychainBlockNumber
     }
     
     pool: pools(assetIds: [$assetInId, $assetOutId]) @client {
         id,
-        assetInId @export(as: "assetInId"),
-        assetOutId @export(as: "assetOutId"),
+        assetInId,
+        assetOutId,
         balances(assetIds: [$assetInId, $assetOutId]) {
             assetId,
             balance

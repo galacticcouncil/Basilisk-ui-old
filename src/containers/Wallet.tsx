@@ -5,6 +5,7 @@ import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtension
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { Account } from '../generated/graphql';
+import { NetworkStatus } from '@apollo/client';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
@@ -12,7 +13,7 @@ export const Wallet = () => {
   const [setActiveAccount] = useSetActiveAccountMutation();
   const { data: activeAccountData } = useGetActiveAccountQuery();
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
-  const { data: accountsData, loading: accountsLoading } = useGetAccountsQuery(
+  const { data: accountsData, loading: accountsLoading, networkStatus: accountsNetworkStatus } = useGetAccountsQuery(
     !(extensionData?.extension.isAvailable && isAccountSelectorOpen)
   );
 
@@ -29,6 +30,9 @@ export const Wallet = () => {
     setActiveAccount({ variables: { id: undefined } });
   }, [setActiveAccount]);
 
+  console.log('network status acc', accountsNetworkStatus);
+
+
   // request data from the data layer
   // render the component with the provided data
   return (
@@ -38,7 +42,7 @@ export const Wallet = () => {
         isExtensionAvailable={!!extensionData?.extension.isAvailable}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
-        accountsLoading={accountsLoading}
+        accountsLoading={accountsNetworkStatus === NetworkStatus.loading}
         account={activeAccountData?.activeAccount}
         onAccountSelected={onAccountSelected}
         onAccountCleared={onAccountCleared}

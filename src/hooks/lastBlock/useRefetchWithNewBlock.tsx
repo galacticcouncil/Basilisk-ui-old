@@ -43,17 +43,28 @@ export const useRefetchWithNewBlock = (
         ...lastBlock,
       });
     } else {
+      writeLastBlock(client?.cache, {
+        __typename,
+        id,
+        ...lastBlock,
+      });
+
       // lastBlockNumber has been updated, and it's not the first time
       // refetch queries that depend on the lastBlockNumber
-      client?.refetchQueries({
-        updateCache(cache) {
-          writeLastBlock(cache, {
-            __typename,
-            id,
-            ...lastBlock,
-          });
-        },
-      });
+      setTimeout(() => {
+        client?.refetchQueries({
+          updateCache(cache) {
+            cache.modify({
+              fields: {
+                lastBlock(value, { INVALIDATE }) {
+                  return INVALIDATE
+                }
+              }
+            })
+          },
+          optimistic: true,
+        })
+      }, 0)
     }
   }, [lastBlock, client]);
 };

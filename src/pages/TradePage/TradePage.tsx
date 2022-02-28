@@ -1,4 +1,4 @@
-import { useApolloClient } from '@apollo/client';
+import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
 import { find } from 'lodash';
 import moment from 'moment';
@@ -157,7 +157,7 @@ export const TradePage = () => {
   });
   const { math } = useMath();
 
-  const { data: poolData, loading: poolLoading } = useGetPoolByAssetsQuery({
+  const { data: poolData, loading: poolLoading, networkStatus: poolNetworkStatus } = useGetPoolByAssetsQuery({
     assetInId: assetIds.assetIn || undefined,
     assetOutId: assetIds.assetOut || undefined,
   });
@@ -203,6 +203,8 @@ export const TradePage = () => {
     };
   }, [assetOutLiquidity, assetInLiquidity, math]);
 
+  console.log('network status pool', poolLoading, poolNetworkStatus);
+
   return (
     <div className="trade-page">
       <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
@@ -211,7 +213,8 @@ export const TradePage = () => {
         onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
         isActiveAccountConnected={isActiveAccountConnected}
         pool={pool}
-        isPoolLoading={poolLoading}
+        // first load and each time the asset ids (variables) change
+        isPoolLoading={(poolNetworkStatus === NetworkStatus.loading) || poolNetworkStatus === NetworkStatus.setVariables}
         assetInLiquidity={assetInLiquidity}
         assetOutLiquidity={assetOutLiquidity}
         spotPrice={spotPrice}
@@ -224,5 +227,7 @@ export const TradePage = () => {
         <p>Trade error: {error ? error : '-'}</p>
       </div>
     </div>
+
+
   );
 };
