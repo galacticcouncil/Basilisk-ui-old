@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { QueryHookOptions, useQuery } from '@apollo/client';
 import { Query } from '../../../generated/graphql';
 import { loader } from 'graphql.macro';
 
@@ -8,6 +8,7 @@ export interface GetPoolsQueryResponse {
     pools: Query['pools']
 }
 
-export const useGetPoolsQuery = () => useQuery<GetPoolsQueryResponse>(GET_POOLS, {
+export const useGetPoolsQuery = (options?: QueryHookOptions) => useQuery<GetPoolsQueryResponse>(GET_POOLS, {
     notifyOnNetworkStatusChange: true,
+    ...options
 });

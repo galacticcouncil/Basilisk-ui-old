@@ -1,5 +1,6 @@
 import { Asset } from '../../../../../generated/graphql';
 import classNames from 'classnames';
+import { idToAsset } from '../../../../../pages/TradePage/TradePage';
 export interface AssetItemProps {
     asset: Asset,
     onClick: () => void,
@@ -16,6 +17,6 @@ export const AssetItem = ({
             'active': active
         })} 
         onClick={onClick}>
-        {asset.id}
+        {idToAsset(asset.id)?.symbol || asset.id}
     </div>
 )
