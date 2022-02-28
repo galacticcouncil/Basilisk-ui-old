@@ -13,7 +13,7 @@ export const unwrapRepayFeeToFee = (apiInstance: ApiPromise): Fee => {
     denominator: apiRepayFee[1],
   };
 };
-export const fetchConstants = (apiInstance: ApiPromise): Constants => ({
+export const getConstants = (apiInstance: ApiPromise): Constants => ({
   lbp: {
     repayFee: unwrapRepayFeeToFee(apiInstance),
   },

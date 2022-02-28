@@ -1,16 +1,15 @@
 import { ApiPromise } from '@polkadot/api';
 import { Constants } from '../../../generated/graphql';
-import { fetchConstants } from './fetchConstants';
+import { getConstants } from './getConstants';
 import {
   getMockApiPromise,
   mockedRepayFee,
 } from '../../polkadotJs/tests/mockUsePolkadotJsContext';
 
-describe('fetch chain constants', () => {
+describe('getConstants', () => {
   let mockApiInstance: ApiPromise;
 
   beforeEach(() => {
-    jest.clearAllMocks();
     mockApiInstance = getMockApiPromise();
   });
 
@@ -19,11 +18,8 @@ describe('fetch chain constants', () => {
       .fn()
       .mockImplementation(() => ({ toHuman: jest.fn(() => mockedRepayFee) }));
 
-    const chainConstants: Constants = fetchConstants(mockApiInstance);
+    const chainConstants: Constants = getConstants(mockApiInstance);
 
-    expect(chainConstants.lbp.repayFee).toEqual({
-      numerator: '2',
-      denominator: '10',
-    });
+    expect(chainConstants.lbp.repayFee).toEqual(mockedRepayFee);
   });
 });

@@ -3,7 +3,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Constants, LbpConstants, Fee } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
-import { fetchConstants } from '../../lib/fetchConstants';
+import { getConstants } from '../../lib/getConstants';
 
 export const __typenameConstants: Constants['__typename'] = 'Constants';
 export const __typenameLbpConstants: LbpConstants['__typename'] =
@@ -27,7 +27,7 @@ const withTypename = (constants: Constants) => ({
  * @param apiInstance ApiPromise
  */
 export const constantsQueryResolver = (apiInstance: ApiPromise) =>
-  withTypename(fetchConstants(apiInstance));
+  withTypename(getConstants(apiInstance));
 
 export const useConstantsQueryResolver = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
