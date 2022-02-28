@@ -60,21 +60,19 @@ export const TradeFormSettings = ({
   }, watch(['autoSlippage']));
 
   return (
-    <>
-      <form>
-        <label>Allowed slippage (%)</label>
-        <input
-          {...register('allowedSlippage', {
-            setValueAs: (value) =>
-              value && new BigNumber(value).dividedBy('100').toFixed(3),
-          })}
-          // disabled if using auto slippage
-          disabled={getValues('autoSlippage')}
-          type="text"
-        />
-        <input {...register('autoSlippage')} type="checkbox" />
-      </form>
-    </>
+    <form className="trade-settings">
+      <label>Allowed slippage (%)</label>
+      <input
+        {...register('allowedSlippage', {
+          setValueAs: (value) =>
+            value && new BigNumber(value).dividedBy('100').toFixed(3),
+        })}
+        // disabled if using auto slippage
+        disabled={getValues('autoSlippage')}
+        type="text"
+      />
+      <input {...register('autoSlippage')} type="checkbox" />
+    </form>
   );
 };
 
@@ -381,12 +379,12 @@ export const TradeForm = ({
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
-      {/* <TradeFormSettings
+      <TradeFormSettings
         allowedSlippage={allowedSlippage}
         onAllowedSlippageChange={(allowedSlippage) =>
           setAllowedSlippage(allowedSlippage)
         }
-      /> */}
+      />
 
       <FormProvider {...form}>
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
