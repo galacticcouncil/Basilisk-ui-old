@@ -17,6 +17,7 @@
   .trade-form {
     display: flex;
     flex-direction: column;
+
     gap: 16px;
 
     min-height: 400px;
@@ -54,7 +55,7 @@
 
     overflow: hidden;
 
-    z-index: 2;
+    z-index: 1;
 
     &:hover {
       cursor: pointer;
@@ -72,7 +73,7 @@
     font-size: 12px;
     font-weight: 500;
     position: absolute;
-    z-index: 2;
+    z-index: 1;
     background-color: $d-gray5;
 
     border-radius: 4px 0 0 4px;
