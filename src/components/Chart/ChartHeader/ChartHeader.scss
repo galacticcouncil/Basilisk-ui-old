@@ -4,6 +4,8 @@ $disabledOpacity: 0.3;
 
 // TODO: break down css into multiple files
 .chart-header {
+  height: auto;
+
   &__pair-symbols {
     width: fit-content;
 
@@ -22,11 +24,13 @@ $disabledOpacity: 0.3;
 
   &__data {
     display: flex;
+    align-items: end;
     flex-direction: column;
     font-weight: 500;
 
     &__in-asset {
       font-size: 24px;
+      line-height: 24px;
     }
 
     &__breakdown {
@@ -61,6 +65,7 @@ $disabledOpacity: 0.3;
 
       &__symbols {
         font-size: 24px;
+        line-height: 24px;
       }
 
       &__full-name {
@@ -70,7 +75,8 @@ $disabledOpacity: 0.3;
   }
 
   &__controls {
-    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
     user-select: none;
 
     &__granularity,

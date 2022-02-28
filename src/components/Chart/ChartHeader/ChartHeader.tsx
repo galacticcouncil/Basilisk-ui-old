@@ -109,7 +109,7 @@ export const ChartHeader = ({
 
             {displayData.asset.symbol}
           </div>
-          <div className="flex-container flex-align-right flex-wrap chart-header__data__breakdown">
+          <div className="chart-header__data__breakdown">
             {/* <div className="text-gray-4">
               {displayData.usdBalance ? (
                 <FormattedNumber
@@ -144,7 +144,7 @@ export const ChartHeader = ({
 
             <div
               className={
-                'text-gray-4 chart-header__data__breakdown__granularity ' +
+                'chart-header__data__breakdown__granularity ' +
                 classNames({
                   disabled: isUserBrowsingGraph,
                 })
@@ -155,35 +155,11 @@ export const ChartHeader = ({
                 defaultMessage="Past"
               />{' '}
               {formatGranularity(granularity)}
-              {(() => {
-                if (!granularity) return;
-
-                switch (poolType) {
-                  // This is a *very special* case, when we also want to display
-                  // a price prediction for an LBP PRICE chart
-                  case PoolType.LBP: {
-                    if (chartType !== ChartType.PRICE) return;
-                    return (
-                      <>
-                        {' + '}
-                        <FormattedMessage
-                          id="ChartHeader.granularity.futureIndicator"
-                          // TODO: do we want to show 'Future' here?
-                          defaultMessage=" "
-                        />{' '}
-                        {formatGranularity(granularity)}
-                      </>
-                    );
-                  }
-                  default:
-                    return;
-                }
-              })()}
             </div>
           </div>
         </div>
       </div>
-      <div className="flex-container flex-align-space chart-header__controls">
+      <div className="chart-header__controls">
         {/* graph selector */}
 
         <div className="chart-header__controls__graph-type text-gray-4 text-start">
