@@ -118,6 +118,7 @@ export const BalanceInput = ({
                 onBlur={field.onBlur}
                 ref={inputRef}
                 onChange={(e) => handleOnChange(field, e)}
+                placeholder="0.00"
               />
               {(() => {
                 console.log('field.value', field.value);
