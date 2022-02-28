@@ -11,6 +11,7 @@ import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUni
 import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
 import { useFormContext } from 'react-hook-form';
 import Icon from '../../Icon/Icon';
+import { idToAsset } from '../../../pages/TradePage/TradePage';
 
 export interface AssetBalanceInputProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
@@ -64,7 +65,7 @@ export const AssetBalanceInput = ({
         data-modal-portal-toggle={toggleId}
       >
         <div>
-          {methods.getValues(assetInputName)}
+          {idToAsset(methods.getValues(assetInputName))?.symbol || methods.getValues(assetInputName)}
           <Icon name="DropdownArrow" />
         </div>
       </div>
@@ -72,7 +73,7 @@ export const AssetBalanceInput = ({
         <div className="asset-balance-input__input-wrapper__unit-selector">
           <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
           <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
-            {methods.getValues(assetInputName)}
+          {idToAsset(methods.getValues(assetInputName))?.symbol || methods.getValues(assetInputName)}
           </div>
         </div>
 

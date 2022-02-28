@@ -1,6 +1,6 @@
 import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
-import { find } from 'lodash';
+import { find, uniq } from 'lodash';
 import moment from 'moment';
 import {
   Dispatch,
@@ -32,6 +32,7 @@ import {
 } from '../../components/Chart/shared';
 import BigNumber from 'bignumber.js';
 import { useLoading } from '../../hooks/misc/useLoading';
+import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -45,6 +46,23 @@ export interface TradeChartProps {
     outIn?: string;
     inOut?: string;
   };
+}
+
+export const idToAsset = (id: string | null) => {
+  const assetMetadata: Record<string, any> = {
+    '0': {
+      symbol: 'BSX',
+      fullName: 'Basilisk',
+      icon: 'todo'
+    },
+    '2': {
+      symbol: 'kUSD',
+      fullName: 'Karura US Dollar',
+      icon: 'todo'
+    }
+  }
+
+  return assetMetadata[id!] as any;
 }
 
 export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
@@ -147,14 +165,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   return (
     <TradeChartComponent
       assetPair={{
-        assetA: {
-          symbol: assetIds.assetOut || undefined,
-          fullName: assetIds.assetOut || undefined,
-        },
-        assetB: {
-          symbol: assetIds.assetIn || undefined,
-          fullName: assetIds.assetIn || undefined,
-        },
+        assetA: idToAsset(assetIds.assetOut),
+        assetB: idToAsset(assetIds.assetIn),
       }}
       poolType={PoolType.XYK}
       granularity={ChartGranularity.H24}
@@ -187,6 +199,25 @@ export const TradePage = () => {
     depsLoading
   );
 
+  const { data: poolsData, networkStatus: poolsNetworkStatus } = useGetPoolsQuery({
+    skip: depsLoading
+  });
+
+  const assets = useMemo(() => {
+    const assets = poolsData?.pools
+      ?.map(pool => {
+        return [pool.assetInId, pool.assetOutId];
+      })
+      .reduce((assets, poolAssets) => {
+        return assets.concat(poolAssets);
+      }, [])
+      .map((id) => ({ id }))
+
+    return uniq(assets);
+  }, [poolsData]);
+
+  console.log('assets', assets);
+
   console.log('network status pool deps', depsLoading);
 
   const pool = useMemo(() => poolData?.pool, [poolData]);
@@ -195,7 +226,7 @@ export const TradePage = () => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
 
-  const [submitTrade, { loading, error }] = useSubmitTradeMutation();
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] = useSubmitTradeMutation();
 
   const handleSubmitTrade = useCallback(
     (variables) => {
@@ -250,12 +281,14 @@ export const TradePage = () => {
         assetOutLiquidity={assetOutLiquidity}
         spotPrice={spotPrice}
         onSubmitTrade={handleSubmitTrade}
+        tradeLoading={tradeLoading}
+        assets={assets}
       />
 
       <div className="debug">
         <h3>[Trade Page] Debug Box</h3>
-        <p>Trade loading: {loading ? 'true' : 'false'}</p>
-        <p>Trade error: {error ? error : '-'}</p>
+        <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+        <p>Trade error: {tradeError ? tradeError : '-'}</p>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ import { useMath } from '../../../hooks/math/useMath';
 import { percentageChange } from '../../../hooks/math/usePercentageChange';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
-import { TradeAssetIds } from '../../../pages/TradePage/TradePage';
+import { idToAsset, TradeAssetIds } from '../../../pages/TradePage/TradePage';
 import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput';
 import { PoolType } from '../../Chart/shared';
 import { TradeInfo } from './TradeInfo/TradeInfo';
@@ -79,6 +79,7 @@ export const TradeFormSettings = ({
 };
 
 export interface TradeFormProps {
+  assets?: { id: string }[],
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
@@ -91,6 +92,7 @@ export interface TradeFormProps {
   };
   isPoolLoading: boolean;
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
+  tradeLoading: boolean
 }
 
 export interface TradeFormFields {
@@ -138,6 +140,8 @@ export const TradeForm = ({
   assetOutLiquidity,
   spotPrice,
   onSubmitTrade,
+  tradeLoading,
+  assets
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
@@ -166,8 +170,6 @@ export const TradeForm = ({
 
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null);
   const assetInAmountInputRef = useRef<HTMLInputElement>(null);
-
-  const assets = useMemo(() => times(10).map((id) => ({ id: `${id}` })), []);
 
   // trigger form field validation right away
   useEffect(() => {
@@ -407,13 +409,13 @@ export const TradeForm = ({
               {(() => {
                 switch (tradeType) {
                   case TradeType.Sell:
-                    return `1 ${getValues('assetIn')} = ${fromPrecision12(
+                    return `1 ${idToAsset(getValues('assetIn'))?.symbol || getValues('assetIn')} = ${fromPrecision12(
                       spotPrice?.inOut
-                    )} ${getValues('assetOut')}`;
+                    )} ${idToAsset(getValues('assetOut'))?.symbol || getValues('assetOut')}`;
                   case TradeType.Buy:
-                    return `1 ${getValues('assetOut')} = ${fromPrecision12(
+                    return `1 ${idToAsset(getValues('assetOut'))?.symbol || getValues('assetOut')} = ${fromPrecision12(
                       spotPrice?.outIn
-                    )} ${getValues('assetIn')}`;
+                    )} ${idToAsset(getValues('assetIn'))?.symbol || getValues('assetIn')}`;
                 }
               })()}
             </div>
@@ -451,7 +453,7 @@ export const TradeForm = ({
                 activeAccount: () => isActiveAccountConnected,
               },
             })}
-            disabled={!isValid}
+            disabled={!isValid || tradeLoading}
             value={getSubmitText()}
           />
         </form>
