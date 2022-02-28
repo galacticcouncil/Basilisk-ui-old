@@ -22,20 +22,24 @@ import { PoolType } from '../../Chart/shared';
 import { TradeInfo } from './TradeInfo/TradeInfo';
 import './TradeForm.scss';
 import Icon from '../../Icon/Icon';
+import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
   onAllowedSlippageChange: (allowedSlippage: string | null) => void;
+  closeModal: any
 }
 
 export interface TradeFormSettingsFormFields {
   allowedSlippage: string | null;
   autoSlippage: boolean;
+  
 }
 
 export const TradeFormSettings = ({
   allowedSlippage,
   onAllowedSlippageChange,
+  closeModal
 }: TradeFormSettingsProps) => {
   const { register, watch, getValues, setValue } = useForm<
     TradeFormSettingsFormFields
@@ -61,6 +65,7 @@ export const TradeFormSettings = ({
 
   return (
     <form className="trade-settings">
+      <button onClick={closeModal}>close</button>
       <label>Allowed slippage (%)</label>
       <input
         {...register('allowedSlippage', {
@@ -75,6 +80,27 @@ export const TradeFormSettings = ({
     </form>
   );
 };
+
+export const useModalPortalElement = ({
+  allowedSlippage,
+  setAllowedSlippage
+}: any) => {
+  return useCallback(({ closeModal, elementRef, isModalOpen }) => {
+    console.log('useModalPortalElement', isModalOpen);
+    return isModalOpen
+      ? (
+        <TradeFormSettings
+          closeModal={closeModal}
+          allowedSlippage={allowedSlippage}
+          onAllowedSlippageChange={(allowedSlippage) =>
+            setAllowedSlippage(allowedSlippage)
+          }
+        />
+      )
+      : <></>
+  }, []);
+}
+
 
 export interface TradeFormProps {
   assets?: { id: string }[],
@@ -145,6 +171,7 @@ export const TradeForm = ({
   const { math, loading: mathLoading } = useMath();
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.Buy);
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
+
   const form = useForm<TradeFormFields>({
     reValidateMode: 'onChange',
     mode: 'onTouched',
@@ -257,6 +284,13 @@ export const TradeForm = ({
   }, [isPoolLoading, errors]);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
+
+  const modalPortalElement = useModalPortalElement({ allowedSlippage, setAllowedSlippage });
+  const { toggleModal, modalPortal, toggleId } = useModalPortal(
+    modalPortalElement,
+    modalContainerRef,
+    false
+  )
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
@@ -379,13 +413,8 @@ export const TradeForm = ({
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
-      <TradeFormSettings
-        allowedSlippage={allowedSlippage}
-        onAllowedSlippageChange={(allowedSlippage) =>
-          setAllowedSlippage(allowedSlippage)
-        }
-      />
-
+      {modalPortal}
+      <button onClick={toggleModal}>settings</button>
       <FormProvider {...form}>
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
           <div className="trade-form-heading">You get</div>
