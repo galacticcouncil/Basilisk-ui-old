@@ -71,7 +71,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
 
   useEffect(() => {
     if (!historicalBalancesData?.historicalBalances || !math || !spotPrice)
-      return;
+      return setDataset([]);
     const dataset = historicalBalancesData.historicalBalances.map(
       ({ createdAt, assetABalance, assetBBalance }) => {
         return {

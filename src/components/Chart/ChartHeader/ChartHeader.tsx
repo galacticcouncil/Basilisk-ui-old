@@ -53,6 +53,7 @@ export const ChartHeader = ({
     console.log('referenceDataPercentageChange', referenceData?.balance, displayData.balance);
     if (!referenceData?.balance) return 0;
     return percentageChange(referenceData.balance, displayData.balance);
+    // return percentageChange(displayData.balance, referenceData.balance);
   }, [displayData, referenceData]);
 
   return (
