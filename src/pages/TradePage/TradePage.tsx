@@ -23,7 +23,10 @@ import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByA
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
 import { Line } from 'react-chartjs-2';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
+import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart';
 import './TradePage.scss';
+import { ChartGranularity, ChartType, PoolType } from '../../components/Chart/shared';
+import BigNumber from 'bignumber.js';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -72,7 +75,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
     const dataset = historicalBalancesData.historicalBalances.map(
       ({ createdAt, assetABalance, assetBBalance }) => {
         return {
-          x: createdAt,
+          // x: `${moment(createdAt).getTime()}`,
+          x: new Date(createdAt).getTime(),
           y: (() => {
             const assetOutLiquidity =
               assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
@@ -97,7 +101,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
               ),
             };
 
-            return fromPrecision12(spotPrice.outIn);
+            return parseFloat(new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3))
           })(),
         };
       }
@@ -105,8 +109,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
 
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
-      x: moment().toISOString(),
-      y: fromPrecision12(spotPrice.outIn),
+      x: new Date().getTime(),
+      y: parseFloat(new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)),
     });
 
     setDataset(dataset);
@@ -129,9 +133,11 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   //   })
   // }, [pool, spotPrice,])
 
+  console.log('dataset', dataset);
+
   return (
     <div className="trade-chart">
-      <p>
+      {/* <p>
         {assetIds.assetOut}/{assetIds.assetIn}
       </p>
       <p>{fromPrecision12(spotPrice?.outIn)}</p>
@@ -144,7 +150,26 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
             },
           ],
         }}
+      /> */}
+      <TradeChartComponent 
+        assetPair={{
+          assetA: {
+            symbol: assetIds.assetOut || undefined,
+            fullName: assetIds.assetOut || undefined
+          },
+          assetB: {
+            symbol: assetIds.assetIn || undefined,
+            fullName: assetIds.assetIn || undefined
+          },
+        }}
+        poolType={PoolType.XYK}
+        granularity={ChartGranularity.H24}
+        chartType={ChartType.PRICE}
+        primaryDataset={dataset as any}
+        onChartTypeChange={() => {}}
+        onGranularityChange={() => {}}
       />
+
     </div>
   );
 };

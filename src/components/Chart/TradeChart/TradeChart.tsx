@@ -74,7 +74,8 @@ export const TradeChart = ({
     },
   });
 
-  const resetDisplayData = () => {
+  const resetDisplayData = useCallback(() => {
+    console.log('resetDisplayData', primaryDataset)
     setDisplayData({
       balance: last(primaryDataset)?.y,
       // TODO; usd value of the balance needs to be determined separately
@@ -87,7 +88,19 @@ export const TradeChart = ({
         fullName: assetPair.assetB?.fullName,
       },
     });
-  };
+    setReferenceData({
+      balance: first(primaryDataset)?.y,
+      // TODO; usd value of the balance needs to be determined separately
+      // concept of a rich dataset, boil it down to x/y for the linechart
+      // and persist usd balances etc at a higher level
+      usdBalance: first(primaryDataset)?.y,
+      // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
+      asset: {
+        symbol: assetPair.assetB?.symbol,
+        fullName: assetPair.assetB?.fullName,
+      },
+    })
+  }, [primaryDataset]);
 
   // TODO: temporary
   useEffect(() => {
@@ -96,9 +109,18 @@ export const TradeChart = ({
 
   // TODO: set reference data based on if the user is interacting with the graph
   // if the user is not interacting with the graph, reference data should be
-  const [referenceData, setReferenceData] = useState<DisplayData | undefined>(
-    displayData
-  );
+  const [referenceData, setReferenceData] = useState<DisplayData | undefined>({
+    balance: first(primaryDataset)?.y,
+    // TODO; usd value of the balance needs to be determined separately
+    // concept of a rich dataset, boil it down to x/y for the linechart
+    // and persist usd balances etc at a higher level
+    usdBalance: first(primaryDataset)?.y,
+    // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
+    asset: {
+      symbol: assetPair.assetB?.symbol,
+      fullName: assetPair.assetB?.fullName,
+    },
+  });
 
   const getTooltipPositionCss = useCallback(_getTooltipPositionCss, []);
   const [tooltipData, setTooltipData] = useState<TooltipData | undefined>(
@@ -106,17 +128,38 @@ export const TradeChart = ({
   );
 
   // TODO: rewrite
-  const dataTrend = (() => {
+  const dataTrend = useMemo(() => {
+    console.log('dataTrend', displayData.balance, referenceData?.balance);
     if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral;
     return displayData?.balance! >= referenceData?.balance!
       ? Trend.Positive
       : Trend.Negative;
-  })();
+  }, [displayData, referenceData])
 
   // TODO: set trend based on tooltip data
+  // useEffect(() => {
+  //   // tooltipData?.data.x < referenceData.
+  //   if (!tooltipData) return;
+  //   setReferenceData({
+  //     ...displayData,
+  //     balance: tooltipData?.data.y,
+  //     // TODO; usd value of the balance needs to be determined separately
+  //     // concept of a rich dataset, boil it down to x/y for the linechart
+  //     // and persist usd balances etc at a higher level
+  //     usdBalance: tooltipData?.data.y,
+  //     // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
+  //   });
+  // }, [tooltipData, displayData]);
+
   useEffect(() => {
-    // tooltipData?.data.x < referenceData.
-  }, [tooltipData]);
+    if (tooltipData) return;
+    setReferenceData({
+      ...referenceData!,
+      balance: first(primaryDataset)?.y,
+      usdBalance: first(primaryDataset)?.y,
+      
+    })
+  }, [primaryDataset]);
 
   const handleTooltip = useCallback(
     (tooltipData: TooltipData | undefined) => {
@@ -129,22 +172,29 @@ export const TradeChart = ({
           []
         );
 
-        const referenceData = find(allData, {
+        const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
-          y: tooltipData?.data.y,
+          y: tooltipData?.data.y
         });
 
-        if (referenceData)
-          setDisplayData({
-            ...displayData,
-            balance: referenceData.y,
-            usdBalance: referenceData.y,
-          });
+        console.log('referenceData', referenceData, tooltipData.data, allData)
+
+        if (displayDataTooltip)
+          setDisplayData(displayData => ({
+            ...displayData!,
+            balance: displayDataTooltip?.y,
+          }));
+          setReferenceData(referenceData => {
+            return ({
+              ...referenceData!,
+              balance: last(primaryDataset)?.y
+            })
+          })
       } else {
         resetDisplayData();
       }
     },
-    [setTooltipData]
+    [setTooltipData, primaryDataset, displayData, referenceData]
   );
 
   const availableChartTypes = useMemo(

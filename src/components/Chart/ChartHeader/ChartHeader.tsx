@@ -50,6 +50,7 @@ export const ChartHeader = ({
   onGranularityChange: (granularity: ChartGranularity) => void;
 }) => {
   const referenceDataPercentageChange = useMemo(() => {
+    console.log('referenceDataPercentageChange', referenceData?.balance, displayData.balance);
     if (!referenceData?.balance) return 0;
     return percentageChange(referenceData.balance, displayData.balance);
   }, [displayData, referenceData]);
@@ -162,10 +163,10 @@ export const ChartHeader = ({
       <div className="chart-header__controls">
         {/* graph selector */}
 
-        <div className="chart-header__controls__graph-type text-gray-4 text-start">
+        {/* <div className="chart-header__controls__graph-type text-gray-4 text-start"> */}
           {/* TODO: add translations & granularity enums & on graph type handler */}
           {/* for now only price chart is available */}
-          {availableChartTypes.map((chartTypeEntry, i) => (
+          {/* {availableChartTypes.map((chartTypeEntry, i) => (
             <span
               className={classNames({
                 'chart-header__controls__graph-type__individual': true,
@@ -181,13 +182,13 @@ export const ChartHeader = ({
                 values={{ chartType: chartTypeEntry }}
               />
             </span>
-          ))}
-        </div>
+          ))} */}
+        {/* </div> */}
 
         {/* granularity selector */}
 
-        <div className="chart-header__controls__granularity text-end text-gray-4">
-          {availableGranularity.map((granularityEntry, i) => {
+        {/* <div className="chart-header__controls__granularity text-end text-gray-4"> */}
+          {/* {availableGranularity.map((granularityEntry, i) => {
             return (
               <span
                 className={classNames({
@@ -200,8 +201,8 @@ export const ChartHeader = ({
                 {formatGranularity(granularityEntry)}
               </span>
             );
-          })}
-        </div>
+          })} */}
+        {/* </div> */}
       </div>
     </div>
   );
