@@ -5,6 +5,7 @@ import { ReactComponent as NotificationInactiveIcon } from './assets/Notificatio
 import { ReactComponent as DropdownArrowIcon } from './assets/DropdownArrowIcon.svg';
 import { ReactComponent as CancelIcon } from './assets/Cancel.svg';
 import { ReactComponent as BasiliskLogoFull } from './assets/BasiliskLogoFull.svg';
+import { ReactComponent as AssetSwitchIcon } from './assets/AssetSwitchIcon.svg';
 
 const Icons = {
   Help: () => <HelpIcon />,
@@ -13,6 +14,7 @@ const Icons = {
   DropdownArrow: () => <DropdownArrowIcon />,
   Cancel: () => <CancelIcon />,
   BasiliskLogoFull: () => <BasiliskLogoFull />,
+  AssetSwitch: () => <AssetSwitchIcon />,
 } as const;
 
 type IconNames = keyof typeof Icons;

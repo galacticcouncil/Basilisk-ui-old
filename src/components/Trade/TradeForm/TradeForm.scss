@@ -1,7 +1,7 @@
 @import './../../../misc/colors.module.scss';
 @import './../../../misc/misc.module.scss';
 
-.trade-form {
+.trade-form-wrapper {
   position: relative;
   flex-basis: 340px;
   flex-grow: 1;
@@ -13,4 +13,79 @@
   overflow: hidden;
 
   position: relative;
+
+  .trade-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    min-height: 400px;
+
+    .trade-form-heading {
+      font-size: 18px;
+      font-weight: 500;
+    }
+  }
+}
+
+// SHOULD BE EXTRACTED TO COMPONENTS
+
+.asset-switch {
+  display: flex;
+  height: 55px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  .asset-switch-icon {
+    position: absolute;
+    left: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 55px;
+    height: 55px;
+
+    border-radius: 55px;
+    border: 4px solid $d-gray3;
+    background-color: $d-gray5;
+
+    overflow: hidden;
+
+    z-index: 2;
+
+    &:hover {
+      cursor: pointer;
+      svg {
+        path {
+          fill: $green1;
+        }
+      }
+    }
+  }
+
+  .asset-switch-price {
+    right: 0;
+    padding: 0 16px;
+    font-size: 12px;
+    font-weight: 500;
+    position: absolute;
+    z-index: 2;
+    background-color: $d-gray5;
+
+    border-radius: 4px 0 0 4px;
+  }
+
+  .asset-switch-divider {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background-color: $d-gray5;
+    opacity: 1;
+    border: 0;
+    left: 0;
+    z-index: 1;
+  }
 }

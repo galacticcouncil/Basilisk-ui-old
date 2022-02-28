@@ -21,6 +21,7 @@ import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceI
 import { PoolType } from '../../Chart/shared';
 import { TradeInfo } from './TradeInfo/TradeInfo';
 import './TradeForm.scss';
+import Icon from '../../Icon/Icon';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -376,54 +377,57 @@ export const TradeForm = ({
   }, [assetIds]);
 
   return (
-    <div className="trade-form">
+    <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
-      <TradeFormSettings
+      {/* <TradeFormSettings
         allowedSlippage={allowedSlippage}
         onAllowedSlippageChange={(allowedSlippage) =>
           setAllowedSlippage(allowedSlippage)
         }
-      />
-      <br />
+      /> */}
+
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(_handleSubmit)}>
-          <div>
-            <br />
-            <AssetBalanceInput
-              balanceInputName="assetOutAmount"
-              assetInputName="assetOut"
-              modalContainerRef={modalContainerRef}
-              balanceInputRef={assetOutAmountInputRef}
-              assets={assets}
-            />
+        <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
+          <div className="trade-form-heading">You get</div>
+
+          <AssetBalanceInput
+            balanceInputName="assetOutAmount"
+            assetInputName="assetOut"
+            modalContainerRef={modalContainerRef}
+            balanceInputRef={assetOutAmountInputRef}
+            assets={assets}
+          />
+
+          <div className="asset-switch">
+            <hr className="asset-switch-divider"></hr>
+            <div className="asset-switch-icon" onClick={handleSwitchAssets}>
+              <Icon name="AssetSwitch" />
+            </div>
+            <div className="asset-switch-price">
+              {(() => {
+                switch (tradeType) {
+                  case TradeType.Sell:
+                    return `1 ${getValues('assetIn')} = ${fromPrecision12(
+                      spotPrice?.inOut
+                    )} ${getValues('assetOut')}`;
+                  case TradeType.Buy:
+                    return `1 ${getValues('assetOut')} = ${fromPrecision12(
+                      spotPrice?.outIn
+                    )} ${getValues('assetIn')}`;
+                }
+              })()}
+            </div>
           </div>
 
-          <div onClick={handleSwitchAssets}>Switch assets</div>
-          <p>
-            {(() => {
-              switch (tradeType) {
-                case TradeType.Sell:
-                  return `1 [${getValues('assetIn')}] = ${fromPrecision12(
-                    spotPrice?.inOut
-                  )} [${getValues('assetOut')}]`;
-                case TradeType.Buy:
-                  return `1 [${getValues('assetOut')}] = ${fromPrecision12(
-                    spotPrice?.outIn
-                  )} [${getValues('assetIn')}]`;
-              }
-            })()}
-          </p>
+          <div className="trade-form-heading">Pay with</div>
 
-          <div>
-            <br />
-            <AssetBalanceInput
-              balanceInputName="assetInAmount"
-              assetInputName="assetIn"
-              modalContainerRef={modalContainerRef}
-              balanceInputRef={assetInAmountInputRef}
-              assets={assets}
-            />
-          </div>
+          <AssetBalanceInput
+            balanceInputName="assetInAmount"
+            assetInputName="assetIn"
+            modalContainerRef={modalContainerRef}
+            balanceInputRef={assetInAmountInputRef}
+            assets={assets}
+          />
 
           <TradeInfo
             tradeLimit={tradeLimit}
@@ -439,19 +443,17 @@ export const TradeForm = ({
             submit: errors.submit?.type,
           })}
 
-          <div>
-            <input
-              type="submit"
-              {...register('submit', {
-                validate: {
-                  poolDoesNotExist: () => !!pool,
-                  activeAccount: () => isActiveAccountConnected,
-                },
-              })}
-              disabled={!isValid}
-              value={getSubmitText()}
-            />
-          </div>
+          <input
+            type="submit"
+            {...register('submit', {
+              validate: {
+                poolDoesNotExist: () => !!pool,
+                activeAccount: () => isActiveAccountConnected,
+              },
+            })}
+            disabled={!isValid}
+            value={getSubmitText()}
+          />
         </form>
       </FormProvider>
 
