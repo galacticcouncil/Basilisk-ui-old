@@ -28,13 +28,15 @@ export const buy = async (
   amountBuy: string, // 99
   maxSold: string // 49.5 + 0.5%
 ) => {
-  await withGracefulErrors(
-    async (resolve, reject) => {
+  // await withGracefulErrors(
+    // async (resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
       const activeAccount = readActiveAccount(cache);
       const address = activeAccount?.id;
 
       // TODO: extract this error
-      if (!address) return reject(new Error('No active account found!'));
+      try {
+        if (!address) return reject(new Error('No active account found!'));
 
       const { signer } = await web3FromAddress(address);
 
@@ -45,7 +47,10 @@ export const buy = async (
           { signer },
           xykBuyHandler(resolve, reject, apiInstance)
         );
-    },
-    [gracefulExtensionCancelationErrorHandler]
-  );
+      } catch (e) {
+        reject(e)
+      }
+    })
+  //   [gracefulExtensionCancelationErrorHandler]
+  // );
 };

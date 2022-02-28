@@ -9,6 +9,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
 } from 'react';
 import { Control, useForm, UseFormReturn } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -199,6 +200,9 @@ export const TradePage = () => {
     depsLoading
   );
 
+  // progress, not broadcast because we dont wait for broadcast to happen here
+  const [notification, setNotification] = useState<'standby' | 'progress' | 'success' | 'failure'>('standby');
+
   const { data: poolsData, networkStatus: poolsNetworkStatus } = useGetPoolsQuery({
     skip: depsLoading
   });
@@ -226,10 +230,33 @@ export const TradePage = () => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
 
-  const [submitTrade, { loading: tradeLoading, error: tradeError }] = useSubmitTradeMutation();
+  const clearNotificationIntervalRef = useRef<any>();
+
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] = useSubmitTradeMutation({
+    onCompleted: () => {
+      setNotification('success')
+      // reset notification status in 3 seconds, with the ability to stop the timer
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby')
+      }, 3000)
+    },
+    onError: () => {
+      console.log('onError');
+      setNotification('failure')
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby')
+      }, 3000)
+    },
+  });
+
+  useEffect(() => {
+    if (tradeLoading) setNotification('progress')
+  }, [tradeLoading])
 
   const handleSubmitTrade = useCallback(
     (variables) => {
+      clearNotificationIntervalRef.current && clearTimeout(clearNotificationIntervalRef.current);
+      clearNotificationIntervalRef.current = null;
       submitTrade({ variables });
     },
     [submitTrade]
@@ -264,32 +291,37 @@ export const TradePage = () => {
   console.log('network status pool', poolLoading, poolNetworkStatus);
 
   return (
-    <div className="trade-page">
-      <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
-      <TradeForm
-        assetIds={assetIds}
-        onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-        isActiveAccountConnected={isActiveAccountConnected}
-        pool={pool}
-        // first load and each time the asset ids (variables) change
-        isPoolLoading={
-          poolNetworkStatus === NetworkStatus.loading ||
-          poolNetworkStatus === NetworkStatus.setVariables ||
-          depsLoading
-        }
-        assetInLiquidity={assetInLiquidity}
-        assetOutLiquidity={assetOutLiquidity}
-        spotPrice={spotPrice}
-        onSubmitTrade={handleSubmitTrade}
-        tradeLoading={tradeLoading}
-        assets={assets}
-      />
-
-      <div className="debug">
-        <h3>[Trade Page] Debug Box</h3>
-        <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-        <p>Trade error: {tradeError ? tradeError : '-'}</p>
+    <>
+      <div>
+        Notification: {notification}
       </div>
-    </div>
+      <div className="trade-page">
+        <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
+        <TradeForm
+          assetIds={assetIds}
+          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+          isActiveAccountConnected={isActiveAccountConnected}
+          pool={pool}
+          // first load and each time the asset ids (variables) change
+          isPoolLoading={
+            poolNetworkStatus === NetworkStatus.loading ||
+            poolNetworkStatus === NetworkStatus.setVariables ||
+            depsLoading
+          }
+          assetInLiquidity={assetInLiquidity}
+          assetOutLiquidity={assetOutLiquidity}
+          spotPrice={spotPrice}
+          onSubmitTrade={handleSubmitTrade}
+          tradeLoading={tradeLoading}
+          assets={assets}
+        />
+
+        <div className="debug">
+          <h3>[Trade Page] Debug Box</h3>
+          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+          <p>Trade error: {tradeError ? JSON.stringify(tradeError) : '-'}</p>
+        </div>
+        </div>
+    </>
   );
 };

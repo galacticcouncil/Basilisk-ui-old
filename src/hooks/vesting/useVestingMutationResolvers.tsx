@@ -73,7 +73,7 @@ export const vestingClaimHandler =
     events: EventRecord[];
     dispatchError?: DispatchError;
   }) => {
-    if (status.isFinalized) log.info('operation finalized');
+    if (status.isFinalized) log.info('transaction operation finalized');
 
     // TODO: extract intention registred for exchange buy/sell
     events.forEach(({ event: { data, method, section }, phase }) => {
@@ -87,26 +87,29 @@ export const vestingClaimHandler =
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
-      console.log('is in block', status.createdAtHash?.toString());
+      console.log('transaction is in block', status.createdAtHash?.toString());
       if (dispatchError?.isModule) {
+        reject();
         return log.info(
-          'operation unsuccessful',
+          'transaction unsuccessful',
           !apiInstance
             ? dispatchError
             : apiInstance.registry.findMetaError(dispatchError.asModule)
         );
       }
 
-      return log.info('operation successful');
+      resolve();
+
+      return log.info('transaction successful');
     }
 
     // if the operation has been broadcast, finish the mutation
     if (status.isBroadcast) {
       log.info('transaction has been broadcast', status.hash.toHuman());
-      return resolve();
+      // return resolve();
     }
     if (dispatchError) {
-      log.error('There was a dispatch error', dispatchError);
+      log.error('transaction There was a dispatch error', dispatchError);
       return reject('Dispatch error');
     }
   };
