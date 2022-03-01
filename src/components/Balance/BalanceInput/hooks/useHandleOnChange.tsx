@@ -6,7 +6,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { ControllerRenderProps, UseFormSetValue } from 'react-hook-form';
+import { ControllerRenderProps, UseFormGetValues, UseFormSetValue } from 'react-hook-form';
 import { formatFromSIWithPrecision12, MetricUnit } from '../../metricUnit';
 import { BalanceInputProps, thousandsSeparatorSymbol } from '../BalanceInput';
 
@@ -21,8 +21,6 @@ export const useHandleOnChange = ({
   unit: MetricUnit;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
 }) => {
-  const [rawValue, setRawValue] = useState<string | undefined>();
-
   // TODO: type the value
   const setValueAs = useCallback(
     (value) => {
@@ -33,26 +31,19 @@ export const useHandleOnChange = ({
       log.debug('BalanceInput', 'setValueAs', value, formattedValue, unit);
       return formattedValue;
     },
-    [formatFromSIWithPrecision12, unit]
+    [unit]
   );
 
   // TODO better types for `field`
   const handleOnChange = useCallback(
     (field: ControllerRenderProps, e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      console.log('on change', value);
-      setRawValue(value);
-      field.onChange(setValueAs(value));
-    },
-    [setValueAs, setRawValue]
-  );
+      const formattedValue = setValueAs(value)
 
-  useEffect(() => {
-    log.debug('BalanceInput', 'unit changed', rawValue, unit);
-    const value = setValueAs(rawValue);
-    console.log('setting value', rawValue, value);
-    setValue(name, value);
-  }, [unit, rawValue]);
+      setValue(name, formattedValue)
+    },
+    [setValueAs, setValue, name]
+  );
 
   return handleOnChange;
 };

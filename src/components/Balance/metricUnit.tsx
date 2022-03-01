@@ -77,7 +77,7 @@ export const formatToSIWithPrecision12 = (
   metricPrefix: MetricUnit
 ) => {
   const base10 = prefixMap[metricPrefix];
-  log.debug('formatFromSIWithPrecision12', 'base10', base10, metricPrefix);
+  log.debug('formatToSIWithPrecision12', 'base10', base10, metricPrefix, number);
   if (!base10) return;
 
   const formattedResult = new BigNumber(number).dividedBy(base10);

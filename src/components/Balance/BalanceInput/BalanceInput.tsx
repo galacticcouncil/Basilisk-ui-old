@@ -23,14 +23,14 @@ import BigNumber from 'bignumber.js';
 log.setDefaultLevel('debug');
 // TODO Make default unit non-required?
 export interface BalanceInputProps {
-  defaultUnit?: MetricUnit;
   name: string;
+  defaultUnit?: MetricUnit;
   showMetricUnitSelector?: boolean;
   /**
    * This whole property exists due to my inability to figure out
    * how to pass an actual input ref through react-hook-form controller's field.ref
    *
-   * field.ref ends up being a wrapper for validationa and input focusing, without the ability to
+   * field.ref ends up being a wrapper for validation and input focusing, without the ability to
    * retrieve the actual input element from the form state
    */
   inputRef?: MutableRefObject<HTMLInputElement | null>;
@@ -81,6 +81,7 @@ export const BalanceInput = ({
   inputRef,
 }: BalanceInputProps) => {
   const { control, register, setValue, getValues } = useFormContext();
+  // TODO verify that rawValue is not used at all after balance input decimal "fix"
   const [rawValue, setRawValue] = useState<string | undefined>();
   const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
