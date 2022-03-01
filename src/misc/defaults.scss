@@ -20,11 +20,15 @@ div {
 }
 
 input {
-  font-family: 'Roboto', sans-serif;
   font-weight: bold;
   color: $white1;
   outline: none;
   border: none;
-  background-color: $gray1;
+  background-color: $d-gray2;
   box-sizing: border-box;
+
+  &:disabled {
+    color: $l-gray4;
+    background-color: transparent;
+  }
 }

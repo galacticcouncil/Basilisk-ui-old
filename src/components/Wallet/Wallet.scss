@@ -3,6 +3,7 @@
 
 .wallet {
   display: flex;
+  flex-shrink: 100;
   align-items: center;
   justify-content: space-between;
   width: auto;
@@ -56,6 +57,7 @@
     flex-shrink: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: end;
   }
 
   &__account-btn {
@@ -81,5 +83,9 @@
       color: $green1;
       cursor: pointer;
     }
+  }
+
+  @media only screen and (max-width: 500px) {
+    display: none;
   }
 }

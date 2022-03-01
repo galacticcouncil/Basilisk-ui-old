@@ -19,7 +19,7 @@ export interface WalletProps {
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
   setAccountSelectorOpen: (isModalOpen: boolean) => void;
-  activeAccountLoading: boolean
+  activeAccountLoading: boolean;
 }
 
 export const Wallet = ({
@@ -32,7 +32,7 @@ export const Wallet = ({
   extensionLoading,
   isExtensionAvailable,
   setAccountSelectorOpen,
-  activeAccountLoading
+  activeAccountLoading,
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
@@ -50,6 +50,15 @@ export const Wallet = ({
   const handleAccountSelectorClick = useCallback(() => toggleModal(), [
     toggleModal,
   ]);
+
+  const trimAddress = (account?: Account) => {
+    if (account) {
+      const address = account.id;
+      return `${address.substring(0, 5)}...${address.substring(
+        address.length - 5
+      )}`;
+    } else return ' ';
+  };
 
   useEffect(() => {
     setAccountSelectorOpen(isModalOpen);
@@ -82,7 +91,7 @@ export const Wallet = ({
             <>
               <div className="wallet__info__account">
                 {<FormattedBalance balance={getBsxBalance(account)} />}
-                <div className="wallet__address">{account?.id}</div>
+                <div className="wallet__address">{trimAddress(account)}</div>
               </div>
               <Identicon value={account?.id} size={32} />
               <div

@@ -27,19 +27,18 @@ import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPo
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
   onAllowedSlippageChange: (allowedSlippage: string | null) => void;
-  closeModal: any
+  closeModal: any;
 }
 
 export interface TradeFormSettingsFormFields {
   allowedSlippage: string | null;
   autoSlippage: boolean;
-  
 }
 
 export const TradeFormSettings = ({
   allowedSlippage,
   onAllowedSlippageChange,
-  closeModal
+  closeModal,
 }: TradeFormSettingsProps) => {
   const { register, watch, getValues, setValue, handleSubmit } = useForm<
     TradeFormSettingsFormFields
@@ -65,48 +64,60 @@ export const TradeFormSettings = ({
 
   return (
     <form className="trade-settings" onSubmit={handleSubmit(() => {})}>
-      <button onClick={closeModal}>close</button>
-      <label>Allowed slippage (%)</label>
-      <input
-        {...register('allowedSlippage', {
-          setValueAs: (value) =>
-            value && new BigNumber(value).dividedBy('100').toFixed(3),
-        })}
-        // disabled if using auto slippage
-        disabled={getValues('autoSlippage')}
-        type="text"
-      />
-      <input {...register('autoSlippage')} type="checkbox" />
+      <div className="close-icon" onClick={closeModal}>
+        <Icon name="Cancel" />
+      </div>
+      <label className="settings-field">
+        <div className="settings-field__label">Auto slippage</div>
+        <input {...register('autoSlippage')} type="checkbox" />
+      </label>
+      <label className="settings-field">
+        <div className="settings-field__label">Allowed slippage percent</div>
+        <input
+          {...register('allowedSlippage', {
+            setValueAs: (value) =>
+              value && new BigNumber(value).dividedBy('100').toFixed(3),
+          })}
+          // disabled if using auto slippage
+          disabled={getValues('autoSlippage')}
+          type="text"
+        />
+      </label>
     </form>
   );
 };
 
 export const useModalPortalElement = ({
   allowedSlippage,
-  setAllowedSlippage
+  setAllowedSlippage,
 }: any) => {
-  return useCallback(({ closeModal, elementRef, isModalOpen }) => {
-    console.log('useModalPortalElement', allowedSlippage);
-    return (
-      <div className={classNames({
-        'trade-settings-wrapper hidden': !isModalOpen
-      })}>
-        <TradeFormSettings
-          closeModal={closeModal}
-          allowedSlippage={allowedSlippage}
-          onAllowedSlippageChange={(allowedSlippage) => {
-            console.log('onAllowedSlippageChange', allowedSlippage);
-            setAllowedSlippage(allowedSlippage)
-          }}
-        />
-      </div>
-    )
-  }, [allowedSlippage]);
-}
-
+  return useCallback(
+    ({ closeModal, elementRef, isModalOpen }) => {
+      console.log('useModalPortalElement', allowedSlippage);
+      return (
+        <div
+          className={classNames({
+            hidden: !isModalOpen,
+            'trade-settings-wrapper': true,
+          })}
+        >
+          <TradeFormSettings
+            closeModal={closeModal}
+            allowedSlippage={allowedSlippage}
+            onAllowedSlippageChange={(allowedSlippage) => {
+              console.log('onAllowedSlippageChange', allowedSlippage);
+              setAllowedSlippage(allowedSlippage);
+            }}
+          />
+        </div>
+      );
+    },
+    [allowedSlippage]
+  );
+};
 
 export interface TradeFormProps {
-  assets?: { id: string }[],
+  assets?: { id: string }[];
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
@@ -119,7 +130,7 @@ export interface TradeFormProps {
   };
   isPoolLoading: boolean;
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
-  tradeLoading: boolean
+  tradeLoading: boolean;
 }
 
 export interface TradeFormFields {
@@ -168,7 +179,7 @@ export const TradeForm = ({
   spotPrice,
   onSubmitTrade,
   tradeLoading,
-  assets
+  assets,
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
@@ -288,12 +299,15 @@ export const TradeForm = ({
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
-  const modalPortalElement = useModalPortalElement({ allowedSlippage, setAllowedSlippage });
+  const modalPortalElement = useModalPortalElement({
+    allowedSlippage,
+    setAllowedSlippage,
+  });
   const { toggleModal, modalPortal, toggleId } = useModalPortal(
     modalPortalElement,
     modalContainerRef,
     false
-  )
+  );
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
@@ -417,10 +431,17 @@ export const TradeForm = ({
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
       {modalPortal}
-      <button onClick={(e) => {
-        e.preventDefault() 
-        toggleModal()
-      }}>settings</button>
+
+      <div
+        className="settings-button"
+        onClick={(e) => {
+          e.preventDefault();
+          toggleModal();
+        }}
+      >
+        <Icon name="Settings" />
+      </div>
+
       <FormProvider {...form}>
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
           <div className="trade-form-heading">You get</div>
@@ -432,7 +453,6 @@ export const TradeForm = ({
             balanceInputRef={assetOutAmountInputRef}
             assets={assets}
           />
-
           <div className="asset-switch">
             <hr className="divider asset-switch-divider"></hr>
             <div className="asset-switch-icon" onClick={handleSwitchAssets}>
@@ -442,20 +462,26 @@ export const TradeForm = ({
               {(() => {
                 switch (tradeType) {
                   case TradeType.Sell:
-                    return `1 ${idToAsset(getValues('assetIn'))?.symbol || getValues('assetIn')} = ${fromPrecision12(
-                      spotPrice?.inOut
-                    )} ${idToAsset(getValues('assetOut'))?.symbol || getValues('assetOut')}`;
+                    return `1 ${
+                      idToAsset(getValues('assetIn'))?.symbol ||
+                      getValues('assetIn')
+                    } = ${fromPrecision12(spotPrice?.inOut)} ${
+                      idToAsset(getValues('assetOut'))?.symbol ||
+                      getValues('assetOut')
+                    }`;
                   case TradeType.Buy:
-                    return `1 ${idToAsset(getValues('assetOut'))?.symbol || getValues('assetOut')} = ${fromPrecision12(
-                      spotPrice?.outIn
-                    )} ${idToAsset(getValues('assetIn'))?.symbol || getValues('assetIn')}`;
+                    return `1 ${
+                      idToAsset(getValues('assetOut'))?.symbol ||
+                      getValues('assetOut')
+                    } = ${fromPrecision12(spotPrice?.outIn)} ${
+                      idToAsset(getValues('assetIn'))?.symbol ||
+                      getValues('assetIn')
+                    }`;
                 }
               })()}
             </div>
           </div>
-
           <div className="trade-form-heading">Pay with</div>
-
           <AssetBalanceInput
             balanceInputName="assetInAmount"
             assetInputName="assetIn"
@@ -463,17 +489,14 @@ export const TradeForm = ({
             balanceInputRef={assetInAmountInputRef}
             assets={assets}
           />
-
           <div className="divider-wrapper">
             <hr className="divider"></hr>
           </div>
-
           <TradeInfo
             tradeLimit={tradeLimit}
             expectedSlippage={slippage?.multipliedBy(100).toFixed(3)}
             errors={errors}
           />
-
           {JSON.stringify({
             assetIn: errors.assetIn?.type,
             assetOut: errors.assetOut?.type,
@@ -481,7 +504,6 @@ export const TradeForm = ({
             assetOutAmount: errors.assetOutAmount?.type,
             submit: errors.submit?.type,
           })}
-
           <input
             type="submit"
             {...register('submit', {

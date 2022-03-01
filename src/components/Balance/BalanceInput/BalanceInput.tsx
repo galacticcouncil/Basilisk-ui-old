@@ -111,6 +111,7 @@ export const BalanceInput = ({
             <>
               <MaskedInputWithRef
                 mask={currencyMask}
+                inputMode="decimal"
                 // TODO: get rid of this
                 value={new BigNumber(
                   formatToSIWithPrecision12(field.value, unit) || ''

@@ -99,8 +99,73 @@
   }
 }
 
+.settings-button {
+  position: absolute;
+  right: 16px;
+
+  &:hover {
+    cursor: pointer;
+
+    svg {
+      path {
+        fill: $green1;
+      }
+    }
+  }
+}
+
 .trade-settings-wrapper {
-   &.hidden {
-     display: none
-   }
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  padding: 16px;
+
+  background-color: $d-gray4;
+
+  z-index: 1;
+
+  .trade-settings {
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    font-weight: 500;
+
+    .close-icon {
+      align-self: end;
+      margin-bottom: 16px;
+
+      svg:hover {
+        cursor: pointer;
+        path {
+          fill: $orange1;
+        }
+      }
+    }
+  }
+
+  .settings-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__label {
+      flex-grow: 10;
+    }
+
+    input {
+      flex-shrink: 10;
+      flex-basis: 50px;
+      width: 50px;
+      text-align: center;
+
+      border-radius: $border-radius;
+    }
+  }
+
+  &.hidden {
+    display: none;
+  }
 }
