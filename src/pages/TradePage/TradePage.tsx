@@ -48,17 +48,18 @@ export interface TradeChartProps {
   };
 }
 
+// TODO EXTRACT
 export const idToAsset = (id: string | null) => {
   const assetMetadata: Record<string, any> = {
     '0': {
       symbol: 'BSX',
       fullName: 'Basilisk',
-      icon: 'todo',
+      icon: true,
     },
     '2': {
       symbol: 'kUSD',
-      fullName: 'Karura US Dollar',
-      icon: 'todo',
+      fullName: 'Karura USD',
+      icon: false,
     },
   };
 

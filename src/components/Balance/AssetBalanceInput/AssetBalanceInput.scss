@@ -7,7 +7,6 @@
   align-items: center;
 
   height: 60px;
-  padding: 14px 16px 16px 16px;
 
   background-color: $d-gray2;
   border-radius: $border-radius;
@@ -17,33 +16,61 @@
   }
 
   &__asset-info {
-    height: 2rem;
+    height: 100%;
+
+    padding: 16px 12px;
+
+    letter-spacing: 0.5px;
 
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+    gap: 4px;
 
-    width: 4rem;
+    width: 130px;
 
     font-size: 0.95rem;
     font-weight: bold;
     cursor: pointer;
 
+    .asset-icon {
+      width: 32px;
+      height: 32px;
+
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+
+      &.unknown {
+        background-image: url('../../../misc/icons/assets/Unknown.svg');
+      }
+    }
+
     &:hover {
       color: $green1;
+
+      svg {
+        path {
+          fill: $green1;
+        }
+      }
     }
+
+    box-shadow: 1px 0 $d-gray4;
   }
 
   &__input-wrapper {
     flex-grow: 1;
+    padding: 16px;
 
     &__unit-selector {
       display: flex;
       justify-content: end;
-      gap: 4px;
 
       &__asset-name {
         font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
       }
     }
   }

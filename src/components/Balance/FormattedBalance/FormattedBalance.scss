@@ -8,9 +8,10 @@
   justify-self: end;
   justify-content: right;
 
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 
-  line-height: 1em;
+  line-height: 1.2em;
 
   &__value {
     margin-right: 4px;
@@ -19,7 +20,7 @@
   &__suffix {
     color: $gray4;
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 500;
   }
 
   &__symbol {

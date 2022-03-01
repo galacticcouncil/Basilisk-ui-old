@@ -64,16 +64,22 @@ export const AssetBalanceInput = ({
         onClick={(_) => handleAssetSelectorClick()}
         data-modal-portal-toggle={toggleId}
       >
-        <div>
-          {idToAsset(methods.getValues(assetInputName))?.symbol || methods.getValues(assetInputName)}
-          <Icon name="DropdownArrow" />
-        </div>
+        <div
+          className={classNames({
+            'asset-icon': true,
+            unknown: !idToAsset(methods.getValues(assetInputName))?.icon,
+          })}
+        ></div>
+        {idToAsset(methods.getValues(assetInputName))?.symbol ||
+          methods.getValues(assetInputName)}
+        <Icon name="DropdownArrow" />
       </div>
       <div className="asset-balance-input__input-wrapper">
         <div className="asset-balance-input__input-wrapper__unit-selector">
           <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
           <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
-          {idToAsset(methods.getValues(assetInputName))?.symbol || methods.getValues(assetInputName)}
+            {idToAsset(methods.getValues(assetInputName))?.symbol ||
+              methods.getValues(assetInputName)}
           </div>
         </div>
 

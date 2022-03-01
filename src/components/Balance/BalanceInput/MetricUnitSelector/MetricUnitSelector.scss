@@ -8,7 +8,8 @@
   flex-shrink: 1;
   justify-content: right;
 
-  font-weight: bold;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 
   min-width: 100px;
   cursor: pointer;
@@ -59,7 +60,7 @@
     top: 100%;
     right: 0;
 
-    background-color: $gray1;
+    background-color: $d-gray2;
 
     border-bottom-left-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
@@ -71,7 +72,6 @@
     overflow: hidden;
 
     .metric-unit-list-item {
-      text-transform: uppercase;
       text-align: center;
 
       line-height: 1em;
@@ -85,7 +85,7 @@
 
       &:hover {
         background-color: $green2;
-        color: $white1;
+        color: $d-gray4;
       }
 
       &:last-child {
