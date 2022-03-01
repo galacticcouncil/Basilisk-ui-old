@@ -1,14 +1,14 @@
 import { ApiPromise } from '@polkadot/api';
-import '@polkadot/api-augment';
 import { Option } from '@polkadot/types';
 import { LbpPool } from '../../../../generated/graphql';
 import { PalletLbpPool } from '../../types';
+import '@polkadot/api-augment';
 
 /**
  * This function fetches all LBP pools in the network.
  *
- * @param apiInstance of APIPromise of polkadot.js
- * @returns an array of all LBP pools or empty array
+ * @param apiInstance APIPromise of polkadot.js
+ * @returns an array of all LBP pools. Can be an empty array.
  */
 export const getAllLbpPools = async (
   apiInstance: ApiPromise
