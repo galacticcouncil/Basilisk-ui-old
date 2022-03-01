@@ -76,9 +76,16 @@ export const AssetBalanceInput = ({
             }')`,
           }}
         ></div>
-        {idToAsset(methods.getValues(assetInputName))?.symbol ||
-          methods.getValues(assetInputName)}
-        <Icon name="DropdownArrow" />
+        <div className="asset-balance-input__asset-info__names">
+          <div className="asset-balance-input__asset-info__names__full-name">
+            {idToAsset(methods.getValues(assetInputName))?.fullName || ''}
+          </div>
+          <div className="asset-balance-input__asset-info__names__ticker">
+            {idToAsset(methods.getValues(assetInputName))?.symbol ||
+              methods.getValues(assetInputName)}
+            <Icon name="DropdownArrow" />
+          </div>
+        </div>
       </div>
       <div className="asset-balance-input__input-wrapper">
         <div className="asset-balance-input__input-wrapper__unit-selector">

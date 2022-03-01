@@ -61,7 +61,6 @@ export const idToAsset = (id: string | null) => {
     '2': {
       symbol: 'kUSD',
       fullName: 'Karura USD',
-      icon: false,
     },
   };
 
