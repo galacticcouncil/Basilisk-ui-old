@@ -9,12 +9,15 @@
   width: auto;
 
   max-width: 550px;
-  min-width: 350px;
+  min-width: 340px;
+
+  flex-basis: 345px;
+
   gap: 12px;
 
   background-color: $d-gray4;
   border-radius: $border-radius;
-  padding: 16px 20px;
+  padding: 16px;
 
   &__icons-wrapper {
     display: flex;

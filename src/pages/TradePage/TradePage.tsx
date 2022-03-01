@@ -34,6 +34,8 @@ import BigNumber from 'bignumber.js';
 import { useLoading } from '../../hooks/misc/useLoading';
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
+import BSX from '../../misc/icons/assets/BSX.svg';
+
 export interface TradeAssetIds {
   assetIn: string | null;
   assetOut: string | null;
@@ -54,7 +56,7 @@ export const idToAsset = (id: string | null) => {
     '0': {
       symbol: 'BSX',
       fullName: 'Basilisk',
-      icon: true,
+      icon: BSX,
     },
     '2': {
       symbol: 'kUSD',

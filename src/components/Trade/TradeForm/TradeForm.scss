@@ -17,9 +17,11 @@
   .trade-form {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     gap: 16px;
 
+    height: 100%;
     min-height: 400px;
 
     .trade-form-heading {

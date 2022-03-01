@@ -13,6 +13,8 @@ import { useFormContext } from 'react-hook-form';
 import Icon from '../../Icon/Icon';
 import { idToAsset } from '../../../pages/TradePage/TradePage';
 
+import unknownAssetIcon from '../../../misc/icons/assets/Unknown.svg';
+
 export interface AssetBalanceInputProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   balanceInputName: BalanceInputProps['name'];
@@ -65,10 +67,14 @@ export const AssetBalanceInput = ({
         data-modal-portal-toggle={toggleId}
       >
         <div
-          className={classNames({
-            'asset-icon': true,
-            unknown: !idToAsset(methods.getValues(assetInputName))?.icon,
-          })}
+          className="asset-icon"
+          style={{
+            backgroundImage: `url('${
+              idToAsset(methods.getValues(assetInputName))?.icon
+                ? idToAsset(methods.getValues(assetInputName))?.icon
+                : unknownAssetIcon
+            }')`,
+          }}
         ></div>
         {idToAsset(methods.getValues(assetInputName))?.symbol ||
           methods.getValues(assetInputName)}
