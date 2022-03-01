@@ -89,10 +89,7 @@ export const AccountSelector = ({
                         defaultMessage="No accounts available"
                       />
                     </h5>
-                    <a
-                      href="/#"
-                      className="account-selector__create-account-link"
-                    >
+                    <div className="account-selector__create-account-link">
                       <FormattedMessage
                         id="Wallet.SelectAccountHelp"
                         defaultMessage="Need help creating an account?"
@@ -101,7 +98,7 @@ export const AccountSelector = ({
                       <a href="/#" title="" target="_blank">
                         <FormattedMessage id="Wallet.ClickHere" />
                       </a>
-                    </a>
+                    </div>
                   </div>
                 )}
                 {account && (

@@ -285,16 +285,16 @@ export const TradeForm = ({
 
     switch (errors.submit?.type) {
       case 'activeAccount':
-        return 'no active account';
+        return 'Select account';
       case 'poolDoesNotExist':
-        return 'invalid pair';
+        return 'Select tokens';
     }
 
-    if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amounts';
+    if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amount';
 
     if (Object.keys(errors).length) return 'form invalid';
 
-    return 'trade';
+    return 'Swap';
   }, [isPoolLoading, errors]);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
@@ -493,19 +493,13 @@ export const TradeForm = ({
             <hr className="divider"></hr>
           </div>
           <TradeInfo
-            tradeLimit={tradeLimit}
-            expectedSlippage={slippage?.multipliedBy(100).toFixed(3)}
+            tradeLimit={fromPrecision12(tradeLimit)}
+            expectedSlippage={slippage?.multipliedBy(100).toFixed(2)}
             errors={errors}
           />
-          {JSON.stringify({
-            assetIn: errors.assetIn?.type,
-            assetOut: errors.assetOut?.type,
-            assetInAmount: errors.assetInAmount?.type,
-            assetOutAmount: errors.assetOutAmount?.type,
-            submit: errors.submit?.type,
-          })}
           <input
             type="submit"
+            className="submit-button"
             {...register('submit', {
               validate: {
                 poolDoesNotExist: () => !!pool,

@@ -44,6 +44,21 @@
       border: 0;
       left: 0;
     }
+
+    .submit-button {
+      background: $green1;
+      text-transform: uppercase;
+      border-radius: $border-radius;
+      height: 50px;
+
+      &:hover {
+        background-color: $green2;
+      }
+
+      &:disabled {
+        background-color: $l-gray5;
+      }
+    }
   }
 }
 

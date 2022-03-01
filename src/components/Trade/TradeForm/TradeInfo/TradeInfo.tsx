@@ -20,16 +20,24 @@ export const TradeInfo = ({
 }: TradeInfoProps) => {
   return (
     <div className="trade-info">
-      <p>Trade info</p>
-      <p>Expected slippage: {expectedSlippage}</p>
-      <p>Trade limit: {tradeLimit}</p>
-      <p>
-        Trade fee (%):{' '}
+      <div className="heading">Trade info</div>
+      <div>Current slippage: {expectedSlippage || '0'} %</div>
+      <div>Trade limit: {new BigNumber(tradeLimit || '0').toFixed(2)}</div>
+      <div>
+        Trade fee:{' '}
         {new BigNumber(tradeFee.numerator)
           .dividedBy(tradeFee.denominator)
-          .toFixed(3)}
+          .multipliedBy(100)
+          .toFixed(2)}
         %
-      </p>
+      </div>
+      {/* {JSON.stringify({
+        assetIn: errors?.assetIn?.type,
+        assetOut: errors?.assetOut?.type,
+        assetInAmount: errors?.assetInAmount?.type,
+        assetOutAmount: errors?.assetOutAmount?.type,
+        submit: errors?.submit?.type,
+      })} */}
     </div>
   );
 };
