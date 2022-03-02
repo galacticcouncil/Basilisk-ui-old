@@ -221,6 +221,12 @@ export const LineChart = ({
     return { yAxisMin, yAxisMax };
   }, [primaryDataset, secondaryDataset]);
 
+  const xAxisBounds = useMemo(() => {
+    const xAxisMin = from;
+    const xAxisMax = to;
+    return { xAxisMin, xAxisMax };
+  }, [from, to]);
+
   const chartOptions = useMemo<ChartOptions>(() => {
     return {
       responsive: true,
@@ -229,8 +235,8 @@ export const LineChart = ({
         xAxis: {
           display: false,
           type: 'time',
-          min: from,
-          to: to,
+          min: xAxisBounds.xAxisMin,
+          to: xAxisBounds.xAxisMax,
         },
         yAxis: {
           display: false,

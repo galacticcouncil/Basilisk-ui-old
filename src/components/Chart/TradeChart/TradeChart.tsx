@@ -211,6 +211,13 @@ export const TradeChart = ({
     []
   );
 
+  const { from, to } = useMemo(() => {
+    const from = moment().subtract(24, 'hours').valueOf()
+    const to = last(primaryDataset)?.x;
+
+    return { from, to }
+  }, [granularity, primaryDataset]);
+
   return (
     <div className="trade-chart">
       <ChartHeader
@@ -235,6 +242,8 @@ export const TradeChart = ({
               primaryDataset={primaryDataset}
               fill={true}
               trend={dataTrend}
+              from={from}
+              to={to}
               onHandleTooltip={handleTooltip}
             />
             {tooltipData?.positionX ? (
