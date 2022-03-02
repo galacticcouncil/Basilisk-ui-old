@@ -213,10 +213,11 @@ export const LineChart = ({
     );
     allData = orderBy(allData, ['y'], ['asc']);
 
-    const smallestDatapoint = first(allData)?.y;
-    const largestDatapoint = last(allData)?.y;
-    const yAxisMin = smallestDatapoint;
-    const yAxisMax = largestDatapoint;
+    const smallestDatapoint = first(allData)?.y || 0;
+    const largestDatapoint = last(allData)?.y || 0;
+    const dataScale = largestDatapoint - smallestDatapoint;
+    const yAxisMin = smallestDatapoint - dataScale * 0.1;
+    const yAxisMax = largestDatapoint + dataScale * 0.05;
     return { yAxisMin, yAxisMax };
   }, [primaryDataset, secondaryDataset]);
 

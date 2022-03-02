@@ -1,7 +1,5 @@
 @import '../../../misc/colors.module.scss';
 
-$chart-height: 25rem;
-
 .trade-chart {
   display: flex;
   flex-direction: column;
@@ -12,7 +10,7 @@ $chart-height: 25rem;
   flex-basis: 260px;
 
   background: $gray2;
-  padding: 1.5rem;
+  padding: 16px;
   position: relative;
 
   &__chart-wrapper {
@@ -24,7 +22,7 @@ $chart-height: 25rem;
     &__chart-jail {
       position: relative;
       flex-grow: 1;
-      padding: 100px 0 16px 0;
+      padding: 80px 0 0 0;
     }
   }
 
