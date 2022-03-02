@@ -114,7 +114,7 @@ export const useFormatDataset = ({
         fill,
         data: dataset,
         pointRadius: 0,
-        borderWidth: 3,
+        borderWidth: 2,
         borderColor: (() => {
           // secondary dataset is always orange
           if (!isPrimaryDataset(label)) return cssColors.orange1;

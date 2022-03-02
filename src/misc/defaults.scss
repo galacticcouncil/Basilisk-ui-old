@@ -10,9 +10,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: $d-gray3;
   color: $white1;
+  padding: 0;
 
   min-width: 360px;
   min-height: 400px;
+  height: 100vh;
+
+  /*  */
+  background: linear-gradient(0deg, #2d2a32 0%, #34333e 100%);
 }
 
 div {

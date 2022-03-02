@@ -69,10 +69,13 @@
 // SHOULD BE EXTRACTED TO COMPONENTS
 
 .balance-info {
-  line-height: 16px;
-  padding-top: 4px;
-  font-size: 12px;
   display: flex;
+  align-items: center;
+  gap: 4px;
+
+  height: 16px;
+  margin-top: 4px;
+  font-size: 10px;
 }
 
 .asset-switch {
