@@ -63,6 +63,10 @@ export const idToAsset = (id: string | null) => {
       symbol: 'kUSD',
       fullName: 'Karura USD',
     },
+    '3': {
+      symbol: 'DAI',
+      fullName: 'DAI Stablecoin',
+    },
   };
 
   return assetMetadata[id!] as any;
@@ -215,9 +219,10 @@ export const TradePage = () => {
       .reduce((assets, poolAssets) => {
         return assets.concat(poolAssets);
       }, [])
-      .map((id) => ({ id }));
+      .map((id) => id);
 
-    return uniq(assets);
+    return uniq(assets)
+      .map(id => ({ id }));
   }, [poolsData]);
 
   console.log('assets', assets);
