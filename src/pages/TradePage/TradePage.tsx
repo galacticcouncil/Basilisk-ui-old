@@ -35,6 +35,7 @@ import { useLoading } from '../../hooks/misc/useLoading';
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import BSX from '../../misc/icons/assets/BSX.svg';
+import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -201,12 +202,10 @@ export const TradePage = () => {
     depsLoading
   );
 
-  const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus,
-  } = useGetPoolsQuery({
-    skip: depsLoading,
-  });
+  const { data: poolsData, networkStatus: poolsNetworkStatus } =
+    useGetPoolsQuery({
+      skip: depsLoading,
+    });
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
@@ -231,10 +230,8 @@ export const TradePage = () => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation();
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation();
 
   const handleSubmitTrade = useCallback(
     (variables) => {
@@ -271,6 +268,30 @@ export const TradePage = () => {
 
   console.log('network status pool', poolLoading, poolNetworkStatus);
 
+  const {
+    data: activeAccountTradeBalancesData,
+    networkStatus: activeAccountTradeBalancesNetworkStatus,
+  } = useGetActiveAccountTradeBalances({
+    variables: {
+      assetInId: assetIds.assetIn || undefined,
+      assetOutId: assetIds.assetOut || undefined,
+    },
+  });
+
+  const tradeBalances = useMemo(() => {
+    const balances = activeAccountTradeBalancesData?.activeAccount?.balances;
+
+    const outBalance = find(balances, {
+      assetId: assetIds.assetOut
+    }) as Balance | undefined
+
+    const inBalance = find(balances, {
+      assetId: assetIds.assetIn
+    }) as Balance | undefined
+
+    return { outBalance, inBalance };
+  }, [activeAccountTradeBalancesData, assetIds]);
+
   return (
     <div className="trade-page">
       <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
@@ -291,6 +312,12 @@ export const TradePage = () => {
         onSubmitTrade={handleSubmitTrade}
         tradeLoading={tradeLoading}
         assets={assets}
+        activeAccountTradeBalances={tradeBalances}
+        activeAccountTradeBalancesLoading={
+          activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
+          activeAccountTradeBalancesNetworkStatus === NetworkStatus.setVariables ||
+          depsLoading
+        }
       />
 
       <div className="debug">

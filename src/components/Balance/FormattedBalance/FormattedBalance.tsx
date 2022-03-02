@@ -4,17 +4,7 @@ import log from 'loglevel';
 import './FormattedBalance.scss';
 import { UnitStyle } from '../metricUnit';
 import { useFormatSI } from './hooks/useFormatSI';
-
-// TODO: extract
-export const assetIdNameMap: Record<
-  string,
-  { symbol: string; fullName: string }
-> = {
-  '0': {
-    symbol: 'BSX',
-    fullName: 'Basilisk',
-  },
-};
+import { idToAsset } from '../../../pages/TradePage/TradePage';
 
 export interface FormattedBalanceProps {
   balance: Balance;
@@ -27,7 +17,7 @@ export const FormattedBalance = ({
   precision = 2,
   unitStyle = UnitStyle.LONG,
 }: FormattedBalanceProps) => {
-  const assetSymbol = useMemo(() => assetIdNameMap[balance.assetId]?.symbol, [
+  const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
     balance.assetId,
   ]);
   const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);

@@ -23,6 +23,7 @@ import { TradeInfo } from './TradeInfo/TradeInfo';
 import './TradeForm.scss';
 import Icon from '../../Icon/Icon';
 import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -40,14 +41,13 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true,
-    },
-  });
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<TradeFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true,
+      },
+    });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -131,6 +131,11 @@ export interface TradeFormProps {
   isPoolLoading: boolean;
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
   tradeLoading: boolean;
+  activeAccountTradeBalances?: {
+    outBalance?: Balance;
+    inBalance?: Balance;
+  },
+  activeAccountTradeBalancesLoading: boolean
 }
 
 export interface TradeFormFields {
@@ -180,6 +185,8 @@ export const TradeForm = ({
   onSubmitTrade,
   tradeLoading,
   assets,
+  activeAccountTradeBalances,
+  activeAccountTradeBalancesLoading
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
@@ -427,6 +434,37 @@ export const TradeForm = ({
     setValue('assetOut', assetIds.assetOut);
   }, [assetIds]);
 
+  const tradeBalances = useMemo(() => {
+    const assetOutAmount = getValues('assetOutAmount') || undefined;
+    const outBeforeTrade = activeAccountTradeBalances?.outBalance?.balance;
+    const outAfterTrade =
+      outBeforeTrade &&
+      (assetOutAmount) &&
+      new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0);
+    const outTradeChange = percentageChange(outBeforeTrade, outAfterTrade)?.toFixed(3);
+
+    const assetInAmount = getValues('assetInAmount') || undefined;
+    const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
+    const inAfterTrade =
+      inBeforeTrade &&
+      (assetInAmount) &&
+      new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0);
+    const inTradeChange = percentageChange(inBeforeTrade, inAfterTrade)?.toFixed(3);
+
+    return {
+      outBeforeTrade,
+      outAfterTrade,
+      outTradeChange,
+
+      inBeforeTrade,
+      inAfterTrade,
+      inTradeChange
+    };
+  }, [
+    activeAccountTradeBalances,
+    ...watch(['assetOutAmount', 'assetInAmount']),
+  ]);
+
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
@@ -456,7 +494,31 @@ export const TradeForm = ({
               assets={assets}
             />{' '}
             <div className="balance-info balance-out-info">
-              Your balance: todo
+            {activeAccountTradeBalancesLoading
+              ? 'loading'
+              // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+              : (
+                <>
+                  {tradeBalances.outBeforeTrade && assetIds.assetOut
+                  ? <FormattedBalance balance={{
+                    balance: tradeBalances.outBeforeTrade,
+                    assetId: assetIds.assetOut
+                  }}/>
+                  : <></>
+                  }
+                  {/* {'->'} */}
+                  {tradeBalances.outAfterTrade && assetIds.assetOut
+                  ? <FormattedBalance balance={{
+                    balance: tradeBalances.outAfterTrade,
+                    assetId: assetIds.assetOut
+                  }}/>
+                  : <></>
+                  }
+                  {tradeBalances.outTradeChange && `${tradeBalances.outTradeChange}%`}
+                </>
+              )
+              }
+              
             </div>
           </div>
 
@@ -498,7 +560,30 @@ export const TradeForm = ({
               assets={assets}
             />
             <div className="balance-info balance-out-info">
-              Your balance: todo
+            {activeAccountTradeBalancesLoading
+              ? 'loading'
+              // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+              : (
+                <>
+                  {tradeBalances.inBeforeTrade && assetIds.assetIn
+                  ? <FormattedBalance balance={{
+                    balance: tradeBalances.inBeforeTrade,
+                    assetId: assetIds.assetIn
+                  }}/>
+                  : <></>
+                  }
+                  {/* {'->'} */}
+                  {tradeBalances.inAfterTrade && assetIds.assetIn
+                  ? <FormattedBalance balance={{
+                    balance: tradeBalances.inAfterTrade,
+                    assetId: assetIds.assetIn
+                  }}/>
+                  : <></>
+                  }
+                  {tradeBalances.inTradeChange && `${tradeBalances.inTradeChange}%`}
+                </>
+              )
+              }
             </div>
           </div>
           <div className="divider-wrapper">
