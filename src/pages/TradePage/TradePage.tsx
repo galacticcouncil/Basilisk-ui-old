@@ -296,7 +296,7 @@ export const TradePage = () => {
       <div className="debug">
         <h3>[Trade Page] Debug Box</h3>
         <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-        <p>Trade error: {tradeError ? tradeError : '-'}</p>
+        {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
       </div>
     </div>
   );

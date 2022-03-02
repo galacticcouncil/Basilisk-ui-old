@@ -99,8 +99,13 @@
 
     overflow: hidden;
 
+    transition: transform 500ms ease;
+
     &:hover {
       cursor: pointer;
+
+      transform: rotate(180deg);
+
       svg {
         path {
           fill: $green1;
@@ -119,9 +124,6 @@
     background-color: $d-gray5;
 
     border-radius: 4px 0 0 4px;
-  }
-
-  .asset-switch-divider {
   }
 }
 

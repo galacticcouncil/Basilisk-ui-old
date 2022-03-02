@@ -119,46 +119,42 @@ export const AccountSelector = ({
           </>
         ) : (
           <div className="account-selector__message">
-            <p>
-              <FormattedMessage
-                id="Wallet.InstallInstructions"
-                values={{
-                  link: (
-                    <a
-                      href="https://polkadot.js.org/extension/"
-                      title=""
-                      className="account-selector__create-account-link"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <FormattedMessage id="Wallet.InstallLinkText" />
-                    </a>
-                  ),
-                }}
-              />
-            </p>
-            <p>
-              <FormattedMessage
-                id="Wallet.ReloadInstructions"
-                values={{
-                  link: (
-                    <a
-                      href="/#"
-                      className="account-selector__create-account-link"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.reload();
-                      }}
-                    >
-                      <FormattedMessage
-                        id="Wallet.ReloadLinkText"
-                        defaultMessage="reload the page"
-                      />
-                    </a>
-                  ),
-                }}
-              />
-            </p>
+            <FormattedMessage
+              id="Wallet.InstallInstructions"
+              values={{
+                link: (
+                  <a
+                    href="https://polkadot.js.org/extension/"
+                    title=""
+                    className="account-selector__create-account-link"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <FormattedMessage id="Wallet.InstallLinkText" />
+                  </a>
+                ),
+              }}
+            />
+            <FormattedMessage
+              id="Wallet.ReloadInstructions"
+              values={{
+                link: (
+                  <a
+                    href="/#"
+                    className="account-selector__create-account-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.reload();
+                    }}
+                  >
+                    <FormattedMessage
+                      id="Wallet.ReloadLinkText"
+                      defaultMessage="reload the page"
+                    />
+                  </a>
+                ),
+              }}
+            />
           </div>
         )}
       </div>

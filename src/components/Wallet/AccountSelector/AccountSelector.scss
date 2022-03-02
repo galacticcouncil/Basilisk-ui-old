@@ -110,8 +110,9 @@
   }
 
   &__message {
-    display: flex;
-    flex-grow: 1;
+    padding: 16px;
+
+    text-align: center;
     justify-content: center;
     align-items: center;
   }
