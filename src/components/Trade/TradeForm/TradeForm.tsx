@@ -252,9 +252,9 @@ export const TradeForm = ({
   }, [assetOutAmountInput]);
 
   useEffect(() => {
-    const assetOutAmount = getValues('assetOutAmount') || '0';
+    const assetOutAmount = getValues('assetOutAmount');
     console.log('assetOutAmount', assetOutAmount);
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !assetOutAmount) return;
     if (tradeType !== TradeType.Buy) return;
 
     console.log('assetOutAmount using math', assetOutAmount);
@@ -273,9 +273,9 @@ export const TradeForm = ({
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
 
   useEffect(() => {
-    const assetInAmount = getValues('assetInAmount') || '0';
+    const assetInAmount = getValues('assetInAmount');
     console.log('assetInAmount', assetInAmount);
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !assetInAmount) return;
     if (tradeType !== TradeType.Sell) return;
 
     const amount = math.xyk.calculate_out_given_in(
