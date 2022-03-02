@@ -1,0 +1,16 @@
+@import './../../../../misc/colors.module.scss';
+@import './../../../../misc/misc.module.scss';
+
+.trade-info {
+  &__data {
+    display: flex;
+    flex-direction: column;
+    font-size: 12px;
+    font-weight: 600;
+
+    .data-piece {
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}

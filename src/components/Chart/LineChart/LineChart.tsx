@@ -5,6 +5,7 @@ import 'chartjs-adapter-moment';
 import cssColors from './../../../misc/colors.module.scss';
 import './LineChart.scss';
 import { first, orderBy, last } from 'lodash';
+import 'chart.js/auto';
 
 export type DataPoint = {
   x: number;
@@ -70,7 +71,7 @@ export const useChartCtx = () => {
 export const greenBackgroundGradient = (
   chartCtx: CanvasRenderingContext2D | null
 ) => {
-  var gradient = chartCtx?.createLinearGradient(0, 0, 0, 260);
+  var gradient = chartCtx?.createLinearGradient(0, 0, 0, 270);
   gradient?.addColorStop(0, cssColors.green1Opacity33);
   gradient?.addColorStop(1, cssColors.gray2Opacity0);
   return gradient;
@@ -113,8 +114,7 @@ export const useFormatDataset = ({
         fill,
         data: dataset,
         pointRadius: 0,
-        tension: 0.2,
-        borderWidth: 1,
+        borderWidth: 3,
         borderColor: (() => {
           // secondary dataset is always orange
           if (!isPrimaryDataset(label)) return cssColors.orange1;
@@ -235,7 +235,7 @@ export const LineChart = ({
           display: false,
           stacked: false,
           min: yAxisBounds.yAxisMin,
-          max: yAxisBounds.yAxisMax ? yAxisBounds.yAxisMax * 1.02 : undefined,
+          max: yAxisBounds.yAxisMax ? yAxisBounds.yAxisMax : undefined,
         },
       },
       animations: {

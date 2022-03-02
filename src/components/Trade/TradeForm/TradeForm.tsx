@@ -446,13 +446,20 @@ export const TradeForm = ({
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
           <div className="trade-form-heading">You get</div>
 
-          <AssetBalanceInput
-            balanceInputName="assetOutAmount"
-            assetInputName="assetOut"
-            modalContainerRef={modalContainerRef}
-            balanceInputRef={assetOutAmountInputRef}
-            assets={assets}
-          />
+          <div className="balance-wrapper">
+            {' '}
+            <AssetBalanceInput
+              balanceInputName="assetOutAmount"
+              assetInputName="assetOut"
+              modalContainerRef={modalContainerRef}
+              balanceInputRef={assetOutAmountInputRef}
+              assets={assets}
+            />{' '}
+            <div className="balance-info balance-out-info">
+              Your balance: todo
+            </div>
+          </div>
+
           <div className="asset-switch">
             <hr className="divider asset-switch-divider"></hr>
             <div className="asset-switch-icon" onClick={handleSwitchAssets}>
@@ -482,13 +489,18 @@ export const TradeForm = ({
             </div>
           </div>
           <div className="trade-form-heading">Pay with</div>
-          <AssetBalanceInput
-            balanceInputName="assetInAmount"
-            assetInputName="assetIn"
-            modalContainerRef={modalContainerRef}
-            balanceInputRef={assetInAmountInputRef}
-            assets={assets}
-          />
+          <div className="balance-wrapper">
+            <AssetBalanceInput
+              balanceInputName="assetInAmount"
+              assetInputName="assetIn"
+              modalContainerRef={modalContainerRef}
+              balanceInputRef={assetInAmountInputRef}
+              assets={assets}
+            />
+            <div className="balance-info balance-out-info">
+              Your balance: todo
+            </div>
+          </div>
           <div className="divider-wrapper">
             <hr className="divider"></hr>
           </div>

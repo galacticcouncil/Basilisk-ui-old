@@ -12,7 +12,6 @@
   letter-spacing: 0.5px;
 
   min-width: 100px;
-  cursor: pointer;
 
   &__select {
     display: flex;
@@ -22,6 +21,8 @@
     align-items: center;
 
     color: $l-gray2;
+
+    cursor: pointer;
 
     > div {
       display: inline;
@@ -84,6 +85,8 @@
       }
 
       &:hover {
+        cursor: pointer;
+
         background-color: $green2;
         color: $d-gray4;
       }

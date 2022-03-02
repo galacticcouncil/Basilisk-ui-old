@@ -75,7 +75,7 @@ export const TradeChart = ({
   });
 
   const resetDisplayData = useCallback(() => {
-    console.log('resetDisplayData', primaryDataset)
+    console.log('resetDisplayData', primaryDataset);
     setDisplayData({
       balance: last(primaryDataset)?.y,
       // TODO; usd value of the balance needs to be determined separately
@@ -99,7 +99,7 @@ export const TradeChart = ({
         symbol: assetPair.assetB?.symbol,
         fullName: assetPair.assetB?.fullName,
       },
-    })
+    });
   }, [primaryDataset]);
 
   // TODO: temporary
@@ -129,12 +129,12 @@ export const TradeChart = ({
 
   // TODO: rewrite
   const dataTrend = useMemo(() => {
-    console.log('dataTrend', displayData.balance, referenceData?.balance);
+    // console.log('dataTrend', displayData.balance, referenceData?.balance);
     if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral;
     return displayData?.balance! >= referenceData?.balance!
       ? Trend.Positive
       : Trend.Negative;
-  }, [displayData, referenceData])
+  }, [displayData, referenceData]);
 
   // TODO: set trend based on tooltip data
   // useEffect(() => {
@@ -157,8 +157,7 @@ export const TradeChart = ({
       ...referenceData!,
       balance: first(primaryDataset)?.y,
       usdBalance: first(primaryDataset)?.y,
-      
-    })
+    });
   }, [primaryDataset]);
 
   const handleTooltip = useCallback(
@@ -174,22 +173,22 @@ export const TradeChart = ({
 
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
-          y: tooltipData?.data.y
+          y: tooltipData?.data.y,
         });
 
-        console.log('referenceData', referenceData, tooltipData.data, allData)
+        // console.log('referenceData', referenceData, tooltipData.data, allData);
 
         if (displayDataTooltip)
-          setDisplayData(displayData => ({
+          setDisplayData((displayData) => ({
             ...displayData!,
             balance: displayDataTooltip?.y,
           }));
-          setReferenceData(referenceData => {
-            return ({
-              ...referenceData!,
-              balance: last(primaryDataset)?.y
-            })
-          })
+        setReferenceData((referenceData) => {
+          return {
+            ...referenceData!,
+            balance: last(primaryDataset)?.y,
+          };
+        });
       } else {
         resetDisplayData();
       }
