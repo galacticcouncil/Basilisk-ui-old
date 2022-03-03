@@ -4,7 +4,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-moment';
 import cssColors from './../../../misc/colors.module.scss';
 import './LineChart.scss';
-import { first, orderBy, last } from 'lodash';
+import { first, orderBy, last, difference } from 'lodash';
 import 'chart.js/auto';
 
 export type DataPoint = {
@@ -216,9 +216,20 @@ export const LineChart = ({
     const smallestDatapoint = first(allData)?.y || 0;
     const largestDatapoint = last(allData)?.y || 0;
     const dataScale = largestDatapoint - smallestDatapoint;
-    const yAxisMin = smallestDatapoint - dataScale * 0.1;
-    const yAxisMax = largestDatapoint + dataScale * 0.05;
-    return { yAxisMin, yAxisMax };
+    console.log('DIFFFEERENCE', dataScale);
+    type YAxisBounds = {
+      yAxisMin: number | undefined;
+      yAxisMax: number | undefined;
+    };
+    const yAxisBounds: YAxisBounds = {
+      yAxisMin: undefined,
+      yAxisMax: undefined,
+    };
+    if (dataScale) {
+      yAxisBounds.yAxisMin = smallestDatapoint - dataScale * 0.1;
+      yAxisBounds.yAxisMax = largestDatapoint + dataScale * 0.05;
+    }
+    return yAxisBounds;
   }, [primaryDataset, secondaryDataset]);
 
   const xAxisBounds = useMemo(() => {
