@@ -119,6 +119,11 @@
   }
 
   .asset-switch-price {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 18px;
+
     right: 0;
     padding: 0 16px;
     font-size: 12px;
