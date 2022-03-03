@@ -62,11 +62,11 @@ export const TradeChart = ({
   primaryDataset,
 }: TradeChartProps) => {
   const [displayData, setDisplayData] = useState<DisplayData>({
-    balance: last(primaryDataset)?.y,
+    balance: last(primaryDataset)?.yAsString,
     // TODO; usd value of the balance needs to be determined separately
     // concept of a rich dataset, boil it down to x/y for the linechart
     // and persist usd balances etc at a higher level
-    usdBalance: last(primaryDataset)?.y,
+    usdBalance: last(primaryDataset)?.yAsString,
     // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
     asset: {
       symbol: assetPair.assetB?.symbol,
@@ -79,11 +79,11 @@ export const TradeChart = ({
   const resetDisplayData = useCallback(() => {
     console.log('resetDisplayData', primaryDataset);
     setDisplayData({
-      balance: last(primaryDataset)?.y,
+      balance: last(primaryDataset)?.yAsString,
       // TODO; usd value of the balance needs to be determined separately
       // concept of a rich dataset, boil it down to x/y for the linechart
       // and persist usd balances etc at a higher level
-      usdBalance: last(primaryDataset)?.y,
+      usdBalance: last(primaryDataset)?.yAsString,
       // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
       asset: {
         symbol: assetPair.assetB?.symbol,
@@ -91,11 +91,11 @@ export const TradeChart = ({
       },
     });
     setReferenceData({
-      balance: first(primaryDataset)?.y,
+      balance: first(primaryDataset)?.yAsString,
       // TODO; usd value of the balance needs to be determined separately
       // concept of a rich dataset, boil it down to x/y for the linechart
       // and persist usd balances etc at a higher level
-      usdBalance: first(primaryDataset)?.y,
+      usdBalance: first(primaryDataset)?.yAsString,
       // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
       asset: {
         symbol: assetPair.assetB?.symbol,
@@ -112,11 +112,11 @@ export const TradeChart = ({
   // TODO: set reference data based on if the user is interacting with the graph
   // if the user is not interacting with the graph, reference data should be
   const [referenceData, setReferenceData] = useState<DisplayData | undefined>({
-    balance: first(primaryDataset)?.y,
+    balance: first(primaryDataset)?.yAsString,
     // TODO; usd value of the balance needs to be determined separately
     // concept of a rich dataset, boil it down to x/y for the linechart
     // and persist usd balances etc at a higher level
-    usdBalance: first(primaryDataset)?.y,
+    usdBalance: first(primaryDataset)?.yAsString,
     // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
     asset: {
       symbol: assetPair.assetB?.symbol,
@@ -157,8 +157,8 @@ export const TradeChart = ({
     if (tooltipData) return;
     setReferenceData({
       ...referenceData!,
-      balance: first(primaryDataset)?.y,
-      usdBalance: first(primaryDataset)?.y,
+      balance: first(primaryDataset)?.yAsString,
+      usdBalance: first(primaryDataset)?.yAsString,
     });
   }, [primaryDataset]);
 
@@ -176,6 +176,7 @@ export const TradeChart = ({
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
           y: tooltipData?.data.y,
+          yAsString: tooltipData?.data.yAsString
         });
 
         // console.log('referenceData', referenceData, tooltipData.data, allData);
@@ -183,12 +184,12 @@ export const TradeChart = ({
         if (displayDataTooltip)
           setDisplayData((displayData) => ({
             ...displayData!,
-            balance: displayDataTooltip?.y,
+            balance: displayDataTooltip?.yAsString,
           }));
         setReferenceData((referenceData) => {
           return {
             ...referenceData!,
-            balance: last(primaryDataset)?.y,
+            balance: last(primaryDataset)?.yAsString,
           };
         });
       } else {

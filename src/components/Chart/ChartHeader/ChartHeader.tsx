@@ -8,11 +8,11 @@ import {
   DisplayData,
   PoolType,
 } from '../shared';
-import percentageChange from 'percent-change';
 import './ChartHeader.scss';
 import classNames from 'classnames';
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { percentageChange } from '../../../hooks/math/usePercentageChange';
 
 const horizontalBar = '―';
 
@@ -54,7 +54,9 @@ export const ChartHeader = ({
   const referenceDataPercentageChange = useMemo(() => {
     // console.log('referenceDataPercentageChange', referenceData?.balance, displayData.balance);
     if (!referenceData?.balance) return 0;
-    return percentageChange(referenceData.balance, displayData.balance);
+    return parseFloat(
+      percentageChange(referenceData.balance, displayData.balance)?.toFixed(3) || '0'
+    );
     // return percentageChange(displayData.balance, referenceData.balance);
   }, [displayData, referenceData]);
 

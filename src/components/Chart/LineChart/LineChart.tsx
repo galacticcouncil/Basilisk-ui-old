@@ -10,6 +10,7 @@ import 'chart.js/auto';
 export type DataPoint = {
   x: number;
   y: number;
+  yAsString?: string
 };
 
 export type Dataset = DataPoint[];

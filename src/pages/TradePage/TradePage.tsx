@@ -140,10 +140,9 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
               ),
             };
 
-            return parseFloat(
-              new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)
-            );
+            return new BigNumber(fromPrecision12(spotPrice.outIn) || '').toNumber()
           })(),
+          yAsString: fromPrecision12(spotPrice.outIn)
         };
       }
     );
@@ -151,9 +150,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
       x: new Date().getTime(),
-      y: parseFloat(
-        new BigNumber(fromPrecision12(spotPrice.outIn) || '').toFixed(3)
-      ),
+      y: new BigNumber(fromPrecision12(spotPrice.outIn) || '').toNumber(),
+      yAsString: fromPrecision12(spotPrice.outIn)
     });
 
     console.log(dataset);
