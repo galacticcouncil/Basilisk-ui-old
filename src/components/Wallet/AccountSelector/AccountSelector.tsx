@@ -34,28 +34,23 @@ export const AccountSelector = ({
 
   return (
     <div className="account-selector" ref={innerRef}>
-      <div className="account-selector__content-wrapper">
-        <div className="account-selector__heading">
-          <div className="account-selector__heading__info">
-            <div>
-              {isExtensionAvailable ? (
-                <FormattedMessage
-                  id="Wallet.SelectAccount"
-                  defaultMessage="Select account"
-                />
-              ) : (
-                <FormattedMessage
-                  id="Wallet.InstallExtension"
-                  defaultMessage="Install extension"
-                />
-              )}
-            </div>
-            <div
-              className="account-selector__close-modal-btn"
-              onClick={() => closeModal()}
-            >
-              <Icon name="Cancel" />
-            </div>
+      <div className="account-selector__content-wrapper modal-component-wrapper">
+        <div className="modal-component-heading">
+          <div>
+            {isExtensionAvailable ? (
+              <FormattedMessage
+                id="Wallet.SelectAccount"
+                defaultMessage="Select account"
+              />
+            ) : (
+              <FormattedMessage
+                id="Wallet.InstallExtension"
+                defaultMessage="Install extension"
+              />
+            )}
+          </div>
+          <div className="close-modal-btn" onClick={() => closeModal()}>
+            <Icon name="Cancel" />
           </div>
         </div>
         {isExtensionAvailable ? (
@@ -70,7 +65,7 @@ export const AccountSelector = ({
             ) : (
               <>
                 {accounts?.length ? (
-                  <div className="d-flex account-selector__accounts-list">
+                  <div className="modal-component-content">
                     {accounts?.map((account, i) => (
                       <AccountItem
                         key={i}

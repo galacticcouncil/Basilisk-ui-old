@@ -35,6 +35,8 @@ import { useLoading } from '../../hooks/misc/useLoading';
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import BSX from '../../misc/icons/assets/BSX.svg';
+import Unknown from '../../misc/icons/assets/Unknown.svg';
+
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 
 export interface TradeAssetIds {
@@ -62,10 +64,12 @@ export const idToAsset = (id: string | null) => {
     '2': {
       symbol: 'kUSD',
       fullName: 'Karura USD',
+      icon: Unknown,
     },
     '3': {
       symbol: 'DAI',
       fullName: 'DAI Stablecoin',
+      icon: Unknown,
     },
   };
 
@@ -206,10 +210,12 @@ export const TradePage = () => {
     depsLoading
   );
 
-  const { data: poolsData, networkStatus: poolsNetworkStatus } =
-    useGetPoolsQuery({
-      skip: depsLoading,
-    });
+  const {
+    data: poolsData,
+    networkStatus: poolsNetworkStatus,
+  } = useGetPoolsQuery({
+    skip: depsLoading,
+  });
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
@@ -221,8 +227,7 @@ export const TradePage = () => {
       }, [])
       .map((id) => id);
 
-    return uniq(assets)
-      .map(id => ({ id }));
+    return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
   console.log('assets', assets);
@@ -235,8 +240,10 @@ export const TradePage = () => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
 
-  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
-    useSubmitTradeMutation();
+  const [
+    submitTrade,
+    { loading: tradeLoading, error: tradeError },
+  ] = useSubmitTradeMutation();
 
   const handleSubmitTrade = useCallback(
     (variables) => {
@@ -287,12 +294,12 @@ export const TradePage = () => {
     const balances = activeAccountTradeBalancesData?.activeAccount?.balances;
 
     const outBalance = find(balances, {
-      assetId: assetIds.assetOut
-    }) as Balance | undefined
+      assetId: assetIds.assetOut,
+    }) as Balance | undefined;
 
     const inBalance = find(balances, {
-      assetId: assetIds.assetIn
-    }) as Balance | undefined
+      assetId: assetIds.assetIn,
+    }) as Balance | undefined;
 
     return { outBalance, inBalance };
   }, [activeAccountTradeBalancesData, assetIds]);
@@ -320,7 +327,8 @@ export const TradePage = () => {
         activeAccountTradeBalances={tradeBalances}
         activeAccountTradeBalancesLoading={
           activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-          activeAccountTradeBalancesNetworkStatus === NetworkStatus.setVariables ||
+          activeAccountTradeBalancesNetworkStatus ===
+            NetworkStatus.setVariables ||
           depsLoading
         }
       />

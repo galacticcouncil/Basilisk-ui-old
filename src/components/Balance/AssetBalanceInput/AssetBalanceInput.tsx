@@ -13,8 +13,6 @@ import { useFormContext } from 'react-hook-form';
 import Icon from '../../Icon/Icon';
 import { idToAsset } from '../../../pages/TradePage/TradePage';
 
-import unknownAssetIcon from '../../../misc/icons/assets/Unknown.svg';
-
 export interface AssetBalanceInputProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   balanceInputName: BalanceInputProps['name'];
@@ -71,8 +69,6 @@ export const AssetBalanceInput = ({
           style={{
             backgroundImage: `url('${
               idToAsset(methods.getValues(assetInputName))?.icon
-                ? idToAsset(methods.getValues(assetInputName))?.icon
-                : unknownAssetIcon
             }')`,
           }}
         ></div>

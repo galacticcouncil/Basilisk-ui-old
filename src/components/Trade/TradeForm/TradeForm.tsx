@@ -531,7 +531,6 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {/* {'->'} */}
                   {tradeBalances.outAfterTrade && assetIds.assetOut ? (
                     <>
                       <Icon name="RightArrow" />
@@ -546,7 +545,7 @@ export const TradeForm = ({
                     <></>
                   )}
                   {tradeBalances.outTradeChange &&
-                    `(${tradeBalances.outTradeChange}%)`}
+                    `(+${tradeBalances.outTradeChange}%)`}
                 </>
               )}
             </div>
@@ -606,7 +605,6 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {/* {'->'} */}
                   {tradeBalances.inAfterTrade && assetIds.assetIn ? (
                     <>
                       <Icon name="RightArrow" />
