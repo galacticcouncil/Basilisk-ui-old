@@ -558,23 +558,47 @@ export const TradeForm = ({
             </div>
             <div className="asset-switch-price">
               {(() => {
+                const assetOut = getValues('assetOut')
+                const assetIn = getValues('assetIn')
                 switch (tradeType) {
                   case TradeType.Sell:
-                    return `1 ${
-                      idToAsset(getValues('assetIn'))?.symbol ||
-                      getValues('assetIn')
-                    } = ${fromPrecision12(spotPrice?.inOut)} ${
-                      idToAsset(getValues('assetOut'))?.symbol ||
-                      getValues('assetOut')
-                    }`;
+                    // return `1 ${
+                    //   idToAsset(getValues('assetIn'))?.symbol ||
+                    //   getValues('assetIn')
+                    // } = ${fromPrecision12(spotPrice?.inOut)} ${
+                    //   idToAsset(getValues('assetOut'))?.symbol ||
+                    //   getValues('assetOut')
+                    // }`;
+                    return spotPrice?.inOut && assetOut
+                      ? (
+                        <>
+                          1 {idToAsset(getValues('assetIn'))?.symbol} =
+                          <FormattedBalance balance={{
+                            balance: spotPrice.inOut,
+                            assetId: assetOut
+                          }}/>
+                        </>
+                      )
+                      : <>-</>
                   case TradeType.Buy:
-                    return `1 ${
-                      idToAsset(getValues('assetOut'))?.symbol ||
-                      getValues('assetOut')
-                    } = ${fromPrecision12(spotPrice?.outIn)} ${
-                      idToAsset(getValues('assetIn'))?.symbol ||
-                      getValues('assetIn')
-                    }`;
+                    // return `1 ${
+                    //   idToAsset(getValues('assetOut'))?.symbol ||
+                    //   getValues('assetOut')
+                    // } = ${fromPrecision12(spotPrice?.outIn)} ${
+                    //   idToAsset(getValues('assetIn'))?.symbol ||
+                    //   getValues('assetIn')
+                    // }`;
+                    return spotPrice?.outIn && assetIn
+                      ? (
+                        <>
+                          1 {idToAsset(getValues('assetOut'))?.symbol} =
+                          <FormattedBalance balance={{
+                            balance: spotPrice.outIn,
+                            assetId: assetIn
+                          }}/>
+                        </>
+                      )
+                      : <>-</>
                 }
               })()}
             </div>

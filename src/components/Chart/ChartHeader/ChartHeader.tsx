@@ -11,6 +11,8 @@ import {
 import percentageChange from 'percent-change';
 import './ChartHeader.scss';
 import classNames from 'classnames';
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 
 const horizontalBar = '―';
 
@@ -97,12 +99,11 @@ export const ChartHeader = ({
             {/* TODO: add abbreviations for spot price */}
             {displayData.balance ? (
               <>
-                <FormattedNumber
-                  value={displayData.balance}
-                  style="decimal"
-                  // notation={determineNotation(displayData.balance)}
-                  minimumFractionDigits={2}
-                  maximumFractionDigits={2}
+                <FormattedBalance
+                  balance={{
+                    balance: `${toPrecision12(`${displayData.balance}`)}`,
+                    assetId: ''
+                  }}
                 />{' '}
               </>
             ) : (
