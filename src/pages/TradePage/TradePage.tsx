@@ -61,6 +61,11 @@ export const idToAsset = (id: string | null) => {
       fullName: 'Basilisk',
       icon: BSX,
     },
+    '1': {
+      symbol: 'USDC',
+      fullName: 'USD Coin',
+      icon: Unknown,
+    },
     '2': {
       symbol: 'kUSD',
       fullName: 'Karura USD',
