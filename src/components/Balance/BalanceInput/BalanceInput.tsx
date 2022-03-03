@@ -81,7 +81,6 @@ export const BalanceInput = ({
   inputRef,
 }: BalanceInputProps) => {
   const { control, register, setValue, getValues } = useFormContext();
-  const [rawValue, setRawValue] = useState<string | undefined>();
   const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
   const currencyMask = useMemo(
@@ -92,7 +91,7 @@ export const BalanceInput = ({
     [unit]
   );
 
-  const handleOnChange = useHandleOnChange({ setValue, unit, name, inputRef });
+  const { handleOnChange, isLastCharDot } = useHandleOnChange({ setValue, unit, name, inputRef });
 
   return (
     <div
@@ -115,7 +114,7 @@ export const BalanceInput = ({
                 // TODO: get rid of this
                 value={new BigNumber(
                   formatToSIWithPrecision12(field.value, unit) || ''
-                ).toString()}
+                ).toString() + (isLastCharDot ? '.' : '')}
                 onBlur={field.onBlur}
                 ref={inputRef}
                 onChange={(e) => handleOnChange(field, e)}

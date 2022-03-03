@@ -1,3 +1,4 @@
+import { last } from 'lodash';
 import log from 'loglevel';
 import {
   ChangeEvent,
@@ -22,12 +23,20 @@ export const useHandleOnChange = ({
   inputRef?: MutableRefObject<HTMLInputElement | null>;
 }) => {
   const [rawValue, setRawValue] = useState<string | undefined>();
+  /**
+   * Persists the intent to input decimal numbers by capturing the
+   * 'dot' a.k.a. the decimal point in the raw user input
+   */
+  const [isLastCharDot, setIsLastCharDot] = useState<boolean>(false);
 
   // TODO: type the value
   const setValueAs = useCallback(
     (value) => {
       // entering dangerous waters
+      const lastChar = last(value?.split(''));
       value = value?.replaceAll(thousandsSeparatorSymbol, '');
+      setIsLastCharDot(lastChar === '.');
+      log.debug('BalanceInput', value, lastChar, isLastCharDot);
       // this converts the given number to unit `NONE` and formats it with 12 digit precision
       const formattedValue = formatFromSIWithPrecision12(value, unit);
       log.debug('BalanceInput', 'setValueAs', value, formattedValue, unit);
@@ -40,7 +49,7 @@ export const useHandleOnChange = ({
   const handleOnChange = useCallback(
     (field: ControllerRenderProps, e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-      console.log('on change', value);
+      log.debug('BalanceInput', 'handleOnChange', value);
       setRawValue(value);
       field.onChange(setValueAs(value));
     },
@@ -48,11 +57,10 @@ export const useHandleOnChange = ({
   );
 
   useEffect(() => {
-    log.debug('BalanceInput', 'unit changed', rawValue, unit);
     const value = setValueAs(rawValue);
-    console.log('setting value', rawValue, value);
+    log.debug('BalanceInput', 'unit changed', rawValue, unit, value);
     setValue(name, value);
   }, [unit, rawValue]);
 
-  return handleOnChange;
+  return { handleOnChange, isLastCharDot };
 };
