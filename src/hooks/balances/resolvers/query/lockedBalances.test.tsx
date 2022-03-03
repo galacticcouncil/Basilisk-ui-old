@@ -32,58 +32,81 @@ jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
 
 describe('lockedBalances', () => {
   const address = 'bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak';
-  const entity: Entity = { id: address };
+  const entityAddress = 'bXmoSgp2Vtvctj5c292YDYu1vcYC4A5Hs1gdMjRhfXUf7Ht6x';
+  const entity: Entity = { id: entityAddress };
   const lockId = '0x6f726d6c76657374';
   const mockLockedNativeBalancesApi = [{ id: lockId, amount: '10' }];
   const typeName = 'LockedBalance';
+  // TODO type lockedBalancesByLockIdQueryResolver in implementation
+  let lockedBalancesByLockIdQueryResolver: any;
 
   describe('balancesByAddressQueryResolver', () => {
     let mockApiInstance: ApiPromise;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       mockApiInstance = getMockApiPromise();
 
       mockedLockedNativeBalances.mockReturnValueOnce(
         mockLockedNativeBalancesApi
       );
-    });
 
-    it('fails to fetch without PolkadotJS ApiPromise', async () => {
-      const brokenApiInstance = undefined as unknown as ApiPromise;
-      const lockedBalancesByLockIdQueryResolver =
-        await lockedBalancesByLockIdQueryResolverFactory(brokenApiInstance);
-
-      const lockedBalancesByLockIdQueryResolverPromise =
-        lockedBalancesByLockIdQueryResolver(entity, { lockId: lockId });
-
-      await expect(
-        lockedBalancesByLockIdQueryResolverPromise
-      ).rejects.toMatchObject(Error(errors.apiInstanceNotInitialized));
-    });
-
-    it('fails to fetch with wrong arguments', async () => {
-      const lockedBalancesByLockIdQueryResolver =
+      lockedBalancesByLockIdQueryResolver =
         await lockedBalancesByLockIdQueryResolverFactory(mockApiInstance);
-      const brokenArgs = {
-        assetIds: undefined,
-      } as unknown as LockedBalancesByLockIdResolverArgs;
-
-      const lockedBalancesByLockIdQueryResolverPromise =
-        lockedBalancesByLockIdQueryResolver(entity, brokenArgs);
-
-      await expect(
-        lockedBalancesByLockIdQueryResolverPromise
-      ).rejects.toMatchObject(
-        Error(errors.noArgumentsProvidedLockedBalanceQuery)
-      );
     });
 
-    it('can fetch lockedBalance by lockId', async () => {
-      const lockedBalancesByLockIdQueryResolver =
-        await lockedBalancesByLockIdQueryResolverFactory(mockApiInstance);
+    describe('fail cases', () => {
+      it('fails to fetch without PolkadotJS ApiPromise', async () => {
+        const brokenApiInstance = undefined as unknown as ApiPromise;
+        const lockedBalancesByLockIdQueryResolver =
+          await lockedBalancesByLockIdQueryResolverFactory(brokenApiInstance);
 
+        const lockedBalancesByLockIdQueryResolverPromise =
+          lockedBalancesByLockIdQueryResolver(entity, {
+            address,
+            lockId,
+          });
+
+        await expect(
+          lockedBalancesByLockIdQueryResolverPromise
+        ).rejects.toMatchObject(Error(errors.apiInstanceNotInitialized));
+      });
+
+      it('fails to fetch with wrong arguments', async () => {
+        const brokenArgs = {
+          lockId: undefined,
+        } as unknown as LockedBalancesByLockIdResolverArgs;
+
+        const lockedBalancesByLockIdQueryResolverPromise =
+          lockedBalancesByLockIdQueryResolver(entity, brokenArgs);
+
+        await expect(
+          lockedBalancesByLockIdQueryResolverPromise
+        ).rejects.toMatchObject(
+          Error(errors.missingArgumentsLockedBalanceQuery)
+        );
+      });
+
+      it('fails to fetch with wrong arguments and missing parent entity', async () => {
+        const brokenArgs = {
+          lockId: 'lockId',
+        } as unknown as LockedBalancesByLockIdResolverArgs;
+        const brokenEntity = {} as unknown as Entity;
+
+        const lockedBalancesByLockIdQueryResolverPromise =
+          lockedBalancesByLockIdQueryResolver(brokenEntity, brokenArgs);
+
+        await expect(
+          lockedBalancesByLockIdQueryResolverPromise
+        ).rejects.toMatchObject(
+          Error(errors.missingArgumentsLockedBalanceQuery)
+        );
+      });
+    });
+
+    it('can fetch lockedBalance by lockId and address', async () => {
       const lockedBalances = await lockedBalancesByLockIdQueryResolver(entity, {
-        lockId: lockId,
+        address,
+        lockId,
       });
 
       expect(lockedBalances).toEqual([
@@ -95,6 +118,26 @@ describe('lockedBalances', () => {
           lockId: mockLockedNativeBalancesApi[0].id,
         },
       ]);
+      expect(mockedLockedNativeBalances).toHaveBeenCalledWith(address);
+    });
+
+    it('can fetch lockedBalance by lockId and entity address', async () => {
+      const lockedBalances = await lockedBalancesByLockIdQueryResolver(entity, {
+        // address is not specified in this case
+        lockId,
+      });
+
+      expect(lockedBalances).toEqual([
+        {
+          __typename: typeName,
+          // entity address
+          id: `${entityAddress}-${constants.nativeAssetId}-${lockId}`,
+          assetId: constants.nativeAssetId,
+          balance: mockLockedNativeBalancesApi[0].amount,
+          lockId: mockLockedNativeBalancesApi[0].id,
+        },
+      ]);
+      expect(mockedLockedNativeBalances).toHaveBeenCalledWith(entityAddress);
     });
   });
 
@@ -131,7 +174,10 @@ describe('lockedBalances', () => {
         gql`
           query GetLockedBalances {
             mockEntity @client {
-              lockedBalances(lockId: "0x6f726d6c76657374") {
+              lockedBalances(
+                address: "bXmPf7DcVmFuHEmzH3UX8t6AUkfNQW8pnTeXGhFhqbfngjAak"
+                lockId: "0x6f726d6c76657374"
+              ) {
                 assetId
                 balance
                 lockId

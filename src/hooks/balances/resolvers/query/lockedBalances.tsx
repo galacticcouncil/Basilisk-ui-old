@@ -14,6 +14,7 @@ const withTypename = (lockedBalance: LockedBalance) => ({
 });
 
 export interface LockedBalancesByLockIdResolverArgs {
+  address?: string;
   lockId: string;
 }
 
@@ -25,7 +26,7 @@ export const lockedBalancesByLockIdQueryResolverFactory =
   (apiInstance?: ApiPromise) =>
   /**
    *
-   * @param _obj Any entity that has the address as id. Eg. LBPPool, XYKPool, Account
+   * @param obj Any entity that has the address as id. Eg. LBPPool, XYKPool, Account
    * @param args AssetIds or string[]
    * @returns
    */
@@ -35,13 +36,18 @@ export const lockedBalancesByLockIdQueryResolverFactory =
   ): Promise<LockedBalance[]> => {
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!args.lockId) throw Error(errors.noArgumentsProvidedLockedBalanceQuery);
+    if (!args.lockId) throw Error(errors.missingArgumentsLockedBalanceQuery);
+    // can't fetch lockedBalance without address
+    if (!args.address && !obj.id)
+      throw Error(errors.missingArgumentsLockedBalanceQuery);
+
+    const address = args.address ? args.address : obj.id;
 
     return (
-      await getLockedBalancesByLockId(apiInstance, obj.id, args.lockId)
+      await getLockedBalancesByLockId(apiInstance, address, args.lockId)
     ).map((lockedBalance: LockedBalance) => {
-      // add id and typename to each balance
-      lockedBalance.id = `${obj.id}-${lockedBalance.assetId}-${lockedBalance.lockId}`;
+      // add id(address-assetId-lockId) and typename to each balance
+      lockedBalance.id = `${address}-${lockedBalance.assetId}-${lockedBalance.lockId}`;
       return withTypename(lockedBalance);
     });
   };
