@@ -74,6 +74,8 @@ export const TradeChart = ({
     },
   });
 
+  console.log('dataset length', primaryDataset?.length, primaryDataset)
+
   const resetDisplayData = useCallback(() => {
     console.log('resetDisplayData', primaryDataset);
     setDisplayData({

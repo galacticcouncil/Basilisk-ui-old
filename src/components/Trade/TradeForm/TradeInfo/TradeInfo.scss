@@ -11,6 +11,10 @@
     .data-piece {
       display: flex;
       justify-content: space-between;
+      &__label {
+        color: #bdccd4;
+        font-weight: 700;
+      }
     }
   }
 }

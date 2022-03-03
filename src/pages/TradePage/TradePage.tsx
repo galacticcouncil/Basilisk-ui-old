@@ -156,6 +156,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
       ),
     });
 
+    console.log(dataset);
     setDataset(dataset);
   }, [historicalBalancesData?.historicalBalances, math, spotPrice, assetIds]);
 

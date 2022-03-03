@@ -9,6 +9,7 @@ export interface MetricUnitSelectorProps {
   unit: MetricUnit;
   units?: MetricUnit[];
   onUnitSelected: (unit: MetricUnit) => void;
+  children?: React.ReactNode
 }
 
 export const modalPortalToggleId = 'metric-unit-selector-toggle';
@@ -17,6 +18,7 @@ export const MetricUnitSelector = ({
   unit,
   units = Object.values(MetricUnit),
   onUnitSelected,
+  children
 }: MetricUnitSelectorProps) => {
   const selectorContainerRef = useRef<HTMLDivElement | null>(null);
   const modalPortalElement = useModalPortalElement({
@@ -34,21 +36,26 @@ export const MetricUnitSelector = ({
 
   // TODO short / long
   return (
-    <div className="metric-unit-selector">
-      {/* Currently selected unit */}
-      <div
-        className="metric-unit-selector__select"
+    <>
+      <div 
+        className="metric-unit-selector"
         onClick={handleUnitClick}
         data-modal-portal-toggle={toggleId}
       >
-        <div className="metric-unit-selector__icon">
-          <Icon name="DropdownArrow" />
+        {/* Currently selected unit */}
+        <div
+          className="metric-unit-selector__select"
+        >
+          <div className="metric-unit-selector__icon">
+            <Icon name="DropdownArrow" />
+          </div>
+          <div className="metric-unit-selector__unit">{unitMap[unit]}</div>
         </div>
-        <div className="metric-unit-selector__unit">{unitMap[unit]}</div>
+        {/* List of available units */}
+        <div ref={selectorContainerRef}></div>
+        {children}
       </div>
-      {/* List of available units */}
-      <div ref={selectorContainerRef}></div>
       {modalPortal}
-    </div>
+    </>
   );
 };

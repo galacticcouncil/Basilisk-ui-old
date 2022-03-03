@@ -148,7 +148,7 @@ export const useTooltipHandler = (
   useCallback<TooltipHandler>(
     ({ tooltip }) => {
       const visible = tooltip.opacity ? true : false;
-      const { x, y } = tooltip.dataPoints[0].parsed;
+      const { x, y } = tooltip?.dataPoints[0].parsed;
       const positionX = tooltip.caretX;
 
       if (x === tooltipData?.data.x && visible === tooltipData.visible) return;

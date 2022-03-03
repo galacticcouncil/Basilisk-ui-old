@@ -23,17 +23,17 @@ export const TradeInfo = ({
     <div className="trade-info">
       <div className="trade-info__data">
         <div className="data-piece">
-          Current slippage{' '}
+          <span className='data-piece__label'>Current slippage{' '}</span>
           <div className="data-piece__value">{expectedSlippage || '0'}%</div>
         </div>
         <div className="data-piece">
-          Trade limit{' '}
+          <span className='data-piece__label'>Trade limit{' '}</span>
           <div className="data-piece__value">
             {new BigNumber(tradeLimit || '0').toFixed(2)}
           </div>
         </div>
         <div className="data-piece">
-          Trade fee{' '}
+          <span className='data-piece__label'>Trade fee{' '}</span>
           <div className="data-piece__value">
             {new BigNumber(tradeFee.numerator)
               .dividedBy(tradeFee.denominator)

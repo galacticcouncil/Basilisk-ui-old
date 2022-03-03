@@ -85,11 +85,12 @@ export const AssetBalanceInput = ({
       </div>
       <div className="asset-balance-input__input-wrapper">
         <div className="asset-balance-input__input-wrapper__unit-selector">
-          <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
-          <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
-            {idToAsset(methods.getValues(assetInputName))?.symbol ||
-              methods.getValues(assetInputName)}
-          </div>
+          <MetricUnitSelector unit={unit} onUnitSelected={setUnit}>
+            <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
+              {idToAsset(methods.getValues(assetInputName))?.symbol ||
+                methods.getValues(assetInputName)}
+            </div>
+          </MetricUnitSelector>
         </div>
 
         <BalanceInput

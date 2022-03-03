@@ -13,6 +13,16 @@
 
   min-width: 100px;
 
+  &:hover {
+    cursor: pointer;
+    
+    svg {
+      path {
+        fill: $green1;
+      }
+    }
+  }
+
   &__select {
     display: flex;
     font-size: 0.65em;
@@ -22,20 +32,8 @@
 
     color: $l-gray2;
 
-    cursor: pointer;
-
     > div {
       display: inline;
-    }
-
-    &:hover {
-      color: $green1;
-
-      svg {
-        path {
-          fill: $green1;
-        }
-      }
     }
   }
 
