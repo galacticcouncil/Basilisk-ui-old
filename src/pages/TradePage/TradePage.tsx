@@ -141,12 +141,12 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
               ),
             };
 
-            const y = new BigNumber(fromPrecision12(spotPrice.outIn) || '')
+            const y = new BigNumber(fromPrecision12(spotPrice.outIn) || '');
 
             return {
               y: y.toNumber(),
-              yAsString: fromPrecision12(spotPrice.outIn)
-            }
+              yAsString: fromPrecision12(spotPrice.outIn),
+            };
           })(),
         };
       }
@@ -156,7 +156,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
       // TODO: pretending this is now, should use the time from the lastBlock instead
       x: new Date().getTime(),
       y: new BigNumber(fromPrecision12(spotPrice.outIn) || '').toNumber(),
-      yAsString: fromPrecision12(spotPrice.outIn)
+      yAsString: fromPrecision12(spotPrice.outIn),
     });
 
     console.log(dataset);
@@ -206,7 +206,9 @@ export const TradePage = () => {
   });
   const { math } = useMath();
   // progress, not broadcast because we dont wait for broadcast to happen here
-  const [notification, setNotification] = useState<'standby' | 'progress' | 'success' | 'failure'>('standby');
+  const [notification, setNotification] = useState<
+    'standby' | 'pending' | 'success' | 'failed'
+  >('standby');
 
   const depsLoading = useLoading();
   const {
@@ -253,30 +255,33 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [submitTrade, { loading: tradeLoading, error: tradeError }] = useSubmitTradeMutation({
-     onCompleted: () => {
-       setNotification('success')
-       // reset notification status in 3 seconds, with the ability to stop the timer
-       clearNotificationIntervalRef.current = setTimeout(() => {
-         setNotification('standby')
-       }, 3000)
-     },
-     onError: () => {
-       console.log('onError');
-       setNotification('failure')
-       clearNotificationIntervalRef.current = setTimeout(() => {
-         setNotification('standby')
-       }, 3000)
-     },
-   });
+  const [
+    submitTrade,
+    { loading: tradeLoading, error: tradeError },
+  ] = useSubmitTradeMutation({
+    onCompleted: () => {
+      setNotification('success');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+    onError: () => {
+      console.log('onError');
+      setNotification('failed');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+  });
 
-   useEffect(() => {
-     if (tradeLoading) setNotification('progress')
-   }, [tradeLoading])
+  useEffect(() => {
+    if (tradeLoading) setNotification('pending');
+  }, [tradeLoading]);
 
   const handleSubmitTrade = useCallback(
     (variables) => {
-      clearNotificationIntervalRef.current && clearTimeout(clearNotificationIntervalRef.current);
+      clearNotificationIntervalRef.current &&
+        clearTimeout(clearNotificationIntervalRef.current);
       clearNotificationIntervalRef.current = null;
       submitTrade({ variables });
     },
@@ -336,39 +341,42 @@ export const TradePage = () => {
   }, [activeAccountTradeBalancesData, assetIds]);
 
   return (
-    <div className="trade-page">
-      Notification: {notification}
-      <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
-      <TradeForm
-        assetIds={assetIds}
-        onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-        isActiveAccountConnected={isActiveAccountConnected}
-        pool={pool}
-        // first load and each time the asset ids (variables) change
-        isPoolLoading={
-          poolNetworkStatus === NetworkStatus.loading ||
-          poolNetworkStatus === NetworkStatus.setVariables ||
-          depsLoading
-        }
-        assetInLiquidity={assetInLiquidity}
-        assetOutLiquidity={assetOutLiquidity}
-        spotPrice={spotPrice}
-        onSubmitTrade={handleSubmitTrade}
-        tradeLoading={tradeLoading}
-        assets={assets}
-        activeAccountTradeBalances={tradeBalances}
-        activeAccountTradeBalancesLoading={
-          activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-          activeAccountTradeBalancesNetworkStatus ===
-            NetworkStatus.setVariables ||
-          depsLoading
-        }
-      />
-
-      <div className="debug">
-        <h3>[Trade Page] Debug Box</h3>
-        <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-        {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+    <div className="trade-page-wrapper">
+      <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification">transaction {notification}</div>
+      </div>
+      <div className="trade-page">
+        <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
+        <TradeForm
+          assetIds={assetIds}
+          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+          isActiveAccountConnected={isActiveAccountConnected}
+          pool={pool}
+          // first load and each time the asset ids (variables) change
+          isPoolLoading={
+            poolNetworkStatus === NetworkStatus.loading ||
+            poolNetworkStatus === NetworkStatus.setVariables ||
+            depsLoading
+          }
+          assetInLiquidity={assetInLiquidity}
+          assetOutLiquidity={assetOutLiquidity}
+          spotPrice={spotPrice}
+          onSubmitTrade={handleSubmitTrade}
+          tradeLoading={tradeLoading}
+          assets={assets}
+          activeAccountTradeBalances={tradeBalances}
+          activeAccountTradeBalancesLoading={
+            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
+            activeAccountTradeBalancesNetworkStatus ===
+              NetworkStatus.setVariables ||
+            depsLoading
+          }
+        />
+        <div className="debug">
+          <h3>[Trade Page] Debug Box</h3>
+          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+          {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+        </div>
       </div>
     </div>
   );

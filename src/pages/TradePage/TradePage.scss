@@ -1,4 +1,9 @@
 @import '../../misc/misc.module.scss';
+@import '../../misc/colors.module.scss';
+
+.trade-page-wrapper {
+  position: relative;
+}
 
 .trade-page {
   display: flex;
@@ -8,4 +13,50 @@
 
   border-radius: $border-radius;
   overflow: hidden;
+}
+
+.notifications-bar {
+  display: flex;
+  justify-content: center;
+
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 14px;
+  font-weight: 600;
+  height: 50px;
+  padding: 0 16px;
+  width: 175px;
+
+  background-color: $d-gray5;
+  border-radius: $border-radius;
+
+  transition: top 200ms ease, background-color, 200ms ease;
+
+  &.transaction-standby {
+    top: 0;
+    background-color: $d-gray5;
+
+    .notification {
+      visibility: hidden;
+    }
+  }
+
+  &.transaction-success {
+    top: -24px;
+    background-color: $green2;
+    color: $black;
+  }
+
+  &.transaction-failed {
+    top: -24px;
+    background-color: $red1;
+    color: $black;
+  }
+
+  &.transaction-pending {
+    top: -24px;
+    background-color: $orange1;
+    color: $black;
+  }
 }
