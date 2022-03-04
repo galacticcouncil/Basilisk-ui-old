@@ -40,13 +40,13 @@
       height: 12px;
       border-radius: 100%;
       &.green {
-        background-color: green;
+        background-color: $green2;
       }
       &.orange {
-        background-color: orange;
+        background-color: $orange1;
       }
       &.red {
-        background-color: red;
+        background-color: $red1;
       }
     }
   }
