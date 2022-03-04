@@ -1,93 +1,24 @@
-name: Build & Deploy UI app & Storybook
-on:
-  push:
-    branches:
-      - develop
-      - 'fix/**'
-      - 'feat/**'
-  pull_request:
-    branches:
-      - 'fix/**'
-      - 'feat/**'
+name: Deploy App and Storybook
 
-# GH_PAGES_FULL_BRANCH - app-builds-gh-pages
+on:
+  workflow_call:
+    inputs:
+      app-build-artifact-name:
+        required: true
+        type: string
+      storybook-build-artifact-name:
+        required: true
+        type: string
+    secrets:
+      gh_token:
+        required: true
+      gh_pages_full_branch:
+        required: true
 
 jobs:
-  build:
-    name: Build UI app and Storybook
-    runs-on: macos-latest
-    steps:
-
-      - uses: actions/checkout@v2
-
-      - name: Install Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 17.3
-
-      - name: Cache Node Modules
-        id: cache-node-modules-ui-app-v1
-        uses: actions/cache@v2
-        with:
-          path: node_modules
-          key: node-modules-ui-app-v2-${{ hashFiles('yarn.lock') }}
-
-      - name: Install NPM packages
-        if: steps.cache-node-modules-ui-app-v1.outputs.cache-hit != 'true'
-        run: rm -rf node_modules && yarn install --frozen-lockfile
-
-      - name: Update browserslist
-        run: npx browserslist@latest --update-db
-
-      - name: Update script file
-        shell: bash
-        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
-
-      - name: Extract branch folder name
-        shell: bash
-        run: |
-          if [[ $GITHUB_EVENT_NAME = 'push' ]]
-          then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
-          then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
-          else
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-          fi
-        id: extract_branch
-
-      - name: Build App and Storybook
-        run: |
-          yarn run build
-          yarn run storybook:build -- -o sb-build-files
-        env:
-          CI: false
-          REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
-          NODE_OPTIONS: --openssl-legacy-provider
-
-      - name: Upload script files
-        uses: actions/upload-artifact@v2
-        with:
-          name: script-files
-          path: ./scripts
-
-      - name: Upload production-ready SB build files
-        uses: actions/upload-artifact@v2
-        with:
-          name: sb-build-files
-          path: ./sb-build-files
-
-      - name: Upload production-ready App build files
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-build-files
-          path: ./build
-
   clear_build:
     name: Clear existing build
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -98,14 +29,14 @@ jobs:
           chmod -R 777 ./scripts
           echo "##[set-output name=is_ghp_branch_exists;]$(./scripts/gh-actions-is-branch-exists.sh "$GH_PAGES_FULL_BRANCH")"
         env:
-          GH_PAGES_FULL_BRANCH: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+          GH_PAGES_FULL_BRANCH: ${{ secrets.gh_pages_full_branch }}
         id: ghp_branch_existence
 
       - name: Checkout gh-pages branch
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         uses: actions/checkout@v2
         with:
-          ref: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+          ref: ${{ secrets.gh_pages_full_branch }}
 
       - name: Download artifact
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
@@ -149,12 +80,12 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v4
         if: steps.auto-commit-action.outputs.changes_detected == 'true' && steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true'
         with:
-          branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+          branch: ${{ secrets.gh_pages_full_branch }}
 
   deploy:
     name: Deploy new builds
-    if: ${{ always() && needs.build.result=='success' }}
-    needs: [build, clear_build]
+    if: ${{ always() }}
+    needs: clear_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -162,13 +93,13 @@ jobs:
       - name: Download artifact - Storybook (build files)
         uses: actions/download-artifact@v2
         with:
-          name: sb-build-files
+          name: ${{ inputs.storybook-build-artifact-name }}
           path: ./sb-build-files
 
       - name: Download artifact - App (build files)
         uses: actions/download-artifact@v2
         with:
-          name: app-build-files
+          name: ${{ inputs.app-build-artifact-name }}
           path: ./app-build-files
 
       - name: Download artifact
@@ -194,15 +125,15 @@ jobs:
       - name: Deploy Storybook to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          publish_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+          github_token: ${{ secrets.gh_token }}
+          publish_branch: ${{ secrets.gh_pages_full_branch }}
           publish_dir: ./sb-build-files
           destination_dir: ${{ format('{0}/{1}', steps.extract_branch.outputs.branch, 'storybook') }}
 
       - name: Deploy App to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          publish_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+          github_token: ${{ secrets.gh_token }}
+          publish_branch: ${{ secrets.gh_pages_full_branch }}
           publish_dir: ./app-build-files
           destination_dir: ${{ format('{0}/{1}', steps.extract_branch.outputs.branch, 'app') }}

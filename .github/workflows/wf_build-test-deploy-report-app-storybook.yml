@@ -1,0 +1,55 @@
+name: Build Test Deploy App and Storybook
+#on:
+#  pull_request:
+#    branches:
+#      - develop
+
+jobs:
+
+  build-app-storybook:
+    name: Build App and Storybook
+    uses: ./.github/workflows/_called_build-app-and-storybook.yml
+    with:
+      app-build-artifact-name: app-build-files
+      storybook-build-artifact-name: sb-build-files
+      app-node-modules-cache-key: cache-node-modules-ui-app
+
+  app-unit-tests:
+    name: Run applicatioin unit tests
+    needs: build-app-storybook
+    uses: ./.github/workflows/_called_run-app-unit-tests.yml
+    if: ${{ needs.build-app-storybook.result=='success' }}
+    with:
+      base-branch-codecov-artifact-name: ref-lcov.info
+      working-branch-codecov-artifact-name: working-lcov.info
+      app-node-modules-cache-key: cache-node-modules-ui-app
+
+  storybook-e2e-tests:
+    name: Run Storybook e2e tests
+    needs: build-app-storybook
+    uses: ./.github/workflows/_called_run-storybook-e2e-tests.yml
+    if: ${{ needs.build-app-storybook.result=='success' }}
+    with:
+      storybook-build-artifact-name: sb-build-files
+      app-node-modules-cache-key: cache-node-modules-ui-app
+
+  app-e2e-tests:
+    name: Run App e2e tests
+    needs: build-app-storybook
+    uses: ./.github/workflows/_called_run-app-e2e-tests.yml
+    if: ${{ needs.build-app-storybook.result=='success' }}
+    with:
+      storybook-build-artifact-name: sb-build-files
+      app-node-modules-cache-key: cache-node-modules-ui-app
+
+  deploy-app-storybook-builds:
+    name: Deploy App&Storybook builds
+    needs: [build-app-storybook, app-unit-tests, storybook-e2e-tests, app-e2e-tests]
+    uses: ./.github/workflows/_called_deploy-app-and-storybook.yml
+    if: ${{ needs.build-app-storybook.result=='success' }}
+    with:
+      app-build-artifact-name: app-build-files
+      storybook-build-artifact-name: sb-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
