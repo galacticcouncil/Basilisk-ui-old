@@ -6,7 +6,7 @@
   flex-basis: 350px;
   flex-grow: 1;
 
-  padding: 16px;
+  padding: 14px;
   min-width: 350px;
 
   background-color: $d-gray4;
@@ -19,14 +19,13 @@
     flex-direction: column;
     justify-content: space-between;
 
-    padding: 8px 0;
-
     gap: 8px;
 
     height: 100%;
     min-height: 400px;
 
     .trade-form-heading {
+      padding-top: 4px;
       color: $l-gray3;
       font-size: 18px;
       font-weight: 500;
