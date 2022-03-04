@@ -180,8 +180,8 @@ jobs:
         env:
           PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
 
-      - name: Sleep for 5 seconds
-        run: sleep 5s
+      - name: Sleep for 30 seconds (for compiling html reports)
+        run: sleep 30s
         shell: bash
 
       - name: Upload trace files

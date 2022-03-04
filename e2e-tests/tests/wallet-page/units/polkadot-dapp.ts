@@ -9,6 +9,7 @@ expect.extend({ toMatchImageSnapshot });
 const testUnitPolkadotUiDemoTest = async (
   browserContext: ChromiumBrowserContext
 ) => {
+  await browserContext.tracing.start({ screenshots: true, snapshots: true });
   await browserContext.tracing.startChunk({
     title: 'testUnitPolkadotUiDemoTest',
   });

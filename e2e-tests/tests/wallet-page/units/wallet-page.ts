@@ -8,6 +8,7 @@ const { expect } = require('@playwright/test');
 expect.extend({ toMatchImageSnapshot });
 
 const testUnitWalletPage = async (browserContext: ChromiumBrowserContext) => {
+  await browserContext.tracing.start({ screenshots: true, snapshots: true });
   await browserContext.tracing.startChunk({ title: 'testUnitWalletPage' });
 
   const page: Page = await browserContext.newPage();

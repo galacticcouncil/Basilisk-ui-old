@@ -377,10 +377,12 @@ variable definitions as `.env.test.e2e.ci` but with replaced `__VAR_NAMER__` pla
 repo secrets during GH Actions workflow). 
 
 For running e2e test locally you should:
-1) Build UI project
-2) Run testnet
-3) Run built UI project in local server `http://127.0.0.1:3000`
-4) Run tests with `yarn test:e2e-local`
+1) `npx playwright install` if necessary
+2) Build UI project
+3) Run local testnet (with Basilisk-api).
+4) Run built UI project in local server `http://127.0.0.1:3000` (can be `yarn start`)
+5) Run tests with `yarn test:e2e-local`
+6) Check testing results in `ui-app-e2e-results.html` and screenshots in `./traces`
 
 
 ### Storybook testing

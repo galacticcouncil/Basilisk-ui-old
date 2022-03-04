@@ -10,6 +10,7 @@
 /coverage
 /storybook-testing/results
 /traces
+/test-results
 
 # production
 /build

@@ -19,7 +19,8 @@ let page: Page;
 let browserContext: ChromiumBrowserContext;
 let extensionURL: string;
 
-test.skip('The Polkadot.js Extension browser should', () => {
+// test.skip('The Polkadot.js Extension browser should', () => {
+test.describe('The Polkadot.js Extension browser should', () => {
   test.beforeAll(async () => {
     const init = await initBrowserWithExtension();
 
@@ -31,6 +32,10 @@ test.skip('The Polkadot.js Extension browser should', () => {
       title: 'Init Browser with Polkadot.js extension',
     });
 
+    /**
+     * We need import Alice (or any other) account into dapp which can be used
+     * in further tests for signing transactions.
+     */
     page = await importPolkadotDappAccount({
       browserContext,
       extensionURL,
@@ -46,7 +51,6 @@ test.skip('The Polkadot.js Extension browser should', () => {
   });
 
   test.afterAll(async () => {
-    // await browserContext.tracing.stop({ path: './traces/wallet-page.zip' });
 
     await browserContext?.close();
 
@@ -55,9 +59,11 @@ test.skip('The Polkadot.js Extension browser should', () => {
     extensionURL = '';
   });
 
+  test('open PolkadotUI app', async () =>
+    await testUnitPolkadotUiDemoTest(browserContext));
+
   test('open Basilisk UI app Wallet page', async () =>
     await testUnitWalletPage(browserContext));
 
-  test('open PolkadotUI app', async () =>
-    await testUnitPolkadotUiDemoTest(browserContext));
+
 });
