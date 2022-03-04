@@ -1,5 +1,6 @@
-import { getPoolAccount as getLpbPollAccount } from './getPoolAccount';
+import { getPoolAccount } from './getPoolAccount';
 
+// RPCs exposed within the LBP module
 export const lbp = {
-  getLpbPollAccount,
+  getPoolAccount,
 };

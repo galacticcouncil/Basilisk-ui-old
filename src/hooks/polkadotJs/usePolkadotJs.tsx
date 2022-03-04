@@ -51,7 +51,7 @@ export const useConfigurePolkadotJs = () => {
         provider,
         types,
         typesAlias,
-        rpc,
+        rpc, // custom definitions for RPC methods
       });
       setApiInstance(apiInstance);
     })();
