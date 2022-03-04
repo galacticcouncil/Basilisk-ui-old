@@ -551,8 +551,11 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.outTradeChange &&
-                    `(+${tradeBalances.outTradeChange}%)`}
+                  {tradeBalances.outTradeChange && (
+                    <div className="green">
+                      (${tradeBalances.outTradeChange}%)
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -653,8 +656,9 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.inTradeChange &&
-                    `(${tradeBalances.inTradeChange}%)`}
+                  {tradeBalances.inTradeChange && (
+                    <div className="red">(${tradeBalances.inTradeChange}%)</div>
+                  )}
                 </>
               )}
             </div>
