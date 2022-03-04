@@ -55,7 +55,18 @@ export const TradeInfo = ({
         </div>
       </div>
       {/* TODO Error message */}
-      <div className="error">
+      <div
+        className={
+          'validation' +
+          (errors?.assetIn?.type ||
+          errors?.assetOut?.type ||
+          errors?.assetInAmount?.type ||
+          errors?.assetOutAmount?.type ||
+          errors?.submit?.type
+            ? ' error'
+            : '')
+        }
+      >
         {errors?.assetIn?.type ||
           errors?.assetOut?.type ||
           errors?.assetInAmount?.type ||

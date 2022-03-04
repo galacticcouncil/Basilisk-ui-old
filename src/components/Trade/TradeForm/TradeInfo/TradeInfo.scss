@@ -4,6 +4,7 @@
 .trade-info {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 4px;
 
   min-height: 80px;
@@ -14,8 +15,16 @@
     display: flex;
     flex-direction: column;
 
+    justify-content: center;
+
+    max-height: 50px;
+    opacity: 1;
+
+    transition: max-height 0.3s ease, opacity 0.15s ease;
+
     &.hidden {
-      display: none;
+      max-height: 0px;
+      opacity: 0;
     }
 
     .data-piece {
@@ -27,14 +36,28 @@
       }
     }
   }
-  .error {
-    font-size: 12px;
-    font-weight: 600;
-    color: $red1;
-  }
 
-  .warning {
-    font-size: 14;
-    color: $orange1;
+  .validation {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+
+    transition: max-height 0.3s ease, opacity 0.15s ease;
+
+    &.error {
+      max-height: 60px;
+      opacity: 1;
+
+      font-size: 12px;
+      color: $red1;
+    }
+
+    &.warning {
+      max-height: 30px;
+      opacity: 1;
+
+      font-size: 14;
+      color: $orange1;
+    }
   }
 }
