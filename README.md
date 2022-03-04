@@ -279,9 +279,82 @@ export const usePoolResolver = () => useCallback(() => {
 });
 ```
 
-## E2E testing
+## Contributing
 
-### Build Polkadot extension
+### Tests code coverage
+All application layers must be tested as full as it's possible. At the moment we don't set strict
+rule for tests coverage threshold, but there is temporary soft rule for all new files - 
+**each new file must have tests coverage not less than 90%**.
+
+
+
+### Conventional naming for commits and pull-requests
+
+
+We are using conventional commits and pull-requests naming strategy. Specification for conventional naming can be 
+found [here](https://www.conventionalcommits.org/en/v1.0.0/#specification).
+
+**Commits:**
+For making conventional commits, you can run `yarn commit` and go through commit flow or add
+conventional commit message manually.
+
+**Pull-request:**
+Each pull-request name must fit to Conventional Commits messaging strategy.
+
+For successful merge of any PR it must fit to the next requirements:
+- at least 1 review from repository contributors;
+- review from Code Owner;
+- working branch must be up to date before merge;
+- all conversation must be resolved;
+- [Semantic Pull Requests](https://github.com/zeke/semantic-pull-requests) check must be successfully passed. 
+Next types for pull-requests are supported:
+  - `feat`
+  - `fix`
+  - `docs`
+  - `style`
+  - `refactor`
+  - `perf`
+  - `test`
+  - `build`
+  - `ci`
+  - `chore`
+  - `revert`
+
+
+## Testing
+
+### App unit testing
+
+For unit testing we use [Jest](https://jestjs.io/). All app unit testing configs are defined 
+in `craco.config.js` in `jest` section.
+
+For running all unit tests execute next command:
+```shell
+# Local testing
+yarn test
+
+# Testing in CI flow
+yarn test:ci
+```
+
+Testing process provides code coverage report in terminal as a text output and detailed report
+in `./coverage` folder. Moreover, detailed report is used in GH Action testing workflow for publication coverage report as 
+comment in appropriate pull-request.
+`./coverage/lcov-report/index.html` can be open in web-browser for 
+investigation of coverage details.
+
+If you need to test specific file and get code coverage report for this file, use this approach:
+```shell
+yarn test <test-file-name.test.tsx> --collectCoverageOnlyFrom=<tested-file-name.tsx>
+
+# For instance:
+yarn test src/hooks/balances/resolvers/query/balances.test.tsx --collectCoverageOnlyFrom=src/hooks/balances/resolvers/query/balances.tsx
+```
+
+
+### App E2E testing
+
+#### Build Polkadot extension
 
 1. Clone polkadot-dapp [repo](https://github.com/polkadot-js/extension) to `./polkadot-dapp` folder
 2. `cd extension`
@@ -290,7 +363,7 @@ export const usePoolResolver = () => useCallback(() => {
 5. Unzip newly built archive `master-build` to the same folder as archive's root. All necessary
    extension files are located in `master-build` folder which can be used as dapp src root.
 
-### E2E Testing requirements
+#### E2E Testing requirements
 
 GH Actions musk have configured next Repo secrets:
 ```yaml

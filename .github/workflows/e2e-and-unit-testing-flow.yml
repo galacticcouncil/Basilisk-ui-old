@@ -5,80 +5,80 @@ on:
       - develop
 
 jobs:
-  set_test_env_polkadot_node:
-    name: Set test environment - Polkadot-node
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone Polkadot-node
-        run: |
-          git clone https://github.com/paritytech/polkadot.git
-
-      - name: Cache binary file for Polkadot-node
-        id: cache-bin-polkadot-node
-        uses: actions/cache@v2
-        with:
-          path: polkadot/target/release
-          key: bin-polkadot-node-3-${{ hashFiles('polkadot/Cargo.lock') }}
-
-      - name: Fetch Polkadot-node bin file
-        if: steps.cache-bin-polkadot-node.outputs.cache-hit != 'true'
-        run: |
-          cd polkadot
-          mkdir -p target
-          cd target
-          mkdir -p release
-          cd release
-          wget https://github.com/paritytech/polkadot/releases/download/v0.9.13/polkadot
-
-      - name: Make Polkadot-node bin executable
-        run: |
-          cd polkadot/target/release
-          chmod +x polkadot
-
-      - name: Save artifacts - Polkadot-node
-        uses: actions/upload-artifact@v2
-        with:
-          name: polkadot-node-artifacts
-          path: ./polkadot/target/release
-
-  set_test_env_basilisk_node:
-    name: Set test environment - Basilisk-node
-    runs-on: ubuntu-latest
-    steps:
-      - name: Clone Basilisk-node
-        run: |
-          git clone https://github.com/galacticcouncil/Basilisk-node.git
-
-      - name: Cache binary file for Basilisk-node
-        id: cache-bin-basilisk-node
-        uses: actions/cache@v2
-        with:
-          path: Basilisk-node/target/release
-          key: bin-basilisk-node-5-${{ hashFiles('Basilisk-node/Cargo.lock') }}
-
-      - name: Fetch Basilisk-node bin file
-        if: steps.cache-bin-basilisk-node.outputs.cache-hit != 'true'
-        run: |
-          cd Basilisk-node
-          mkdir -p target
-          cd target
-          mkdir -p release
-          cd release
-          wget https://github.com/galacticcouncil/Basilisk-node/releases/download/v6.0.0/basilisk
-          cp -v basilisk testing-basilisk
-          ls
-
-      - name: Make Basilisk-node bin executable
-        run: |
-          cd Basilisk-node/target/release
-          chmod +x basilisk
-          chmod +x testing-basilisk
-
-      - name: Save artifacts - Basilisk-node
-        uses: actions/upload-artifact@v2
-        with:
-          name: basilisk-node-artifacts
-          path: ./Basilisk-node
+#  set_test_env_polkadot_node:
+#    name: Set test environment - Polkadot-node
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Clone Polkadot-node
+#        run: |
+#          git clone https://github.com/paritytech/polkadot.git
+#
+#      - name: Cache binary file for Polkadot-node
+#        id: cache-bin-polkadot-node
+#        uses: actions/cache@v2
+#        with:
+#          path: polkadot/target/release
+#          key: bin-polkadot-node-3-${{ hashFiles('polkadot/Cargo.lock') }}
+#
+#      - name: Fetch Polkadot-node bin file
+#        if: steps.cache-bin-polkadot-node.outputs.cache-hit != 'true'
+#        run: |
+#          cd polkadot
+#          mkdir -p target
+#          cd target
+#          mkdir -p release
+#          cd release
+#          wget https://github.com/paritytech/polkadot/releases/download/v0.9.13/polkadot
+#
+#      - name: Make Polkadot-node bin executable
+#        run: |
+#          cd polkadot/target/release
+#          chmod +x polkadot
+#
+#      - name: Save artifacts - Polkadot-node
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: polkadot-node-artifacts
+#          path: ./polkadot/target/release
+#
+#  set_test_env_basilisk_node:
+#    name: Set test environment - Basilisk-node
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Clone Basilisk-node
+#        run: |
+#          git clone https://github.com/galacticcouncil/Basilisk-node.git
+#
+#      - name: Cache binary file for Basilisk-node
+#        id: cache-bin-basilisk-node
+#        uses: actions/cache@v2
+#        with:
+#          path: Basilisk-node/target/release
+#          key: bin-basilisk-node-5-${{ hashFiles('Basilisk-node/Cargo.lock') }}
+#
+#      - name: Fetch Basilisk-node bin file
+#        if: steps.cache-bin-basilisk-node.outputs.cache-hit != 'true'
+#        run: |
+#          cd Basilisk-node
+#          mkdir -p target
+#          cd target
+#          mkdir -p release
+#          cd release
+#          wget https://github.com/galacticcouncil/Basilisk-node/releases/download/v6.0.0/basilisk
+#          cp -v basilisk testing-basilisk
+#          ls
+#
+#      - name: Make Basilisk-node bin executable
+#        run: |
+#          cd Basilisk-node/target/release
+#          chmod +x basilisk
+#          chmod +x testing-basilisk
+#
+#      - name: Save artifacts - Basilisk-node
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: basilisk-node-artifacts
+#          path: ./Basilisk-node
 
   build_app:
     name: Build UI application
@@ -296,15 +296,15 @@ jobs:
   #         killall -q -v polkadot
   #         killall -q -v testing-basilisk
 
-  purge_testnet_artifacts:
-    name: Purge testnet artifacts
-    if: ${{ always() }}
-    runs-on: ubuntu-latest
-    needs: run_tests
-    steps:
-      - uses: geekyeggo/delete-artifact@v1
-        with:
-          name: |
-            basilisk-node-artifacts
-            polkadot-node-artifacts
-          failOnError: false
+#  purge_testnet_artifacts:
+#    name: Purge testnet artifacts
+#    if: ${{ always() }}
+#    runs-on: ubuntu-latest
+#    needs: [set_test_env_polkadot_node, ]
+#    steps:
+#      - uses: geekyeggo/delete-artifact@v1
+#        with:
+#          name: |
+#            basilisk-node-artifacts
+#            polkadot-node-artifacts
+#          failOnError: false

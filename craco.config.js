@@ -32,6 +32,14 @@ module.exports = {
           'default',
           ['jest-junit', { outputFile: 'ui-app-unit-tests-results.xml' }],
         ],
+        collectCoverage: true,
+        collectCoverageFrom: ["src/**/*.{ts,tsx}", '!**/node_modules/**'],
+        // "coverageThreshold": {
+        //   "global": {
+        //     "lines": 90
+        //   }
+        // },
+        coverageReporters: ['text', 'lcov'],
         testPathIgnorePatterns: ['./*.stories.test.ts$'],
         transformIgnorePatterns: ['node_modules/(?!@polkadot)/'],
         // testResultsProcessor:
@@ -39,5 +47,3 @@ module.exports = {
     },
   },
 };
-
-// module.exports = {}
