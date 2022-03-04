@@ -3,7 +3,7 @@ import { Fee } from '../../../generated/graphql';
 
 export const repayFeeDataType = '(u32, u32)';
 
-export const unwrapRepayFeeToFee = (apiInstance: ApiPromise): Fee => {
+export const unwrapITupleU32ToFee = (apiInstance: ApiPromise): Fee => {
   const apiRepayFee = apiInstance
     .createType(repayFeeDataType, apiInstance.consts.lbp.repayFee)
     .toHuman() as Array<string>;
@@ -13,3 +13,5 @@ export const unwrapRepayFeeToFee = (apiInstance: ApiPromise): Fee => {
     denominator: apiRepayFee[1],
   };
 };
+
+// todo still fix this 👆

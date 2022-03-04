@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Fee, LbpConstants } from '../../../../generated/graphql';
+import { Fee } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
+import { getRepayFee } from '../../lib/getRepayFee';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import errors from '../../../../errors';
 
@@ -12,16 +13,16 @@ const withTypename = (repayFee: Fee) => ({
 });
 
 /**
- * Resolver for the `repayFee` field
+ * sub-resolver for constants.lbp.repayFee - Uses lib/getRepayFee get requested data
  *
- * @param parent The return value of the LbpConstants resolver
+ * @param apiInstance ApiPromise
+ *
  */
 export const repayFeeQueryResolverFactory =
   (apiInstance?: ApiPromise) =>
-  ({ repayFee }: LbpConstants) => {
+  (/** resolver arguments go here if needed in future */) => {
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!repayFee) throw Error('Super DAMN'); //TODO proper error
-    return withTypename(repayFee);
+    return withTypename(getRepayFee(apiInstance));
   };
 
 export const useRepayFeeQueryResolver = () => {

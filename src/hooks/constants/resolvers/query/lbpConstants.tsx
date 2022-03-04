@@ -1,35 +1,32 @@
 import { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Constants, LbpConstants } from '../../../../generated/graphql';
+import { LbpConstants } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import errors from '../../../../errors';
 
 export const __typename: LbpConstants['__typename'] = 'LBPConstants';
-const withTypename = (lbpConstants: LbpConstants): LbpConstants => ({
+const withTypename = () => ({
   __typename,
-  ...lbpConstants,
 });
 
 /**
- * Resolver for the `LbpConstants` entity
+ * sub-resolver for constants.lbp
  *
- * @param constants The return value of the Constants resolver
+ * * @param apiInstance ApiPromise
  */
 export const lbpConstantsQueryResolverFactory =
   (apiInstance?: ApiPromise) =>
-  ({ lbp }: Constants) => {
+  (/** resolver arguments go here if needed in future */) => {
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!lbp) throw Error('DAMN!'); //TODO proper error
 
-    return withTypename(lbp);
+    return withTypename();
   };
 
 export const useLbpConstantsQueryResolver = () => {
   const { apiInstance } = usePolkadotJsContext();
-  console.log('in lbp resolver');
   return {
-    lbpConstants: withErrorHandler(
+    lbp: withErrorHandler(
       useMemo(
         () => lbpConstantsQueryResolverFactory(apiInstance),
         [apiInstance]
