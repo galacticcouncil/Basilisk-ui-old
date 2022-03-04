@@ -64,26 +64,34 @@ export const TradeFormSettings = ({
   }, watch(['autoSlippage']));
 
   return (
-    <form className="trade-settings" onSubmit={handleSubmit(() => {})}>
-      <div className="close-icon" onClick={closeModal}>
-        <Icon name="Cancel" />
+    <form
+      className="trade-settings modal-component-wrapper"
+      onSubmit={handleSubmit(() => {})}
+    >
+      <div className="modal-component-heading">
+        Settings
+        <div className="close-modal-btn" onClick={closeModal}>
+          <Icon name="Cancel" />
+        </div>
       </div>
-      <label className="settings-field">
-        <div className="settings-field__label">Auto slippage</div>
-        <input {...register('autoSlippage')} type="checkbox" />
-      </label>
-      <label className="settings-field">
-        <div className="settings-field__label">Allowed slippage percent</div>
-        <input
-          {...register('allowedSlippage', {
-            setValueAs: (value) =>
-              value && new BigNumber(value).dividedBy('100').toFixed(3),
-          })}
-          // disabled if using auto slippage
-          disabled={getValues('autoSlippage')}
-          type="text"
-        />
-      </label>
+      <div className="modal-component-content">
+        <label className="settings-field">
+          <div className="settings-field__label">Auto slippage</div>
+          <input {...register('autoSlippage')} type="checkbox" />
+        </label>
+        <label className="settings-field">
+          <div className="settings-field__label">Allowed slippage percent</div>
+          <input
+            {...register('allowedSlippage', {
+              setValueAs: (value) =>
+                value && new BigNumber(value).dividedBy('100').toFixed(3),
+            })}
+            // disabled if using auto slippage
+            disabled={getValues('autoSlippage')}
+            type="text"
+          />
+        </label>
+      </div>
     </form>
   );
 };

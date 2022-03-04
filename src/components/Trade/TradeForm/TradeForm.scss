@@ -159,29 +159,10 @@
   top: 0;
   left: 0;
 
-  padding: 16px;
-
-  background-color: $d-gray4;
-
   z-index: 1;
 
   .trade-settings {
-    display: flex;
-    flex-direction: column;
-    font-size: 18px;
-    font-weight: 500;
-
-    .close-icon {
-      align-self: end;
-      margin-bottom: 16px;
-
-      svg:hover {
-        cursor: pointer;
-        path {
-          fill: $orange1;
-        }
-      }
-    }
+    height: 100%;
   }
 
   .settings-field {
