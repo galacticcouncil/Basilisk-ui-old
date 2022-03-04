@@ -2,11 +2,17 @@
 @import './../../../../misc/misc.module.scss';
 
 .trade-info {
+  min-height: 60px;
+
   &__data {
     display: flex;
     flex-direction: column;
     font-size: 12px;
     font-weight: 600;
+
+    &.hidden {
+      display: none;
+    }
 
     .data-piece {
       display: flex;
@@ -16,5 +22,10 @@
         font-weight: 700;
       }
     }
+  }
+  .error {
+    font-size: 12px;
+    font-weight: 600;
+    color: $red1;
   }
 }

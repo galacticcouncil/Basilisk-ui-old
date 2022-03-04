@@ -21,19 +21,30 @@ export const TradeInfo = ({
 }: TradeInfoProps) => {
   return (
     <div className="trade-info">
-      <div className="trade-info__data">
+      <div
+        className={
+          'trade-info__data' +
+          (errors?.assetIn?.type ||
+          errors?.assetOut?.type ||
+          errors?.assetInAmount?.type ||
+          errors?.assetOutAmount?.type ||
+          errors?.submit?.type
+            ? ' hidden'
+            : '')
+        }
+      >
         <div className="data-piece">
-          <span className='data-piece__label'>Current slippage{' '}</span>
+          <span className="data-piece__label">Current slippage </span>
           <div className="data-piece__value">{expectedSlippage || '0'}%</div>
         </div>
         <div className="data-piece">
-          <span className='data-piece__label'>Trade limit{' '}</span>
+          <span className="data-piece__label">Trade limit </span>
           <div className="data-piece__value">
             {new BigNumber(tradeLimit || '0').toFixed(2)}
           </div>
         </div>
         <div className="data-piece">
-          <span className='data-piece__label'>Trade fee{' '}</span>
+          <span className="data-piece__label">Trade fee </span>
           <div className="data-piece__value">
             {new BigNumber(tradeFee.numerator)
               .dividedBy(tradeFee.denominator)
@@ -42,13 +53,14 @@ export const TradeInfo = ({
             %
           </div>
         </div>
-        {/* {JSON.stringify({
-        assetIn: errors?.assetIn?.type,
-        assetOut: errors?.assetOut?.type,
-        assetInAmount: errors?.assetInAmount?.type,
-        assetOutAmount: errors?.assetOutAmount?.type,
-        submit: errors?.submit?.type,
-      })} */}
+      </div>
+      {/* TODO Error message */}
+      <div className="error">
+        {errors?.assetIn?.type ||
+          errors?.assetOut?.type ||
+          errors?.assetInAmount?.type ||
+          errors?.assetOutAmount?.type ||
+          errors?.submit?.type}
       </div>
     </div>
   );
