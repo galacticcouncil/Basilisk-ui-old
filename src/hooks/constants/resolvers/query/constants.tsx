@@ -1,43 +1,36 @@
-import { useCallback } from 'react';
+import { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Constants, LbpConstants, Fee } from '../../../../generated/graphql';
+import { Constants } from '../../../../generated/graphql';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getConstants } from '../../lib/getConstants';
+import errors from '../../../../errors';
 
-export const __typenameConstants: Constants['__typename'] = 'Constants';
-export const __typenameLbpConstants: LbpConstants['__typename'] =
-  'LBPConstants';
-export const __typenameFee: Fee['__typename'] = 'Fee';
+export const __typename: Constants['__typename'] = 'Constants';
 const withTypename = (constants: Constants) => ({
-  __typename: __typenameConstants,
-  lbp: {
-    __typename: __typenameLbpConstants,
-    repayFee: {
-      __typename: __typenameFee,
-      ...constants.lbp.repayFee,
-    },
-  },
+  __typename,
+  ...constants,
 });
 
 /**
- * Resolver for the `Constants` entity which uses the standalone lib/fetchConstants
+ * Resolver for the `Constants` entity. Uses the standalone lib/getConstants
  * function to resolve the reqested data.
  *
  * @param apiInstance ApiPromise
  */
-export const constantsQueryResolver = (apiInstance: ApiPromise) =>
-  withTypename(getConstants(apiInstance));
+export const constantsQueryResolverFactory =
+  (apiInstance?: ApiPromise) => () => {
+    if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
+    console.log('in constants resolver');
+    return withTypename(getConstants(apiInstance));
+  };
 
 export const useConstantsQueryResolver = () => {
-  const { apiInstance, loading } = usePolkadotJsContext();
+  const { apiInstance } = usePolkadotJsContext();
 
   return {
     constants: withErrorHandler(
-      useCallback(() => {
-        if (!apiInstance || loading) return;
-        return constantsQueryResolver(apiInstance);
-      }, [apiInstance, loading]),
+      useMemo(() => constantsQueryResolverFactory(apiInstance), [apiInstance]),
       'constants'
     ),
   };

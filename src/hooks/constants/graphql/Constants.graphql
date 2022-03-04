@@ -1,7 +1,4 @@
-type Fee {
-  numerator: String!
-  denominator: String!
-}
+#import './../../pools/graphql/Pool.graphql'
 
 type LBPConstants {
   repayFee: Fee!

@@ -15,7 +15,7 @@ import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResol
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
 import { usePersistentConfig } from '../config/usePersistentConfig';
-import { useConstantsQueryResolver } from '../constants/resolvers/query/constants';
+import { useConstantsQueryResolvers } from '../constants/resolvers/useConstantsQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -29,6 +29,13 @@ export const useResolvers: () => Resolvers = () => {
     LBPPool,
   } = usePoolsQueryResolver();
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
+  const {
+    Query: ConstantsQueryResolver,
+    Constants,
+    LBPConstants,
+  } = useConstantsQueryResolvers();
+
+  console.log('WHAT IS IT: ', Constants);
   return {
     Query: {
       ...AccountsQueryResolver,
@@ -38,7 +45,7 @@ export const useResolvers: () => Resolvers = () => {
       ...useBalanceQueryResolvers(),
       ...PoolsQueryResolver,
       ...useAssetsQueryResolvers(),
-      ...useConstantsQueryResolver(),
+      ...ConstantsQueryResolver,
     },
     Mutation: {
       ...useAccountsMutationResolvers(),
@@ -49,6 +56,8 @@ export const useResolvers: () => Resolvers = () => {
     Account,
     XYKPool,
     LBPPool,
+    Constants,
+    LBPConstants,
   };
 };
 
