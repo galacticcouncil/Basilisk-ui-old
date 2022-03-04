@@ -24,4 +24,30 @@
 
     gap: 10px;
   }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: #bdccd4;
+    font-weight: 400;
+    font-size: 12px;
+    gap: 8px;
+
+    .liveliness {
+      width: 12px;
+      height: 12px;
+      border-radius: 100%;
+      &.green {
+        background-color: green;
+      }
+      &.orange {
+        background-color: orange;
+      }
+      &.red {
+        background-color: red;
+      }
+    }
+  }
 }

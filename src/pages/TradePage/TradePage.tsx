@@ -116,7 +116,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
         return {
           // x: `${moment(createdAt).getTime()}`,
           x: new Date(createdAt).getTime(),
-          y: (() => {
+          ...(() => {
             const assetOutLiquidity =
               assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
                 ? assetABalance
@@ -140,9 +140,13 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
               ),
             };
 
-            return new BigNumber(fromPrecision12(spotPrice.outIn) || '').toNumber()
+            const y = new BigNumber(fromPrecision12(spotPrice.outIn) || '')
+
+            return {
+              y: y.toNumber(),
+              yAsString: fromPrecision12(spotPrice.outIn)
+            }
           })(),
-          yAsString: fromPrecision12(spotPrice.outIn)
         };
       }
     );

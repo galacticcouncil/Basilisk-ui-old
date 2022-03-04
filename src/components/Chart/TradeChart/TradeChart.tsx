@@ -176,7 +176,6 @@ export const TradeChart = ({
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
           y: tooltipData?.data.y,
-          yAsString: tooltipData?.data.yAsString
         });
 
         // console.log('referenceData', referenceData, tooltipData.data, allData);
