@@ -9,6 +9,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
 } from 'react';
 import { Control, useForm, UseFormReturn } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
@@ -204,6 +205,8 @@ export const TradePage = () => {
     fetchPolicy: 'cache-only',
   });
   const { math } = useMath();
+  // progress, not broadcast because we dont wait for broadcast to happen here
+  const [notification, setNotification] = useState<'standby' | 'progress' | 'success' | 'failure'>('standby');
 
   const depsLoading = useLoading();
   const {
@@ -248,13 +251,33 @@ export const TradePage = () => {
     return !!activeAccountData?.activeAccount;
   }, [activeAccountData]);
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation();
+  const clearNotificationIntervalRef = useRef<any>();
+
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] = useSubmitTradeMutation({
+     onCompleted: () => {
+       setNotification('success')
+       // reset notification status in 3 seconds, with the ability to stop the timer
+       clearNotificationIntervalRef.current = setTimeout(() => {
+         setNotification('standby')
+       }, 3000)
+     },
+     onError: () => {
+       console.log('onError');
+       setNotification('failure')
+       clearNotificationIntervalRef.current = setTimeout(() => {
+         setNotification('standby')
+       }, 3000)
+     },
+   });
+
+   useEffect(() => {
+     if (tradeLoading) setNotification('progress')
+   }, [tradeLoading])
 
   const handleSubmitTrade = useCallback(
     (variables) => {
+      clearNotificationIntervalRef.current && clearTimeout(clearNotificationIntervalRef.current);
+      clearNotificationIntervalRef.current = null;
       submitTrade({ variables });
     },
     [submitTrade]
@@ -314,6 +337,7 @@ export const TradePage = () => {
 
   return (
     <div className="trade-page">
+      Notification: {notification}
       <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
       <TradeForm
         assetIds={assetIds}
