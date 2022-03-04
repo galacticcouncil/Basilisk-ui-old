@@ -58,7 +58,6 @@ export const AssetBalanceInput = ({
     <div className="asset-balance-input">
       {/* This portal will be rendered at it's container ref as defined above */}
       {modalPortal}
-      {/* TODO: icon */}
       <div
         className="asset-balance-input__asset-info"
         onClick={(_) => handleAssetSelectorClick()}
@@ -74,11 +73,13 @@ export const AssetBalanceInput = ({
         ></div>
         <div className="asset-balance-input__asset-info__names">
           <div className="asset-balance-input__asset-info__names__full-name">
-            {idToAsset(methods.getValues(assetInputName))?.fullName || ''}
+            {idToAsset(methods.getValues(assetInputName))?.fullName ||
+              'Select asset'}
           </div>
           <div className="asset-balance-input__asset-info__names__ticker">
             {idToAsset(methods.getValues(assetInputName))?.symbol ||
-              methods.getValues(assetInputName)}
+              methods.getValues(assetInputName) ||
+              '---'}
             <Icon name="DropdownArrow" />
           </div>
         </div>
