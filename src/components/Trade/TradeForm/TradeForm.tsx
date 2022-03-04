@@ -491,18 +491,17 @@ export const TradeForm = ({
       <div ref={modalContainerRef}></div>
       {modalPortal}
 
-      <div
-        className="settings-button"
-        onClick={(e) => {
-          e.preventDefault();
-          toggleModal();
-        }}
-      >
-        <Icon name="Settings" />
-      </div>
-
       <FormProvider {...form}>
         <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
+          <div
+            className="settings-button"
+            onClick={(e) => {
+              e.preventDefault();
+              toggleModal();
+            }}
+          >
+            <Icon name="Settings" />
+          </div>
           <div className="trade-form-heading">You get</div>
 
           <div className="balance-wrapper">
@@ -558,8 +557,8 @@ export const TradeForm = ({
             </div>
             <div className="asset-switch-price">
               {(() => {
-                const assetOut = getValues('assetOut')
-                const assetIn = getValues('assetIn')
+                const assetOut = getValues('assetOut');
+                const assetIn = getValues('assetIn');
                 switch (tradeType) {
                   case TradeType.Sell:
                     // return `1 ${
@@ -569,17 +568,19 @@ export const TradeForm = ({
                     //   idToAsset(getValues('assetOut'))?.symbol ||
                     //   getValues('assetOut')
                     // }`;
-                    return spotPrice?.inOut && assetOut
-                      ? (
-                        <>
-                          1 {idToAsset(getValues('assetIn'))?.symbol} =
-                          <FormattedBalance balance={{
+                    return spotPrice?.inOut && assetOut ? (
+                      <>
+                        1 {idToAsset(getValues('assetIn'))?.symbol} =
+                        <FormattedBalance
+                          balance={{
                             balance: spotPrice.inOut,
-                            assetId: assetOut
-                          }}/>
-                        </>
-                      )
-                      : <>-</>
+                            assetId: assetOut,
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>-</>
+                    );
                   case TradeType.Buy:
                     // return `1 ${
                     //   idToAsset(getValues('assetOut'))?.symbol ||
@@ -588,17 +589,19 @@ export const TradeForm = ({
                     //   idToAsset(getValues('assetIn'))?.symbol ||
                     //   getValues('assetIn')
                     // }`;
-                    return spotPrice?.outIn && assetIn
-                      ? (
-                        <>
-                          1 {idToAsset(getValues('assetOut'))?.symbol} =
-                          <FormattedBalance balance={{
+                    return spotPrice?.outIn && assetIn ? (
+                      <>
+                        1 {idToAsset(getValues('assetOut'))?.symbol} =
+                        <FormattedBalance
+                          balance={{
                             balance: spotPrice.outIn,
-                            assetId: assetIn
-                          }}/>
-                        </>
-                      )
-                      : <>-</>
+                            assetId: assetIn,
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>-</>
+                    );
                 }
               })()}
             </div>
