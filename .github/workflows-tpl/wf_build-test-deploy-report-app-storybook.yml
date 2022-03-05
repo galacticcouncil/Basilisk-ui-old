@@ -1,8 +1,8 @@
 name: Build Test Deploy App and Storybook
-#on:
-#  pull_request:
-#    branches:
-#      - develop
+on:
+  pull_request:
+    branches:
+      - develop
 
 jobs:
 
