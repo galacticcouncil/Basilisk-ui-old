@@ -420,23 +420,7 @@ yarn storybook:test:watch-headed
 
 ### Github Actions workflows
 
-`E2E and Unit Testing Flow` (`.github/workflows/e2e-and-unit-testing-flow.yml`) workflow generates testing reports and 
-screenshots traces which are available as artifacts in this workflow.
-
-Possible artifacts:
-- `ui-app-e2e-results.html`
-- `ui-app-unit-tests-results.html`
-- `traces` (contains bunches of screenshots for each test separately)
-
-`Add artifact links to pull request` (`.github/workflows/publish-testing-artifacts-to-pr-comment.yml`) workflow runs 
-after each `E2E and Unit Testing Flow` ([workflow_run](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#workflow_run)) 
-and publishes names and links of available artifacts after tests as comment in related PR, which has triggered
-`E2E and Unit Testing Flow` workflow. 
-`Add artifact links to pull request` workflow must be published in **default branch** of the repo (currently it's `develop`). 
-Workflow config from default branch will be used for all actions 
-( [... will only trigger a workflow run if the workflow file is on the default branch.v](https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#workflow_run) ).
-
-
+More details [here](./ci-docs/README.md)
 
 
 ## VSCode extensions
