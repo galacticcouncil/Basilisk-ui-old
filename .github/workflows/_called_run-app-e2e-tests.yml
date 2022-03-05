@@ -1,0 +1,156 @@
+name: App E2E tests
+
+on:
+  workflow_call:
+    inputs:
+      app-build-artifact-name:
+        required: true
+        type: string
+      app-node-modules-cache-key:
+        required: true
+        type: string
+
+jobs:
+  run_app_e2e_tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 17.3
+
+      - name: Install Node.js HTTP-Server
+        run: yarn global add http-server
+
+      - uses: actions/checkout@v2
+        with:
+          path: 'ui-app'
+
+      - name: Download artifact - UI app build
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.app-build-artifact-name }}
+          path: ./ui-app/build
+
+      # Prepare Basilisk-api ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
+      - name: Clone Basilisk-api
+        run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
+
+      - name: Cache Node Modules for Basilisk-api
+        id: cache-node-modules-basilisk-api
+        uses: actions/cache@v2
+        with:
+          path: Basilisk-api/node_modules
+          key: node-modules-basilisk-api-${{ hashFiles('Basilisk-api/yarn.lock') }}
+
+      - name: Install Dependencies for Basilisk-api
+        if: steps.cache-node-modules-basilisk-api.outputs.cache-hit != 'true'
+        run: |
+          cd Basilisk-api
+          yarn install --frozen-lockfile
+      # Install NPM deps for running tests
+      - name: Cache Node Modules for ui-app
+        id: cache-node-modules-ui-app
+        uses: actions/cache@v2
+        with:
+          path: ui-app/node_modules
+          key: node-modules-ui-app-${{ hashFiles('ui-app/yarn.lock') }}
+
+      - name: Install Dependencies for ui-app
+        if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
+        run: |
+          cd ui-app
+          yarn install --frozen-lockfile
+      # Update folders structure
+      - name: Change folders permissions
+        run: |
+          chmod -R 777 Basilisk-api
+          chmod -R 777 ui-app
+      # Run testnet
+      - name: Run sandbox testnet
+        shell: bash
+        timeout-minutes: 10
+        run: |
+          cd Basilisk-api
+          yarn fullruntime:clean-setup-start
+      # Double check of testnet status
+      - name: Wait for Basilisk Node port :9988
+        shell: bash
+        timeout-minutes: 2
+        run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 9988
+
+      # Run UI App
+      - name: Run UI application
+        shell: bash
+        run: |
+          cd ui-app/build
+          http-server -s -p 3030 -a 127.0.0.1 &
+      # Check of UI app status
+      - name: Wait for UI app port :3030
+        shell: bash
+        timeout-minutes: 2
+        run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 3030
+
+      # Prepare Playwright env
+      - name: Install OS dependencies for Playwright
+        run: npx playwright install-deps
+
+      - name: Make e2e testing env vars file visible (required for falnyr/replace-env-vars-action@master)
+        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
+        shell: bash
+
+      - name: Prepate E2E Tests Env Variables
+        uses: falnyr/replace-env-vars-action@master
+        env:
+          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
+          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
+          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
+        with:
+          filename: ui-app/e2e-tests-vars.txt
+
+      - name: Make e2e testing env vars file hidden
+        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
+        shell: bash
+
+      # For debug and monitoring purposes
+      - name: Check Docker containers and ports
+        if: always()
+        run: |
+          docker ps
+          docker network ls
+          sudo lsof -i -P -n | grep LISTEN
+        shell: bash
+
+      # Run e2e tests
+      - name: Run e2e tests
+        shell: bash
+        run: |
+          cd ui-app
+          DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
+        env:
+          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+
+      - name: Sleep for 30 seconds (for compiling html reports)
+        run: sleep 30s
+        shell: bash
+
+      - name: Upload trace files
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: traces_screenshots
+          path: ./ui-app/traces
+
+      - name: Upload e2e tests report file
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: e2e_tests_report_html
+          path: ./ui-app/ui-app-e2e-results.html
+
+      - name: Upload testnet logs
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: testnet-sandbox-logs
+          path: ./Basilisk-api/testnet-sandbox-logs
