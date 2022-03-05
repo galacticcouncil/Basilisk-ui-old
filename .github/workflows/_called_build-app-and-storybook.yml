@@ -41,19 +41,19 @@ jobs:
 
       - name: Update script file
         shell: bash
-        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
+        run: chmod -R 777 ./scripts/ci/gh-actions-branch-name-serialize.sh
 
       - name: Extract branch folder name
         shell: bash
         run: |
           if [[ $GITHUB_EVENT_NAME = 'push' ]]
           then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
           then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
           else
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           fi
         id: extract_branch
 

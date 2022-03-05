@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           chmod -R 777 ./scripts
-          echo "##[set-output name=is_ghp_branch_exists;]$(./scripts/gh-actions-is-branch-exists.sh "$GH_PAGES_FULL_BRANCH")"
+          echo "##[set-output name=is_ghp_branch_exists;]$(./scripts/ci/gh-actions-is-branch-exists.sh "$GH_PAGES_FULL_BRANCH")"
         env:
           GH_PAGES_FULL_BRANCH: ${{ secrets.gh_pages_full_branch }}
         id: ghp_branch_existence
@@ -48,7 +48,7 @@ jobs:
       - name: Update script file
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         shell: bash
-        run: chmod -R 777 ./scripts/gh-actions-branch-name-serialize.sh
+        run: chmod -R 777 ./scripts/ci/gh-actions-branch-name-serialize.sh
 
       - name: Extract branch folder name
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
@@ -56,12 +56,12 @@ jobs:
         run: |
           if [[ $GITHUB_EVENT_NAME = 'push' ]]
           then
-            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
           then
-            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/ci/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
           else
-            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=folder_name;]$GITHUB_WORKSPACE/$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           fi
         id: branch_folder_name
 
@@ -113,12 +113,12 @@ jobs:
         run: |
           if [[ $GITHUB_EVENT_NAME = 'push' ]]
           then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
           then
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
           else
-            echo "##[set-output name=branch;]$(./scripts/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
+            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
           fi
         id: extract_branch
 
