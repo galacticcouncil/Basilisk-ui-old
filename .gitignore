@@ -11,6 +11,7 @@
 /storybook-testing/results
 /traces
 /test-results
+/e2e-tests/extensions
 
 # production
 /build
