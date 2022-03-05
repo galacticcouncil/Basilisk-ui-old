@@ -39,7 +39,7 @@ jobs:
     uses: ./.github/workflows/_called_run-app-e2e-tests.yml
     if: ${{ needs.build-app-storybook.result=='success' }}
     with:
-      storybook-build-artifact-name: sb-build-files
+      app-build-artifact-name: app-build-files
       app-node-modules-cache-key: cache-node-modules-ui-app
 
   deploy-app-storybook-builds:
