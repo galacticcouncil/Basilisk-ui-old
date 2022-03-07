@@ -19,8 +19,6 @@ export const getBalancesByAddress = async (
   assetIds: string[]
 ): Promise<Balance[]> => {
   let balances: Balance[] = [];
-  console.log('getBalancesByAddress', address, assetIds);
-
   if (includes(assetIds, constants.nativeAssetId)) {
     const nativeBalance = await fetchNativeAssetBalance(apiInstance, address);
     balances.push(nativeBalance);

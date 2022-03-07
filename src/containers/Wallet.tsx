@@ -33,11 +33,7 @@ export const Wallet = () => {
   const onAccountCleared = useCallback(() => {
     setActiveAccount({ variables: { id: undefined } });
   }, [setActiveAccount]);
-
-  console.log('network status acc', accountsNetworkStatus);
-
   
-
   // request data from the data layer
   // render the component with the provided data
   return (

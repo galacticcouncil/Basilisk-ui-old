@@ -31,7 +31,6 @@ export const withGracefulErrors = async (
     try {
       resolve(await fn(resolve, reject));
     } catch (e: any) {
-      console.log('graceful error', e);
       // eslint-disable-next-line no-ex-assign
       e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
       // rejecting this promise with an error instead of throwing an error
@@ -139,19 +138,30 @@ export const useVestingMutationResolvers = () => {
           throw new Error(polkadotJsNotReadyYetError);
 
         // // TODO: why does this not return a tx hash?
-        return await withGracefulErrors(
-          async (resolve, reject) => {
-            const { signer } = await web3FromAddress(address);
-            await apiInstance.tx.vesting
-              .claim()
-              .signAndSend(
-                address,
-                { signer },
-                vestingClaimHandler(resolve, reject)
-              );
-          },
-          [gracefulExtensionCancelationErrorHandler]
-        );
+        // return await withGracefulErrors(
+          // async (resolve, reject) => {
+          //   const { signer } = await web3FromAddress(address);
+          //   await apiInstance.tx.vesting
+          //     .claim()
+          //     .signAndSend(
+          //       address,
+          //       { signer },
+          //       vestingClaimHandler(resolve, reject)
+          //     );
+          // },
+          // [gracefulExtensionCancelationErrorHandler]
+        // );
+
+        return new Promise(async (resolve, reject) => {
+          const { signer } = await web3FromAddress(address);
+          await apiInstance.tx.vesting
+            .claim()
+            .signAndSend(
+              address,
+              { signer },
+              vestingClaimHandler(resolve, reject)
+            );
+        });
       },
       [loading, apiInstance]
     ),

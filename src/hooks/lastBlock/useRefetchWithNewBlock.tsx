@@ -33,8 +33,7 @@ export const useRefetchWithNewBlock = (
     const lastBlockData = client?.cache.readQuery<GetLastBlockQueryResponse>({
       query: GET_LAST_BLOCK,
     });
-    console.log('lastBlock', lastBlock);
-
+    
     if (!lastBlockData?.lastBlock?.parachainBlockNumber) {
       // received the first real lastBlockNumber, don't refetch just yet
       writeLastBlock(client?.cache, {

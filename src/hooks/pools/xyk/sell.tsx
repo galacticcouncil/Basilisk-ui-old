@@ -28,23 +28,27 @@ export const sell = async (
   amountSell: string,
   minBought: string
 ) => {
-  await withGracefulErrors(
-    async (resolve, reject) => {
+  // await withGracefulErrors(
+    await new Promise(async (resolve, reject) => {
       const activeAccount = readActiveAccount(cache);
       const address = activeAccount?.id;
 
-      if (!address) return reject(new Error('No active account found!'));
+      try {
+        if (!address) return reject(new Error('No active account found!'));
 
-      const { signer } = await web3FromAddress(address);
+        const { signer } = await web3FromAddress(address);
 
-      await apiInstance.tx.xyk
-        .sell(assetSell, assetBuy, amountSell, minBought, discount)
-        .signAndSend(
-          address,
-          { signer },
-          xykBuyHandler(resolve, reject, apiInstance)
-        );
-    },
-    [gracefulExtensionCancelationErrorHandler]
-  );
+        await apiInstance.tx.xyk
+          .sell(assetSell, assetBuy, amountSell, minBought, discount)
+          .signAndSend(
+            address,
+            { signer },
+            xykBuyHandler(resolve, reject, apiInstance)
+          );
+      } catch (e) {
+        reject(e);
+      }
+    })
+    // [gracefulExtensionCancelationErrorHandler]
+  // );
 };

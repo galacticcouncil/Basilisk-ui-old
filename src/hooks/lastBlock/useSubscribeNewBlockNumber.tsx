@@ -21,10 +21,8 @@ export const useSubscribeNewBlock = () => {
   const subscribeNewBlocks = useCallback(async () => {
     if (!apiInstance || loading) return;
     // TODO: how to unsubscribe?
-    console.log('lastBlock subscribing', apiInstance);
      await apiInstance.derive.chain.bestNumber(
       async (number) => {
-        console.log('lastBlock black', number.toString())
         const validationData =
          await apiInstance.query.parachainSystem.validationData();
 
@@ -51,7 +49,6 @@ export const useSubscribeNewBlock = () => {
     if (loading) return;
     subscribeNewBlocks();
     return () => {
-      console.log('lastBlock unsubscribing', unsubscribe);
       unsubscribe && unsubscribe();
     }
   }, [loading, subscribeNewBlocks, unsubscribe]);

@@ -81,7 +81,6 @@ export const useConfigureApolloClient = () => {
   }, [processorUrl, cache]);
 
   useEffect(() => {
-    console.log('updating resolvers');
     client?.setResolvers(resolvers);
   }, [resolvers, client]);
 

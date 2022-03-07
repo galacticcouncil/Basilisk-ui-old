@@ -120,9 +120,6 @@ export const BalanceInput = ({
                 onChange={(e) => handleOnChange(field, e)}
                 placeholder="0.00"
               />
-              {(() => {
-                console.log('field.value', field.value);
-              })()}
             </>
           )}
         />

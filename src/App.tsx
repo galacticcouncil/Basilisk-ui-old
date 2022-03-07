@@ -8,7 +8,7 @@ import { PageContainer } from './containers/PageContainer';
 import { Locale } from './misc/locale';
 import messages from './compiled-lang/en.json';
 
-log.setLevel('debug');
+log.setLevel('info');
 
 export const branch = process.env.REACT_APP_GIT_BRANCH;
 export const baseName = branch?.length ? `/basilisk-ui/${branch}/app` : '/';

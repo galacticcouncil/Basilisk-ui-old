@@ -159,7 +159,6 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
       yAsString: fromPrecision12(spotPrice.outIn),
     });
 
-    console.log(dataset);
     setDataset(dataset);
   }, [historicalBalancesData?.historicalBalances, math, spotPrice, assetIds]);
 
@@ -167,7 +166,6 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   //   setDataset(dataset => {
   //     if (!spotPrice || !dataset) return dataset;
 
-  //     console.log('spot price changed, updating dataset', spotPrice.outIn);
 
   //     return [
   //       ...dataset,
@@ -179,8 +177,6 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   //     ]
   //   })
   // }, [pool, spotPrice,])
-
-  console.log('dataset', dataset);
 
   return (
     <TradeChartComponent
@@ -243,10 +239,6 @@ export const TradePage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  console.log('assets', assets);
-
-  console.log('network status pool deps', depsLoading);
-
   const pool = useMemo(() => poolData?.pool, [poolData]);
 
   const isActiveAccountConnected = useMemo(() => {
@@ -266,7 +258,6 @@ export const TradePage = () => {
       }, 4000);
     },
     onError: () => {
-      console.log('onError');
       setNotification('failed');
       clearNotificationIntervalRef.current = setTimeout(() => {
         setNotification('standby');
@@ -313,8 +304,6 @@ export const TradePage = () => {
       ),
     };
   }, [assetOutLiquidity, assetInLiquidity, math]);
-
-  console.log('network status pool', poolLoading, poolNetworkStatus);
 
   const {
     data: activeAccountTradeBalancesData,

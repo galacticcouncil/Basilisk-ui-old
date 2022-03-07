@@ -102,7 +102,6 @@ export const useModalPortalElement = ({
 }: any) => {
   return useCallback(
     ({ closeModal, elementRef, isModalOpen }) => {
-      console.log('useModalPortalElement', allowedSlippage);
       return (
         <div
           className={classNames({
@@ -114,7 +113,6 @@ export const useModalPortalElement = ({
             closeModal={closeModal}
             allowedSlippage={allowedSlippage}
             onAllowedSlippageChange={(allowedSlippage) => {
-              console.log('onAllowedSlippageChange', allowedSlippage);
               setAllowedSlippage(allowedSlippage);
             }}
           />
@@ -246,7 +244,6 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Sell && assetInAmountInput !== undefined)
       return;
-    console.log('setting trade type to sell', assetInAmountInput);
 
     setTradeType(TradeType.Sell);
   }, [assetInAmountInput]);
@@ -255,14 +252,12 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Buy && assetOutAmountInput !== undefined)
       return;
-    console.log('setting trade type to buy', assetOutAmountInput);
 
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);
 
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount');
-    console.log('assetOutAmount', assetOutAmount);
     if (
       !pool ||
       !math ||
@@ -273,8 +268,6 @@ export const TradeForm = ({
       return;
     if (tradeType !== TradeType.Buy) return;
 
-    console.log('assetOutAmount using math', assetOutAmount);
-
     const amount = math.xyk.calculate_in_given_out(
       // which combination is correct?
       // assetOutLiquidity,
@@ -283,14 +276,11 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetOutAmount
     );
-    // return
-    console.log('buy setting assetInAmount', amount);
     setValue('assetInAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
 
   useEffect(() => {
     const assetInAmount = getValues('assetInAmount');
-    console.log('assetInAmount', assetInAmount);
     if (
       !pool ||
       !math ||
@@ -306,7 +296,6 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetInAmount
     );
-    console.log('sell setting assetOutAmount', amount);
     setValue('assetOutAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
 
@@ -353,13 +342,6 @@ export const TradeForm = ({
     )
       return;
 
-    console.log(
-      'tradeLimit',
-      assetOutAmount,
-      spotPrice?.outIn,
-      allowedSlippage
-    );
-
     switch (tradeType) {
       case TradeType.Sell:
         return new BigNumber(assetInAmount)
@@ -387,8 +369,6 @@ export const TradeForm = ({
     if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
       return;
 
-    console.log('slipige', assetInAmount, spotPrice.inOut); // continue here, spot price * in/out amount produce too big of a number
-
     switch (tradeType) {
       case TradeType.Sell:
         return percentageChange(
@@ -411,8 +391,6 @@ export const TradeForm = ({
     spotPrice,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
-
-  console.log('form', errors, isDirty, isValid);
 
   // handle submit of the form
   const _handleSubmit = useCallback(

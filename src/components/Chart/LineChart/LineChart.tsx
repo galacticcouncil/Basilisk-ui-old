@@ -217,7 +217,6 @@ export const LineChart = ({
     const smallestDatapoint = first(allData)?.y || 0;
     const largestDatapoint = last(allData)?.y || 0;
     const dataScale = largestDatapoint - smallestDatapoint;
-    console.log('DIFFFEERENCE', dataScale);
     type YAxisBounds = {
       yAxisMin: number | undefined;
       yAxisMax: number | undefined;

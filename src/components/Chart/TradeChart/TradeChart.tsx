@@ -74,10 +74,7 @@ export const TradeChart = ({
     },
   });
 
-  console.log('dataset length', primaryDataset?.length, primaryDataset)
-
   const resetDisplayData = useCallback(() => {
-    console.log('resetDisplayData', primaryDataset);
     setDisplayData({
       balance: last(primaryDataset)?.yAsString,
       // TODO; usd value of the balance needs to be determined separately
@@ -131,7 +128,6 @@ export const TradeChart = ({
 
   // TODO: rewrite
   const dataTrend = useMemo(() => {
-    // console.log('dataTrend', displayData.balance, referenceData?.balance);
     if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral;
     return displayData?.balance! >= referenceData?.balance!
       ? Trend.Positive
@@ -177,8 +173,6 @@ export const TradeChart = ({
           x: tooltipData?.data.x,
           y: tooltipData?.data.y,
         });
-
-        // console.log('referenceData', referenceData, tooltipData.data, allData);
 
         if (displayDataTooltip)
           setDisplayData((displayData) => ({
