@@ -52,7 +52,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           </span>
         </div>
         <div>
-          Version: {process.env.REACT_APP_GITHUB_SHA || 'unknown'}
+          Version: {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
+            ? process.env.REACT_APP_GITHUB_SHA
+            : 'unknown'}
         </div>
       </div>
     </div>
