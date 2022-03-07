@@ -20,6 +20,8 @@ export interface WalletProps {
   isExtensionAvailable: boolean;
   setAccountSelectorOpen: (isModalOpen: boolean) => void;
   activeAccountLoading: boolean;
+  faucetMint: () => void,
+  faucetMintLoading?: boolean
 }
 
 export const Wallet = ({
@@ -33,6 +35,8 @@ export const Wallet = ({
   isExtensionAvailable,
   setAccountSelectorOpen,
   activeAccountLoading,
+  faucetMint,
+  faucetMintLoading
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
@@ -73,9 +77,12 @@ export const Wallet = ({
         <span className="wallet__icons-wrapper__icon">
           <Icon name="Help" />
         </span>
-        {/* <span className="wallet__icons-wrapper__icon">
-          <Icon name="NotificationInactive" />
-        </span> */}
+        <span className="wallet__icons-wrapper__icon" onClick={() => faucetMint()}>
+          {faucetMintLoading
+            ? <>Loading</>
+            : <>Mint tokens</>
+          }
+        </span>
       </div>
       <div className="wallet__info" data-modal-portal-toggle={toggleId}>
         {extensionLoading || activeAccountLoading ? (

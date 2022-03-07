@@ -453,7 +453,7 @@ export const TradeForm = ({
         percentageChange(
           fromPrecision12(outBeforeTrade),
           fromPrecision12(outAfterTrade)
-        )
+        )?.multipliedBy(100)
       )
       : (
         new BigNumber(
@@ -474,7 +474,7 @@ export const TradeForm = ({
         percentageChange(
           fromPrecision12(inBeforeTrade),
           fromPrecision12(inAfterTrade)
-        )
+        )?.multipliedBy(100)
       )
       : (
         new BigNumber(

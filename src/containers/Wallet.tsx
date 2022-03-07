@@ -7,6 +7,7 @@ import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActive
 import { Account } from '../generated/graphql';
 import { NetworkStatus } from '@apollo/client';
 import { useLoading } from '../hooks/misc/useLoading';
+import { useFaucetMintMutation } from '../hooks/faucet/mutations/useFaucetMintMutation';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
@@ -33,6 +34,8 @@ export const Wallet = () => {
   const onAccountCleared = useCallback(() => {
     setActiveAccount({ variables: { id: undefined } });
   }, [setActiveAccount]);
+
+  const [faucetMint, { loading: faucetMintLoading }] = useFaucetMintMutation();
   
   // request data from the data layer
   // render the component with the provided data
@@ -50,6 +53,8 @@ export const Wallet = () => {
         onAccountCleared={onAccountCleared}
         modalContainerRef={modalContainerRef}
         setAccountSelectorOpen={setAccountSelectorOpen}
+        faucetMint={() => faucetMint()}
+        faucetMintLoading={faucetMintLoading}
       />
     </>
   );

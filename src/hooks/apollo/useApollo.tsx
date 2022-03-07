@@ -12,6 +12,7 @@ import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResol
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
 import { usePersistentConfig } from '../config/usePersistentConfig';
+import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -40,6 +41,7 @@ export const useResolvers: () => Resolvers = () => {
       ...useVestingMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
+      ...useFaucetResolvers().Mutation
     },
     XYKPool,
     LBPPool,
