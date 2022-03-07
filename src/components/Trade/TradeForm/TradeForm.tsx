@@ -278,7 +278,8 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetOutAmount
     );
-    if (amount === '0' && assetOutAmount !== '0') return setValue('assetInAmount', null);
+    // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+    if (amount === '0' && assetOutAmount !== '0') return;
     setValue('assetInAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
 
