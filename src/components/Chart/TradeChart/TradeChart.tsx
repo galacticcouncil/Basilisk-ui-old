@@ -45,6 +45,7 @@ export const _getTooltipPositionCss = (tooltipPosition: number) => {
 export interface TradeChartProps {
   assetPair: AssetPair;
   poolType: PoolType;
+  isPoolLoading?: boolean
   granularity: ChartGranularity;
   chartType: ChartType;
   primaryDataset: Dataset;
@@ -56,6 +57,7 @@ export const TradeChart = ({
   assetPair,
   poolType,
   granularity,
+  isPoolLoading,
   chartType,
   onChartTypeChange,
   onGranularityChange,
@@ -277,13 +279,30 @@ export const TradeChart = ({
         <></>
       )}
 
-      {!primaryDataset?.length ? (
-        <div className="trade-chart__error-wrapper">
-          <TradeChartError type={TradeChartErrorType.InvalidPair} />
-        </div>
-      ) : (
-        <></>
-      )}
+      
+        {/* {isPoolLoading
+          ? (
+            <div className="trade-chart__error-wrapper">
+              <TradeChartError type={TradeChartErrorType.InvalidPair} />
+            </div>
+          )
+          : (
+            !primaryDataset?.length? (
+              <div className="trade-chart__error-wrapper">
+                <TradeChartError type={TradeChartErrorType.InvalidPair} />
+              </div>
+            ) : (
+              <></>
+            )
+          )} */}
+
+          {!primaryDataset?.length? (
+              <div className="trade-chart__error-wrapper">
+                <TradeChartError type={TradeChartErrorType.InvalidPair} />
+              </div>
+            ) : (
+              <></>
+            )}
     </div>
   );
 };

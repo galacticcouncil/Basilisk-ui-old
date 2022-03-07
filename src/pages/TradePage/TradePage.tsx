@@ -47,6 +47,7 @@ export interface TradeAssetIds {
 
 export interface TradeChartProps {
   pool?: Pool;
+  isPoolLoading?: boolean,
   assetIds: TradeAssetIds;
   spotPrice?: {
     outIn?: string;
@@ -86,9 +87,9 @@ export const idToAsset = (id: string | null) => {
   return assetMetadata[id!] as any;
 };
 
-export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
+export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeChartProps) => {
   const { math } = useMath();
-  const { data: historicalBalancesData } = useGetHistoricalBalancesQuery(
+  const { data: historicalBalancesData, networkStatus: historicalBalancesNetworkStatus } = useGetHistoricalBalancesQuery(
     {
       from: useMemo(() => moment().subtract(1, 'days').toISOString(), []),
       to: useMemo(() => moment().toISOString(), []),
@@ -102,6 +103,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   );
 
   const [dataset, setDataset] = useState<Array<any>>();
+  const [datasetLoading, setDatasetLoading] = useState(true);
 
   const assetOutLiquidity = useMemo(() => {
     const assetId = assetIds.assetOut || undefined;
@@ -114,8 +116,15 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
   }, [pool, assetIds]);
 
   useEffect(() => {
-    if (!historicalBalancesData?.historicalBalances || !math || !spotPrice)
-      return setDataset([]);
+    setDatasetLoading(true);
+
+    if (!historicalBalancesData?.historicalBalances || !math || !spotPrice) {
+      setDataset([]);
+      setTimeout(() => {
+        setDatasetLoading(false);
+      }, 0)
+      return;
+    }
     const dataset = historicalBalancesData.historicalBalances.map(
       ({ createdAt, assetABalance, assetBBalance }) => {
         return {
@@ -164,6 +173,9 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
     });
 
     setDataset(dataset);
+    setTimeout(() => {
+      setDatasetLoading(false);
+    }, 0)
   }, [historicalBalancesData?.historicalBalances, math, spotPrice, assetIds]);
 
   // useEffect(() => {
@@ -188,6 +200,12 @@ export const TradeChart = ({ pool, assetIds, spotPrice }: TradeChartProps) => {
         assetA: idToAsset(assetIds.assetOut),
         assetB: idToAsset(assetIds.assetIn),
       }}
+      isPoolLoading={
+        isPoolLoading ||
+        historicalBalancesNetworkStatus === NetworkStatus.loading ||
+        historicalBalancesNetworkStatus === NetworkStatus.setVariables ||
+        datasetLoading
+      }
       poolType={PoolType.XYK}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
@@ -339,7 +357,11 @@ export const TradePage = () => {
         <div className="notification">transaction {notification}</div>
       </div>
       <div className="trade-page">
-        <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} />
+        <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} isPoolLoading={
+            poolNetworkStatus === NetworkStatus.loading ||
+            poolNetworkStatus === NetworkStatus.setVariables ||
+            depsLoading
+        }/>
         <TradeForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}

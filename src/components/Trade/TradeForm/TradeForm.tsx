@@ -529,28 +529,28 @@ export const TradeForm = ({
               assets={assets}
             />{' '}
             <div className="balance-info balance-out-info">
-              {activeAccountTradeBalancesLoading ? (
+              {activeAccountTradeBalancesLoading || isPoolLoading || !tradeBalances.outBeforeTrade ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
-                  {tradeBalances.outBeforeTrade && assetIds.assetOut ? (
+                  {assetIds.assetOut ? (
                     <FormattedBalance
                       balance={{
-                        balance: tradeBalances.outBeforeTrade,
+                        balance: tradeBalances.outBeforeTrade || '0',
                         assetId: assetIds.assetOut,
                       }}
                     />
                   ) : (
-                    <></>
+                    <> -</>
                   )}
-                  {tradeBalances.outAfterTrade && assetIds.assetOut ? (
+                  {assetIds.assetOut ? (
                     <>
                       <Icon name="RightArrow" />
                       <FormattedBalance
                         balance={{
-                          balance: tradeBalances.outAfterTrade,
+                          balance: tradeBalances.outAfterTrade || '0',
                           assetId: assetIds.assetOut,
                         }}
                       />
@@ -638,21 +638,21 @@ export const TradeForm = ({
               assets={assets}
             />
             <div className="balance-info balance-out-info">
-              {activeAccountTradeBalancesLoading ? (
+              {activeAccountTradeBalancesLoading || isPoolLoading || !tradeBalances.inBeforeTrade ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
-                  {tradeBalances.inBeforeTrade && assetIds.assetIn ? (
+                  {assetIds.assetIn ? (
                     <FormattedBalance
                       balance={{
-                        balance: tradeBalances.inBeforeTrade,
+                        balance: tradeBalances.inBeforeTrade || '0',
                         assetId: assetIds.assetIn,
                       }}
                     />
                   ) : (
-                    <></>
+                    <> -</>
                   )}
                   {tradeBalances.inAfterTrade && assetIds.assetIn ? (
                     <>

@@ -2,6 +2,7 @@ import './TradeChartError.scss';
 
 export enum TradeChartErrorType {
   InvalidPair = 'InvalidPair',
+  Loading = 'Loading',
   Unexpected = 'Unexpected',
 }
 export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
@@ -20,6 +21,14 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
                 </div>
               </div>
             );
+            case TradeChartErrorType.Loading:
+              return (
+                <div className="row">
+                  <div className="large">
+                    Loading...
+                  </div>
+                </div>
+              );
           default:
             return (
               <div className="row">
