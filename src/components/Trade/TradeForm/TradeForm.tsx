@@ -151,7 +151,7 @@ export interface TradeFormFields {
   assetInAmount: string | null;
   assetOutAmount: string | null;
   submit: void;
-  warnings: any
+  warnings: any;
 }
 
 /**
@@ -233,7 +233,15 @@ export const TradeForm = ({
   useEffect(() => {
     // must provide input name otherwise it does not validate appropriately
     trigger('submit');
-  }, [isActiveAccountConnected, pool, isPoolLoading, activeAccountTradeBalances, assetInLiquidity, assetOutLiquidity, ...watch(['assetInAmount', 'assetOutAmount'])]);
+  }, [
+    isActiveAccountConnected,
+    pool,
+    isPoolLoading,
+    activeAccountTradeBalances,
+    assetInLiquidity,
+    assetOutLiquidity,
+    ...watch(['assetInAmount', 'assetOutAmount']),
+  ]);
 
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
@@ -259,13 +267,7 @@ export const TradeForm = ({
 
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount');
-    if (
-      !pool ||
-      !math ||
-      !assetInLiquidity ||
-      !assetOutLiquidity
-    )
-      return;
+    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
     if (tradeType !== TradeType.Buy) return;
 
     if (!assetOutAmount) return setValue('assetInAmount', null);
@@ -285,13 +287,7 @@ export const TradeForm = ({
 
   useEffect(() => {
     const assetInAmount = getValues('assetInAmount');
-    if (
-      !pool ||
-      !math ||
-      !assetInLiquidity ||
-      !assetOutLiquidity
-    )
-      return;
+    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
     if (tradeType !== TradeType.Sell) return;
 
     if (!assetInAmount) return setValue('assetOutAmount', null);
@@ -301,7 +297,8 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetInAmount
     );
-    if (amount === '0' && assetInAmount !== '0') return setValue('assetOutAmount', null);
+    if (amount === '0' && assetInAmount !== '0')
+      return setValue('assetOutAmount', null);
     setValue('assetOutAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
 
@@ -320,7 +317,7 @@ export const TradeForm = ({
 
     if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amount';
 
-    if (Object.keys(errors).length) return 'form invalid';
+    if (Object.keys(errors).length) return 'Swap';
 
     return 'Swap';
   }, [isPoolLoading, errors, isDirty]);
@@ -696,13 +693,18 @@ export const TradeForm = ({
                 },
                 notEnoughBalanceIn: () => {
                   const assetInAmount = getValues('assetInAmount');
-                  if (!activeAccountTradeBalances?.inBalance?.balance || !assetInAmount) return false;
-                  return new BigNumber(activeAccountTradeBalances.inBalance.balance)
-                    .lt(assetInAmount);
-                }
+                  if (
+                    !activeAccountTradeBalances?.inBalance?.balance ||
+                    !assetInAmount
+                  )
+                    return false;
+                  return new BigNumber(
+                    activeAccountTradeBalances.inBalance.balance
+                  ).lt(assetInAmount);
+                },
               },
             })}
-            disabled={(!isValid || tradeLoading || !isDirty)}
+            disabled={!isValid || tradeLoading || !isDirty}
             value={getSubmitText()}
           />
         </form>
