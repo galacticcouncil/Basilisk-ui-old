@@ -570,7 +570,10 @@ export const TradeForm = ({
                       ({
                       tradeBalances.outTradeChange?.lt('0.01')
                         ? `< 0.01`
-                        : tradeBalances.outTradeChange.toFixed(2)
+                        : (tradeBalances.outTradeChange?.gt('1000')
+                          ? `> 1000`
+                          : tradeBalances.outTradeChange.toFixed(2)
+                        )
                     }%)
                     </div>
                   )}
@@ -677,8 +680,11 @@ export const TradeForm = ({
                   {tradeBalances.inTradeChange && !tradeBalances.inTradeChange.isZero() && (
                     <div className="red">({
                       tradeBalances.inTradeChange?.abs().lt('0.01')
-                      ? `< 0.01`
-                      : tradeBalances.inTradeChange.toFixed(2)
+                      ? `< -0.01`
+                      : (tradeBalances.inTradeChange?.abs().gt('1000')
+                        ? `> -1000`
+                        : tradeBalances.inTradeChange.toFixed(2)
+                    )
                     }%)</div>
                   )}
                 </>
