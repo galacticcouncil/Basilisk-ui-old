@@ -1,7 +1,9 @@
 import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo } from 'react';
+import { debounce, delay, throttle } from 'lodash';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Fee } from '../../../../generated/graphql';
+import { Balance, Fee } from '../../../../generated/graphql';
+import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
 import { TradeFormFields } from '../TradeForm';
 import constants from './../../../../constants';
 import './TradeInfo.scss';
@@ -9,9 +11,9 @@ import './TradeInfo.scss';
 export interface TradeInfoProps {
   transactionFee?: string;
   tradeFee?: Fee;
-  tradeLimit?: string;
+  tradeLimit?: Balance;
   isDirty?: boolean;
-  expectedSlippage?: string;
+  expectedSlippage?: BigNumber;
   errors?: FieldErrors<TradeFormFields>;
 }
 
@@ -22,7 +24,9 @@ export const TradeInfo = ({
   isDirty,
   tradeFee = constants.xykFee,
 }: TradeInfoProps) => {
-  const error = useMemo(() => {
+  const [displayError, setDisplayError] = useState<string | undefined>();
+  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
+  const formError = useMemo(() => {
     switch (errors?.submit?.type) {
       case 'minTradeLimitOut':
         return 'Min trade limit not reached';
@@ -40,17 +44,38 @@ export const TradeInfo = ({
     return;
   }, [errors?.submit]);
 
+  useEffect(() => {
+    if (formError) {
+      setDisplayError(formError);
+      return () => {}
+    }
+    const timeoutId = setTimeout(() => setDisplayError(formError), 300);
+    return () => timeoutId && clearTimeout(timeoutId);
+  }, [formError]);
+
   return (
     <div className="trade-info">
       <div className="trade-info__data">
         <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
-          <div className="data-piece__value">{expectedSlippage || '0'}%</div>
+          <div className="data-piece__value">{!expectedSlippage?.isNaN()
+            ? expectedSlippage?.multipliedBy(100).toFixed(2) || '0'
+            : '0'
+          }%</div>
         </div>
         <div className="data-piece">
           <span className="data-piece__label">Trade limit </span>
           <div className="data-piece__value">
-            {new BigNumber(tradeLimit || '0').toFixed(2)}
+            {tradeLimit?.assetId
+              ? (
+                <FormattedBalance 
+              balance={{
+                balance: tradeLimit?.balance || '0',
+                assetId: tradeLimit?.assetId
+              }}
+            />
+              )
+            : <>-</>}
           </div>
         </div>
         <div className="data-piece">
@@ -68,11 +93,11 @@ export const TradeInfo = ({
 
       <div
         className={
-          'validation' +
-          (Object.keys(errors || {}).length && isDirty ? ' error' : '')
+          'validation error ' +
+          (isError && isDirty ? 'visible' : '')
         }
       >
-        {error}
+        {displayError}
       </div>
     </div>
   );

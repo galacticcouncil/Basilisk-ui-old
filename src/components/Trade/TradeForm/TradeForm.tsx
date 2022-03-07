@@ -338,27 +338,37 @@ export const TradeForm = ({
     // convert from precision, otherwise the math doesnt work
     const assetInAmount = fromPrecision12(getValues('assetInAmount') || '0');
     const assetOutAmount = fromPrecision12(getValues('assetOutAmount') || '0');
+    const assetIn = getValues('assetIn');
+    const assetOut = getValues('assetOut');
 
     if (
       !assetInAmount ||
       !assetOutAmount ||
       !spotPrice?.inOut ||
       !spotPrice?.outIn ||
+      ! assetIn ||
+      ! assetOut ||
       !allowedSlippage
     )
       return;
 
     switch (tradeType) {
       case TradeType.Sell:
-        return new BigNumber(assetInAmount)
-          .multipliedBy(spotPrice?.inOut)
-          .multipliedBy(new BigNumber('1').minus(allowedSlippage))
-          .toFixed(0);
+        return {
+          balance: new BigNumber(assetInAmount)
+            .multipliedBy(spotPrice?.inOut)
+            .multipliedBy(new BigNumber('1').minus(allowedSlippage))
+            .toFixed(0),
+          assetId: assetOut
+        };
       case TradeType.Buy:
-        return new BigNumber(assetOutAmount)
-          .multipliedBy(spotPrice?.outIn)
-          .multipliedBy(new BigNumber('1').plus(allowedSlippage))
-          .toFixed(0);
+        return {
+          balance: new BigNumber(assetOutAmount)
+            .multipliedBy(spotPrice?.outIn)
+            .multipliedBy(new BigNumber('1').plus(allowedSlippage))
+            .toFixed(0),
+          assetId: assetIn
+        }
     }
   }, [
     spotPrice,
@@ -418,7 +428,7 @@ export const TradeForm = ({
         assetOutAmount: data.assetOutAmount,
         poolType: PoolType.XYK,
         tradeType: tradeType,
-        amountWithSlippage: tradeLimit,
+        amountWithSlippage: tradeLimit.balance,
       });
     },
     [tradeType, tradeLimit]
@@ -679,8 +689,8 @@ export const TradeForm = ({
             <hr className="divider"></hr>
           </div>
           <TradeInfo
-            tradeLimit={fromPrecision12(tradeLimit)}
-            expectedSlippage={slippage?.multipliedBy(100).toFixed(2)}
+            tradeLimit={tradeLimit}
+            expectedSlippage={slippage}
             errors={errors}
             isDirty={isDirty}
           />
@@ -764,7 +774,7 @@ export const TradeForm = ({
             }
           })()}
         </p>
-        <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit)}</p>
+        <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit.balance)}</p>
         <p>
           Amounts (out / in):{' '}
           {fromPrecision12(getValues('assetOutAmount') || undefined)} /{' '}

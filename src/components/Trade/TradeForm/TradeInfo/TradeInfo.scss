@@ -38,18 +38,21 @@
   }
 
   .validation {
-    opacity: 0;
+    opacity: .3;
     line-height: 16px;
     height: 16px;
     max-height: 0px;
+    // max-height: 30px;
     overflow: hidden;
 
-    transition: max-height 0.3s ease, opacity 0.1s ease;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
 
-    &.error {
+    &.visible {
       max-height: 30px;
       opacity: 1;
+    }
 
+    &.error {
       font-size: 14px;
       color: $red1;
     }
