@@ -50,17 +50,30 @@ export const useHandleOnChange = ({
     [setValueAs, setRawValue]
   );
 
-  useEffect(() => {
-    const value = setValueAs(rawValue);
-    log.debug('BalanceInput', 'unit changed', rawValue, unit, value);
-    setValue(name, value);
-  }, [unit, rawValue]);
+  // useEffect(() => {
+  //   const value = setValueAs(rawValue);
+  //   log.debug('BalanceInput', 'unit changed', rawValue, unit, value);
+  //   setValue(name, value);
+  // }, [unit, rawValue]);
 
-  useEffect(debounce(() => {
-    setRawValue(
-      formatToSIWithPrecision12(getValues(name), unit)
-    )
-  }, 400), [value, unit])
+  useEffect(() => {
+    const rawValue = formatToSIWithPrecision12(getValues(name), unit);
+    setRawValue(rawValue)
+  }, [unit]);
+
+  useEffect(() => {
+    const debounced = debounce(() => {
+      const rawValue = formatToSIWithPrecision12(getValues(name), unit);
+      setRawValue(rawValue)
+
+      const value = setValueAs(rawValue);
+      setValue(name, value);
+    }, 700, { leading: true })
+
+    debounced();
+
+    return () => debounced.cancel();
+  }, [value])
 
   return { handleOnChange, rawValue };
 };

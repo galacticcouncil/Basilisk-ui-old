@@ -13,6 +13,6 @@ export const MetricUnitItem = ({ metricUnit, onClick, active }: MetricUnitItemPr
             'active': active
         })} 
         onClick={_ => onClick()}>
-        {unitMap[metricUnit]}
+        {metricUnit === '' ? 'base' : unitMap[metricUnit]}
     </div>
 )

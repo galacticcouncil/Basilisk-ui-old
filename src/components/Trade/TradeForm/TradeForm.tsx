@@ -253,7 +253,7 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Sell && assetInAmountInput !== undefined)
       return;
-
+    console.log('setTradeType', 'sell')
     setTradeType(TradeType.Sell);
   }, [assetInAmountInput]);
 
@@ -261,6 +261,8 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Buy && assetOutAmountInput !== undefined)
       return;
+
+      console.log('setTradeType', 'buy')
 
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);
@@ -381,6 +383,8 @@ export const TradeForm = ({
   const slippage = useMemo(() => {
     const assetInAmount = getValues('assetInAmount');
     const assetOutAmount = getValues('assetOutAmount');
+
+    console.log('slippage', assetInAmount, assetOutAmount);
 
     if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
       return;
