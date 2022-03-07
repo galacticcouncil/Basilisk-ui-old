@@ -36,6 +36,12 @@
     color: $green1;
   }
 
+  .close-modal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .close-modal-btn:hover {
     cursor: pointer;
 
