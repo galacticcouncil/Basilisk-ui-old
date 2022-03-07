@@ -320,7 +320,7 @@ export const TradeForm = ({
 
     if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amount';
 
-    if (Object.keys(errors).length) return 'form invalid';
+    if (Object.keys(errors).length) return 'Swap';
 
     return 'Swap';
   }, [isPoolLoading, errors, isDirty]);
@@ -445,27 +445,47 @@ export const TradeForm = ({
   }, [assetIds]);
 
   const tradeBalances = useMemo(() => {
-    const assetOutAmount = getValues('assetOutAmount') || undefined;
+    const assetOutAmount = getValues('assetOutAmount') || '0';
     const outBeforeTrade = activeAccountTradeBalances?.outBalance?.balance;
     const outAfterTrade =
       outBeforeTrade &&
       assetOutAmount &&
       new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0);
-    const outTradeChange = percentageChange(
-      outBeforeTrade,
-      outAfterTrade
-    )?.toFixed(3);
+    const outTradeChange = outBeforeTrade !== '0'
+      ? (
+        percentageChange(
+          fromPrecision12(outBeforeTrade),
+          fromPrecision12(outAfterTrade)
+        )
+      )
+      : (
+        new BigNumber(
+          outAfterTrade !== '0'
+          ? '100.000'
+          : '0'
+        )
+      )
 
-    const assetInAmount = getValues('assetInAmount') || undefined;
+    const assetInAmount = getValues('assetInAmount') || '0';
     const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
     const inAfterTrade =
       inBeforeTrade &&
       assetInAmount &&
       new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0);
-    const inTradeChange = percentageChange(
-      inBeforeTrade,
-      inAfterTrade
-    )?.toFixed(3);
+    const inTradeChange = inBeforeTrade !== '0'
+      ? (
+        percentageChange(
+          fromPrecision12(inBeforeTrade),
+          fromPrecision12(inAfterTrade)
+        )
+      )
+      : (
+        new BigNumber(
+          inAfterTrade !== '0'
+          ? '-100.000'
+          : '0'
+        )
+      )
 
     return {
       outBeforeTrade,
@@ -538,9 +558,13 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.outTradeChange && (
+                  {tradeBalances.outTradeChange && !tradeBalances.outTradeChange.isZero() && (
                     <div className="green">
-                      (${tradeBalances.outTradeChange}%)
+                      ({
+                      tradeBalances.outTradeChange?.lt('0.01')
+                        ? `< 0.01`
+                        : tradeBalances.outTradeChange.toFixed(2)
+                    }%)
                     </div>
                   )}
                 </>
@@ -643,8 +667,12 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.inTradeChange && (
-                    <div className="red">(${tradeBalances.inTradeChange}%)</div>
+                  {tradeBalances.inTradeChange && !tradeBalances.inTradeChange.isZero() && (
+                    <div className="red">({
+                      tradeBalances.inTradeChange?.abs().lt('0.01')
+                      ? `< 0.01`
+                      : tradeBalances.inTradeChange.toFixed(2)
+                    }%)</div>
                   )}
                 </>
               )}
@@ -676,6 +704,12 @@ export const TradeForm = ({
                   if (!assetInAmount || assetInAmount === '0') return false;
                   return true;
                 },
+                notEnoughBalanceIn: () => {
+                  const assetInAmount = getValues('assetInAmount');
+                  if (!activeAccountTradeBalances?.inBalance?.balance || !assetInAmount) return false;
+                  return new BigNumber(activeAccountTradeBalances.inBalance.balance)
+                    .gt(assetInAmount);
+                },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
                   if (!assetOutAmount || assetOutAmount === '0') return false;
@@ -694,12 +728,6 @@ export const TradeForm = ({
                   if (!allowedSlippage) return false;
                   return slippage?.lt(allowedSlippage);
                 },
-                notEnoughBalanceIn: () => {
-                  const assetInAmount = getValues('assetInAmount');
-                  if (!activeAccountTradeBalances?.inBalance?.balance || !assetInAmount) return false;
-                  return new BigNumber(activeAccountTradeBalances.inBalance.balance)
-                    .lt(assetInAmount);
-                }
               },
             })}
             disabled={(!isValid || tradeLoading || !isDirty)}
