@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import classNames from 'classnames';
-import { find, times } from 'lodash';
+import { every, find, times } from 'lodash';
 import {
   MutableRefObject,
   useCallback,
@@ -151,6 +151,7 @@ export interface TradeFormFields {
   assetInAmount: string | null;
   assetOutAmount: string | null;
   submit: void;
+  warnings: any
 }
 
 /**
@@ -202,7 +203,7 @@ export const TradeForm = ({
 
   const form = useForm<TradeFormFields>({
     reValidateMode: 'onChange',
-    mode: 'onTouched',
+    mode: 'all',
     defaultValues: {
       assetIn: assetIds.assetIn,
       assetOut: assetIds.assetOut,
@@ -232,7 +233,7 @@ export const TradeForm = ({
   useEffect(() => {
     // must provide input name otherwise it does not validate appropriately
     trigger('submit');
-  }, [isActiveAccountConnected, pool, isPoolLoading]);
+  }, [isActiveAccountConnected, pool, isPoolLoading, activeAccountTradeBalances, assetInLiquidity, assetOutLiquidity, ...watch(['assetInAmount', 'assetOutAmount'])]);
 
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
@@ -262,11 +263,12 @@ export const TradeForm = ({
       !pool ||
       !math ||
       !assetInLiquidity ||
-      !assetOutLiquidity ||
-      !assetOutAmount
+      !assetOutLiquidity
     )
       return;
     if (tradeType !== TradeType.Buy) return;
+
+    if (!assetOutAmount) return setValue('assetInAmount', null);
 
     const amount = math.xyk.calculate_in_given_out(
       // which combination is correct?
@@ -276,6 +278,7 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetOutAmount
     );
+    if (amount === '0' && assetOutAmount !== '0') return setValue('assetInAmount', null);
     setValue('assetInAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
 
@@ -285,22 +288,27 @@ export const TradeForm = ({
       !pool ||
       !math ||
       !assetInLiquidity ||
-      !assetOutLiquidity ||
-      !assetInAmount
+      !assetOutLiquidity
     )
       return;
     if (tradeType !== TradeType.Sell) return;
+
+    if (!assetInAmount) return setValue('assetOutAmount', null);
 
     const amount = math.xyk.calculate_out_given_in(
       assetInLiquidity,
       assetOutLiquidity,
       assetInAmount
     );
+    if (amount === '0' && assetInAmount !== '0') return setValue('assetOutAmount', null);
     setValue('assetOutAmount', amount || null);
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
+
+    // TODO: change to 'input amounts'?
+    if (!isDirty) return 'Swap';
 
     switch (errors.submit?.type) {
       case 'activeAccount':
@@ -314,7 +322,7 @@ export const TradeForm = ({
     if (Object.keys(errors).length) return 'form invalid';
 
     return 'Swap';
-  }, [isPoolLoading, errors]);
+  }, [isPoolLoading, errors, isDirty]);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -648,17 +656,52 @@ export const TradeForm = ({
             tradeLimit={fromPrecision12(tradeLimit)}
             expectedSlippage={slippage?.multipliedBy(100).toFixed(2)}
             errors={errors}
+            isDirty={isDirty}
           />
           <input
             type="submit"
             className="submit-button"
             {...register('submit', {
               validate: {
-                poolDoesNotExist: () => !!pool,
+                poolDoesNotExist: () => !isPoolLoading && !!pool,
                 activeAccount: () => isActiveAccountConnected,
+                minTradeLimitOut: () => {
+                  const assetOutAmount = getValues('assetOutAmount');
+                  if (!assetOutAmount || assetOutAmount === '0') return false;
+                  return true;
+                },
+                minTradeLimitIn: () => {
+                  const assetInAmount = getValues('assetInAmount');
+                  if (!assetInAmount || assetInAmount === '0') return false;
+                  return true;
+                },
+                maxTradeLimitOut: () => {
+                  const assetOutAmount = getValues('assetOutAmount');
+                  if (!assetOutAmount || assetOutAmount === '0') return false;
+                  return new BigNumber(assetOutLiquidity || '0')
+                    .dividedBy(3)
+                    .gte(assetOutAmount);
+                },
+                maxTradeLimitIn: () => {
+                  const assetInAmount = getValues('assetInAmount');
+                  if (!assetInAmount || assetInAmount === '0') return false;
+                  return new BigNumber(assetInLiquidity || '0')
+                    .dividedBy(3)
+                    .gte(assetInAmount);
+                },
+                slippageHigherThanTolerance: () => {
+                  if (!allowedSlippage) return false;
+                  return slippage?.lt(allowedSlippage);
+                },
+                notEnoughBalanceIn: () => {
+                  const assetInAmount = getValues('assetInAmount');
+                  if (!activeAccountTradeBalances?.inBalance?.balance || !assetInAmount) return false;
+                  return new BigNumber(activeAccountTradeBalances.inBalance.balance)
+                    .lt(assetInAmount);
+                }
               },
             })}
-            disabled={!isValid || tradeLoading}
+            disabled={(!isValid || tradeLoading || !isDirty)}
             value={getSubmitText()}
           />
         </form>

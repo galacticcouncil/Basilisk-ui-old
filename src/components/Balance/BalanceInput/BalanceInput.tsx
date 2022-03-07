@@ -34,6 +34,7 @@ export interface BalanceInputProps {
    * retrieve the actual input element from the form state
    */
   inputRef?: MutableRefObject<HTMLInputElement | null>;
+  required?: boolean
 }
 
 const MaskedInputWithRef = React.forwardRef(
@@ -79,6 +80,7 @@ export const BalanceInput = ({
   defaultUnit = MetricUnit.NONE,
   showMetricUnitSelector = true,
   inputRef,
+  required
 }: BalanceInputProps) => {
   const { control, register, setValue, getValues } = useFormContext();
   const { unit, setUnit } = useDefaultUnit(defaultUnit);
@@ -117,6 +119,7 @@ export const BalanceInput = ({
                 ).toString() + (isLastCharDot ? '.' : '')}
                 onBlur={field.onBlur}
                 ref={inputRef}
+                required={required}
                 onChange={(e) => handleOnChange(field, e)}
                 placeholder="0.00"
               />

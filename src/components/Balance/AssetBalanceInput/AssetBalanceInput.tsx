@@ -23,6 +23,7 @@ export interface AssetBalanceInputProps {
   isAssetSelectable?: boolean;
   // onAssetSelected: (asset: Asset) => void,
   balanceInputRef?: MutableRefObject<HTMLInputElement | null>;
+  required?: boolean
 }
 
 export const AssetBalanceInput = ({
@@ -35,6 +36,7 @@ export const AssetBalanceInput = ({
   isAssetSelectable = true,
   // onAssetSelected,
   balanceInputRef,
+  required,
 }: AssetBalanceInputProps) => {
   const modalPortalElement = useModalPortalElement({
     assets,
@@ -99,6 +101,7 @@ export const AssetBalanceInput = ({
           defaultUnit={unit}
           showMetricUnitSelector={false}
           inputRef={balanceInputRef}
+          required={required}
         />
       </div>
     </div>
