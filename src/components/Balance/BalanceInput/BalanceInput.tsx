@@ -82,7 +82,7 @@ export const BalanceInput = ({
   inputRef,
   required
 }: BalanceInputProps) => {
-  const { control, register, setValue, getValues } = useFormContext();
+  const { control, register, setValue, getValues, watch } = useFormContext();
   const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
   const currencyMask = useMemo(
@@ -93,7 +93,7 @@ export const BalanceInput = ({
     [unit]
   );
 
-  const { handleOnChange, isLastCharDot } = useHandleOnChange({ setValue, unit, name, inputRef });
+  const { handleOnChange, rawValue } = useHandleOnChange({ setValue, unit, name, inputRef, getValues, value: watch(name) });
 
   return (
     <div
@@ -114,9 +114,10 @@ export const BalanceInput = ({
                 mask={currencyMask}
                 inputMode="decimal"
                 // TODO: get rid of this
-                value={new BigNumber(
-                  formatToSIWithPrecision12(field.value, unit) || ''
-                ).toString() + (isLastCharDot ? '.' : '')}
+                // value={new BigNumber(
+                //   formatToSIWithPrecision12(field.value, unit) || ''
+                // ).toString() + (persistLastChar ? lastChar : '')}
+                value={rawValue}
                 onBlur={field.onBlur}
                 ref={inputRef}
                 required={required}

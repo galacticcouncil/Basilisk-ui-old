@@ -1,4 +1,4 @@
-import { last } from 'lodash';
+import { debounce, last, throttle } from 'lodash';
 import log from 'loglevel';
 import {
   ChangeEvent,
@@ -7,8 +7,8 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { ControllerRenderProps, UseFormSetValue } from 'react-hook-form';
-import { formatFromSIWithPrecision12, MetricUnit } from '../../metricUnit';
+import { ControllerRenderProps, UseFormGetValues, UseFormSetValue, UseFormWatch } from 'react-hook-form';
+import { formatFromSIWithPrecision12, formatToSIWithPrecision12, MetricUnit } from '../../metricUnit';
 import { BalanceInputProps, thousandsSeparatorSymbol } from '../BalanceInput';
 
 export const useHandleOnChange = ({
@@ -16,27 +16,21 @@ export const useHandleOnChange = ({
   name,
   unit,
   inputRef,
+  getValues,
+  value
 }: {
   setValue: UseFormSetValue<any>;
+  getValues: UseFormGetValues<any>
   name: BalanceInputProps['name'];
   unit: MetricUnit;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
+  value: UseFormWatch<any>
 }) => {
   const [rawValue, setRawValue] = useState<string | undefined>();
-  /**
-   * Persists the intent to input decimal numbers by capturing the
-   * 'dot' a.k.a. the decimal point in the raw user input
-   */
-  const [isLastCharDot, setIsLastCharDot] = useState<boolean>(false);
-
   // TODO: type the value
   const setValueAs = useCallback(
     (value) => {
-      // entering dangerous waters
-      const lastChar = last(value?.split(''));
       value = value?.replaceAll(thousandsSeparatorSymbol, '');
-      setIsLastCharDot(lastChar === '.');
-      log.debug('BalanceInput', value, lastChar, isLastCharDot);
       // this converts the given number to unit `NONE` and formats it with 12 digit precision
       const formattedValue = formatFromSIWithPrecision12(value, unit);
       log.debug('BalanceInput', 'setValueAs', value, formattedValue, unit);
@@ -62,5 +56,11 @@ export const useHandleOnChange = ({
     setValue(name, value);
   }, [unit, rawValue]);
 
-  return { handleOnChange, isLastCharDot };
+  useEffect(debounce(() => {
+    setRawValue(
+      formatToSIWithPrecision12(getValues(name), unit)
+    )
+  }, 400), [value, unit])
+
+  return { handleOnChange, rawValue };
 };
