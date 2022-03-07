@@ -58,21 +58,25 @@ export interface TradeChartProps {
 export const idToAsset = (id: string | null) => {
   const assetMetadata: Record<string, any> = {
     '0': {
+      id: '0',
       symbol: 'BSX',
       fullName: 'Basilisk',
       icon: BSX,
     },
     '1': {
+      id: '1',
       symbol: 'USDC',
       fullName: 'USD Coin',
       icon: Unknown,
     },
     '2': {
+      id: '2',
       symbol: 'kUSD',
       fullName: 'Karura USD',
       icon: Unknown,
     },
     '3': {
+      id: '3',
       symbol: 'DAI',
       fullName: 'DAI Stablecoin',
       icon: Unknown,

@@ -67,7 +67,7 @@ export const ChartHeader = ({
           {/* pair symbols */}
           <div className="chart-header__pool-info__assets__symbols">
             <div>
-              {`${assetPair.assetA.symbol}`}
+              {`${assetPair.assetA?.symbol}`}
               <span> / </span>
               {assetPair.assetB?.symbol
                 ? `${assetPair.assetB.symbol}`
@@ -88,7 +88,7 @@ export const ChartHeader = ({
 
           <div className="chart-header__pool-info__assets__full-name">
             {/* Pair full names */}
-            {`${assetPair.assetA.fullName} / `}
+            {`${assetPair.assetA?.fullName} / `}
             {assetPair.assetB?.fullName
               ? `${assetPair.assetB.fullName}`
               : horizontalBar}
