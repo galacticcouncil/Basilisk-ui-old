@@ -11,7 +11,7 @@
   max-width: 550px;
   min-width: 350px;
 
-  flex-basis: 350px;
+  // flex-basis: 350px;
 
   gap: 12px;
 
@@ -22,6 +22,35 @@
   &__icons-wrapper {
     display: flex;
     gap: 12px;
+
+    &__icon {
+      display: flex;
+      align-items: center;
+    }
+
+    .faucet {
+      &.loading {
+        &:before {
+          content: ' ';
+          display: block;
+          width: 14px;
+          height: 14px;
+          margin: 4px 4px 0 0;
+          border-radius: 50%;
+          border: 2px solid $black;
+          border-color: $black transparent $black transparent;
+          animation: loader 1.2s linear infinite;
+        }
+        @keyframes loader {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      }
+    }
 
     &__icon:hover {
       cursor: pointer;

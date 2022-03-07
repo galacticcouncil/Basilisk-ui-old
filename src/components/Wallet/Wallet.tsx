@@ -8,6 +8,7 @@ import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPorta
 import { useModalPortalElement } from './AccountSelector/hooks/useModalPortalElement';
 import { FormattedMessage } from 'react-intl';
 import getBsxBalance from '../../misc/utils/getBsxBalance';
+import classNames from 'classnames';
 
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
@@ -74,15 +75,23 @@ export const Wallet = ({
       {modalPortal}
 
       <div className="wallet__icons-wrapper">
-        <span className="wallet__icons-wrapper__icon">
+        <a className="wallet__icons-wrapper__icon" href="https://github.com/galacticcouncil/Basilisk-ui/issues" target="_blank">
           <Icon name="Help" />
-        </span>
-        <span className="wallet__icons-wrapper__icon" onClick={() => faucetMint()}>
+        </a>
+        {account
+          ? (
+            <div
+          className={classNames("wallet__info__account wallet__account-btn faucet", {
+            loading: faucetMintLoading
+          })}
+          onClick={(_) => faucetMint()}
+        >
           {faucetMintLoading
-            ? <>Loading</>
-            : <>Mint tokens</>
+            ? 'Loading...'
+            : 'Get test tokens 🚰'
           }
-        </span>
+        </div>
+          ): <></>}
       </div>
       <div className="wallet__info" data-modal-portal-toggle={toggleId}>
         {extensionLoading || activeAccountLoading ? (
