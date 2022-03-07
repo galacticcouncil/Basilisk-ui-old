@@ -45,10 +45,10 @@
     transition: max-height 0.3s ease, opacity 0.15s ease;
 
     &.error {
-      max-height: 60px;
+      max-height: 30px;
       opacity: 1;
 
-      font-size: 12px;
+      font-size: 14px;
       color: $red1;
     }
 

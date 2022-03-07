@@ -10,7 +10,7 @@ export interface TradeInfoProps {
   transactionFee?: string;
   tradeFee?: Fee;
   tradeLimit?: string;
-  isDirty?: boolean,
+  isDirty?: boolean;
   expectedSlippage?: string;
   errors?: FieldErrors<TradeFormFields>;
 }
@@ -22,35 +22,27 @@ export const TradeInfo = ({
   isDirty,
   tradeFee = constants.xykFee,
 }: TradeInfoProps) => {
-
   const error = useMemo(() => {
     switch (errors?.submit?.type) {
       case 'minTradeLimitOut':
-        return 'Min trade limit not reached'
+        return 'Min trade limit not reached';
       case 'minTradeLimitIn':
-        return 'Min trade limit not reached'
+        return 'Min trade limit not reached';
       case 'maxTradeLimitOut':
-        return 'Max trade limit reached'
+        return 'Max trade limit reached';
       case 'maxTradeLimitIn':
-        return 'Max trade limit reached'
+        return 'Max trade limit reached';
       case 'slippageHigherThanTolerance':
-        return 'Slippage higher than tolerance'
+        return 'Slippage higher than tolerance';
       case 'notEnoughBalanceIn':
-        return 'Insufficient balance'
+        return 'Insufficient balance';
     }
     return;
-  }, [errors?.submit])
+  }, [errors?.submit]);
 
   return (
     <div className="trade-info">
-      <div
-        className={
-          'trade-info__data' +
-          (Object.keys(errors || {}).length && isDirty
-            ? ' hidden'
-            : '')
-        }
-      >
+      <div className="trade-info__data">
         <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
           <div className="data-piece__value">{expectedSlippage || '0'}%</div>
@@ -73,13 +65,11 @@ export const TradeInfo = ({
         </div>
       </div>
       {/* TODO Error message */}
-      
+
       <div
         className={
           'validation' +
-          (Object.keys(errors || {}).length && isDirty
-            ? ' error'
-            : '')
+          (Object.keys(errors || {}).length && isDirty ? ' error' : '')
         }
       >
         {error}
