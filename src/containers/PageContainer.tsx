@@ -37,18 +37,23 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
       <div className="">{children}</div>
 
       <div className="footer">
-        <div className={classNames('liveliness', {
-          'green': sinceLastBlockUpdate <= 30,
-          'orange': sinceLastBlockUpdate > 30,
-          'red': sinceLastBlockUpdate >= 60
-        })}></div>
-        <span>
-          {lastBlockData?.lastBlock?.parachainBlockNumber ? (
-            `Block no.: ${lastBlockData.lastBlock.parachainBlockNumber}`
-          ) : (
-            <></>
-          )}
-        </span>
+        <div className='liveliness-wrapper'>
+          <div className={classNames('liveliness', {
+            'green': sinceLastBlockUpdate <= 30,
+            'orange': sinceLastBlockUpdate > 30,
+            'red': sinceLastBlockUpdate >= 60
+          })}></div>
+          <span>
+            {lastBlockData?.lastBlock?.parachainBlockNumber ? (
+              `Block no.: ${lastBlockData.lastBlock.parachainBlockNumber}`
+            ) : (
+              <></>
+            )}
+          </span>
+        </div>
+        <div>
+          Version: {process.env.REACT_APP_GITHUB_SHA || 'unknown'}
+        </div>
       </div>
     </div>
   );

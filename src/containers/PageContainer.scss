@@ -29,24 +29,32 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 
     color: #bdccd4;
     font-weight: 400;
     font-size: 12px;
-    gap: 8px;
+    gap: 4px;
 
-    .liveliness {
-      width: 12px;
-      height: 12px;
-      border-radius: 100%;
-      &.green {
-        background-color: $green2;
-      }
-      &.orange {
-        background-color: $orange1;
-      }
-      &.red {
-        background-color: $red1;
+    .liveliness-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .liveliness {
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+        margin-right: 6px;
+        &.green {
+          background-color: $green2;
+        }
+        &.orange {
+          background-color: $orange1;
+        }
+        &.red {
+          background-color: $red1;
+        }
       }
     }
   }
