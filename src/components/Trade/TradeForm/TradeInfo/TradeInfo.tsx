@@ -46,8 +46,8 @@ export const TradeInfo = ({
 
   useEffect(() => {
     if (formError) {
-      setDisplayError(formError);
-      return () => {}
+      const timeoutId = setTimeout(() => setDisplayError(formError), 50);
+      return () => timeoutId && clearTimeout(timeoutId);
     }
     const timeoutId = setTimeout(() => setDisplayError(formError), 300);
     return () => timeoutId && clearTimeout(timeoutId);
@@ -58,24 +58,26 @@ export const TradeInfo = ({
       <div className="trade-info__data">
         <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
-          <div className="data-piece__value">{!expectedSlippage?.isNaN()
-            ? expectedSlippage?.multipliedBy(100).toFixed(2) || '0'
-            : '0'
-          }%</div>
+          <div className="data-piece__value">
+            {!expectedSlippage?.isNaN()
+              ? expectedSlippage?.multipliedBy(100).toFixed(2) || '0'
+              : '0'}
+            %
+          </div>
         </div>
         <div className="data-piece">
           <span className="data-piece__label">Trade limit </span>
           <div className="data-piece__value">
-            {tradeLimit?.assetId
-              ? (
-                <FormattedBalance 
-              balance={{
-                balance: tradeLimit?.balance || '0',
-                assetId: tradeLimit?.assetId
-              }}
-            />
-              )
-            : <>-</>}
+            {tradeLimit?.assetId ? (
+              <FormattedBalance
+                balance={{
+                  balance: tradeLimit?.balance || '0',
+                  assetId: tradeLimit?.assetId,
+                }}
+              />
+            ) : (
+              <>-</>
+            )}
           </div>
         </div>
         <div className="data-piece">
@@ -92,10 +94,7 @@ export const TradeInfo = ({
       {/* TODO Error message */}
 
       <div
-        className={
-          'validation error ' +
-          (isError && isDirty ? 'visible' : '')
-        }
+        className={'validation error ' + (isError && isDirty ? 'visible' : '')}
       >
         {displayError}
       </div>

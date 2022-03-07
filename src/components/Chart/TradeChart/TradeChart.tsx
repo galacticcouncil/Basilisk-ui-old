@@ -45,7 +45,7 @@ export const _getTooltipPositionCss = (tooltipPosition: number) => {
 export interface TradeChartProps {
   assetPair: AssetPair;
   poolType: PoolType;
-  isPoolLoading?: boolean
+  isPoolLoading?: boolean;
   granularity: ChartGranularity;
   chartType: ChartType;
   primaryDataset: Dataset;
@@ -210,10 +210,10 @@ export const TradeChart = ({
   );
 
   const { from, to } = useMemo(() => {
-    const from = moment().subtract(24, 'hours').valueOf()
+    const from = moment().subtract(24, 'hours').valueOf();
     const to = last(primaryDataset)?.x;
 
-    return { from, to }
+    return { from, to };
   }, [granularity, primaryDataset]);
 
   return (
@@ -279,8 +279,7 @@ export const TradeChart = ({
         <></>
       )}
 
-      
-        {/* {isPoolLoading
+      {/* {isPoolLoading
           ? (
             <div className="trade-chart__error-wrapper">
               <TradeChartError type={TradeChartErrorType.InvalidPair} />
@@ -296,13 +295,13 @@ export const TradeChart = ({
             )
           )} */}
 
-          {!primaryDataset?.length? (
-              <div className="trade-chart__error-wrapper">
-                <TradeChartError type={TradeChartErrorType.InvalidPair} />
-              </div>
-            ) : (
-              <></>
-            )}
+      {!primaryDataset?.length ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.InvalidPair} />
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };
