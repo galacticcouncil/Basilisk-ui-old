@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Fee } from '../../../../generated/graphql';
-import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
-import { getRepayFee } from '../../lib/getRepayFee';
-import { withErrorHandler } from '../../../apollo/withErrorHandler';
-import errors from '../../../../errors';
+import { Fee } from '../../../../../generated/graphql';
+import { usePolkadotJsContext } from '../../../../polkadotJs/usePolkadotJs';
+import { getRepayFee } from '../../../lib/getRepayFee';
+import { withErrorHandler } from '../../../../apollo/withErrorHandler';
+import errors from '../../../../../errors';
 
 export const __typename: Fee['__typename'] = 'Fee';
 const withTypename = (repayFee: Fee) => ({

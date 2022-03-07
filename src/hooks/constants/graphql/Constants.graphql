@@ -1,11 +1,11 @@
 #import './../../pools/graphql/Pool.graphql'
 
 type LBPConstants {
-  repayFee: Fee!
+  repayFee: Fee
 }
 
 type Constants {
-  lbp: LBPConstants!
+  lbp: LBPConstants
 }
 
 extend type Query {

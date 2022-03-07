@@ -56,7 +56,7 @@ export type Config = {
 
 export type Constants = {
   __typename?: 'Constants';
-  lbp: LbpConstants;
+  lbp?: Maybe<LbpConstants>;
 };
 
 export type Extension = {
@@ -86,7 +86,7 @@ export type LbpAssetWeights = {
 
 export type LbpConstants = {
   __typename?: 'LBPConstants';
-  repayFee: Fee;
+  repayFee?: Maybe<Fee>;
 };
 
 export type LbpPool = {

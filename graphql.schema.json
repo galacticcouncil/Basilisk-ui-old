@@ -313,13 +313,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "LBPConstants",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "LBPConstants",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -520,13 +516,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Fee",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Fee",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

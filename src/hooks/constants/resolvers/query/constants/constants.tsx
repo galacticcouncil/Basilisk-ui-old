@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import { Constants } from '../../../../generated/graphql';
-import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
-import { withErrorHandler } from '../../../apollo/withErrorHandler';
-import errors from '../../../../errors';
+import { Constants } from '../../../../../generated/graphql';
+import { usePolkadotJsContext } from '../../../../polkadotJs/usePolkadotJs';
+import { withErrorHandler } from '../../../../apollo/withErrorHandler';
+import errors from '../../../../../errors';
 
 export const __typename: Constants['__typename'] = 'Constants';
 const withTypename = () => ({

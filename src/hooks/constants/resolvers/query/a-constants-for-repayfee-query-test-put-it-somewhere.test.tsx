@@ -1,4 +1,9 @@
-import { useLbpConstantsQueryResolver } from './lbpConstants';
+/**
+ * This file is a reference file and wip
+ * don't worry about it for now
+ */
+
+import { useLbpConstantsQueryResolver } from './lbpConstants/lbpConstants';
 import { LbpConstants } from '../../../../generated/graphql';
 import { Resolvers, useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
@@ -6,7 +11,23 @@ import TestRenderer, { act } from 'react-test-renderer';
 import { gql } from 'graphql.macro';
 import waitForExpect from 'wait-for-expect';
 
-jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
+export const mockedRepayFee = ['2', '10'];
+
+export const getMockApiPromise = () =>
+  ({
+    consts: {
+      lbp: {
+        getRepayFee: mockedRepayFee,
+      },
+    },
+  } as unknown as ApiPromise);
+
+export const mockUsePolkadotJsContext = () => ({
+  apiInstance: getMockApiPromise(),
+  loading: false,
+});
+
+jest.mock('../../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
     /**
      * Jest.mock executes before any import. Requiring a module inside a mock is

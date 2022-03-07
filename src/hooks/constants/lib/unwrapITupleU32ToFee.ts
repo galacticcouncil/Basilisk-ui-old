@@ -14,5 +14,3 @@ export const unwrapITupleU32ToFee = (apiInstance: ApiPromise): Fee => {
     denominator: tuple[1].toString(),
   };
 };
-
-// todo still fix this 👆
