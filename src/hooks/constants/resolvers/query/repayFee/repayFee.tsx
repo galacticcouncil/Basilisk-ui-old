@@ -7,8 +7,10 @@ import { withErrorHandler } from '../../../../apollo/withErrorHandler';
 import errors from '../../../../../errors';
 
 export const __typename: Fee['__typename'] = 'Fee';
+const id = 'LBPRepayFee';
 const withTypename = (repayFee: Fee) => ({
   __typename,
+  id,
   ...repayFee,
 });
 
