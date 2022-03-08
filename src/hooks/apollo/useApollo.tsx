@@ -35,7 +35,6 @@ export const useResolvers: () => Resolvers = () => {
     LBPConstants,
   } = useConstantsQueryResolvers();
 
-  console.log('WHAT IS IT: ', Constants);
   return {
     Query: {
       ...AccountsQueryResolver,
