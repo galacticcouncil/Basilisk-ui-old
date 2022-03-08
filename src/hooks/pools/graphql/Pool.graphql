@@ -28,6 +28,7 @@ type LBPAssetWeights {
 }
 
 type Fee {
+  id: String
   numerator: String!
   denominator: String!
 }

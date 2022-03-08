@@ -68,6 +68,7 @@ export type Extension = {
 export type Fee = {
   __typename?: 'Fee';
   denominator: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
   numerator: Scalars['String'];
 };
 
