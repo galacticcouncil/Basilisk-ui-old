@@ -86,8 +86,8 @@ describe('repayFee', () => {
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.mockConstants.mockLbp.repayFee).toEqual({
-            __typename: 'Fee',
-            id: 'LBPRepayFee',
+            __typename: 'RepayFee',
+            id: 'LBPConstantsFee',
             numerator: mockedGetRepayFeeValue.numerator,
             denominator: mockedGetRepayFeeValue.denominator,
           });

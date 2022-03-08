@@ -1,7 +1,13 @@
 #import './../../pools/graphql/Pool.graphql'
 
+type RepayFee implements Fee {
+  id: String!
+  numerator: String!
+  denominator: String!
+}
+
 type LBPConstants {
-  repayFee: Fee
+  repayFee: RepayFee
 }
 
 type Constants {
