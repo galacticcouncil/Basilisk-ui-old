@@ -4,8 +4,8 @@ import { gql } from 'graphql.macro';
 import { ApiPromise } from '@polkadot/api';
 import TestRenderer, { act } from 'react-test-renderer';
 import waitForExpect from 'wait-for-expect';
-import { useConstantsQueryResolver } from './constants';
-import { Constants } from '../../../../../generated/graphql';
+import { useLbpConstantsQueryResolver } from './lbpConstants';
+import { LbpConstants } from '../../../../../generated/graphql';
 
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
@@ -20,12 +20,20 @@ jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   },
 }));
 
-describe('constants', () => {
-  describe('useConstantsQueryResolver', () => {
+describe('lbpConstants', () => {
+  describe('useLbpConstantsQueryResolvers', () => {
     const useResolvers = () => {
       return {
         Query: {
-          ...useConstantsQueryResolver(),
+          mockEntity: () => ({
+            lbp: {
+              __typename: 'LBPConstants',
+            },
+            __typename: 'Constants',
+          }),
+        },
+        MockEntity: {
+          ...useLbpConstantsQueryResolver(),
         },
       };
     };
@@ -38,23 +46,23 @@ describe('constants', () => {
       };
 
     interface TestQueryResponse {
-      constants: Constants;
+      mockEntity: { lbp: LbpConstants };
     }
     const Test = () => {
-      const { data } = useQuery<Constants>(
+      const { data } = useQuery<TestQueryResponse>(
         gql`
-          query GetConstants {
-            constants @client {
-              __typename
+          query GetLbpConstants {
+            mockEntity @client {
+              lbp
             }
           }
         `
       );
+
       return <>{JSON.stringify(data)}</>;
     };
 
     let component: TestRenderer.ReactTestRenderer;
-
     const render = () => {
       const ResolverProvider = resolverProviderFactory(useResolvers);
       component = TestRenderer.create(
@@ -72,8 +80,8 @@ describe('constants', () => {
 
       await act(async () => {
         await waitForExpect(() => {
-          expect(data()?.constants).toEqual({
-            __typename: 'Constants',
+          expect(data()?.mockEntity.lbp).toEqual({
+            __typename: 'LBPConstants',
           });
         });
       });
