@@ -4,15 +4,16 @@ import { gql } from 'graphql.macro';
 import { ApiPromise } from '@polkadot/api';
 import TestRenderer, { act } from 'react-test-renderer';
 import waitForExpect from 'wait-for-expect';
-import { useLbpConstantsQueryResolver } from './lbpConstants';
-import { LbpConstants } from '../../../../../generated/graphql';
+import { useRepayFeeQueryResolver } from './repayFee';
+import { Fee } from '../../../../../generated/graphql';
+
+const mockedGetRepayFeeValue = {
+  numerator: '3',
+  denominator: '4',
+};
 
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
-    /**
-     * mock more in apiInstance for this resolver
-     * as required in future.
-     */
     return {
       apiInstance: {},
       loading: false,
@@ -20,17 +21,22 @@ jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   },
 }));
 
-describe('lbpConstants', () => {
-  describe('useLbpConstantsQueryResolvers', () => {
+jest.mock('../../../lib/getRepayFee', () => ({
+  getRepayFee: () => mockedGetRepayFeeValue,
+}));
+
+describe('repayFee', () => {
+  describe('useRepayFeeQueryResolver', () => {
     const useResolvers = () => {
       return {
         Query: {
-          mockConstants: () => ({
-            __typename: 'Constants',
-          }),
+          mockConstants: () => ({ __typename: 'Constants' }),
         },
         Constants: {
-          ...useLbpConstantsQueryResolver(),
+          mockLbp: () => ({ __typename: 'LBPConstants' }),
+        },
+        LBPConstants: {
+          ...useRepayFeeQueryResolver(),
         },
       };
     };
@@ -43,15 +49,15 @@ describe('lbpConstants', () => {
       };
 
     interface TestQueryResponse {
-      mockConstants: { lbp: LbpConstants };
+      mockConstants: { mockLbp: { repayFee: Fee } };
     }
     const Test = () => {
       const { data } = useQuery<TestQueryResponse>(
         gql`
           query GetLbpConstants {
             mockConstants @client {
-              lbp {
-                __typename
+              mockLbp {
+                repayFee
               }
             }
           }
@@ -79,8 +85,10 @@ describe('lbpConstants', () => {
 
       await act(async () => {
         await waitForExpect(() => {
-          expect(data()?.mockConstants.lbp).toEqual({
-            __typename: 'LBPConstants',
+          expect(data()?.mockConstants.mockLbp.repayFee).toEqual({
+            __typename: 'Fee',
+            numerator: mockedGetRepayFeeValue.numerator,
+            denominator: mockedGetRepayFeeValue.denominator,
           });
         });
       });

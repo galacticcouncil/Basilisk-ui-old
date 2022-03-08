@@ -26,12 +26,13 @@ export const lbpConstantsQueryResolverFactory =
 export const useLbpConstantsQueryResolver = () => {
   const { apiInstance } = usePolkadotJsContext();
   return {
-    lbp: withErrorHandler(
-      useMemo(
-        () => lbpConstantsQueryResolverFactory(apiInstance),
-        [apiInstance]
-      ),
-      'lBPConstants'
+    lbp: useMemo(
+      () =>
+        withErrorHandler(
+          lbpConstantsQueryResolverFactory(apiInstance),
+          'lBPConstants'
+        ),
+      [apiInstance]
     ),
   };
 };

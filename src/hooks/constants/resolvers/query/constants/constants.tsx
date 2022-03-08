@@ -25,9 +25,13 @@ export const useConstantsQueryResolver = () => {
   const { apiInstance } = usePolkadotJsContext();
 
   return {
-    constants: withErrorHandler(
-      useMemo(() => constantsQueryResolverFactory(apiInstance), [apiInstance]),
-      'constants'
+    constants: useMemo(
+      () =>
+        withErrorHandler(
+          constantsQueryResolverFactory(apiInstance),
+          'constants'
+        ),
+      [apiInstance]
     ),
   };
 };

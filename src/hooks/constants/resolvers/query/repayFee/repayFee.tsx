@@ -29,9 +29,10 @@ export const useRepayFeeQueryResolver = () => {
   const { apiInstance } = usePolkadotJsContext();
 
   return {
-    repayFee: withErrorHandler(
-      useMemo(() => repayFeeQueryResolverFactory(apiInstance), [apiInstance]),
-      'repayFee'
+    repayFee: useMemo(
+      () =>
+        withErrorHandler(repayFeeQueryResolverFactory(apiInstance), 'repayFee'),
+      [apiInstance]
     ),
   };
 };
