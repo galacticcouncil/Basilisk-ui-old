@@ -169,7 +169,7 @@ export const useListenForInput = (
     if (!inputRef) return;
     // TODO: figure out why using the 'input' broke the mask
     // 'keydown' also doesnt work bcs its triggered by copy/paste, which then
-    // changes the trade type (which this hook is primarily)
+    // changes the trade type (which this hook is primarily) 
     const listener = inputRef.current?.addEventListener('keypress', () =>
       setState((state) => !state)
     );
@@ -198,7 +198,7 @@ export const TradeForm = ({
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
-  const [tradeType, setTradeType] = useState<TradeType>(TradeType.Buy);
+  const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell);
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
 
   const form = useForm<TradeFormFields>({
@@ -251,18 +251,18 @@ export const TradeForm = ({
 
   const assetInAmountInput = useListenForInput(assetInAmountInputRef);
   useEffect(() => {
-    if (tradeType === TradeType.Sell && assetInAmountInput !== undefined)
+    if (tradeType === TradeType.Sell || assetInAmountInput === undefined)
       return;
-    console.log('setTradeType', 'sell');
+    console.log('setTradeType', 'sell', assetInAmountInput);
     setTradeType(TradeType.Sell);
   }, [assetInAmountInput]);
 
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
   useEffect(() => {
-    if (tradeType === TradeType.Buy && assetOutAmountInput !== undefined)
+    if (tradeType === TradeType.Buy || assetOutAmountInput === undefined)
       return;
 
-    console.log('setTradeType', 'buy');
+    console.log('setTradeType', 'buy', assetOutAmountInput);
 
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);

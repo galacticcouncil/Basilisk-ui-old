@@ -154,11 +154,11 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
               ),
             };
 
-            const y = new BigNumber(fromPrecision12(spotPrice.outIn) || '');
+            const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
 
             return {
               y: y.toNumber(),
-              yAsString: fromPrecision12(spotPrice.outIn),
+              yAsString: fromPrecision12(spotPrice.inOut),
             };
           })(),
         };
@@ -168,8 +168,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
       x: new Date().getTime(),
-      y: new BigNumber(fromPrecision12(spotPrice.outIn) || '').toNumber(),
-      yAsString: fromPrecision12(spotPrice.outIn),
+      y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
+      yAsString: fromPrecision12(spotPrice.inOut),
     });
 
     setDataset(dataset);
@@ -197,8 +197,8 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
   return (
     <TradeChartComponent
       assetPair={{
-        assetA: idToAsset(assetIds.assetOut),
-        assetB: idToAsset(assetIds.assetIn),
+        assetA: idToAsset(assetIds.assetIn),
+        assetB: idToAsset(assetIds.assetOut),
       }}
       isPoolLoading={
         isPoolLoading ||

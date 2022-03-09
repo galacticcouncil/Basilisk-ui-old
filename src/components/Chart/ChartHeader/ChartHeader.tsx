@@ -67,8 +67,10 @@ export const ChartHeader = ({
           {/* pair symbols */}
           <div className="chart-header__pool-info__assets__symbols">
             <div>
-              {`${assetPair.assetA?.symbol}`}
-              <span> / </span>
+              {assetPair.assetA?.symbol
+                ? `${assetPair.assetA.symbol}`
+                : horizontalBar}
+              {' / '}
               {assetPair.assetB?.symbol
                 ? `${assetPair.assetB.symbol}`
                 : // TODO: replace with long dash glyph
@@ -88,7 +90,10 @@ export const ChartHeader = ({
 
           <div className="chart-header__pool-info__assets__full-name">
             {/* Pair full names */}
-            {`${assetPair.assetA?.fullName} / `}
+            {assetPair.assetA?.fullName
+              ? `${assetPair.assetA.fullName}`
+              : horizontalBar}
+            {' / '}
             {assetPair.assetB?.fullName
               ? `${assetPair.assetB.fullName}`
               : horizontalBar}
