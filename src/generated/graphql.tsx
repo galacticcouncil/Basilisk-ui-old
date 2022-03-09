@@ -66,6 +66,7 @@ export type Extension = {
 };
 
 export type Fee = {
+  __typename?: 'Fee';
   denominator: Scalars['String'];
   numerator: Scalars['String'];
 };
@@ -85,7 +86,7 @@ export type LbpAssetWeights = {
 
 export type LbpConstants = {
   __typename?: 'LBPConstants';
-  repayFee?: Maybe<RepayFee>;
+  repayFee?: Maybe<Fee>;
 };
 
 export type LbpPool = {
@@ -96,8 +97,8 @@ export type LbpPool = {
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['String'];
+  fee: Fee;
   id: Scalars['String'];
-  poolFee: PoolFee;
   repayTargetReached: Scalars['Boolean'];
   startBlock: Scalars['String'];
 };
@@ -110,12 +111,6 @@ export type LastBlock = {
 };
 
 export type Pool = LbpPool | XykPool;
-
-export type PoolFee = Fee & {
-  __typename?: 'PoolFee';
-  denominator: Scalars['String'];
-  numerator: Scalars['String'];
-};
 
 export type Query = {
   __typename?: 'Query';
@@ -132,13 +127,6 @@ export type Query = {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   pools?: Maybe<Array<Pool>>;
-};
-
-export type RepayFee = Fee & {
-  __typename?: 'RepayFee';
-  denominator: Scalars['String'];
-  id: Scalars['String'];
-  numerator: Scalars['String'];
 };
 
 export enum TradeType {

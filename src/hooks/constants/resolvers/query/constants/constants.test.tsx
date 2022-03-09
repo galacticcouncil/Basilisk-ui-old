@@ -46,6 +46,7 @@ describe('constants', () => {
           query GetConstants {
             constants @client {
               __typename
+              id
             }
           }
         `
@@ -74,6 +75,7 @@ describe('constants', () => {
         await waitForExpect(() => {
           expect(data()?.constants).toEqual({
             __typename: 'Constants',
+            id: 'Constants',
           });
         });
       });

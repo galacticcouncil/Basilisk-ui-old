@@ -7,12 +7,13 @@ import waitForExpect from 'wait-for-expect';
 import { useLbpConstantsQueryResolver } from './lbpConstants';
 import { LbpConstants } from '../../../../../generated/graphql';
 
+const mockedGetRepayFeeValue = {
+  numerator: '3',
+  denominator: '4',
+};
+
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
-    /**
-     * mock more in apiInstance for this resolver
-     * as required in future.
-     */
     return {
       apiInstance: {},
       loading: false,
@@ -20,16 +21,15 @@ jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   },
 }));
 
+jest.mock('../../../lib/getRepayFee', () => ({
+  getRepayFee: () => mockedGetRepayFeeValue,
+}));
+
 describe('lbpConstants', () => {
   describe('useLbpConstantsQueryResolvers', () => {
     const useResolvers = () => {
       return {
         Query: {
-          mockConstants: () => ({
-            __typename: 'Constants',
-          }),
-        },
-        Constants: {
           ...useLbpConstantsQueryResolver(),
         },
       };
@@ -43,17 +43,13 @@ describe('lbpConstants', () => {
       };
 
     interface TestQueryResponse {
-      mockConstants: { lbp: LbpConstants };
+      lbp: LbpConstants;
     }
     const Test = () => {
       const { data } = useQuery<TestQueryResponse>(
         gql`
           query GetLbpConstants {
-            mockConstants @client {
-              lbp {
-                __typename
-              }
-            }
+            lbp @client
           }
         `
       );
@@ -79,8 +75,13 @@ describe('lbpConstants', () => {
 
       await act(async () => {
         await waitForExpect(() => {
-          expect(data()?.mockConstants.lbp).toEqual({
+          expect(data()?.lbp).toEqual({
             __typename: 'LBPConstants',
+            id: 'LBPConstants',
+            repayFee: {
+              denominator: mockedGetRepayFeeValue.denominator,
+              numerator: mockedGetRepayFeeValue.numerator,
+            },
           });
         });
       });

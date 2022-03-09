@@ -1,14 +1,19 @@
 import { Constants } from '../../../../../generated/graphql';
 
 export const __typename: Constants['__typename'] = 'Constants';
-const id = 'constantsId';
-const withTypenameAndId = () => ({
+
+const withTypename = (obj: {}) => ({
   __typename,
-  id,
+  ...obj,
+});
+
+const withId = (obj: {}) => ({
+  id: __typename,
+  ...obj,
 });
 
 export const useConstantsQueryResolver = () => {
   return {
-    constants: () => withTypenameAndId(),
+    constants: () => withTypename(withId({})),
   };
 };
