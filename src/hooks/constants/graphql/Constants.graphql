@@ -1,11 +1,13 @@
 #import './../../pools/graphql/Pool.graphql'
 
-type LBPConstants {
-  repayFee: Fee
+type LbpConstants {
+  id: String!
+  repayFee: Fee!
 }
 
 type Constants {
-  lbp: LBPConstants
+  id: String!
+  lbp: LbpConstants
 }
 
 extend type Query {
