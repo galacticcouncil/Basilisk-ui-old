@@ -24,7 +24,7 @@ export const useDebugBox = () => {
     if (debugBoxEnabled) log.setLevel('info');
   }, [debugBoxEnabled]);
 
-  const DebugBox = useCallback(() => {
+  const debugBox = useMemo(() => {
     if (!debugBoxEnabled) return <></>;
     return (
       // <pre className="debug-box">{JSON.stringify(debugData, undefined, 2)}</pre>
@@ -32,7 +32,7 @@ export const useDebugBox = () => {
     );
   }, [debugData, debugBoxEnabled]);
 
-  return { debugComponent, DebugBox, debugBoxEnabled };
+  return { debugComponent, debugBox, debugBoxEnabled };
 };
 
 export const [DebugBoxProvider, useDebugBoxContext] = constate(useDebugBox);

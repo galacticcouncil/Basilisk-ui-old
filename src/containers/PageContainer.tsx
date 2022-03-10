@@ -31,7 +31,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     return () => clearInterval(intervalId);
   }, [lastBlockUpdate]);
 
-  const { DebugBox } = useDebugBoxContext();
+  const { debugBox } = useDebugBoxContext();
 
   return (
     <>
@@ -78,7 +78,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       </div>
-      <DebugBox />
+      {debugBox}
     </>
   );
 };
