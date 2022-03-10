@@ -39,24 +39,29 @@ const unwrapOptionalLbpPool = (
   const lbpPool = lbpPoolOptional.unwrap();
 
   return {
-    assetAWeights: {
-      initial: lbpPool.initialWeight.toString(),
-      final: lbpPool.finalWeight.toString(),
-      current: lbpPool.initialWeight.toString(),
+    weights: {
+      assetA: {
+        initial: lbpPool.initialWeight.toString(),
+        final: lbpPool.finalWeight.toString(),
+      },
+      assetB: {
+        initial: lbpPool.finalWeight.toString(),
+        final: lbpPool.initialWeight.toString(),
+      },
     },
-    assetBWeights: {
-      initial: lbpPool.finalWeight.toString(),
-      final: lbpPool.initialWeight.toString(),
-      current: lbpPool.finalWeight.toString(),
+    assetIds: {
+      a: lbpPool.assets[0].toString(),
+      b: lbpPool.assets[1].toString(),
     },
-    assetInId: lbpPool.assets[0].toString(),
-    assetOutId: lbpPool.assets[1].toString(),
-    startBlock: lbpPool.start.toString(),
-    endBlock: lbpPool.end.toString(),
+    sale: {
+      start: lbpPool.start?.toString(),
+      end: lbpPool.end?.toString(),
+    },
     fee: {
       numerator: lbpPool.fee[0].toString(),
       denominator: lbpPool.fee[1].toString(),
     },
-    repayTargetReached: false,
+    feeCollector: lbpPool.feeCollector.toString(),
+    repayTarget: lbpPool.repayTarget.toString(),
   };
 };

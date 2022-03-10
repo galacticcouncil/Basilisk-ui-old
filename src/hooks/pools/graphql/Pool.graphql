@@ -24,7 +24,6 @@ enum TradeType {
 type LBPAssetWeights {
   initial: String!
   final: String!
-  current: String!
 }
 
 type Fee {
@@ -32,18 +31,35 @@ type Fee {
   denominator: String!
 }
 
+type LBPSale {
+  start: String
+  end: String
+}
+
+type LBPWeightPairs {
+  assetA: LBPAssetWeights!
+  assetB: LBPAssetWeights!
+}
+
 # TODO: figure out which fields are populated at creation and at update
 type LBPPool {
   id: String!
+  applicableFee: String!
+  assetIds: AssetIds!
+  balances: [Balance!]!
+  sale: LBPSale
+  weights: LBPWeightPairs!
+  fee: Fee!
+  feeCollector: String!
+  repayTarget: String!
+  # TODO remove assetInId, assetOutId
   assetInId: String!
   assetOutId: String!
-  balances: [Balance!]
-  fee: Fee!
-  repayTargetReached: Boolean!
-  assetAWeights: LBPAssetWeights!
-  assetBWeights: LBPAssetWeights!
-  startBlock: String!
-  endBlock: String!
+  # repayTargetReached: Boolean!
+  # assetAWeights: LBPAssetWeights!
+  # assetBWeights: LBPAssetWeights!
+  # startBlock: String!
+  # endBlock: String!
 }
 
 type XYKPool {

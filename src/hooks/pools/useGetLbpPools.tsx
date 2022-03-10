@@ -1,12 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
 import { useCallback } from 'react';
-import { Fee, LbpAssetWeights, LbpPool } from '../../generated/graphql';
+import { Pool } from '../../generated/graphql';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import type { Codec } from '@polkadot/types/types';
 import { mapToPoolId } from './useGetXykPools';
-import { calculateOppositeAssetWeight } from './lbp/calculateOppositeAssetWeight';
 import { HydraDxMath, useMathContext } from '../math/useMath';
-import { calculateCurrentAssetWeight } from './lbp/calculateCurrentAssetWeight';
 import { ApolloClient } from '@apollo/client';
 import { readLastBlock } from '../lastBlock/readLastBlock';
 
@@ -30,16 +28,17 @@ export const lbpRepayFeeLockId = '0x6c6270636c6c6374'; // 'lbpcllct';
 export const balanceDataType = 'BalanceOf';
 
 // fee applied in a case when the repayTarget has not been reached
-const repayFee: Fee = {
-  numerator: '2',
-  denominator: '10',
-};
+// const repayFee: Fee = {
+//   numerator: '2',
+//   denominator: '10',
+// };
 
 /**
  * @param math
  * @param client
  * @returns Function to format the given codec into an LBPPool
  */
+// TODO broke this implementation, needs to be resolved in separate issue
 export const mapToPool =
   (math: HydraDxMath, client: ApolloClient<object>, apiInstance: ApiPromise) =>
   /**
@@ -62,39 +61,39 @@ export const mapToPool =
     // ).toString()
 
     // construct the pool entity without weights
-    const partialPool: Omit<
-      LbpPool,
-      'assetBWeights' | 'assetAWeights' | 'repayTargetReached' | 'fee'
-    > = {
-      id,
-      assetInId: poolData.assets[0].toString(),
-      assetOutId: poolData.assets[1].toString(),
-      startBlock: poolData.start.toString(),
-      endBlock: poolData.end.toString(),
-    };
+    // const partialPool: Omit<
+    //   LbpPool,
+    //   'assetBWeights' | 'assetAWeights' | 'repayTargetReached' | 'fee'
+    // > = {
+    //   id,
+    //   assetInId: poolData.assets[0].toString(),
+    //   assetOutId: poolData.assets[1].toString(),
+    //   startBlock: poolData.start.toString(),
+    //   endBlock: poolData.end.toString(),
+    // };
 
     // determine weights for asset A
-    const partialAssetAWeights: Omit<LbpAssetWeights, 'current'> = {
-      initial: poolData.initialWeight.toString(),
-      final: poolData.finalWeight.toString(),
-    };
+    // const partialAssetAWeights: Omit<LbpAssetWeights, 'current'> = {
+    //   initial: poolData.initialWeight.toString(),
+    //   final: poolData.finalWeight.toString(),
+    // };
 
-    const assetAWeights: LbpAssetWeights = {
-      ...partialAssetAWeights,
-      current: calculateCurrentAssetWeight(
-        math,
-        partialPool,
-        partialAssetAWeights,
-        relaychainBlockNumber
-      ),
-    };
+    // const assetAWeights: LbpAssetWeights = {
+    //   ...partialAssetAWeights,
+    //   current: calculateCurrentAssetWeight(
+    //     math,
+    //     partialPool,
+    //     partialAssetAWeights,
+    //     relaychainBlockNumber
+    //   ),
+    // };
 
     // determine weights for asset B
-    const assetBWeights: LbpAssetWeights = {
-      initial: calculateOppositeAssetWeight(assetAWeights.initial),
-      final: calculateOppositeAssetWeight(assetAWeights.final),
-      current: calculateOppositeAssetWeight(assetAWeights.current),
-    };
+    // const assetBWeights: LbpAssetWeights = {
+    //   initial: calculateOppositeAssetWeight(assetAWeights.initial),
+    //   final: calculateOppositeAssetWeight(assetAWeights.final),
+    //   current: calculateOppositeAssetWeight(assetAWeights.current),
+    //};
 
     // TODO: this function only works by finding the first lock with the given ID
     // TODO: this data fetching should be moved to a resolver, and this mapper
@@ -111,21 +110,21 @@ export const mapToPool =
     //     ? new BigNumber(feeCollectorBalanceLockAmount).gt(new BigNumber(repayTarget))
     //     : false
 
-    const poolFee: Fee = {
-      numerator: poolData.fee.numerator.toString(),
-      denominator: poolData.fee.denominator.toString(),
-    };
+    // const poolFee: Fee = {
+    //   numerator: poolData.fee.numerator.toString(),
+    //   denominator: poolData.fee.denominator.toString(),
+    // };
 
-    const pool: LbpPool = {
-      ...partialPool,
-      assetAWeights,
-      assetBWeights,
-      repayTargetReached: false,
-      // if we've haven't reached the repay target, the pool will carry a larger fee
-      fee: false ? poolFee : repayFee,
-    };
+    // const pool: LbpPool = {
+    //   ...partialPool,
+    //   assetAWeights,
+    //   assetBWeights,
+    //   repayTargetReached: false,
+    //   // if we've haven't reached the repay target, the pool will carry a larger fee
+    //   fee: false ? poolFee : repayFee,
+    // };
 
-    return pool;
+    return {} as Pool;
   };
 
 export const getLbpPools = async (

@@ -136,25 +136,27 @@ export const useGetPoolsQueryResolver = () => {
           xykPools,
         ]);
 
-        return ([] as (LbpPool | XykPool)[])
-          .concat(
-            lbpPools?.map(
-              (pool) =>
-                ({
-                  ...pool,
-                  __typename: 'LBPPool',
-                } as LbpPool)
+        return (
+          ([] as (LbpPool | XykPool)[])
+            // .concat(
+            //   lbpPools?.map(
+            //     (pool) =>
+            //       ({
+            //         ...pool,
+            //         __typename: 'LBPPool',
+            //       } as LbpPool)
+            //   )
+            // )
+            .concat(
+              xykPools?.map(
+                (pool) =>
+                  ({
+                    ...pool,
+                    __typename: 'XYKPool',
+                  } as XykPool)
+              )
             )
-          )
-          .concat(
-            xykPools?.map(
-              (pool) =>
-                ({
-                  ...pool,
-                  __typename: 'XYKPool',
-                } as XykPool)
-            )
-          );
+        );
       },
       [apiInstance, getLbpPool, getLbpPools, getXykPool, getXykPools, loading]
     ),

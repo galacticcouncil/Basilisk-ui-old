@@ -65,26 +65,31 @@ describe('getAllLbpPools', () => {
 
       expect(lbpPools).toEqual([
         {
-          assetAWeights: {
-            initial: mockedLbpPalletValue.initialWeight,
-            final: mockedLbpPalletValue.finalWeight,
-            current: mockedLbpPalletValue.initialWeight,
+          id: address,
+          weights: {
+            assetA: {
+              initial: mockedLbpPalletValue.initialWeight,
+              final: mockedLbpPalletValue.finalWeight,
+            },
+            assetB: {
+              initial: mockedLbpPalletValue.finalWeight,
+              final: mockedLbpPalletValue.initialWeight,
+            },
           },
-          assetBWeights: {
-            initial: mockedLbpPalletValue.finalWeight,
-            final: mockedLbpPalletValue.initialWeight,
-            current: mockedLbpPalletValue.finalWeight,
+          assetIds: {
+            a: mockedLbpPalletValue.assets[0],
+            b: mockedLbpPalletValue.assets[1],
           },
-          assetInId: mockedLbpPalletValue.assets[0],
-          assetOutId: mockedLbpPalletValue.assets[1],
-          startBlock: mockedLbpPalletValue.start,
-          endBlock: mockedLbpPalletValue.end,
+          sale: {
+            start: mockedLbpPalletValue.start,
+            end: mockedLbpPalletValue.end,
+          },
           fee: {
             numerator: mockedLbpPalletValue.fee[0],
             denominator: mockedLbpPalletValue.fee[1],
           },
-          repayTargetReached: false,
-          id: address,
+          feeCollector: mockedLbpPalletValue.feeCollector,
+          repayTarget: mockedLbpPalletValue.repayTarget,
         },
       ]);
     });

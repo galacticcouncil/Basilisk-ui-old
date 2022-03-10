@@ -74,23 +74,35 @@ export type FeePaymentAsset = {
 
 export type LbpAssetWeights = {
   __typename?: 'LBPAssetWeights';
-  current: Scalars['String'];
   final: Scalars['String'];
   initial: Scalars['String'];
 };
 
 export type LbpPool = {
   __typename?: 'LBPPool';
-  assetAWeights: LbpAssetWeights;
-  assetBWeights: LbpAssetWeights;
+  applicableFee: Scalars['String'];
+  assetIds: AssetIds;
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
-  balances?: Maybe<Array<Balance>>;
-  endBlock: Scalars['String'];
+  balances: Array<Balance>;
   fee: Fee;
+  feeCollector: Scalars['String'];
   id: Scalars['String'];
-  repayTargetReached: Scalars['Boolean'];
-  startBlock: Scalars['String'];
+  repayTarget: Scalars['String'];
+  sale?: Maybe<LbpSale>;
+  weights: LbpWeightPairs;
+};
+
+export type LbpSale = {
+  __typename?: 'LBPSale';
+  end?: Maybe<Scalars['String']>;
+  start?: Maybe<Scalars['String']>;
+};
+
+export type LbpWeightPairs = {
+  __typename?: 'LBPWeightPairs';
+  assetA: LbpAssetWeights;
+  assetB: LbpAssetWeights;
 };
 
 export type LastBlock = {

@@ -5,66 +5,85 @@ import { HydraDxMath } from '../../math/useMath';
 /**
  * Wrapper for `math.lbp.calculate_in_given_out`
  * @param math
- * @param inReserve 
- * @param outReserve 
- * @param inWeight 
- * @param outWeight 
- * @param amount 
- * @returns 
+ * @param inReserve
+ * @param outReserve
+ * @param inWeight
+ * @param outWeight
+ * @param amount
+ * @returns
  */
 export const calculateInGivenOut = (
-    math: HydraDxMath,
-    inReserve: string,
-    outReserve: string,
-    inWeight: string,
-    outWeight: string,
-    amount: string
+  math: HydraDxMath,
+  inReserve: string,
+  outReserve: string,
+  inWeight: string,
+  outWeight: string,
+  amount: string
 ) => {
-    return math.lbp.calculate_in_given_out(inReserve, outReserve, inWeight, outWeight, amount);
-}
+  return math.lbp.calculate_in_given_out(
+    inReserve,
+    outReserve,
+    inWeight,
+    outWeight,
+    amount
+  );
+};
 
-export const getPoolBalances = (pool: Pool, assetInId: string, assetOutId: string) => {
-    const assetABalance = find(pool.balances, { assetId: assetInId })?.balance;
-    const assetBBalance = find(pool.balances, { assetId: assetOutId })?.balance
+export const getPoolBalances = (
+  pool: Pool,
+  assetInId: string,
+  assetOutId: string
+) => {
+  const assetABalance = find(pool.balances, { assetId: assetInId })?.balance;
+  const assetBBalance = find(pool.balances, { assetId: assetOutId })?.balance;
 
-    return { assetABalance, assetBBalance }
-}
+  return { assetABalance, assetBBalance };
+};
 
-export const getInAndOutWeights = (pool: LbpPool, assetInId: string, assetOutId: string) => {
-    const assetInWeight = assetInId === pool.assetInId
-        ? pool.assetAWeights.current
-        : pool.assetBWeights.current
+export const getInAndOutWeights = (
+  pool: LbpPool,
+  assetInId: string,
+  assetOutId: string
+) => {
+  // TODO this needs to be fixed in a separate issue
 
-    const assetOutWeight = assetOutId === pool.assetOutId
-        ? pool.assetBWeights.current
-        : pool.assetAWeights.current;
+  // const assetInWeight = assetInId === pool.assetIds.a
+  //     ? pool.assetAWeights.current
+  //     : pool.assetBWeights.current
 
-    return { assetInWeight, assetOutWeight };
-}
+  // const assetOutWeight = assetOutId === pool.assetIds.b
+  //     ? pool.assetBWeights.current
+  //     : pool.assetAWeights.current;
+  // return { assetInWeight, assetOutWeight };
+
+  return { assetInWeight: '0', assetOutWeight: '0' };
+};
 
 export const calculateInGivenOutFromPool = (
-    math: HydraDxMath,
-    pool: LbpPool,
-    assetInId: string,
-    assetOutId: string,
-    amountOut: string,
+  math: HydraDxMath,
+  pool: LbpPool,
+  assetInId: string,
+  assetOutId: string,
+  amountOut: string
 ) => {
-    const { assetABalance: assetInBalance, assetBBalance: assetOutBalance } = getPoolBalances(
-        pool,
-        assetInId,
-        assetOutId,
-    )
+  const { assetABalance: assetInBalance, assetBBalance: assetOutBalance } =
+    getPoolBalances(pool, assetInId, assetOutId);
 
-    if (!assetInBalance || !assetOutBalance) throw new Error(`Can't find the required balances in the pool`);
+  if (!assetInBalance || !assetOutBalance)
+    throw new Error(`Can't find the required balances in the pool`);
 
-    const { assetInWeight, assetOutWeight } = getInAndOutWeights(pool, assetInId, assetOutId);
+  const { assetInWeight, assetOutWeight } = getInAndOutWeights(
+    pool,
+    assetInId,
+    assetOutId
+  );
 
-    return calculateInGivenOut(
-        math, 
-        assetInBalance, 
-        assetOutBalance,
-        assetInWeight,
-        assetOutWeight,
-        amountOut
-    );
-}
+  return calculateInGivenOut(
+    math,
+    assetInBalance,
+    assetOutBalance,
+    assetInWeight,
+    assetOutWeight,
+    amountOut
+  );
+};
