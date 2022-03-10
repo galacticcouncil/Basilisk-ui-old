@@ -34,7 +34,8 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { DebugBox } = useDebugBoxContext();
 
   return (
-    <div className="page-container">
+    <>
+      <div className="page-container">
       <div className="page-header">
         <Icon name="BasiliskLogoFull" />
         <div className="page-header__wallet-wrapper">
@@ -77,10 +78,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
             ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
             : 'unknown'}
         </div>
-        <div style={{ width: '600px', overflowWrap: 'anywhere' }}>
-          <DebugBox />
-        </div>
       </div>
     </div>
+    <DebugBox/>
+    </>
   );
 };

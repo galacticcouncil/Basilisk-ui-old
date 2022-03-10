@@ -306,7 +306,7 @@ export const TradeForm = ({
     if (isPoolLoading) return 'loading';
 
     // TODO: change to 'input amounts'?
-    if (!isDirty) return 'Swap';
+    // if (!isDirty) return 'Swap';
 
     switch (errors.submit?.type) {
       case 'activeAccount':
@@ -712,8 +712,8 @@ export const TradeForm = ({
             className="submit-button"
             {...register('submit', {
               validate: {
-                poolDoesNotExist: () => !isPoolLoading && !!pool,
                 activeAccount: () => isActiveAccountConnected,
+                poolDoesNotExist: () => !isPoolLoading && !!pool,
                 minTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
                   if (!assetOutAmount || assetOutAmount === '0') return false;
