@@ -16,12 +16,13 @@ export const useAssetIdsWithUrl = (): [TradeAssetIds, Dispatch<SetStateAction<Tr
     const navigate = useNavigate();
     const { debugBoxEnabled } = useDebugBoxContext();
 
+    console.log('debugBoxEnabled', debugBoxEnabled);
     useEffect(() => {
       assetIds.assetIn && assetIds.assetOut && navigate({
         search: `?${createSearchParams({
           assetIn: assetIds.assetIn,
           assetOut: assetIds.assetOut,
-          debug: debugBoxEnabled ? 'true' : 'false'
+          ...(debugBoxEnabled ? { debug: 'true' } : null)
         })}`
       });
     }, [assetIds, searchParams, debugBoxEnabled]);
