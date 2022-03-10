@@ -36,51 +36,49 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
       <div className="page-container">
-      <div className="page-header">
-        <Icon name="BasiliskLogoFull" />
-        <div className="page-header__wallet-wrapper">
-          <a
-            className="page-header__wallet-wrapper__help"
-            href="https://discord.gg/9vR4bpx5vQ"
-            rel="noreferrer"
-            target="_blank"
-          >
-            Help
-            <Icon name="Help" />
-          </a>
-          <Wallet />
+        <div className="page-header">
+          <Icon name="BasiliskLogoFull" />
+          <div className="page-header__wallet-wrapper">
+            <a
+              className="page-header__wallet-wrapper__help"
+              href="https://discord.gg/9vR4bpx5vQ"
+              rel="noreferrer"
+              target="_blank"
+            >
+              Help
+              <Icon name="Help" />
+            </a>
+            <Wallet />
+          </div>
         </div>
-      </div>
-      <div className="">{children}</div>
+        <div className="">{children}</div>
 
-      <div className="footer">
-        <div className="liveliness-wrapper">
-          <div
-            className={classNames('liveliness', {
-              green: sinceLastBlockUpdate <= 30,
-              orange: sinceLastBlockUpdate > 30,
-              red: sinceLastBlockUpdate >= 60,
-              gray: !lastBlockData?.lastBlock?.parachainBlockNumber
-            })}
-          ></div>
-          <span>
-            Block no.:
-            {lastBlockData?.lastBlock?.parachainBlockNumber ? (
-              ` ${lastBlockData.lastBlock.parachainBlockNumber}`
-            ) : (
-              ` ${horizontalBar}`
-            )}
-          </span>
-        </div>
-        <div>
-          Version:{' '}
-          {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
-            ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
-            : 'unknown'}
+        <div className="footer">
+          <div className="liveliness-wrapper">
+            <div
+              className={classNames('liveliness', {
+                green: sinceLastBlockUpdate <= 30,
+                orange: sinceLastBlockUpdate > 30,
+                red: sinceLastBlockUpdate >= 60,
+                gray: !lastBlockData?.lastBlock?.parachainBlockNumber,
+              })}
+            ></div>
+            <span>
+              Block no.:
+              {lastBlockData?.lastBlock?.parachainBlockNumber
+                ? ` ${lastBlockData.lastBlock.parachainBlockNumber}`
+                : ` ${horizontalBar}`}
+            </span>
+          </div>
+          <div>
+            Version:{' '}
+            {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
+              ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
+              : 'unknown'}
+          </div>
         </div>
       </div>
-    </div>
-    <DebugBox/>
+      <DebugBox />
     </>
   );
 };
