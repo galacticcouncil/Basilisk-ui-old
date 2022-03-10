@@ -279,29 +279,31 @@ export const TradeChart = ({
         <></>
       )}
 
-      {/* {isPoolLoading
+      {console.log('graph loading', isPoolLoading, primaryDataset?.length)}
+      {isPoolLoading
           ? (
             <div className="trade-chart__error-wrapper">
-              <TradeChartError type={TradeChartErrorType.InvalidPair} />
+              <TradeChartError type={TradeChartErrorType.Loading} />
             </div>
           )
           : (
-            !primaryDataset?.length? (
+            !primaryDataset?.length
+            ? (
               <div className="trade-chart__error-wrapper">
                 <TradeChartError type={TradeChartErrorType.InvalidPair} />
               </div>
             ) : (
               <></>
             )
-          )} */}
+          )}
 
-      {!primaryDataset?.length ? (
+      {/* {!primaryDataset?.length ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.InvalidPair} />
         </div>
       ) : (
         <></>
-      )}
+      )} */}
     </div>
   );
 };

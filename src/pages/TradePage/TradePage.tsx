@@ -47,7 +47,7 @@ export interface TradeAssetIds {
 
 export interface TradeChartProps {
   pool?: Pool;
-  isPoolLoading?: boolean,
+  isPoolLoading?: boolean;
   assetIds: TradeAssetIds;
   spotPrice?: {
     outIn?: string;
@@ -87,9 +87,17 @@ export const idToAsset = (id: string | null) => {
   return assetMetadata[id!] as any;
 };
 
-export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeChartProps) => {
+export const TradeChart = ({
+  pool,
+  assetIds,
+  spotPrice,
+  isPoolLoading,
+}: TradeChartProps) => {
   const { math } = useMath();
-  const { data: historicalBalancesData, networkStatus: historicalBalancesNetworkStatus } = useGetHistoricalBalancesQuery(
+  const {
+    data: historicalBalancesData,
+    networkStatus: historicalBalancesNetworkStatus,
+  } = useGetHistoricalBalancesQuery(
     {
       from: useMemo(() => moment().subtract(1, 'days').toISOString(), []),
       to: useMemo(() => moment().toISOString(), []),
@@ -100,6 +108,13 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
     {
       skip: !pool?.id,
     }
+  );
+
+  const historicalBalancesLoading = useMemo(
+    () =>
+      historicalBalancesNetworkStatus === NetworkStatus.loading ||
+      historicalBalancesNetworkStatus === NetworkStatus.setVariables,
+    [historicalBalancesNetworkStatus]
   );
 
   const [dataset, setDataset] = useState<Array<any>>();
@@ -118,14 +133,19 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
   useEffect(() => {
     setDatasetLoading(true);
 
-    if (!historicalBalancesData?.historicalBalances || !math || !spotPrice) {
+    if (historicalBalancesLoading) return;
+
+    if (
+      (!historicalBalancesLoading &&
+        !historicalBalancesData?.historicalBalances?.length) ||
+      !math ||
+      !spotPrice
+    ) {
       setDataset([]);
-      setTimeout(() => {
-        setDatasetLoading(false);
-      }, 0)
+      setDatasetLoading(false);
       return;
     }
-    const dataset = historicalBalancesData.historicalBalances.map(
+    const dataset = historicalBalancesData?.historicalBalances.map(
       ({ createdAt, assetABalance, assetBBalance }) => {
         return {
           // x: `${moment(createdAt).getTime()}`,
@@ -163,7 +183,7 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
           })(),
         };
       }
-    );
+    ) || [];
 
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
@@ -172,16 +192,20 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
       yAsString: fromPrecision12(spotPrice.inOut),
     });
 
+    console.log('graph loading setting dataset', dataset.length);
     setDataset(dataset);
-    setTimeout(() => {
-      setDatasetLoading(false);
-    }, 0)
-  }, [historicalBalancesData?.historicalBalances, math, spotPrice, assetIds]);
+    setDatasetLoading(false);
+  }, [
+    historicalBalancesData?.historicalBalances,
+    historicalBalancesLoading,
+    math,
+    spotPrice,
+    assetIds,
+  ]);
 
   // useEffect(() => {
   //   setDataset(dataset => {
   //     if (!spotPrice || !dataset) return dataset;
-
 
   //     return [
   //       ...dataset,
@@ -194,18 +218,20 @@ export const TradeChart = ({ pool, assetIds, spotPrice, isPoolLoading }: TradeCh
   //   })
   // }, [pool, spotPrice,])
 
+  const _isPoolLoading = useMemo(
+    () => isPoolLoading || historicalBalancesLoading || datasetLoading,
+    [datasetLoading, isPoolLoading, historicalBalancesLoading]
+  );
+
+  console.log('graph loading status _isPoolLoading', _isPoolLoading);
+
   return (
     <TradeChartComponent
       assetPair={{
         assetA: idToAsset(assetIds.assetIn),
         assetB: idToAsset(assetIds.assetOut),
       }}
-      isPoolLoading={
-        isPoolLoading ||
-        historicalBalancesNetworkStatus === NetworkStatus.loading ||
-        historicalBalancesNetworkStatus === NetworkStatus.setVariables ||
-        datasetLoading
-      }
+      isPoolLoading={_isPoolLoading}
       poolType={PoolType.XYK}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
@@ -241,12 +267,10 @@ export const TradePage = () => {
     depsLoading
   );
 
-  const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus,
-  } = useGetPoolsQuery({
-    skip: depsLoading,
-  });
+  const { data: poolsData, networkStatus: poolsNetworkStatus } =
+    useGetPoolsQuery({
+      skip: depsLoading,
+    });
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
@@ -269,23 +293,21 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-    onError: () => {
-      setNotification('failed');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+      onError: () => {
+        setNotification('failed');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+    });
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -357,11 +379,16 @@ export const TradePage = () => {
         <div className="notification">transaction {notification}</div>
       </div>
       <div className="trade-page">
-        <TradeChart pool={pool} assetIds={assetIds} spotPrice={spotPrice} isPoolLoading={
+        <TradeChart
+          pool={pool}
+          assetIds={assetIds}
+          spotPrice={spotPrice}
+          isPoolLoading={
             poolNetworkStatus === NetworkStatus.loading ||
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
-        }/>
+          }
+        />
         <TradeForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
