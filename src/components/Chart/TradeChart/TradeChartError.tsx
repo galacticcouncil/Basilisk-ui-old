@@ -25,8 +25,14 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
               return (
                 <div className="row">
                   <div className="large">
-                    Loading...
+                    Loading chart data,
+                    <br/> this shouldn't take too long.
                   </div>
+
+                  <div className="small">
+                    Thanks for being a patient snek.
+                  </div>
+
                 </div>
               );
           default:

@@ -5,6 +5,8 @@ import Icon from '../components/Icon/Icon';
 import './PageContainer.scss';
 import moment from 'moment';
 import classNames from 'classnames';
+import { NetworkStatus } from '@apollo/client';
+import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { data: lastBlockData } = useLastBlockQuery();
@@ -54,13 +56,15 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
               green: sinceLastBlockUpdate <= 30,
               orange: sinceLastBlockUpdate > 30,
               red: sinceLastBlockUpdate >= 60,
+              gray: !lastBlockData?.lastBlock?.parachainBlockNumber
             })}
           ></div>
           <span>
+            Block no.:
             {lastBlockData?.lastBlock?.parachainBlockNumber ? (
-              `Block no.: ${lastBlockData.lastBlock.parachainBlockNumber}`
+              ` ${lastBlockData.lastBlock.parachainBlockNumber}`
             ) : (
-              <></>
+              ` ${horizontalBar}`
             )}
           </span>
         </div>

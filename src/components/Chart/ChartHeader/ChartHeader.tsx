@@ -14,7 +14,7 @@ import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalanc
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 import { percentageChange } from '../../../hooks/math/usePercentageChange';
 
-const horizontalBar = '―';
+export const horizontalBar = '―';
 
 const formatGranularity = (granularity: ChartGranularity) => (
   <FormattedMessage

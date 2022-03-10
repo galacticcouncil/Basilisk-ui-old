@@ -86,6 +86,7 @@
         height: 12px;
         border-radius: 100%;
         margin-right: 6px;
+        transition: background-color ease 200ms;
         &.green {
           background-color: $green2;
         }
@@ -94,6 +95,9 @@
         }
         &.red {
           background-color: $red1;
+        }
+        &.gray {
+          background-color: $gray1;
         }
       }
     }
