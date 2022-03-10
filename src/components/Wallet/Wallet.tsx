@@ -100,40 +100,28 @@ export const Wallet = ({
             {' '}
             <FormattedMessage id="Wallet.Loading" defaultMessage="Loading..." />
           </div>
-        ) : isExtensionAvailable ? (
-          account ? (
-            <>
-              <div className="wallet__info__account">
-                {<FormattedBalance balance={getBsxBalance(account)} />}
-                <div className="wallet__address">{trimAddress(account)}</div>
-              </div>
-              <Identicon value={account?.id} size={32} />
-              <div
-                className="wallet__account-btn"
-                onClick={(_) => handleAccountSelectorClick()}
-              >
-                {account?.name}
-              </div>
-            </>
-          ) : (
+        ) : isExtensionAvailable && account ? (
+          <>
+            <div className="wallet__info__account">
+              {<FormattedBalance balance={getBsxBalance(account)} />}
+              <div className="wallet__address">{trimAddress(account)}</div>
+            </div>
+            <Identicon value={account?.id} size={32} />
             <div
-              className="wallet__info__account wallet__account-btn"
+              className="wallet__account-btn"
               onClick={(_) => handleAccountSelectorClick()}
             >
-              <FormattedMessage
-                id="Wallet.ConnectAccount"
-                defaultMessage="Connect account"
-              />
+              {account?.name}
             </div>
-          )
+          </>
         ) : (
           <div
             className="wallet__info__account wallet__account-btn"
             onClick={(_) => handleAccountSelectorClick()}
           >
             <FormattedMessage
-              id="Wallet.InstallExtension"
-              defaultMessage="Install extension"
+              id="Wallet.ConnectAccount"
+              defaultMessage="Connect account"
             />
           </div>
         )}
