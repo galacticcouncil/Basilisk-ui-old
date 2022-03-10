@@ -19,26 +19,6 @@
   border-radius: $border-radius;
   padding: 16px;
 
-  &__icons-wrapper {
-    display: flex;
-    gap: 12px;
-
-    &__icon {
-      display: flex;
-      align-items: center;
-    }
-
-    &__icon:hover {
-      cursor: pointer;
-
-      svg {
-        path {
-          fill: $green1;
-        }
-      }
-    }
-  }
-
   &__info {
     display: flex;
     align-items: center;

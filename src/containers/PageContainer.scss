@@ -23,6 +23,46 @@
     align-items: center;
 
     gap: 10px;
+
+    &__wallet-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+
+        color: $l-gray2;
+      }
+
+      a:visited {
+        color: $l-gray2;
+      }
+
+      a:hover {
+        color: $green1;
+      }
+
+      &__help {
+        svg {
+          height: 20px;
+          width: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+
+          svg {
+            path {
+              fill: $green1;
+            }
+          }
+        }
+      }
+    }
   }
 
   .footer {

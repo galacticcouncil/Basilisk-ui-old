@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { data: lastBlockData } = useLastBlockQuery();
-  
+
   const [lastBlockUpdate, setLastBlockUpdate] = useState(moment().valueOf());
   const [sinceLastBlockUpdate, setSinceLastBlockUpdate] = useState(0);
 
@@ -18,9 +18,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const duration = moment.duration(
-        moment().diff(moment(lastBlockUpdate))
-      ).asSeconds();
+      const duration = moment
+        .duration(moment().diff(moment(lastBlockUpdate)))
+        .asSeconds();
 
       setSinceLastBlockUpdate(duration);
     }, 500);
@@ -32,17 +32,30 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     <div className="page-container">
       <div className="page-header">
         <Icon name="BasiliskLogoFull" />
-        <Wallet />
+        <div className="page-header__wallet-wrapper">
+          <a
+            className="page-header__wallet-wrapper__help"
+            href="https://discord.gg/9vR4bpx5vQ"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Help
+            <Icon name="Help" />
+          </a>
+          <Wallet />
+        </div>
       </div>
       <div className="">{children}</div>
 
       <div className="footer">
-        <div className='liveliness-wrapper'>
-          <div className={classNames('liveliness', {
-            'green': sinceLastBlockUpdate <= 30,
-            'orange': sinceLastBlockUpdate > 30,
-            'red': sinceLastBlockUpdate >= 60
-          })}></div>
+        <div className="liveliness-wrapper">
+          <div
+            className={classNames('liveliness', {
+              green: sinceLastBlockUpdate <= 30,
+              orange: sinceLastBlockUpdate > 30,
+              red: sinceLastBlockUpdate >= 60,
+            })}
+          ></div>
           <span>
             {lastBlockData?.lastBlock?.parachainBlockNumber ? (
               `Block no.: ${lastBlockData.lastBlock.parachainBlockNumber}`
@@ -52,8 +65,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           </span>
         </div>
         <div>
-          Version: {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
-            ? process.env.REACT_APP_GITHUB_SHA?.slice(0,7)
+          Version:{' '}
+          {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
+            ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
             : 'unknown'}
         </div>
       </div>

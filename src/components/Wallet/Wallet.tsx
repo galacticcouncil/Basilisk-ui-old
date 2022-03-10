@@ -21,8 +21,8 @@ export interface WalletProps {
   isExtensionAvailable: boolean;
   setAccountSelectorOpen: (isModalOpen: boolean) => void;
   activeAccountLoading: boolean;
-  faucetMint: () => void,
-  faucetMintLoading?: boolean
+  faucetMint: () => void;
+  faucetMintLoading?: boolean;
 }
 
 export const Wallet = ({
@@ -37,7 +37,7 @@ export const Wallet = ({
   setAccountSelectorOpen,
   activeAccountLoading,
   faucetMint,
-  faucetMintLoading
+  faucetMintLoading,
 }: WalletProps) => {
   const modalPortalElement = useModalPortalElement({
     accounts,
@@ -75,23 +75,21 @@ export const Wallet = ({
       {modalPortal}
 
       <div className="wallet__icons-wrapper">
-        <a className="wallet__icons-wrapper__icon" href="https://github.com/galacticcouncil/Basilisk-ui/issues" target="_blank">
-          <Icon name="Help" />
-        </a>
-        {account
-          ? (
-            <div
-          className={classNames("wallet__info__account wallet__account-btn faucet", {
-            loading: faucetMintLoading
-          })}
-          onClick={(_) => faucetMint()}
-        >
-          {faucetMintLoading
-            ? 'Loading...'
-            : 'Get test tokens 🚰'
-          }
-        </div>
-          ): <></>}
+        {account ? (
+          <div
+            className={classNames(
+              'wallet__info__account wallet__account-btn faucet',
+              {
+                loading: faucetMintLoading,
+              }
+            )}
+            onClick={(_) => faucetMint()}
+          >
+            {faucetMintLoading ? 'Loading...' : 'Get test tokens 🚰'}
+          </div>
+        ) : (
+          <></>
+        )}
       </div>
       <div className="wallet__info" data-modal-portal-toggle={toggleId}>
         {extensionLoading || activeAccountLoading ? (
