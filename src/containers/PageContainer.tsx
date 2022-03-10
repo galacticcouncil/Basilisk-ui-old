@@ -59,16 +59,14 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
               green: sinceLastBlockUpdate <= 30,
               orange: sinceLastBlockUpdate > 30,
               red: sinceLastBlockUpdate >= 60,
-              gray: !lastBlockData?.lastBlock?.parachainBlockNumber
+              gray: !lastBlockData?.lastBlock?.parachainBlockNumber,
             })}
           ></div>
           <span>
             Block no.:
-            {lastBlockData?.lastBlock?.parachainBlockNumber ? (
-              ` ${lastBlockData.lastBlock.parachainBlockNumber}`
-            ) : (
-              ` ${horizontalBar}`
-            )}
+            {lastBlockData?.lastBlock?.parachainBlockNumber
+              ? ` ${lastBlockData.lastBlock.parachainBlockNumber}`
+              : ` ${horizontalBar}`}
           </span>
         </div>
         <div>
@@ -77,9 +75,8 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
             ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
             : 'unknown'}
         </div>
-        <div style={{ width: '600px', overflowWrap: 'anywhere' }}>
-          <DebugBox />
-        </div>
+
+        <DebugBox />
       </div>
     </div>
   );
