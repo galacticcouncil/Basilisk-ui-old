@@ -110,8 +110,6 @@ export const TradeChart = ({
     }
   );
 
-  console.log('fetching graph data for', pool?.id);
-
   const historicalBalancesLoading = useMemo(
     () =>
       historicalBalancesNetworkStatus === NetworkStatus.loading ||
@@ -194,7 +192,6 @@ export const TradeChart = ({
       yAsString: fromPrecision12(spotPrice.inOut),
     });
 
-    console.log('graph loading setting dataset', dataset.length);
     setDataset(dataset);
     setDatasetLoading(false);
   }, [

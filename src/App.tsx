@@ -7,6 +7,7 @@ import { IntlProvider } from 'react-intl';
 import { PageContainer } from './containers/PageContainer';
 import { Locale } from './misc/locale';
 import messages from './compiled-lang/en.json';
+import { DebugBoxProvider } from './pages/TradePage/hooks/useDebugBox';
 
 log.setLevel('info');
 
@@ -17,11 +18,17 @@ export const App = () => {
   return (
     <MultiProvider>
       <HashRouter>
-        <IntlProvider messages={messages} locale={Locale.EN} defaultLocale="en">
-          <PageContainer>
-            <Router />
-          </PageContainer>
-        </IntlProvider>
+        <DebugBoxProvider>
+          <IntlProvider
+            messages={messages}
+            locale={Locale.EN}
+            defaultLocale="en"
+          >
+            <PageContainer>
+              <Router />
+            </PageContainer>
+          </IntlProvider>
+        </DebugBoxProvider>
       </HashRouter>
     </MultiProvider>
   );

@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
 import { idToAsset, TradeAssetIds } from "../TradePage";
+import { useDebugBoxContext } from "./useDebugBox";
 
 export const useAssetIdsWithUrl = (): [TradeAssetIds, Dispatch<SetStateAction<TradeAssetIds>>] => {
     const [searchParams] = useSearchParams();
@@ -13,15 +14,17 @@ export const useAssetIdsWithUrl = (): [TradeAssetIds, Dispatch<SetStateAction<Tr
     });
 
     const navigate = useNavigate();
+    const { debugBoxEnabled } = useDebugBoxContext();
 
     useEffect(() => {
       assetIds.assetIn && assetIds.assetOut && navigate({
         search: `?${createSearchParams({
           assetIn: assetIds.assetIn,
-          assetOut: assetIds.assetOut
+          assetOut: assetIds.assetOut,
+          debug: debugBoxEnabled ? 'true' : 'false'
         })}`
       });
-    }, [assetIds]);
+    }, [assetIds, searchParams, debugBoxEnabled]);
   
     return [assetIds, setAssetIds];
   }

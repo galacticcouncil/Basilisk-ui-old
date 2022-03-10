@@ -24,6 +24,7 @@ import './TradeForm.scss';
 import Icon from '../../Icon/Icon';
 import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
+import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -253,7 +254,6 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Sell || assetInAmountInput === undefined)
       return;
-    console.log('setTradeType', 'sell', assetInAmountInput);
     setTradeType(TradeType.Sell);
   }, [assetInAmountInput]);
 
@@ -261,8 +261,6 @@ export const TradeForm = ({
   useEffect(() => {
     if (tradeType === TradeType.Buy || assetOutAmountInput === undefined)
       return;
-
-    console.log('setTradeType', 'buy', assetOutAmountInput);
 
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);
@@ -384,8 +382,6 @@ export const TradeForm = ({
     const assetInAmount = getValues('assetInAmount');
     const assetOutAmount = getValues('assetOutAmount');
 
-    console.log('slippage', assetInAmount, assetOutAmount);
-
     if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
       return;
 
@@ -497,6 +493,19 @@ export const TradeForm = ({
     activeAccountTradeBalances,
     ...watch(['assetOutAmount', 'assetInAmount']),
   ]);
+
+  const { debugComponent } = useDebugBoxContext();
+
+  useEffect(() => {
+    console.log('all values', getValues());
+    debugComponent('TradeForm', {
+      ...getValues(),
+      spotPrice,
+      tradeLimit,
+      tradeBalances,
+      tradeType
+    })
+  }, [Object.values(getValues()).toString(), spotPrice, tradeBalances, tradeBalances, tradeType])
 
   return (
     <div className="trade-form-wrapper">
@@ -752,7 +761,11 @@ export const TradeForm = ({
         </form>
       </FormProvider>
 
-      <div className="debug">
+
+      <div className={classNames('debug', {
+        // visible: debug
+        // visible: true
+      })}>
         <h3>[Trade Form] Debug box</h3>
         <p>
           Liquidity (out/in): [{getValues('assetOut')}]{' '}

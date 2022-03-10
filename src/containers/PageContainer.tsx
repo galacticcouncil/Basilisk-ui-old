@@ -7,6 +7,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { NetworkStatus } from '@apollo/client';
 import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader';
+import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { data: lastBlockData } = useLastBlockQuery();
@@ -29,6 +30,8 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
 
     return () => clearInterval(intervalId);
   }, [lastBlockUpdate]);
+
+  const { DebugBox } = useDebugBoxContext();
 
   return (
     <div className="page-container">
@@ -73,6 +76,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
             ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
             : 'unknown'}
+        </div>
+        <div style={{ width: '600px', overflowWrap: 'anywhere' }}>
+          <DebugBox />
         </div>
       </div>
     </div>
