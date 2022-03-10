@@ -103,12 +103,14 @@ export const TradeChart = ({
       to: useMemo(() => moment().toISOString(), []),
       quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
-      poolId: pool?.id || '',
+      poolId: pool?.id || ''
     },
     {
-      skip: !pool?.id,
+      skip: !pool?.id
     }
   );
+
+  console.log('fetching graph data for', pool?.id);
 
   const historicalBalancesLoading = useMemo(
     () =>
@@ -261,8 +263,8 @@ export const TradePage = () => {
     networkStatus: poolNetworkStatus,
   } = useGetPoolByAssetsQuery(
     {
-      assetInId: assetIds.assetIn || undefined,
-      assetOutId: assetIds.assetOut || undefined,
+      assetInId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetIn : assetIds.assetOut) || undefined,
+      assetOutId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetOut : assetIds.assetIn) || undefined,
     },
     depsLoading
   );
@@ -354,8 +356,8 @@ export const TradePage = () => {
     networkStatus: activeAccountTradeBalancesNetworkStatus,
   } = useGetActiveAccountTradeBalances({
     variables: {
-      assetInId: assetIds.assetIn || undefined,
-      assetOutId: assetIds.assetOut || undefined,
+      assetInId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetIn : assetIds.assetOut) || undefined,
+      assetOutId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetOut : assetIds.assetIn) || undefined,
     },
   });
 
