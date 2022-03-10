@@ -42,14 +42,13 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true,
-    },
-  });
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<TradeFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true,
+      },
+    });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -170,7 +169,7 @@ export const useListenForInput = (
     if (!inputRef) return;
     // TODO: figure out why using the 'input' broke the mask
     // 'keydown' also doesnt work bcs its triggered by copy/paste, which then
-    // changes the trade type (which this hook is primarily) 
+    // changes the trade type (which this hook is primarily)
     const listener = inputRef.current?.addEventListener('keypress', () =>
       setState((state) => !state)
     );
@@ -502,10 +501,33 @@ export const TradeForm = ({
       ...getValues(),
       spotPrice,
       tradeLimit,
-      tradeBalances,
-      tradeType
-    })
-  }, [Object.values(getValues()).toString(), spotPrice, tradeBalances, tradeBalances, tradeType])
+      assetInLiquidity,
+      assetOutLiquidity,
+      tradeBalances: {
+        ...tradeBalances,
+        inTradeChange: tradeBalances.inTradeChange?.toString(),
+        outTradeChange: tradeBalances.outTradeChange?.toString(),
+      },
+      tradeType,
+      slippage: slippage?.toString(),
+      errors: Object.keys(errors).reduce((reducedErrors, error) => {
+        return {
+          ...reducedErrors,
+          [error]: (errors as any)[error].type,
+        };
+      }, {}),
+    });
+  }, [
+    Object.values(getValues()).toString(),
+    spotPrice,
+    tradeBalances,
+    tradeBalances,
+    tradeType,
+    errors,
+    assetInLiquidity,
+    assetOutLiquidity,
+    slippage
+  ]);
 
   return (
     <div className="trade-form-wrapper">
@@ -761,11 +783,12 @@ export const TradeForm = ({
         </form>
       </FormProvider>
 
-
-      <div className={classNames('debug', {
-        // visible: debug
-        // visible: true
-      })}>
+      <div
+        className={classNames('debug', {
+          // visible: debug
+          // visible: true
+        })}
+      >
         <h3>[Trade Form] Debug box</h3>
         <p>
           Liquidity (out/in): [{getValues('assetOut')}]{' '}
