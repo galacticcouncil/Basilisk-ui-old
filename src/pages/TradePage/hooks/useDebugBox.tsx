@@ -2,6 +2,7 @@ import constate from 'constate';
 import log from 'loglevel';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import ReactJson from 'react-json-view'
 
 export const useDebugBox = () => {
   const [searchParams] = useSearchParams();
@@ -26,7 +27,8 @@ export const useDebugBox = () => {
   const DebugBox = useCallback(() => {
     if (!debugBoxEnabled) return <></>;
     return (
-      <pre className="debug-box">{JSON.stringify(debugData, undefined, 2)}</pre>
+      // <pre className="debug-box">{JSON.stringify(debugData, undefined, 2)}</pre>
+      <ReactJson src={debugData} theme='monokai'/>
     );
   }, [debugData, debugBoxEnabled]);
 
