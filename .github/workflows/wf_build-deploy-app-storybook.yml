@@ -2,13 +2,14 @@ name: Build Deploy App and Storybook
 on:
   push:
     branches:
+      - 'fix/**'
+      - 'feat/**'
       - develop
-      - 'fix/**'
-      - 'feat/**'
   pull_request:
+    types:
+      - opened
     branches:
-      - 'fix/**'
-      - 'feat/**'
+      - develop
 
 jobs:
   build-app-storybook:
@@ -27,6 +28,26 @@ jobs:
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+
+  report-statuses-issue-comment:
+    name: Reportr issue comment
+    uses: ./.github/workflows/_called_publish-report-issue-comment.yml
+    if: ${{ always() }}
+    needs: [ build-app-storybook, deploy-app-storybook-builds ]
+    with:
+      report-msg-title: Basilisk-UI build reporter
+      publish-artifacts-list: false
+
+      app-build-pub-report: true
+      app-build-status: ${{ needs.build-app-storybook.result == 'success' }}
+
+      app-sb-deploy-pub-report: true
+      app-sb-deploy-status: ${{ needs.deploy-app-storybook-builds.result == 'success' }}
+
+      app-unit-test-pub-report: false
     secrets:
       gh_token: ${{ secrets.GH_TOKEN }}
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}

@@ -1,0 +1,26 @@
+name: Publish issue comment with artifacts (dispatch)
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_comment_data:
+        description: 'Stringified JSON with data for publication comment with artifacts list'
+        required: false
+        default: '{}'
+        type: string
+
+jobs:
+  issue-comment-publish:
+    name: Publish issue comment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/github-script@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          ISSUE_COMMENT_DATA: ${{ github.event.inputs.issue_comment_data }}
+        with:
+          script: |
+            const script = require('./scripts/ci/github-script-src/publish-issue-comment-with-artifacts.js')
+            await script({github, context, core})

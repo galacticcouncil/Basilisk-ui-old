@@ -1,0 +1,84 @@
+name: Publish reports in issue comment
+
+on:
+  workflow_call:
+    inputs:
+      publish-artifacts-list:
+        required: true
+        type: boolean
+
+      report-msg-title:
+        required: false
+        type: string
+
+      app-build-pub-report:
+        required: true
+        type: boolean
+      app-build-status:
+        required: false
+        type: boolean
+
+      app-sb-deploy-pub-report:
+        required: true
+        type: boolean
+      app-sb-deploy-status:
+        required: false
+        type: boolean
+
+      app-unit-test-pub-report:
+        required: false
+        type: boolean
+      app-unit-test-status:
+        required: false
+        type: boolean
+      app-unit-test-codecov-percentage:
+        required: false
+        type: string
+      app-unit-test-codecov-diff:
+        required: false
+        type: string
+
+    secrets:
+      gh_token:
+        required: true
+      gh_pages_full_branch:
+        required: true
+
+jobs:
+  publish-report-issue-comment:
+    name: Publish issue comment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/github-script@v6
+        id: issue-comment-data
+        env:
+
+          REPORT_MSG_TITLE: ${{inputs.report-msg-title}}
+          PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
+          PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: wfd_publish-issue-comment-with-artifacts.yml
+
+          IS_APP_SB_BUILD_REPORT: ${{ inputs.app-build-pub-report }}
+          IS_APP_UNIT_TEST_REPORT: ${{ inputs.app-unit-test-pub-report }}
+          IS_APP_E2E_TEST_REPORT: false
+          IS_SB_UNIT_TEST_REPORT: false
+          IS_SB_E2E_TEST_REPORT: false
+          IS_APP_SB_DEPLOYMENT_REPORT: ${{ inputs.app-sb-deploy-pub-report }}
+
+          APP_UNIT_TEST_PERCENTAGE: ${{ inputs.app-unit-test-codecov-percentage }}
+          APP_UNIT_TEST_DIFF: ${{ inputs.app-unit-test-codecov-diff }}
+          APP_BUILD_STATUS: ${{ inputs.app-build-status }}
+          APP_UNIT_TEST_STATUS: ${{ inputs.app-unit-test-status }}
+
+          APP_DEPLOYMENT_STATUS: ${{ inputs.app-sb-deploy-status }}
+
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.GH_PAGES_CUSTOM_DOMAIN }}
+
+        with:
+          result-encoding: string
+          script: |
+            const script = require('./scripts/ci/github-script-src/publish-issue-comment.js')
+            return await script({github, context, core})

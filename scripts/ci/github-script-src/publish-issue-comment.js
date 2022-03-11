@@ -1,95 +1,209 @@
-const getComment = require('./_find-issue-comment');
+const commentUtils = require('./utils/comment-utils');
 
 module.exports = async ({ github, context, core }) => {
   const {
-    SHA,
+    REPORT_MSG_TITLE = 'Basilisk-UI workflows reporter',
+    PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE,
+    PUBLISH_ARTIFACTS_LIST,
     IS_APP_SB_BUILD_REPORT,
-    IS_APP_SB_DEPLOYMENT_REPORT,
     IS_APP_UNIT_TEST_REPORT,
     IS_APP_E2E_TEST_REPORT,
     IS_SB_UNIT_TEST_REPORT,
     IS_SB_E2E_TEST_REPORT,
+    IS_APP_SB_DEPLOYMENT_REPORT,
 
     APP_UNIT_TEST_PERCENTAGE,
     APP_UNIT_TEST_DIFF,
+
     APP_BUILD_STATUS,
-    APP_UNIT_TEST_REF_BRANCH,
     APP_UNIT_TEST_STATUS,
     APP_DEPLOYMENT_STATUS,
-    REPORT_MSG_TITLE = 'Basilisk-UI APP/Storybook build | testing | deployment',
 
     GITHUB_HEAD_REF,
-    GITHUB_REF,
     GITHUB_REF_NAME,
-    gh_token,
+    GITHUB_SHA,
+    GITHUB_REF,
+    GITHUB_BASE_REF, // for PR target branch
+
+    GH_PAGES_CUSTOM_DOMAIN,
+    GH_TOKEN,
   } = process.env;
 
-  process.env.GITHUB_TOKEN = gh_token;
+  process.env.GITHUB_TOKEN = GH_TOKEN;
 
-  // const githubActions = require('@tonyhallett/github-actions');
-  //
-  // console.log(
-  //   'githubActions - ',
-  //   await githubActions.getWorkflowArtifactDetails()
-  // );
+  console.log('context 1 - ', context);
+  console.log('process.env - ', process.env);
 
-  console.log('context - ', context);
-  // console.log('process.env - ', process.env);
-
-  const commentBody = `## Basilisk-reporter message. \n :small_blue_diamond: Testing is fine! UPDATED`;
   const [owner, repo] = context.payload.repository.full_name.split('/');
+  const currentBranchName =
+    context.eventName === 'pull_request' ? GITHUB_HEAD_REF : GITHUB_REF_NAME;
+  let triggerCommit = null;
 
-  const existingIssueComment = await getComment({
-    github,
-    context,
-    issueNumber: context.payload.number,
-    bodyIncludes: 'Basilisk-reporter message.',
-  });
+  let commentBody = `:page_with_curl: **${REPORT_MSG_TITLE}** <br />`;
 
-  await new Promise((res, rej) => {
-    setTimeout(async () => {
-      console.log('context.runId - ', context.runId)
-      const runArtifactsList =
-        await github.rest.actions.listWorkflowRunArtifacts({
-          owner,
-          repo,
-          run_id: context.runId,
-          per_page: 100,
-          page: 1,
-        });
+  if (context.payload.after) {
+    triggerCommit = await github.rest.git.getCommit({
+      owner,
+      repo,
+      commit_sha: context.payload.after,
+    });
+    commentBody += ` _Report has been triggered by commit [${triggerCommit.data.message} (${triggerCommit.data.sha})](${triggerCommit.data.html_url})_ `;
+  }
+  commentBody += `<br /><br />`;
 
-      const iterator = github.paginate.iterator(github.rest.actions.listWorkflowRunArtifacts, {
+  if (IS_APP_SB_BUILD_REPORT === 'true') {
+    commentBody += `:small_blue_diamond: **Application/Storybook build:** <br /> 
+    - Status: ${
+      APP_BUILD_STATUS === 'true'
+        ? ':white_check_mark: _Built_ '
+        : ':no_entry_sign: _Failed_ '
+    }`;
+  }
+
+  if (IS_APP_SB_DEPLOYMENT_REPORT === 'true') {
+    commentBody += `<br /><br />`;
+    commentBody += `:small_blue_diamond: **Application/Storybook deployment:** <br /> 
+    - Status: ${
+      APP_DEPLOYMENT_STATUS === 'true'
+        ? ':white_check_mark: _Deployed_ '
+        : ':no_entry_sign: _Failed_ '
+    }`;
+  }
+
+  if (
+    IS_APP_SB_DEPLOYMENT_REPORT === 'true' &&
+    APP_DEPLOYMENT_STATUS === 'true'
+  ) {
+    commentBody += `
+    <br />
+    - [Application build page](https://${GH_PAGES_CUSTOM_DOMAIN}/${currentBranchName}/app) <br />
+    - [Storybook build page](https://${GH_PAGES_CUSTOM_DOMAIN}/${currentBranchName}/storybook)
+    `;
+    commentBody += `<br /><br />`;
+  }
+
+  commentBody = commentBody.replace(/(\r\n|\n|\r)/gm, '');
+
+  let existingIssueComment = null;
+  let suiteId = '';
+  let issueNumber = null;
+
+  if (context.eventName === 'pull_request') {
+    existingIssueComment = await commentUtils.findIssueComment({
+      github,
+      context,
+      issueNumber: context.payload.number,
+      bodyIncludes: REPORT_MSG_TITLE,
+    });
+
+    issueNumber = context.payload.number;
+  } else if (context.eventName === 'push') {
+    const prList = await github.request(
+      `GET /repos/${owner}/${repo}/commits/${context.sha}/pulls`,
+      {
         owner,
         repo,
-        run_id: context.runId,
-        per_page: 100,
-      });
-
-      for await (const { data: artifacts } of iterator) {
-        console.log('---artifacts - ', artifacts)
-        for (const artifact of artifacts) {
-          console.log("artifact - ", artifact);
-        }
+        commit_sha: context.sha,
       }
+    );
+    console.log('prList - ', prList);
+    const relatedPr = prList.data.filter((prItem) => prItem.state === 'open');
 
-      console.log('runArtifactsList iterator - ', iterator); //1929009502
+    issueNumber = relatedPr.length > 0 ? relatedPr[0].number : null;
 
-      if (!existingIssueComment) {
-        github.rest.issues.createComment({
-          issue_number: context.payload.number,
-          owner,
-          repo,
-          body: commentBody,
-        });
-      } else {
-        github.rest.issues.updateComment({
-          owner,
-          repo,
-          comment_id: existingIssueComment.id,
-          body: commentBody,
-        });
-      }
-      res();
-    }, 10000);
+    existingIssueComment = issueNumber
+      ? await commentUtils.findIssueComment({
+          github,
+          context,
+          issueNumber,
+          bodyIncludes: REPORT_MSG_TITLE,
+        })
+      : null;
+  }
+
+  const existingIssueCommentId = existingIssueComment
+    ? existingIssueComment.id
+    : null;
+
+  if (!issueNumber) return 0;
+
+  if (PUBLISH_ARTIFACTS_LIST !== 'true') {
+    await commentUtils.publishIssueComment({
+      github,
+      owner,
+      repo,
+      existingIssueCommentId,
+      commentBody,
+      issueNumber,
+    });
+
+    return 0;
+  }
+
+  const suitesList = await github.request(
+    `GET /repos/${owner}/${repo}/commits/${GITHUB_SHA}/check-suites`,
+    {
+      owner,
+      repo,
+      ref: GITHUB_SHA,
+    }
+  );
+
+  console.log('suitesList - ', suitesList);
+
+  for (let suiteItem of suitesList.data.check_suites.filter(
+    (item) => item.status === 'in_progress'
+  )) {
+    console.log('suiteItem - ', suiteItem);
+    suiteId = suiteItem.id;
+  }
+
+  // Run workflow for fetching and publication artifacts list
+
+  const preparedInputs = JSON.stringify({
+    publishArtifactsList: PUBLISH_ARTIFACTS_LIST,
+    repoUrl: context.payload.repository.html_url,
+    runId: context.runId,
+    commentBody,
+    owner,
+    repo,
+    suiteId,
+    existingIssueCommentId,
+    issueNumber,
   });
+
+  const workflowsList = await github.request(
+    `GET /repos/${owner}/${repo}/actions/workflows`,
+    {
+      owner,
+      repo,
+    }
+  );
+
+  const publishArtifactsWf =
+    workflowsList.data && workflowsList.data.total_count > 0
+      ? workflowsList.data.workflows.find(
+          (item) =>
+            item.path ===
+            `.github/workflows/${PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE}`
+        )
+      : null;
+
+  console.log('publishArtifactsWf - ', publishArtifactsWf);
+
+  if (!publishArtifactsWf) return 0;
+
+  const dispatchResp = await github.rest.actions.createWorkflowDispatch({
+    owner,
+    repo,
+    workflow_id: publishArtifactsWf.id,
+    ref: context.payload.repository.default_branch,
+    inputs: {
+      issue_comment_data: preparedInputs,
+    },
+  });
+
+  console.log('dispatchResp - ', dispatchResp);
+
+  return 0;
 };

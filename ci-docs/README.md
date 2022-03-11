@@ -18,6 +18,9 @@ combinations/sequence in root workflow.
 - __root workflow file__ - (`.github/workflows/wf_*.yml`) has prefix `wf_`. Consists of reusable 
   workflow calls in different combinations regarding purposes. Should not contain any functionality for 
   building, testing, deployment, etc.
+- __dispatched workflow__ - (`.github/workflows/wfd_*.yml`) has prefix `wfd_`. Workflow which is triggering after dispatch event,
+  which is created manually or from another workflow via github API. More details [here](https://docs.github.com/en/rest/reference/actions#create-a-workflow-dispatch-event).
+_**IMPORTANT** - All updates in such workflow file will be applied only if they pushed into default repository branch (`main | develop`)._
 - __reusable workflow file__ - (`.github/workflows/_called_*.yml`) has prefix `_called_`. Contains 
   functionality for specific purpose (application build, unit testing, etc.). Should contain independent piece of full
   workflow, generate artifacts for next steps, publish reports, etc.
@@ -106,22 +109,71 @@ Reports can be used in `Publish reports in PR and Discord` workflow for generati
 
 <hr />
 
-#### :chains:  Publish reports in PR and Discord ([.github/workflows/_called_report-statuses.yml](.github/workflows/_called_report-statuses.yml))
-Publish statuses and reports from different steps of root workflow. Workflow is based on libraries 
-`GitHub Script`, `Discord for GitHub Actions`, `code-coverage-action`.
+#### :chains:  Generate tests code coverage reports ([.github/workflows/_called_generate-unit-tests-code-cov-report.yml](.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
+Generate unit tests code coverage report from report files, which must be provided as artifacts and names of artifacts as 
+workflow inputs.
 
 :inbox_tray: ***Inputs***:
 - `base-branch-codecov-artifact-name`: **String, required** - _artifact name with code-coverage report from PR target branch_
 - `working-branch-codecov-artifact-name`: **String, required** - _artifact name with code-coverage report from working target branch_
+
+:outbox_tray: ***Outputs***: 
+- `codecov_unit_percentage`: _Total Percentage coverage_
+- `codecov_unit_diff`: _Percentage difference between head branch_
+
+:bricks: ***Artifacts***: -//-
+
+:lock: ***Secrets***:
+- `barecheck_github_app_token`: _required_
+
+<hr />
+
+#### :chains:  Publish reports in Discord ([.github/workflows/_called_publish-report-discord.yml](.github/workflows/_called_publish-report-discord.yml))
+Publish statuses and reports from different steps of root workflow in Discord channel. Workflow is based on libraries
+`GitHub Script`, `Discord for GitHub Actions`.
+
+:inbox_tray: ***Inputs***:
 - `app-build-pub-in-discord`: **Boolean, required** - _publish application build status in Discord channel_
 - `app-build-status`: **Boolean** - _is application build successful_
 - `app-sb-deploy-pub-report-in-discord`: **Boolean, required** - _publish application and Storybook in Discord channel_
 - `app-sb-deploy-status`: **Boolean** - _is application and storybook deployment successful_
-- `app-unit-test-pub-report-in-pr`: **Boolean** - _publish application unit tests report in related PR_
 - `app-unit-test-pub-report-in-discord`: **Boolean** - _publish application unit tests report in Discord channel_
 - `app-unit-test-status`: **Boolean** - _is application unit testing successful_
-- `publish-pr-comment`: **Boolean, required** - publish any comment in related pull request
-- `publish-discord-alert`: **Boolean, required** - publish any message in Discord channel
+- `app-unit-test-codecov-percentage`: **String** - _Total Percentage coverage_
+- `app-unit-test-codecov-diff`: **String** - _Percentage difference between head branch_
+
+:outbox_tray: ***Outputs***: -//-
+
+:bricks: ***Artifacts***: -//-
+
+:lock: ***Secrets***:
+- `gh_pages_full_branch`: _required_
+- `discord_alert_ui_web_hook`: _required_
+
+<hr />
+
+### :chains:  Publish reports as issue comment ([.github/workflows/_called_publish-report-issue-comment.yml](.github/workflows/_called_publish-report-issue-comment.yml))
+Publish statuses and reports from different steps of root workflow as comment in related PR. Workflow is based on libraries
+`GitHub Script`. If we need fetch available artifacts, so it can be done only in separate/next workflow run after workflow run
+which generates these artifacts. Artifacts are not visible for API before run is completed. More details in 
+[this](https://github.com/actions/upload-artifact/issues/50) issue. As result current called workflow has logic, 
+explained in diagram below:
+
+![Publish reports as issue comment](Publish reports in issue comment flow.png)
+
+
+:inbox_tray: ***Inputs***:
+- `publish-artifacts-list`: **Boolean, required** - _publish available artifacts list. Needs automatic run of dispatched workflow_
+- `report-msg-title`: **String, required** - _Title for comment post. This title will be used for matching comment in next
+workflow runs for update the comment_
+- `app-build-pub-report`: **Boolean, required** - _publish application build status_
+- `app-build-status`: **Boolean** - _is application build successful_
+- `app-sb-deploy-pub-report`: **Boolean, required** - _publish application and Storybook_
+- `app-sb-deploy-status`: **Boolean** - _is application and storybook deployment successful_
+- `app-unit-test-pub-report`: **Boolean** - _publish application unit tests report in related PR_
+- `app-unit-test-status`: **Boolean** - _is application unit testing successful_
+- `app-unit-test-codecov-percentage`: **String** - _Total Percentage coverage_
+- `app-unit-test-codecov-diff`: **String** - _Percentage difference between head branch_
 
 :outbox_tray: ***Outputs***: -//-
 
@@ -129,9 +181,7 @@ Publish statuses and reports from different steps of root workflow. Workflow is 
 
 :lock: ***Secrets***:
 - `gh_token`: _required_
-- `gh_pages_full_branch`: _required_
-- `discord_alert_ui_web_hook`: _required_
-- `barecheck_github_app_token`: _required_
+- `gh_pages_full_branch`: _required_ - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data 
 
 <hr />
 
