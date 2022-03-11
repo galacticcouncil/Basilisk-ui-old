@@ -11,8 +11,7 @@ import {
 } from './lbpPools';
 
 const address = 'bXiWm9TE6YXY9mpPeFK8NwjEgMdfmmBdstx33YskqLYvK6dZxs';
-const assetAId = '0';
-const assetBId = '1';
+const feeCollector = 'bXhgsyW7NAYqh1TkTPoZVRndEd7gPMxuDpdoF2Lk1i9ZkGuDm';
 
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
@@ -25,8 +24,7 @@ jest.mock('../../lib/getAllLbpPools', () => ({
     return [
       {
         id: address,
-        assetInId: assetAId,
-        assetOutId: assetBId,
+        feeCollector,
       },
     ];
   },
@@ -73,8 +71,7 @@ describe('useLbpPoolQueryResolvers', () => {
         query GetLbpPools {
           lbpPools @client {
             id
-            assetInId
-            assetOutId
+            feeCollector
           }
         }
       `
@@ -105,8 +102,7 @@ describe('useLbpPoolQueryResolvers', () => {
         expect(data()?.lbpPools).toEqual([
           {
             id: address,
-            assetInId: assetAId,
-            assetOutId: assetBId,
+            feeCollector,
             __typename,
           },
         ]);
