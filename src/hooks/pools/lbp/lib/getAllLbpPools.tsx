@@ -33,6 +33,14 @@ export const getAllLbpPools = async (
   return lbpPools;
 };
 
+/**
+ * Unwraps the optional PalletLbpPool data.
+ * For unknown sale start and end blockHeights,
+ * it returns empty strings.
+ *
+ * @param lbpPoolOptional optional PalletLbpPool data received from query
+ * @returns unwraped data in the LPBPool type format
+ */
 const unwrapOptionalLbpPool = (
   lbpPoolOptional: Option<PalletLbpPool>
 ): Partial<LbpPool> => {
