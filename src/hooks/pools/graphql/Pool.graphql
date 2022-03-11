@@ -27,12 +27,7 @@ type LBPAssetWeights {
   current: String!
 }
 
-interface Fee {
-  numerator: String!
-  denominator: String!
-}
-
-type PoolFee implements Fee {
+type Fee {
   numerator: String!
   denominator: String!
 }
@@ -43,7 +38,7 @@ type LBPPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
-  poolFee: PoolFee!
+  fee: Fee!
   repayTargetReached: Boolean!
   assetAWeights: LBPAssetWeights!
   assetBWeights: LBPAssetWeights!

@@ -1,15 +1,9 @@
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -56,6 +50,7 @@ export type Config = {
 
 export type Constants = {
   __typename?: 'Constants';
+  id: Scalars['String'];
   lbp?: Maybe<LbpConstants>;
 };
 
@@ -84,11 +79,6 @@ export type LbpAssetWeights = {
   initial: Scalars['String'];
 };
 
-export type LbpConstants = {
-  __typename?: 'LBPConstants';
-  repayFee?: Maybe<Fee>;
-};
-
 export type LbpPool = {
   __typename?: 'LBPPool';
   assetAWeights: LbpAssetWeights;
@@ -108,6 +98,11 @@ export type LastBlock = {
   id: Scalars['String'];
   parachainBlockNumber?: Maybe<Scalars['String']>;
   relaychainBlockNumber?: Maybe<Scalars['String']>;
+};
+
+export type LbpConstants = {
+  __typename?: 'LbpConstants';
+  repayFee: Fee;
 };
 
 export type Pool = LbpPool | XykPool;
@@ -131,7 +126,7 @@ export type Query = {
 
 export enum TradeType {
   Buy = 'Buy',
-  Sell = 'Sell',
+  Sell = 'Sell'
 }
 
 export type VestingSchedule = {

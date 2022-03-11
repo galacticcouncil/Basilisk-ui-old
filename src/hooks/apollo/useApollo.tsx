@@ -32,7 +32,6 @@ export const useResolvers: () => Resolvers = () => {
   const {
     Query: ConstantsQueryResolver,
     Constants,
-    LBPConstants,
   } = useConstantsQueryResolvers();
 
   return {
@@ -56,7 +55,6 @@ export const useResolvers: () => Resolvers = () => {
     XYKPool,
     LBPPool,
     Constants,
-    LBPConstants,
   };
 };
 

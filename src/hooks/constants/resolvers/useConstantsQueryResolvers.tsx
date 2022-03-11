@@ -1,6 +1,5 @@
 import { useConstantsQueryResolver } from './query/constants/constants';
 import { useLbpConstantsQueryResolver } from './query/lbpConstants/lbpConstants';
-import { useRepayFeeQueryResolver } from './query/repayFee/repayFee';
 
 export const useConstantsQueryResolvers = () => {
   return {
@@ -9,9 +8,6 @@ export const useConstantsQueryResolvers = () => {
     },
     Constants: {
       ...useLbpConstantsQueryResolver(),
-    },
-    LBPConstants: {
-      ...useRepayFeeQueryResolver(),
-    },
+    }
   };
 };

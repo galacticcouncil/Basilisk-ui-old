@@ -19,7 +19,7 @@ query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
     assetBWeights
     startBlock
     endBlock
-    poolFee {
+    fee {
       numerator
       denominator
     }

@@ -1,6 +1,7 @@
 import { find, isEqual } from 'lodash';
 import { useMemo, useState } from 'react';
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
+import { useGetConstantsQuery } from '../../hooks/constants/queries/useGetConstantsQuery/useGetConstantsQuery';
 import { TradeForm, TradeFormProps } from '../../containers/TradeForm/TradeForm';
 import { PoolLiquidity, TradeChart } from '../../containers/TradeChart';
 import log from 'loglevel';
@@ -23,6 +24,13 @@ export const TradePage = () => {
         assetInId: '0',
         assetOutId: '2'
     })
+
+    const { 
+        data: constsData, 
+        loading: constsLoading, 
+        error: constsError 
+    } = useGetConstantsQuery();
+    log.debug('TradePage.useGetConstantsQuery', constsLoading);
 
     // automatically fetch a pool by the given assets
     const { 

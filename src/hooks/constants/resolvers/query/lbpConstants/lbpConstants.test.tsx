@@ -26,7 +26,7 @@ jest.mock('../../../lib/getRepayFee', () => ({
 }));
 
 describe('lbpConstants', () => {
-  describe('useLbpConstantsQueryResolvers', () => {
+  describe('lbpConstantsQueryResolvers', () => {
     const useResolvers = () => {
       return {
         Query: {
@@ -76,8 +76,6 @@ describe('lbpConstants', () => {
       await act(async () => {
         await waitForExpect(() => {
           expect(data()?.lbp).toEqual({
-            __typename: 'LBPConstants',
-            id: 'LBPConstants',
             repayFee: {
               denominator: mockedGetRepayFeeValue.denominator,
               numerator: mockedGetRepayFeeValue.numerator,
