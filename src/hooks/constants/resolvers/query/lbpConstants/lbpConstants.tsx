@@ -6,15 +6,14 @@ import { withErrorHandler } from '../../../../apollo/withErrorHandler';
 import errors from '../../../../../errors';
 
 export const lbpConstantsQueryResolverFactory =
-  (apiInstance?: ApiPromise) =>
-  () => {
-    if (!apiInstance) { console.log(apiInstance); throw Error(errors.apiInstanceNotInitialized)};
+  (apiInstance?: ApiPromise) => () => {
+    if (!apiInstance) {
+      throw Error(errors.apiInstanceNotInitialized);
+    }
 
     return {
-      repayFee: {
-        ...getRepayFee(apiInstance),
-      },
-    }
+      repayFee: getRepayFee(apiInstance),
+    };
   };
 
 export const useLbpConstantsQueryResolver = () => {

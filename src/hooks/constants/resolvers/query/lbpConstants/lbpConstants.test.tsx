@@ -26,7 +26,7 @@ jest.mock('../../../lib/getRepayFee', () => ({
 }));
 
 describe('lbpConstants', () => {
-  describe('lbpConstantsQueryResolvers', () => {
+  describe('useLbpConstantsQueryResolver', () => {
     const useResolvers = () => {
       return {
         Query: {

@@ -1,8 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { MockedProvider } from '@apollo/client/testing';
-import { renderHook } from '@testing-library/react-hooks'
-import { useGetConstantsQuery } from './useGetConstantsQuery'
-import { useConstantsQueryResolvers } from '../../resolvers/useConstantsQueryResolvers'
+import { renderHook } from '@testing-library/react-hooks';
+import { useGetConstantsQuery } from './useGetConstantsQuery';
+import { useConstantsQueryResolvers } from '../../resolvers/useConstantsQueryResolvers';
 
 // think about, do 👇
 //  auto mock
@@ -29,35 +29,38 @@ jest.mock('../../lib/getRepayFee', () => ({
 }));
 
 describe('useGetConstantsQuery', () => {
-  
   it('can resolve the query', async () => {
+    const { result: resolvers } = renderHook(() =>
+      useConstantsQueryResolvers()
+    );
+    const { result: query, waitForNextUpdate } = renderHook(
+      () => useGetConstantsQuery(),
+      {
+        wrapper: (props) => {
+          // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+          // eslint-disable-next-line testing-library/no-node-access
+          const children = props.children;
+          return (
+            <MockedProvider resolvers={resolvers.current}>
+              {children}
+            </MockedProvider>
+          );
+        },
+      }
+    );
 
-    const { result: resolvers } = renderHook(() => useConstantsQueryResolvers()) 
-
-    console.log(JSON.stringify(resolvers.current, null, 2))
-
-    const { result: query, waitForNextUpdate } = renderHook(() => useGetConstantsQuery(), {
-      wrapper: (props) => (
-        // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
-        // eslint-disable-next-line testing-library/no-node-access
-        <MockedProvider resolvers={resolvers.current}>{props.children}</MockedProvider>
-      )
-    })
-
-    await waitForNextUpdate()
-    
+    await waitForNextUpdate();
     expect(query.current.data).toEqual({
       constants: {
         __typename: 'Constants',
-        id: 'Constants', // id shows up in dev tools and cache,  but not here.  WHY?
+        id: 'Constants',
         lbp: {
           repayFee: {
             denominator: mockedGetRepayFeeValue.denominator,
             numerator: mockedGetRepayFeeValue.numerator,
-          }
-        }
+          },
+        },
       },
-    })
-  
+    });
   });
-})
+});
