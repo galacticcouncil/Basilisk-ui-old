@@ -39,7 +39,8 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
             <div className="account-item__chain-address">{account.id}</div>
           </div>
         </div>
-        <div className="account-item__address-entry">
+        {/* TODO: revive when we implement parsing of the original extension address */}
+        {/* <div className="account-item__address-entry">
           <Identicon
             className="account-item__identicon"
             value={account.id}
@@ -50,7 +51,7 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
             <div className="account-item__chain-name">Kusama</div>
             <div className="account-item__chain-address">{account.id}</div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
