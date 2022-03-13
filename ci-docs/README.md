@@ -159,7 +159,7 @@ which generates these artifacts. Artifacts are not visible for API before run is
 [this](https://github.com/actions/upload-artifact/issues/50) issue. As result current called workflow has logic, 
 explained in diagram below:
 
-![Publish reports as issue comment](Publish reports in issue comment flow.png)
+![Publish reports as issue comment](./Publish reports in issue comment flow.png)
 
 
 :inbox_tray: ***Inputs***:
