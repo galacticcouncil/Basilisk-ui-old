@@ -453,12 +453,12 @@ export const TradeForm = ({
   }, [assetIds]);
 
   const tradeBalances = useMemo(() => {
-    const assetOutAmount = getValues('assetOutAmount') || '0';
+    const assetOutAmount = getValues('assetOutAmount');
     const outBeforeTrade = activeAccountTradeBalances?.outBalance?.balance;
     const outAfterTrade =
       outBeforeTrade &&
       assetOutAmount &&
-      new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0);
+      new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0) || undefined;
     const outTradeChange =
       outBeforeTrade !== '0'
         ? percentageChange(
@@ -467,12 +467,12 @@ export const TradeForm = ({
           )?.multipliedBy(100)
         : new BigNumber(outAfterTrade !== '0' ? '100.000' : '0');
 
-    const assetInAmount = getValues('assetInAmount') || '0';
+    const assetInAmount = getValues('assetInAmount');
     const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
     const inAfterTrade =
       inBeforeTrade &&
       assetInAmount &&
-      new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0);
+      new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0) || undefined
     const inTradeChange =
       inBeforeTrade !== '0'
         ? percentageChange(
@@ -567,7 +567,7 @@ export const TradeForm = ({
                 <>
                   Your balance:
                   {assetIds.assetIn ? (
-                    tradeBalances.inBeforeTrade
+                    tradeBalances.inBeforeTrade !== undefined
                       ? (
                         <FormattedBalance
                           balance={{
@@ -580,7 +580,7 @@ export const TradeForm = ({
                   ) : (
                     <> {horizontalBar}</>
                   )}
-                  {tradeBalances.inAfterTrade && assetIds.assetIn ? (
+                  {tradeBalances.inAfterTrade !== undefined && tradeBalances.inBeforeTrade !== undefined && assetIds.assetIn ? (
                     <>
                       <Icon name="RightArrow" />
                       <FormattedBalance
@@ -687,7 +687,7 @@ export const TradeForm = ({
                 <>
                   Your balance:
                   {assetIds.assetOut ? (
-                    tradeBalances.outBeforeTrade
+                    tradeBalances.outBeforeTrade !== undefined
                       ? (
                         <FormattedBalance
                           balance={{
@@ -700,12 +700,12 @@ export const TradeForm = ({
                   ) : (
                     <> {horizontalBar}</>
                   )}
-                  {assetIds.assetOut ? (
+                  {assetIds.assetOut && tradeBalances.outBeforeTrade !== undefined && tradeBalances.outAfterTrade !== undefined ? (
                     <>
                       <Icon name="RightArrow" />
                       <FormattedBalance
                         balance={{
-                          balance: tradeBalances.outAfterTrade || '0',
+                          balance: tradeBalances.outAfterTrade,
                           assetId: assetIds.assetOut,
                         }}
                       />
