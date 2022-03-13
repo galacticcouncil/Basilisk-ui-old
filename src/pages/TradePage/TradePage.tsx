@@ -408,8 +408,7 @@ export const TradePage = () => {
           activeAccountTradeBalances={tradeBalances}
           activeAccountTradeBalancesLoading={
             activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus ===
-              NetworkStatus.setVariables ||
+            activeAccountTradeBalancesNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
         />

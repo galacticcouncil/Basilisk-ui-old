@@ -26,6 +26,7 @@ import Icon from '../../Icon/Icon';
 import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
 import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -558,22 +559,26 @@ export const TradeForm = ({
             />
             <div className="balance-info balance-out-info">
               {activeAccountTradeBalancesLoading ||
-              isPoolLoading ||
-              !tradeBalances.inBeforeTrade ? (
+              isPoolLoading
+              ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
                   {assetIds.assetIn ? (
-                    <FormattedBalance
-                      balance={{
-                        balance: tradeBalances.inBeforeTrade || '0',
-                        assetId: assetIds.assetIn,
-                      }}
-                    />
+                    tradeBalances.inBeforeTrade
+                      ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.inBeforeTrade,
+                            assetId: assetIds.assetIn,
+                          }}
+                        />
+                      )
+                      : <> {horizontalBar}</>
                   ) : (
-                    <> -</>
+                    <> {horizontalBar}</>
                   )}
                   {tradeBalances.inAfterTrade && assetIds.assetIn ? (
                     <>
@@ -674,22 +679,26 @@ export const TradeForm = ({
             />{' '}
             <div className="balance-info balance-out-info">
               {activeAccountTradeBalancesLoading ||
-              isPoolLoading ||
-              !tradeBalances.outBeforeTrade ? (
+              isPoolLoading
+              ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
                   {assetIds.assetOut ? (
-                    <FormattedBalance
-                      balance={{
-                        balance: tradeBalances.outBeforeTrade || '0',
-                        assetId: assetIds.assetOut,
-                      }}
-                    />
+                    tradeBalances.outBeforeTrade
+                      ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.outBeforeTrade,
+                            assetId: assetIds.assetOut,
+                          }}
+                        />
+                      )
+                      : <> {horizontalBar}</>
                   ) : (
-                    <> -</>
+                    <> {horizontalBar}</>
                   )}
                   {assetIds.assetOut ? (
                     <>
