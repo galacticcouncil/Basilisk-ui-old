@@ -181,7 +181,8 @@ workflow runs for update the comment_
 
 :lock: ***Secrets***:
 - `gh_token`: _required_
-- `gh_pages_full_branch`: _required_ - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data 
+- `gh_pages_full_branch`: _required_ 
+- `gh_pages_custom_domain`: _required_ - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data 
 
 <hr />
 
