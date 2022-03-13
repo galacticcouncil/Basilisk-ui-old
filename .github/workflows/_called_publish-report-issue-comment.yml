@@ -43,6 +43,8 @@ on:
         required: true
       gh_pages_full_branch:
         required: true
+      gh_pages_custom_domain:
+        required: true
 
 jobs:
   publish-report-issue-comment:
@@ -75,7 +77,7 @@ jobs:
 
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.GH_PAGES_CUSTOM_DOMAIN }}
+          GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.gh_pages_custom_domain }}
 
         with:
           script: |
