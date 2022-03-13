@@ -5,6 +5,7 @@ import './AccountItem.scss';
 
 import Identicon from '@polkadot/react-identicon';
 import getBsxBalance from '../../../../misc/utils/getBsxBalance';
+import { trimAddress } from '../../Wallet';
 export interface AccountItemProps {
   account: Account;
   onClick: (account: Account) => void;
@@ -36,7 +37,7 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
           />
           <div className="account-item__chain-info">
             <div className="account-item__chain-name">Basilisk</div>
-            <div className="account-item__chain-address">{account.id}</div>
+            <div className="account-item__chain-address">{trimAddress(account, 24)}</div>
           </div>
         </div>
         {/* TODO: revive when we implement parsing of the original extension address */}

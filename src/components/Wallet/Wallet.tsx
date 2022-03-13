@@ -10,6 +10,16 @@ import { FormattedMessage } from 'react-intl';
 import getBsxBalance from '../../misc/utils/getBsxBalance';
 import classNames from 'classnames';
 
+export const trimAddress = (account: Account, length: number) => {
+  const end = (length) / 2;
+  if (account) {
+    const address = account.id;
+    return `${address.substring(0, end)}...${address.substring(
+      address.length - end
+    )}`;
+  } else return ' ';
+};
+
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
   accounts?: Account[];
@@ -56,15 +66,6 @@ export const Wallet = ({
     toggleModal,
   ]);
 
-  const trimAddress = (account?: Account) => {
-    if (account) {
-      const address = account.id;
-      return `${address.substring(0, 5)}...${address.substring(
-        address.length - 5
-      )}`;
-    } else return ' ';
-  };
-
   useEffect(() => {
     setAccountSelectorOpen(isModalOpen);
   }, [isModalOpen, setAccountSelectorOpen]);
@@ -104,7 +105,7 @@ export const Wallet = ({
           <>
             <div className="wallet__info__account">
               {<FormattedBalance balance={getBsxBalance(account)} />}
-              <div className="wallet__address">{trimAddress(account)}</div>
+              <div className="wallet__address">{trimAddress(account, 10)}</div>
             </div>
             <Identicon value={account?.id} size={32} />
             <div
