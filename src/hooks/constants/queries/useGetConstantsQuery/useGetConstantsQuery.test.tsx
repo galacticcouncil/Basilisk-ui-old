@@ -37,7 +37,7 @@ describe('useGetConstantsQuery', () => {
       () => useGetConstantsQuery(),
       {
         wrapper: (props) => {
-          // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+          // 3.12.22 ... https://github.com/testing-library/eslint-plugin-testing-library/issues/386
           // eslint-disable-next-line testing-library/no-node-access
           const children = props.children;
           return (
