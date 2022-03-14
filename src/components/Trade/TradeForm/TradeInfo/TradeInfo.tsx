@@ -15,6 +15,7 @@ export interface TradeInfoProps {
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
   errors?: FieldErrors<TradeFormFields>;
+  paymentInfo?: string,
 }
 
 export const TradeInfo = ({
@@ -23,6 +24,7 @@ export const TradeInfo = ({
   tradeLimit,
   isDirty,
   tradeFee = constants.xykFee,
+  paymentInfo
 }: TradeInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
@@ -66,6 +68,16 @@ export const TradeInfo = ({
           </div>
         </div>
         <div className="data-piece">
+          <span className="data-piece__label">Trade fee </span>
+          <div className="data-piece__value">
+            {new BigNumber(tradeFee.numerator)
+              .dividedBy(tradeFee.denominator)
+              .multipliedBy(100)
+              .toFixed(2)}
+            %
+          </div>
+        </div>
+        <div className="data-piece">
           <span className="data-piece__label">Trade limit </span>
           <div className="data-piece__value">
             {tradeLimit?.assetId ? (
@@ -81,13 +93,18 @@ export const TradeInfo = ({
           </div>
         </div>
         <div className="data-piece">
-          <span className="data-piece__label">Trade fee </span>
+          <span className="data-piece__label">Transaction fee </span>
           <div className="data-piece__value">
-            {new BigNumber(tradeFee.numerator)
-              .dividedBy(tradeFee.denominator)
-              .multipliedBy(100)
-              .toFixed(2)}
-            %
+            {paymentInfo ? (
+              <FormattedBalance
+                balance={{
+                  balance: paymentInfo,
+                  assetId: '0',
+                }}
+              />
+            ) : (
+              <>-</>
+            )}
           </div>
         </div>
       </div>

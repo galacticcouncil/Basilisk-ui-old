@@ -27,6 +27,9 @@ import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPo
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
 import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
+import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
+import { useApolloClient } from '@apollo/client';
+import { estimateBuy } from '../../../hooks/pools/xyk/buy';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -447,6 +450,29 @@ export const TradeForm = ({
     [assetIds]
   );
 
+  const { apiInstance } = usePolkadotJsContext()
+  const { cache } = useApolloClient();
+  const [paymentInfo, setPaymentInfo] = useState<string>();
+  useEffect(() => {
+    if (!apiInstance) return;
+    const [ assetIn, assetOut, assetInAmount, assetOutAmount ] = getValues(['assetIn', 'assetOut', 'assetInAmount', 'assetOutAmount']);
+    
+    if (!assetIn || !assetOut || !assetInAmount || !assetOutAmount || !tradeLimit) return;
+
+    (async () => {
+      switch (tradeType) {
+        case TradeType.Buy: {
+          const partialFee = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
+            ?.partialFee.toString();
+          return setPaymentInfo(partialFee);
+        }
+        default:
+          return;
+      }
+    })();
+    
+  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount']), tradeLimit, tradeType]);
+
   useEffect(() => {
     setValue('assetIn', assetIds.assetIn);
     setValue('assetOut', assetIds.assetOut);
@@ -738,6 +764,7 @@ export const TradeForm = ({
             expectedSlippage={slippage}
             errors={errors}
             isDirty={isDirty}
+            paymentInfo={paymentInfo}
           />
           <input
             type="submit"
@@ -792,55 +819,6 @@ export const TradeForm = ({
           />
         </form>
       </FormProvider>
-
-      <div
-        className={classNames('debug', {
-          // visible: debug
-          // visible: true
-        })}
-      >
-        <h3>[Trade Form] Debug box</h3>
-        <p>
-          Liquidity (out/in): [{getValues('assetOut')}]{' '}
-          {fromPrecision12(assetOutLiquidity)} / [{getValues('assetIn')}]{' '}
-          {fromPrecision12(assetInLiquidity)}
-        </p>
-        <p>Trade type: {tradeType}</p>
-        <p>Asset IDs: {JSON.stringify(assetIds)}</p>
-        <p>
-          Allowed slippage:{' '}
-          {new BigNumber(allowedSlippage || '0').multipliedBy(100).toFixed(3)} %
-        </p>
-        <p>
-          Spot Price (outIn / inOut): {fromPrecision12(spotPrice?.outIn)} /{' '}
-          {fromPrecision12(spotPrice?.inOut)}
-        </p>
-        <p>
-          {(() => {
-            switch (tradeType) {
-              case TradeType.Sell:
-                return `1 [${getValues('assetIn')}] = ${fromPrecision12(
-                  spotPrice?.inOut
-                )} [${getValues('assetOut')}]`;
-              case TradeType.Buy:
-                return `1 [${getValues('assetOut')}] = ${fromPrecision12(
-                  spotPrice?.outIn
-                )} [${getValues('assetIn')}]`;
-            }
-          })()}
-        </p>
-        <p>Trade limit: {tradeLimit && fromPrecision12(tradeLimit.balance)}</p>
-        <p>
-          Amounts (out / in):{' '}
-          {fromPrecision12(getValues('assetOutAmount') || undefined)} /{' '}
-          {fromPrecision12(getValues('assetInAmount') || undefined)}
-        </p>
-        <p>
-          Slippage:{' '}
-          {slippage && new BigNumber(slippage).multipliedBy(100).toFixed(3)}%
-        </p>
-        <p>Form is valid?: {isValid ? 'true' : 'false'}</p>
-      </div>
     </div>
   );
 };

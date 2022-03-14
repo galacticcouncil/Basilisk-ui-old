@@ -10,10 +10,9 @@ import { FormattedMessage } from 'react-intl';
 import getBsxBalance from '../../misc/utils/getBsxBalance';
 import classNames from 'classnames';
 
-export const trimAddress = (account: Account, length: number) => {
+export const trimAddress = (address: string, length: number) => {
   const end = (length) / 2;
-  if (account) {
-    const address = account.id;
+  if (address) {
     return `${address.substring(0, end)}...${address.substring(
       address.length - end
     )}`;
@@ -105,7 +104,7 @@ export const Wallet = ({
           <>
             <div className="wallet__info__account">
               {<FormattedBalance balance={getBsxBalance(account)} />}
-              <div className="wallet__address">{trimAddress(account, 10)}</div>
+              <div className="wallet__address">{trimAddress(account.id, 10)}</div>
             </div>
             <Identicon value={account?.id} size={32} />
             <div

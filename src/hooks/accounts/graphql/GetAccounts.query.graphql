@@ -7,7 +7,8 @@ query GetAccounts {
   accounts @client {
     id
     name
-    source
+    source,
+    genesisHash,
     balances(assetIds: ["0"]) {
       assetId
       balance

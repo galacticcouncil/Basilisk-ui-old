@@ -5,6 +5,7 @@ type Account {
   id: String!
   name: String
   source: String
+  genesisHash: String
   balances: [Balance!]!
 }
 
