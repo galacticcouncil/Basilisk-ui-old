@@ -11,13 +11,9 @@ import { renderHook, RenderResult } from '@testing-library/react-hooks';
 import { ReactNode } from 'react';
 import errors from '../../../../../errors';
 
+const mockedApiInstance = jest.fn();
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
-  usePolkadotJsContext: () => {
-    return {
-      apiInstance: {},
-      loading: false,
-    } as unknown as ApiPromise;
-  },
+  usePolkadotJsContext: () => mockedApiInstance(),
 }));
 
 const mockedGetRepayFee = jest.fn();
@@ -27,12 +23,18 @@ jest.mock('../../../lib/getRepayFee', () => ({
 
 describe('lbpConstants', () => {
   describe('useLbpConstantsQueryResolver', () => {
+    const mockedUsePolkadotJsContext = {
+      apiInstance: {},
+      loading: false,
+    } as unknown as ApiPromise;
+
     const mockedGetRepayFeeValue = {
       numerator: '3',
       denominator: '4',
     };
 
     beforeEach(() => {
+      mockedApiInstance.mockReturnValueOnce(mockedUsePolkadotJsContext);
       mockedGetRepayFee.mockReturnValueOnce(mockedGetRepayFeeValue);
     });
 
@@ -62,7 +64,7 @@ describe('lbpConstants', () => {
       const renderHookOptions = (resolvers: RenderResult<any>) => {
         return {
           wrapper: (props: { children: ReactNode }) => {
-            // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+            // 14.3.2022 ... https://github.com/testing-library/eslint-plugin-testing-library/issues/386
             // eslint-disable-next-line testing-library/no-node-access
             const children = props.children;
             return (

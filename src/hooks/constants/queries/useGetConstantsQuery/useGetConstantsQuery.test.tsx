@@ -1,65 +1,94 @@
 import { ApiPromise } from '@polkadot/api';
 import { MockedProvider } from '@apollo/client/testing';
-import { renderHook } from '@testing-library/react-hooks';
+import { InMemoryCache } from '@apollo/client';
+import { renderHook, RenderResult } from '@testing-library/react-hooks';
+import { ReactNode } from 'react';
 import { useGetConstantsQuery } from './useGetConstantsQuery';
 import { useConstantsResolvers } from '../../resolvers/useConstantsResolvers';
+import { __typename } from './../../resolvers/query/constants/constants';
 
-// TODO: REMOVE "NOTES"
-// think about, do 👇
-//  auto mock
-// test apollo cache
-// error states. copy the bad api instance test from balances I think ?
-// parameters/dependencies besides api instance ?
-
-const mockedGetRepayFeeValue = {
-  numerator: '3',
-  denominator: '4',
-};
-
+const mockedApiInstance = jest.fn();
 jest.mock('../../../polkadotJs/usePolkadotJs', () => ({
-  usePolkadotJsContext: () => {
-    return {
-      apiInstance: {},
-      loading: false,
-    } as unknown as ApiPromise;
-  },
+  usePolkadotJsContext: () => mockedApiInstance(),
 }));
 
+const mockedGetRepayFee = jest.fn();
 jest.mock('../../lib/getRepayFee', () => ({
-  getRepayFee: () => mockedGetRepayFeeValue,
+  getRepayFee: () => mockedGetRepayFee(),
 }));
 
 describe('useGetConstantsQuery', () => {
-  it('can resolve the query', async () => {
-    const { result: resolvers } = renderHook(() => useConstantsResolvers());
-    const { result: query, waitForNextUpdate } = renderHook(
-      () => useGetConstantsQuery(),
-      {
-        wrapper: (props) => {
-          // 3.12.22 ... https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+  const mockedUsePolkadotJsContext = {
+    apiInstance: {},
+    loading: false,
+  } as unknown as ApiPromise;
+
+  const mockedGetRepayFeeValue = {
+    numerator: '3',
+    denominator: '4',
+  };
+
+  beforeEach(() => {
+    mockedApiInstance.mockReturnValueOnce(mockedUsePolkadotJsContext);
+    mockedGetRepayFee.mockReturnValueOnce(mockedGetRepayFeeValue);
+  });
+
+  describe('success case', () => {
+    const cache: InMemoryCache = new InMemoryCache();
+    const useTestResolvers = () => useConstantsResolvers();
+
+    const renderHookOptions = (
+      cache: InMemoryCache,
+      resolvers: RenderResult<any>
+    ) => {
+      return {
+        wrapper: (props: { children: ReactNode }) => {
+          // 14.3.2022 ... https://github.com/testing-library/eslint-plugin-testing-library/issues/386
           // eslint-disable-next-line testing-library/no-node-access
           const children = props.children;
           return (
-            <MockedProvider resolvers={resolvers.current}>
+            <MockedProvider cache={cache} resolvers={resolvers.current}>
               {children}
             </MockedProvider>
           );
         },
-      }
-    );
+      };
+    };
 
-    await waitForNextUpdate();
-    expect(query.current.data).toEqual({
-      constants: {
-        __typename: 'Constants',
-        id: 'Constants',
-        lbp: {
-          repayFee: {
-            denominator: mockedGetRepayFeeValue.denominator,
-            numerator: mockedGetRepayFeeValue.numerator,
+    it('resolves, caches query result', async () => {
+      const { result: resolvers } = renderHook(() => useTestResolvers());
+      const { result: query, waitForNextUpdate } = renderHook(
+        () => useGetConstantsQuery(),
+        renderHookOptions(cache, resolvers)
+      );
+
+      await waitForNextUpdate();
+
+      const cacheKey = `
+        ${query?.current?.data?.constants.__typename}
+        :
+        ${query?.current?.data?.constants.id}
+      `.replace(/\s+/g, ''); // no whitespace
+      // 'Constants:Constants'
+
+      const updatedCache = cache.extract();
+
+      expect(updatedCache).toEqual({
+        [cacheKey]: {
+          __typename: __typename, // 'Constants'
+          id: __typename,
+          lbp: {
+            repayFee: {
+              denominator: mockedGetRepayFeeValue.denominator,
+              numerator: mockedGetRepayFeeValue.numerator,
+            },
           },
         },
-      },
+        ROOT_QUERY: {
+          __typename: 'Query',
+          constants: { __ref: cacheKey },
+        },
+      });
     });
   });
 });
