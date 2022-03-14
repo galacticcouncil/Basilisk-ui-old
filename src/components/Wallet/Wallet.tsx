@@ -11,7 +11,7 @@ import getBsxBalance from '../../misc/utils/getBsxBalance';
 import classNames from 'classnames';
 
 export const trimAddress = (address: string, length: number) => {
-  const end = (length) / 2;
+  const end = length / 2;
   if (address) {
     return `${address.substring(0, end)}...${address.substring(
       address.length - end
@@ -74,7 +74,7 @@ export const Wallet = ({
       {/* This portal will be rendered at it's container ref as defined above */}
       {modalPortal}
 
-      <div className="wallet__icons-wrapper">
+      {/* <div className="wallet__icons-wrapper">
         {account ? (
           <div
             className={classNames(
@@ -90,7 +90,7 @@ export const Wallet = ({
         ) : (
           <></>
         )}
-      </div>
+      </div> */}
       <div className="wallet__info" data-modal-portal-toggle={toggleId}>
         {extensionLoading || activeAccountLoading ? (
           <div
@@ -104,7 +104,9 @@ export const Wallet = ({
           <>
             <div className="wallet__info__account">
               {<FormattedBalance balance={getBsxBalance(account)} />}
-              <div className="wallet__address">{trimAddress(account.id, 10)}</div>
+              <div className="wallet__address">
+                {trimAddress(account.id, 10)}
+              </div>
             </div>
             <Identicon value={account?.id} size={32} />
             <div

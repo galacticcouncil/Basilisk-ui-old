@@ -7,7 +7,7 @@
   justify-content: center;
   gap: 4px;
 
-  min-height: 80px;
+  min-height: 90px;
   font-size: 12px;
   font-weight: 600;
 
@@ -17,7 +17,7 @@
 
     justify-content: center;
 
-    max-height: 50px;
+    max-height: 65px;
     opacity: 1;
 
     transition: max-height 0.3s ease, opacity 0.15s ease;
@@ -39,7 +39,7 @@
   }
 
   .validation {
-    opacity: .3;
+    opacity: 0.3;
     line-height: 16px;
     height: 16px;
     max-height: 0px;
