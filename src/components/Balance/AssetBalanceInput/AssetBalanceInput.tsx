@@ -12,6 +12,7 @@ import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
 import { useFormContext } from 'react-hook-form';
 import Icon from '../../Icon/Icon';
 import { idToAsset } from '../../../pages/TradePage/TradePage';
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 
 export interface AssetBalanceInputProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
@@ -89,9 +90,10 @@ export const AssetBalanceInput = ({
       <div className="asset-balance-input__input-wrapper">
         <div className="asset-balance-input__input-wrapper__unit-selector">
           <MetricUnitSelector unit={unit} onUnitSelected={setUnit}>
-            <div className="asset-balance-input__input-wrapper__unit-selector__asset-name">
-              {idToAsset(methods.getValues(assetInputName))?.symbol ||
-                methods.getValues(assetInputName)}
+            <div className={classNames("asset-balance-input__input-wrapper__unit-selector__asset-name", {
+              'horizontal-bar': !idToAsset(methods.getValues(assetInputName))?.symbol
+            })}>
+              {idToAsset(methods.getValues(assetInputName))?.symbol || `${horizontalBar}`}
             </div>
           </MetricUnitSelector>
         </div>
