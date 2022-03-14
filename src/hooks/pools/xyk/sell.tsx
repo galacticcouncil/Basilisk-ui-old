@@ -20,6 +20,24 @@ export const xykBuyHandler = (
 
 export const discount = false;
 
+export const estimateSell = async (
+  cache: ApolloCache<object>,
+  apiInstance: ApiPromise,
+  assetSell: string,
+  assetBuy: string,
+  amountSell: string,
+  minBought: string
+) => {
+  const activeAccount = readActiveAccount(cache);
+  const address = activeAccount?.id;
+
+  if (!address) return;
+  
+  return apiInstance.tx.xyk
+    .sell(assetSell, assetBuy, amountSell, minBought, discount)
+    .paymentInfo(address);
+}
+
 export const sell = async (
   cache: ApolloCache<NormalizedCacheObject>,
   apiInstance: ApiPromise,

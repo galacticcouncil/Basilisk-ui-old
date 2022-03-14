@@ -30,6 +30,7 @@ import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
 import { estimateBuy } from '../../../hooks/pools/xyk/buy';
+import { estimateSell } from '../../../hooks/pools/xyk/sell';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -463,6 +464,11 @@ export const TradeForm = ({
       switch (tradeType) {
         case TradeType.Buy: {
           const partialFee = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
+            ?.partialFee.toString();
+          return setPaymentInfo(partialFee);
+        }
+        case TradeType.Sell: {
+          const partialFee = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
             ?.partialFee.toString();
           return setPaymentInfo(partialFee);
         }
