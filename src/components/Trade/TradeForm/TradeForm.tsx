@@ -662,7 +662,13 @@ export const TradeForm = ({
                     // }`;
                     return spotPrice?.inOut && assetOut ? (
                       <>
-                        1 {idToAsset(getValues('assetIn'))?.symbol} =
+                        <FormattedBalance
+                          balance={{
+                            balance: toPrecision12('1')!,
+                            assetId: getValues('assetIn')!,
+                          }}
+                        />
+                        =
                         <FormattedBalance
                           balance={{
                             balance: spotPrice.inOut,
@@ -683,7 +689,13 @@ export const TradeForm = ({
                     // }`;
                     return spotPrice?.outIn && assetIn ? (
                       <>
-                        1 {idToAsset(getValues('assetOut'))?.symbol} =
+                        <FormattedBalance
+                          balance={{
+                            balance: toPrecision12('1')!,
+                            assetId: getValues('assetOut')!,
+                          }}
+                        />
+                        =
                         <FormattedBalance
                           balance={{
                             balance: spotPrice.outIn,

@@ -47,7 +47,7 @@ export const FormattedBalance = ({
   // moves one notch up/down and keeps a fixed precision
   return (
     // WARNING POSSIBLY UNSAFE??
-    <div className="formatted-balance" data-tip={tooltipText} data-html={true}>
+    <div className="formatted-balance" data-tip={tooltipText} data-html={true} data-delay-show={75}>
       <div className="formatted-balance__value">{formattedBalance.value}</div>
       <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
