@@ -341,8 +341,8 @@ export const TradeForm = ({
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
-    const assetInAmount = fromPrecision12(getValues('assetInAmount') || '0');
-    const assetOutAmount = fromPrecision12(getValues('assetOutAmount') || '0');
+    const assetInAmount = fromPrecision12(getValues('assetInAmount') || undefined);
+    const assetOutAmount = fromPrecision12(getValues('assetOutAmount') || undefined);
     const assetIn = getValues('assetIn');
     const assetOut = getValues('assetOut');
 

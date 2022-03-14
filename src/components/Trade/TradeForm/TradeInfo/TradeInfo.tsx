@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { Balance, Fee } from '../../../../generated/graphql';
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
+import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader';
 import { TradeFormFields } from '../TradeForm';
 import constants from './../../../../constants';
 import './TradeInfo.scss';
@@ -61,34 +62,24 @@ export const TradeInfo = ({
         <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
           <div className="data-piece__value">
-            {!expectedSlippage?.isNaN()
-              ? expectedSlippage?.multipliedBy(100).toFixed(2) || '0'
-              : '0'}
-            %
-          </div>
-        </div>
-        <div className="data-piece">
-          <span className="data-piece__label">Trade fee </span>
-          <div className="data-piece__value">
-            {new BigNumber(tradeFee.numerator)
-              .dividedBy(tradeFee.denominator)
-              .multipliedBy(100)
-              .toFixed(2)}
-            %
+            {!expectedSlippage || expectedSlippage?.isNaN()
+              ? horizontalBar
+              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`
+            }
           </div>
         </div>
         <div className="data-piece">
           <span className="data-piece__label">Trade limit </span>
           <div className="data-piece__value">
-            {tradeLimit?.assetId ? (
+            {tradeLimit?.balance ? (
               <FormattedBalance
                 balance={{
-                  balance: tradeLimit?.balance || '0',
+                  balance: tradeLimit?.balance,
                   assetId: tradeLimit?.assetId,
                 }}
               />
             ) : (
-              <>-</>
+              <>{horizontalBar}</>
             )}
           </div>
         </div>
@@ -103,8 +94,18 @@ export const TradeInfo = ({
                 }}
               />
             ) : (
-              <>-</>
+              <>{horizontalBar}</>
             )}
+          </div>
+        </div>
+        <div className="data-piece">
+          <span className="data-piece__label">Trade fee </span>
+          <div className="data-piece__value">
+            {new BigNumber(tradeFee.numerator)
+              .dividedBy(tradeFee.denominator)
+              .multipliedBy(100)
+              .toFixed(2)}
+            %
           </div>
         </div>
       </div>

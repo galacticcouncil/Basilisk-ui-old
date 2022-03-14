@@ -64,7 +64,7 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
               })}
             ></div>
             <span>
-              Block no.:
+              Latest block:
               {lastBlockData?.lastBlock?.parachainBlockNumber
                 ? ` ${lastBlockData.lastBlock.parachainBlockNumber}`
                 : ` ${horizontalBar}`}
