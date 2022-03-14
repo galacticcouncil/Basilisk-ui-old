@@ -73,6 +73,7 @@
     "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.0",
     "react-text-mask": "^5.4.3",
+    "react-tooltip": "^4.2.21",
     "react-use": "^17.3.1",
     "save": "^2.4.0",
     "stream-browserify": "^3.0.0",

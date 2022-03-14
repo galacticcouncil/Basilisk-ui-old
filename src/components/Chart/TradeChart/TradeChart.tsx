@@ -73,6 +73,7 @@ export const TradeChart = ({
     asset: {
       symbol: assetPair.assetB?.symbol,
       fullName: assetPair.assetB?.fullName,
+      id: assetPair.assetB?.id
     },
   });
 
@@ -87,6 +88,7 @@ export const TradeChart = ({
       asset: {
         symbol: assetPair.assetB?.symbol,
         fullName: assetPair.assetB?.fullName,
+        id: assetPair.assetB?.id
       },
     });
     setReferenceData({
@@ -99,6 +101,7 @@ export const TradeChart = ({
       asset: {
         symbol: assetPair.assetB?.symbol,
         fullName: assetPair.assetB?.fullName,
+        id: assetPair.assetB?.id
       },
     });
   }, [primaryDataset]);

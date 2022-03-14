@@ -109,15 +109,13 @@ export const ChartHeader = ({
                 <FormattedBalance
                   balance={{
                     balance: `${toPrecision12(`${displayData.balance}`)}`,
-                    assetId: ''
+                    assetId: displayData.asset.id || ''
                   }}
                 />{' '}
               </>
             ) : (
               `${horizontalBar} `
             )}
-
-            {displayData.asset.symbol}
           </div>
           <div className="chart-header__data__breakdown">
             {/* <div className="text-gray-4">

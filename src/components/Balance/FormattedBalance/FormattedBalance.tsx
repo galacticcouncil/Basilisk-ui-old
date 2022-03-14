@@ -1,10 +1,12 @@
 import { Balance } from '../../../generated/graphql';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import log from 'loglevel';
 import './FormattedBalance.scss';
 import { UnitStyle } from '../metricUnit';
 import { useFormatSI } from './hooks/useFormatSI';
 import { idToAsset } from '../../../pages/TradePage/TradePage';
+import ReactTooltip from 'react-tooltip';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 
 export interface FormattedBalanceProps {
   balance: Balance;
@@ -22,6 +24,17 @@ export const FormattedBalance = ({
   ]);
   const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
 
+  const tooltipText = useMemo(() => {
+    return ` 
+      <span class='balance'>${fromPrecision12(balance.balance)}</span>
+      <span class='symbol'>${assetSymbol}</span>
+    `
+  }, [balance, assetSymbol]);
+
+  useEffect(() => {
+    ReactTooltip.rebuild();
+  }, [tooltipText]);
+
   log.debug(
     'FormattedBalance',
     formattedBalance?.value,
@@ -33,7 +46,8 @@ export const FormattedBalance = ({
   // because when there is more than 3 significant digits, the formatter
   // moves one notch up/down and keeps a fixed precision
   return (
-    <div className="formatted-balance">
+    // WARNING POSSIBLY UNSAFE??
+    <div className="formatted-balance" data-tip={tooltipText} data-html={true}>
       <div className="formatted-balance__value">{formattedBalance.value}</div>
       <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}

@@ -16,7 +16,8 @@ export enum ChartType {
 export interface Asset {
     symbol: string | undefined,
     fullName: string | undefined
-    icon?: string | undefined
+    icon?: string | undefined,
+    id?: string
 }
 
 export interface AssetPair {
