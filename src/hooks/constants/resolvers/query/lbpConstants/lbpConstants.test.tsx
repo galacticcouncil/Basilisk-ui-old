@@ -1,16 +1,15 @@
-import { Resolvers, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { gql } from 'graphql.macro';
 import { ApiPromise } from '@polkadot/api';
-import TestRenderer, { act } from 'react-test-renderer';
-import waitForExpect from 'wait-for-expect';
-import { useLbpConstantsQueryResolver } from './lbpConstants';
+import {
+  lbpConstantsQueryResolverFactory,
+  useLbpConstantsQueryResolver,
+} from './lbpConstants';
 import { LbpConstants } from '../../../../../generated/graphql';
-
-const mockedGetRepayFeeValue = {
-  numerator: '3',
-  denominator: '4',
-};
+import { renderHook, RenderResult } from '@testing-library/react-hooks';
+import { ReactNode } from 'react';
+import errors from '../../../../../errors';
 
 jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   usePolkadotJsContext: () => {
@@ -21,67 +20,90 @@ jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
   },
 }));
 
+const mockedGetRepayFee = jest.fn();
 jest.mock('../../../lib/getRepayFee', () => ({
-  getRepayFee: () => mockedGetRepayFeeValue,
+  getRepayFee: () => mockedGetRepayFee(),
 }));
 
 describe('lbpConstants', () => {
   describe('useLbpConstantsQueryResolver', () => {
-    const useResolvers = () => {
-      return {
-        Query: {
-          ...useLbpConstantsQueryResolver(),
-        },
-      };
+    const mockedGetRepayFeeValue = {
+      numerator: '3',
+      denominator: '4',
     };
-    const resolverProviderFactory =
-      (useResolvers: () => Resolvers) =>
-      ({ children }: { children: React.ReactNode }): JSX.Element => {
-        return (
-          <MockedProvider resolvers={useResolvers()}>{children}</MockedProvider>
+
+    beforeEach(() => {
+      mockedGetRepayFee.mockReturnValueOnce(mockedGetRepayFeeValue);
+    });
+
+    describe('success case', () => {
+      const useTestResolvers = () => {
+        return {
+          Query: {
+            ...useLbpConstantsQueryResolver(),
+          },
+        };
+      };
+
+      interface TestQueryResponse {
+        lbp: LbpConstants;
+      }
+
+      const useTestQuery = () => {
+        return useQuery<TestQueryResponse>(
+          gql`
+            query GetLbp {
+              lbp @client
+            }
+          `
         );
       };
 
-    interface TestQueryResponse {
-      lbp: LbpConstants;
-    }
-    const Test = () => {
-      const { data } = useQuery<TestQueryResponse>(
-        gql`
-          query GetLbpConstants {
-            lbp @client
-          }
-        `
-      );
+      const renderHookOptions = (resolvers: RenderResult<any>) => {
+        return {
+          wrapper: (props: { children: ReactNode }) => {
+            // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+            // eslint-disable-next-line testing-library/no-node-access
+            const children = props.children;
+            return (
+              <MockedProvider resolvers={resolvers.current}>
+                {children}
+              </MockedProvider>
+            );
+          },
+        };
+      };
 
-      return <>{JSON.stringify(data)}</>;
-    };
+      it('can resolve the query within the rendered component', async () => {
+        const { result: resolvers } = renderHook(() => useTestResolvers());
 
-    let component: TestRenderer.ReactTestRenderer;
-    const render = () => {
-      const ResolverProvider = resolverProviderFactory(useResolvers);
-      component = TestRenderer.create(
-        <ResolverProvider>
-          <Test />
-        </ResolverProvider>
-      );
-    };
+        const { result: query, waitForNextUpdate } = renderHook(
+          () => useTestQuery(),
+          renderHookOptions(resolvers)
+        );
 
-    let data: () => TestQueryResponse | undefined = () =>
-      JSON.parse(component.toJSON() as unknown as string);
+        await waitForNextUpdate();
 
-    it('can resolve the query within the rendered component', async () => {
-      render();
-
-      await act(async () => {
-        await waitForExpect(() => {
-          expect(data()?.lbp).toEqual({
+        expect(query.current.data).toEqual({
+          lbp: {
             repayFee: {
-              denominator: mockedGetRepayFeeValue.denominator,
               numerator: mockedGetRepayFeeValue.numerator,
+              denominator: mockedGetRepayFeeValue.denominator,
             },
-          });
+          },
         });
+      });
+    });
+
+    describe('fail case', () => {
+      it('fails to resolve with missing ApiInstance', () => {
+        const brokenApiInstance = undefined as unknown as ApiPromise;
+        const lbpConstantsQueryResolver =
+          lbpConstantsQueryResolverFactory(brokenApiInstance);
+
+        expect(lbpConstantsQueryResolver).toThrowError(
+          errors.apiInstanceNotInitialized
+        );
       });
     });
   });

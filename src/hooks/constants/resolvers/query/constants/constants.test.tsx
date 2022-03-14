@@ -1,47 +1,25 @@
-import { Resolvers, useQuery } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { gql } from 'graphql.macro';
-import { ApiPromise } from '@polkadot/api';
-import TestRenderer, { act } from 'react-test-renderer';
-import waitForExpect from 'wait-for-expect';
-import { useConstantsQueryResolver } from './constants';
+import { useConstantsQueryResolver, __typename } from './constants';
 import { Constants } from '../../../../../generated/graphql';
-
-jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
-  usePolkadotJsContext: () => {
-    /**
-     * mock more in apiInstance for this resolver
-     * as required in future.
-     */
-    return {
-      apiInstance: {},
-      loading: false,
-    } as unknown as ApiPromise;
-  },
-}));
+import { renderHook } from '@testing-library/react-hooks';
 
 describe('constants', () => {
   describe('useConstantsQueryResolver', () => {
-    const useResolvers = () => {
+    const useTestResolvers = () => {
       return {
         Query: {
           ...useConstantsQueryResolver(),
         },
       };
     };
-    const resolverProviderFactory =
-      (useResolvers: () => Resolvers) =>
-      ({ children }: { children: React.ReactNode }): JSX.Element => {
-        return (
-          <MockedProvider resolvers={useResolvers()}>{children}</MockedProvider>
-        );
-      };
 
     interface TestQueryResponse {
       constants: Constants;
     }
-    const Test = () => {
-      const { data } = useQuery<Constants>(
+    const useTestQuery = () => {
+      return useQuery<TestQueryResponse>(
         gql`
           query GetConstants {
             constants @client {
@@ -51,33 +29,33 @@ describe('constants', () => {
           }
         `
       );
-      return <>{JSON.stringify(data)}</>;
     };
-
-    let component: TestRenderer.ReactTestRenderer;
-
-    const render = () => {
-      const ResolverProvider = resolverProviderFactory(useResolvers);
-      component = TestRenderer.create(
-        <ResolverProvider>
-          <Test />
-        </ResolverProvider>
-      );
-    };
-
-    let data: () => TestQueryResponse | undefined = () =>
-      JSON.parse(component.toJSON() as unknown as string);
 
     it('can resolve the query within the rendered component', async () => {
-      render();
+      const { result: resolvers } = renderHook(() => useTestResolvers());
 
-      await act(async () => {
-        await waitForExpect(() => {
-          expect(data()?.constants).toEqual({
-            __typename: 'Constants',
-            id: 'Constants',
-          });
-        });
+      const { result: query, waitForNextUpdate } = renderHook(
+        () => useTestQuery(),
+        {
+          wrapper: (props) => {
+            // // https://github.com/testing-library/eslint-plugin-testing-library/issues/386
+            // eslint-disable-next-line testing-library/no-node-access
+            const children = props.children;
+            return (
+              <MockedProvider resolvers={resolvers.current}>
+                {children}
+              </MockedProvider>
+            );
+          },
+        }
+      );
+
+      await waitForNextUpdate();
+      expect(query.current.data).toEqual({
+        constants: {
+          __typename: __typename, // 'Constants'
+          id: __typename,
+        },
       });
     });
   });
