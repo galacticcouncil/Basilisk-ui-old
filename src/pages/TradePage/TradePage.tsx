@@ -23,6 +23,7 @@ export const TradePage = () => {
         assetInId: '0',
         assetOutId: '2'
     })
+    
     // automatically fetch a pool by the given assets
     const { 
         data: poolData, 
