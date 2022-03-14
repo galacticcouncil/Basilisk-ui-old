@@ -38,14 +38,21 @@ export const AssetSelector = ({
         </div>
 
         <div className="modal-component-content">
-          {assets?.map((asset, i) => (
-            <AssetItem
-              key={i}
-              onClick={() => onAssetSelected(asset)}
-              active={asset.id === activeAsset?.id}
-              asset={asset}
-            />
-          ))}
+          {assets?.length
+            ? (
+              assets?.map((asset, i) => (
+                <AssetItem
+                  key={i}
+                  onClick={() => onAssetSelected(asset)}
+                  active={asset.id === activeAsset?.id}
+                  asset={asset}
+                />
+              ))
+            )
+            : (
+              <p>No other assets available</p>
+            )
+          }
         </div>
       </div>
     </div>

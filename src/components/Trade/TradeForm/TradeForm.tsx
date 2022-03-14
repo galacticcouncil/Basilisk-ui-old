@@ -581,7 +581,7 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets}
+              assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
             />
             <div className="balance-info balance-out-info">
               {activeAccountTradeBalancesLoading ||
@@ -701,7 +701,7 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets}
+              assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
             />{' '}
             <div className="balance-info balance-out-info">
               {activeAccountTradeBalancesLoading ||
