@@ -2,8 +2,9 @@ import { ApiPromise } from '@polkadot/api';
 import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react-hooks';
 import { useGetConstantsQuery } from './useGetConstantsQuery';
-import { useConstantsQueryResolvers } from '../../resolvers/useConstantsQueryResolvers';
+import { useConstantsResolvers } from '../../resolvers/useConstantsResolvers';
 
+// TODO: REMOVE "NOTES"
 // think about, do 👇
 //  auto mock
 // test apollo cache
@@ -30,9 +31,7 @@ jest.mock('../../lib/getRepayFee', () => ({
 
 describe('useGetConstantsQuery', () => {
   it('can resolve the query', async () => {
-    const { result: resolvers } = renderHook(() =>
-      useConstantsQueryResolvers()
-    );
+    const { result: resolvers } = renderHook(() => useConstantsResolvers());
     const { result: query, waitForNextUpdate } = renderHook(
       () => useGetConstantsQuery(),
       {
