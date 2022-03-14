@@ -35,7 +35,9 @@ import BigNumber from 'bignumber.js';
 import { useLoading } from '../../hooks/misc/useLoading';
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
+import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
+import DAI from '../../misc/icons/assets/DAI.svg';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -66,21 +68,21 @@ export const idToAsset = (id: string | null) => {
     },
     '1': {
       id: '1',
-      symbol: 'USDC',
-      fullName: 'USD Coin',
-      icon: Unknown,
+      symbol: 'KSM',
+      fullName: 'Kusama',
+      icon: KSM,
     },
     '2': {
       id: '2',
-      symbol: 'kUSD',
-      fullName: 'Karura USD',
+      symbol: 'aUSD',
+      fullName: 'Acala USD',
       icon: Unknown,
     },
     '3': {
       id: '3',
       symbol: 'DAI',
       fullName: 'DAI Stablecoin',
-      icon: Unknown,
+      icon: DAI,
     },
   };
 
@@ -103,10 +105,10 @@ export const TradeChart = ({
       to: useMemo(() => moment().toISOString(), []),
       quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
-      poolId: pool?.id || ''
+      poolId: pool?.id || '',
     },
     {
-      skip: !pool?.id
+      skip: !pool?.id,
     }
   );
 
@@ -145,45 +147,46 @@ export const TradeChart = ({
       setDatasetLoading(false);
       return;
     }
-    const dataset = historicalBalancesData?.historicalBalances.map(
-      ({ createdAt, assetABalance, assetBBalance }) => {
-        return {
-          // x: `${moment(createdAt).getTime()}`,
-          x: new Date(createdAt).getTime(),
-          ...(() => {
-            const assetOutLiquidity =
-              assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
-                ? assetABalance
-                : assetBBalance;
+    const dataset =
+      historicalBalancesData?.historicalBalances.map(
+        ({ createdAt, assetABalance, assetBBalance }) => {
+          return {
+            // x: `${moment(createdAt).getTime()}`,
+            x: new Date(createdAt).getTime(),
+            ...(() => {
+              const assetOutLiquidity =
+                assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
+                  ? assetABalance
+                  : assetBBalance;
 
-            const assetInLiquidity =
-              assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
-                ? assetABalance
-                : assetBBalance;
+              const assetInLiquidity =
+                assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
+                  ? assetABalance
+                  : assetBBalance;
 
-            const spotPrice = {
-              outIn: math.xyk.get_spot_price(
-                assetOutLiquidity,
-                assetInLiquidity,
-                '1000000000000'
-              ),
-              inOut: math.xyk.get_spot_price(
-                assetInLiquidity,
-                assetOutLiquidity,
-                '1000000000000'
-              ),
-            };
+              const spotPrice = {
+                outIn: math.xyk.get_spot_price(
+                  assetOutLiquidity,
+                  assetInLiquidity,
+                  '1000000000000'
+                ),
+                inOut: math.xyk.get_spot_price(
+                  assetInLiquidity,
+                  assetOutLiquidity,
+                  '1000000000000'
+                ),
+              };
 
-            const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
+              const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
 
-            return {
-              y: y.toNumber(),
-              yAsString: fromPrecision12(spotPrice.inOut),
-            };
-          })(),
-        };
-      }
-    ) || [];
+              return {
+                y: y.toNumber(),
+                yAsString: fromPrecision12(spotPrice.inOut),
+              };
+            })(),
+          };
+        }
+      ) || [];
 
     dataset.push({
       // TODO: pretending this is now, should use the time from the lastBlock instead
@@ -260,16 +263,24 @@ export const TradePage = () => {
     networkStatus: poolNetworkStatus,
   } = useGetPoolByAssetsQuery(
     {
-      assetInId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetIn : assetIds.assetOut) || undefined,
-      assetOutId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetOut : assetIds.assetIn) || undefined,
+      assetInId:
+        (assetIds.assetIn! > assetIds.assetOut!
+          ? assetIds.assetIn
+          : assetIds.assetOut) || undefined,
+      assetOutId:
+        (assetIds.assetIn! > assetIds.assetOut!
+          ? assetIds.assetOut
+          : assetIds.assetIn) || undefined,
     },
     depsLoading
   );
 
-  const { data: poolsData, networkStatus: poolsNetworkStatus } =
-    useGetPoolsQuery({
-      skip: depsLoading,
-    });
+  const {
+    data: poolsData,
+    networkStatus: poolsNetworkStatus,
+  } = useGetPoolsQuery({
+    skip: depsLoading,
+  });
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
@@ -292,21 +303,23 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
-    useSubmitTradeMutation({
-      onCompleted: () => {
-        setNotification('success');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-      onError: () => {
-        setNotification('failed');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-    });
+  const [
+    submitTrade,
+    { loading: tradeLoading, error: tradeError },
+  ] = useSubmitTradeMutation({
+    onCompleted: () => {
+      setNotification('success');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+    onError: () => {
+      setNotification('failed');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+  });
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -353,8 +366,14 @@ export const TradePage = () => {
     networkStatus: activeAccountTradeBalancesNetworkStatus,
   } = useGetActiveAccountTradeBalances({
     variables: {
-      assetInId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetIn : assetIds.assetOut) || undefined,
-      assetOutId: (assetIds.assetIn! > assetIds.assetOut! ? assetIds.assetOut : assetIds.assetIn) || undefined,
+      assetInId:
+        (assetIds.assetIn! > assetIds.assetOut!
+          ? assetIds.assetIn
+          : assetIds.assetOut) || undefined,
+      assetOutId:
+        (assetIds.assetIn! > assetIds.assetOut!
+          ? assetIds.assetOut
+          : assetIds.assetIn) || undefined,
     },
   });
 
@@ -408,7 +427,8 @@ export const TradePage = () => {
           activeAccountTradeBalances={tradeBalances}
           activeAccountTradeBalancesLoading={
             activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus === NetworkStatus.setVariables ||
+            activeAccountTradeBalancesNetworkStatus ===
+              NetworkStatus.setVariables ||
             depsLoading
           }
         />
