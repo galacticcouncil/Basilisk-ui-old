@@ -1,3 +1,6 @@
+# | This workflow can be invoked only from root workflow.
+# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
 name: "Reusable :: Deploy"
 
 on:

@@ -1,15 +1,26 @@
+# | This workflow can be invoked only from root workflow.
+# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
 name: "Reusable :: Report in issue"
 
 on:
   workflow_call:
     inputs:
-      publish-artifacts-list:
-        required: true
-        type: boolean
-
+      # | Title for matching already existing comments in PR for update particular comment.
       report-msg-title:
         required: false
         type: string
+
+      # | If we need publish available run artifacts list, separate workflow must be invoked as artifacts
+      # | from current workflow run are not visible for API before run is completed.
+      # | Related issue - https://github.com/actions/upload-artifact/issues/50
+      # | If "publish-artifacts-list === false", comment won't contain artifacts list and will be published
+      # | in current step.
+      # | If "publish-artifacts-list === true", comment will contain artifacts list and will be published
+      # | in dispatched workflow.
+      publish-artifacts-list:
+        required: true
+        type: boolean
 
       app-storybook-build-pub-report:
         required: true
@@ -18,10 +29,10 @@ on:
         required: false
         type: boolean
 
-      app-sb-deploy-pub-report:
+      app-storybook-deploy-pub-report:
         required: true
         type: boolean
-      app-sb-deploy-status:
+      app-storybook-deploy-status:
         required: false
         type: boolean
 
@@ -41,8 +52,11 @@ on:
     secrets:
       gh_token:
         required: true
+      # | Branch name which is configured as a root branch for GitHub Pages
       gh_pages_full_branch:
         required: true
+      # | Custom domain for configured GitHub Pages, where App and Storybook builds are deployed. Must be passed
+      # | as a secret because API doesn't receive this value.
       gh_pages_custom_domain:
         required: true
 
@@ -59,21 +73,23 @@ jobs:
         env:
           REPORT_MSG_TITLE: ${{inputs.report-msg-title}}
           PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
+          # | Workflow file which will be dispatched from github-script via API for fetching and publication
+          # | artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
           PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: wfd_publish-issue-comment-with-artifacts.yml
 
-          IS_APP_SB_BUILD_REPORT: ${{ inputs.app-storybook-build-pub-report }}
+          IS_APP_STORYBOOK_BUILD_REPORT: ${{ inputs.app-storybook-build-pub-report }}
           IS_APP_UNIT_TEST_REPORT: ${{ inputs.app-unit-test-pub-report }}
           IS_APP_E2E_TEST_REPORT: false
-          IS_SB_UNIT_TEST_REPORT: false
-          IS_SB_E2E_TEST_REPORT: false
-          IS_APP_SB_DEPLOYMENT_REPORT: ${{ inputs.app-sb-deploy-pub-report }}
+          IS_STORYBOOK_UNIT_TEST_REPORT: false
+          IS_STORYBOOK_E2E_TEST_REPORT: false
+          IS_APP_STORYBOOK_DEPLOYMENT_REPORT: ${{ inputs.app-storybook-deploy-pub-report }}
 
           APP_UNIT_TEST_PERCENTAGE: ${{ inputs.app-unit-test-codecov-percentage }}
           APP_UNIT_TEST_DIFF: ${{ inputs.app-unit-test-codecov-diff }}
-          APP_STORYBOOK_BUILD_STATUS: ${{ inputs.app-storybook-build-status }}
           APP_UNIT_TEST_STATUS: ${{ inputs.app-unit-test-status }}
 
-          APP_DEPLOYMENT_STATUS: ${{ inputs.app-sb-deploy-status }}
+          APP_STORYBOOK_BUILD_STATUS: ${{ inputs.app-storybook-build-status }}
+          APP_STORYBOOK_DEPLOYMENT_STATUS: ${{ inputs.app-storybook-deploy-status }}
 
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -82,4 +98,4 @@ jobs:
         with:
           script: |
             const script = require('./scripts/ci/github-script-src/publish-issue-comment.js')
-            return await script({github, context, core})
+            await script({github, context, core})

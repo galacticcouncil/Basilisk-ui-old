@@ -1,3 +1,5 @@
+# | Run E2E test for UI Application
+
 name: "E2E testing App"
 
 on:

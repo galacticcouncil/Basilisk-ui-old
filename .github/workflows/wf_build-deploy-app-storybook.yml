@@ -1,4 +1,8 @@
+# | Build Application and Storybook. Deploy builds into GihHub Pages. Publish build and deployment statuses as
+# | pull request comment, if any pull request is associated with latest commit.
+
 name: "Build Deploy Report"
+
 on:
   push:
     branches:
@@ -13,6 +17,7 @@ on:
 
 jobs:
   build:
+    # | Build Application and Storybook.
     name: "Build"
     uses: ./.github/workflows/_called_build.yml
     with:
@@ -21,6 +26,7 @@ jobs:
       app-node-modules-cache-key: cache-node-modules-ui-app
 
   deploy:
+    # | Deploy Application and Storybook into GitHub Pages. Folder name is the same as working branch.
     name: "Deploy"
     needs: build
     uses: ./.github/workflows/_called_deploy.yml
@@ -33,9 +39,11 @@ jobs:
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
 
   report-statuses-in-issue:
+    # | Publish build and deployment statuses as pull request comment,
+    # | if any pull request is associated with the latest commit.
     name: "Report in issue"
     uses: ./.github/workflows/_called_report-status-in-issue.yml
-    if: ${{ always() }}
+    if: always()
     needs: [ build, deploy ]
     with:
       report-msg-title: "Basilisk-UI build reporter"
@@ -44,8 +52,8 @@ jobs:
       app-storybook-build-pub-report: true
       app-storybook-build-status: ${{ needs.build.result == 'success' }}
 
-      app-sb-deploy-pub-report: true
-      app-sb-deploy-status: ${{ needs.deploy.result == 'success' }}
+      app-storybook-deploy-pub-report: true
+      app-storybook-deploy-status: ${{ needs.deploy.result == 'success' }}
 
       app-unit-test-pub-report: false
     secrets:

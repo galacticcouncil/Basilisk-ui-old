@@ -1,3 +1,6 @@
+# | This workflow can be invoked only from root workflow.
+# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
 name: "Reusable :: E2E tests :: App"
 
 on:
@@ -33,7 +36,7 @@ jobs:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./ui-app/build
 
-      # Prepare Basilisk-api ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
+      # | Prepare Basilisk-api ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
       - name: "Clone Basilisk-api"
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
@@ -49,7 +52,8 @@ jobs:
         run: |
           cd Basilisk-api
           yarn install --frozen-lockfile
-      # Install NPM deps for running tests
+
+      # | Install NPM deps for running tests
       - name: "Cache Node Modules for ui-app"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -62,37 +66,37 @@ jobs:
         run: |
           cd ui-app
           yarn install --frozen-lockfile
-      # Update folders structure
+
       - name: "Change folders permissions"
         run: |
           chmod -R 777 Basilisk-api
           chmod -R 777 ui-app
-      # Run testnet
+
       - name: "Run sandbox testnet"
         shell: bash
         timeout-minutes: 10
         run: |
           cd Basilisk-api
           yarn fullruntime:clean-setup-start
-      # Double check of testnet status
+
+      # | Double check of testnet status
       - name: "Wait for Basilisk Node port :9988"
         shell: bash
         timeout-minutes: 2
         run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 9988
 
-      # Run UI App
       - name: "Run UI application"
         shell: bash
         run: |
           cd ui-app/build
           http-server -s -p 3030 -a 127.0.0.1 &
-      # Check of UI app status
+
+      # | Check of UI app status
       - name: "Wait for UI app port :3030"
         shell: bash
         timeout-minutes: 2
         run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 3030
 
-      # Prepare Playwright env
       - name: "Install OS dependencies for Playwright"
         run: npx playwright install-deps
 
@@ -113,7 +117,7 @@ jobs:
         run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
         shell: bash
 
-      # For debug and monitoring purposes
+      # | For debug and monitoring purposes
       - name: "Check Docker containers and ports"
         if: always()
         run: |
@@ -122,7 +126,6 @@ jobs:
           sudo lsof -i -P -n | grep LISTEN
         shell: bash
 
-      # Run e2e tests
       - name: "Run e2e tests"
         shell: bash
         run: |

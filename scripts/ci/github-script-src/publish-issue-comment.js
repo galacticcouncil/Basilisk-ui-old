@@ -5,19 +5,19 @@ module.exports = async ({ github, context, core }) => {
     REPORT_MSG_TITLE = 'Basilisk-UI workflows reporter',
     PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE,
     PUBLISH_ARTIFACTS_LIST,
-    IS_APP_SB_BUILD_REPORT,
+    IS_APP_STORYBOOK_BUILD_REPORT,
     IS_APP_UNIT_TEST_REPORT,
     IS_APP_E2E_TEST_REPORT,
-    IS_SB_UNIT_TEST_REPORT,
-    IS_SB_E2E_TEST_REPORT,
-    IS_APP_SB_DEPLOYMENT_REPORT,
+    IS_STORYBOOK_UNIT_TEST_REPORT,
+    IS_STORYBOOK_E2E_TEST_REPORT,
+    IS_APP_STORYBOOK_DEPLOYMENT_REPORT,
 
     APP_UNIT_TEST_PERCENTAGE,
     APP_UNIT_TEST_DIFF,
 
     APP_STORYBOOK_BUILD_STATUS,
     APP_UNIT_TEST_STATUS,
-    APP_DEPLOYMENT_STATUS,
+    APP_STORYBOOK_DEPLOYMENT_STATUS,
 
     GITHUB_HEAD_REF,
     GITHUB_REF_NAME,
@@ -50,7 +50,7 @@ module.exports = async ({ github, context, core }) => {
   }
   commentBody += `<br /><br />`;
 
-  if (IS_APP_SB_BUILD_REPORT === 'true') {
+  if (IS_APP_STORYBOOK_BUILD_REPORT === 'true') {
     commentBody += `:small_blue_diamond: **Application/Storybook build:** <br /> 
     - Status: ${
       APP_STORYBOOK_BUILD_STATUS === 'true'
@@ -59,19 +59,19 @@ module.exports = async ({ github, context, core }) => {
     }`;
   }
 
-  if (IS_APP_SB_DEPLOYMENT_REPORT === 'true') {
+  if (IS_APP_STORYBOOK_DEPLOYMENT_REPORT === 'true') {
     commentBody += `<br /><br />`;
     commentBody += `:small_blue_diamond: **Application/Storybook deployment:** <br /> 
     - Status: ${
-      APP_DEPLOYMENT_STATUS === 'true'
+      APP_STORYBOOK_DEPLOYMENT_STATUS === 'true'
         ? ':white_check_mark: _Deployed_ '
         : ':no_entry_sign: _Failed_ '
     }`;
   }
 
   if (
-    IS_APP_SB_DEPLOYMENT_REPORT === 'true' &&
-    APP_DEPLOYMENT_STATUS === 'true'
+    IS_APP_STORYBOOK_DEPLOYMENT_REPORT === 'true' &&
+    APP_STORYBOOK_DEPLOYMENT_STATUS === 'true'
   ) {
     commentBody += `
     <br />
