@@ -1,4 +1,4 @@
-name: Generate unit tests codecov report
+name: Reusable :: Generate unit tests codecov report
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Report in issue
+name: Reusable :: Report in issue
 
 on:
   workflow_call:

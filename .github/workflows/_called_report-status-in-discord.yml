@@ -1,4 +1,4 @@
-name: Reports in Discord
+name: Reusable :: Reports in Discord
 
 on:
   workflow_call:

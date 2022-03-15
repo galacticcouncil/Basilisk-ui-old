@@ -1,4 +1,5 @@
-name: E2E testing app
+name: E2E testing App
+
 on:
   push:
     branches:

@@ -1,4 +1,4 @@
-name: Unit tests :: App
+name: Reusable :: Unit tests :: App
 
 on:
   workflow_call:

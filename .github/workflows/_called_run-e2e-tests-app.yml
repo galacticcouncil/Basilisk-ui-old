@@ -1,4 +1,4 @@
-name: E2E tests :: App
+name: Reusable :: E2E tests :: App
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: E2E tests :: Storybook
+name: Reusable :: E2E tests :: Storybook
 
 on:
   workflow_call:
