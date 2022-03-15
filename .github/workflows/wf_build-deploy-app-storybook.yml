@@ -1,7 +1,7 @@
 # | Build Application and Storybook. Deploy builds into GihHub Pages. Publish build and deployment statuses as
 # | pull request comment, if any pull request is associated with latest commit.
 
-name: "Build Deploy Report"
+name: "Build-Deploy-Report App and Storybook"
 
 on:
   push:
