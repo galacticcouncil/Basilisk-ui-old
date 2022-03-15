@@ -25,6 +25,7 @@ export const FormattedBalance = ({
   const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
 
   const tooltipText = useMemo(() => {
+    // TODO: get rid of raw html
     return ` 
       <span class='balance'>${fromPrecision12(balance.balance)}</span>
       <span class='symbol'>${assetSymbol}</span>
@@ -47,7 +48,7 @@ export const FormattedBalance = ({
   // moves one notch up/down and keeps a fixed precision
   return (
     // WARNING POSSIBLY UNSAFE??
-    <div className="formatted-balance" data-tip={tooltipText} data-html={true} data-delay-show={75}>
+    <div className="formatted-balance" data-tip={tooltipText} data-html={true} data-delay-show={20}>
       <div className="formatted-balance__value">{formattedBalance.value}</div>
       <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
