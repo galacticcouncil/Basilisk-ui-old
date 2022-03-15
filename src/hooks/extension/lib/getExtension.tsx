@@ -10,8 +10,9 @@ const id = '0';
 export const getExtension = async (): Promise<Extension> => {
   // import the constant here to enable mocking in tests
   const { isAvailable }: Pick<Extension, 'isAvailable'> = await new Promise(
-    (resolve) => {
+    (resolve, reject) => {
       promiseRetry(async (retry, attempt) => {
+        console.log('attempt', attempt);
         const isAvailable = !!(window as any).injectedWeb3?.['polkadot-js'];
         console.log('getExtension attempt: #', attempt, isAvailable);
         isAvailable
@@ -25,7 +26,11 @@ export const getExtension = async (): Promise<Extension> => {
             })
           )
           : retry('')
-      });
+      }, {
+        retries: 5,
+        minTimeout: 100,
+        maxTimeout: 200,
+      }).catch(reject);
     }
   );
 
