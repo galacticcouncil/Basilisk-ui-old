@@ -1,4 +1,4 @@
-name: Reusable :: Deploy
+name: "Reusable :: Deploy"
 
 on:
   workflow_call:
@@ -17,13 +17,12 @@ on:
 
 jobs:
   clear_existing_build:
-    name: Clear existing build
+    name: "Clear existing build"
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
 
-      - name: Check GH Pages branch existence
+      - name: "Check GH Pages branch existence"
         shell: bash
         run: |
           chmod -R 777 ./scripts
@@ -32,25 +31,25 @@ jobs:
           GH_PAGES_FULL_BRANCH: ${{ secrets.gh_pages_full_branch }}
         id: ghp_branch_existence
 
-      - name: Checkout GH Pages branch
+      - name: "Checkout GH Pages branch"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         uses: actions/checkout@v2
         with:
           ref: ${{ secrets.gh_pages_full_branch }}
 
-      - name: Download artifact (script-files)
+      - name: "Download artifact (script-files)"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         uses: actions/download-artifact@v2
         with:
           name: script-files
           path: ./scripts
 
-      - name: Update script file
+      - name: "Update script file"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         shell: bash
         run: chmod -R 777 ./scripts
 
-      - name: Extract branch folder name
+      - name: "Extract branch folder name"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         shell: bash
         run: |
@@ -65,55 +64,55 @@ jobs:
           fi
         id: branch_folder_name
 
-      - name: Remove Existing build (app and storybook)
+      - name: "Remove Existing build (app and storybook)"
         uses: JesseTG/rm@v1.0.2
         if: ${{ success() && steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         with:
           path: ${{ steps.branch_folder_name.outputs.folder_name }}
 
-      - name: Remove redundant files from the current branch
+      - name: "Remove redundant files from the current branch"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         shell: bash
         run: rm -r ./scripts
 
-      - name: Commit changes
+      - name: "Commit changes"
         uses: stefanzweifel/git-auto-commit-action@v4
         if: steps.auto-commit-action.outputs.changes_detected == 'true' && steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true'
         with:
           branch: ${{ secrets.gh_pages_full_branch }}
 
   deploy:
-    name: Deploy new builds
+    name: "Deploy new builds"
     if: ${{ always() }}
     needs: clear_existing_build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Download artifact - Storybook (build files)
+      - name: "Download artifact - Storybook (build files)"
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.storybook-build-artifact-name }}
           path: ./sb-build-files
 
-      - name: Download artifact - App (build files)
+      - name: "Download artifact - App (build files)"
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./app-build-files
 
-      - name: Download artifact (script-files)
+      - name: "Download artifact (script-files)"
         uses: actions/download-artifact@v2
         with:
           name: script-files
           path: ./scripts
 
-      - name: Update script file
+      - name: "Update script file"
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         shell: bash
         run: chmod -R 777 ./scripts
 
-      - name: Extract branch folder name
+      - name: "Extract branch folder name"
         shell: bash
         run: |
           if [[ $GITHUB_EVENT_NAME = 'push' ]]
@@ -127,7 +126,7 @@ jobs:
           fi
         id: extract_branch
 
-      - name: Deploy Storybook to GH Pages
+      - name: "Deploy Storybook to GH Pages"
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.gh_token }}
@@ -135,7 +134,7 @@ jobs:
           publish_dir: ./sb-build-files
           destination_dir: ${{ format('{0}/{1}', steps.extract_branch.outputs.branch, 'storybook') }}
 
-      - name: Deploy App to GH Pages
+      - name: "Deploy App to GH Pages"
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.gh_token }}

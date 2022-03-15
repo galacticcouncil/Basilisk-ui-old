@@ -1,4 +1,4 @@
-name: Reusable :: E2E tests :: Storybook
+name: "Reusable :: E2E tests :: Storybook"
 
 on:
   workflow_call:
@@ -12,49 +12,49 @@ on:
 
 jobs:
   run-storybook-e2e-tests:
-    name: Run tests
+    name: "Run tests"
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node.js
+      - name: "Setup Node.js"
         uses: actions/setup-node@v2
         with:
           node-version: 17.3
 
-      - name: Install Node.js HTTP-Server
+      - name: "Install Node.js HTTP-Server"
         run: yarn global add http-server
 
       - uses: actions/checkout@v2
 
-      - name: Download build artifacts
+      - name: "Download build artifacts"
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.storybook-build-artifact-name }}
           path: ./storybook-static
 
-      - name: Cache Node Modules for ui-app
+      - name: "Cache Node Modules for ui-app"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Dependencies for ui-app
+      - name: "Install Node modules for ui-app"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: rm -rf node_modules && yarn install --frozen-lockfile
 
-      - name: Run storybook server
+      - name: "Run storybook server"
         run: http-server storybook-static --port 6006 &
 
       # Check of UI app status
-      - name: Wait for UI app port :6006
+      - name: "Wait for UI app port :6006"
         shell: bash
         timeout-minutes: 2
         run: . ./scripts/ci/gh-actions-wait-for-port.sh 6006
 
-      - name: Run storybook tests
+      - name: "Run storybook tests"
         run: yarn storybook:test
 
-      - name: Upload storybook tests report file
+      - name: "Upload storybook tests report file"
         if: always()
         uses: actions/upload-artifact@v2
         with:

@@ -1,4 +1,4 @@
-name: Reusable :: Generate unit tests codecov report
+name: "Reusable :: Generate unit tests codecov report"
 
 on:
   workflow_call:
@@ -24,27 +24,27 @@ on:
 
 jobs:
   generate_report:
-    name: Generate
+    name: "Generate"
     runs-on: ubuntu-latest
     outputs:
       codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}
       codecov_output_diff: ${{ steps.code-coverage.outputs.diff }}
     steps:
-      - name: Download code coverage report from base branch
+      - name: "Download code coverage report from base branch"
         uses: actions/download-artifact@v2
         id: download-ref
         with:
           name: ${{inputs.base-branch-codecov-artifact-name}}
           path: ./ref-report
 
-      - name: Download code coverage report from working branch
+      - name: "Download code coverage report from working branch"
         uses: actions/download-artifact@v2
         id: download-working
         with:
           name: ${{inputs.working-branch-codecov-artifact-name}}
           path: ./working-report
 
-      - name: Post coverage report in PR
+      - name: "Post coverage report in PR"
         id: code-coverage
         continue-on-error: true
         uses: barecheck/code-coverage-action@v0.5.1

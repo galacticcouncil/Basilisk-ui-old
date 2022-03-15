@@ -1,4 +1,4 @@
-name: Reusable :: Build
+name: "Reusable :: Build"
 
 on:
   workflow_call:
@@ -19,30 +19,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js
+      - name: "Setup Node.js"
         uses: actions/setup-node@v2
         with:
           node-version: 17.3
 
-      - name: Cache Node Modules
+      - name: "Cache Node Modules"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Node modules
+      - name: "Install Node modules"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: rm -rf node_modules && yarn install --frozen-lockfile
 
-      - name: Update browserslist
+      - name: "Update browserslist"
         run: npx browserslist@latest --update-db
 
-      - name: Update script file
+      - name: "Update script file"
         shell: bash
         run: chmod -R 777 ./scripts/ci/gh-actions-branch-name-serialize.sh
 
-      - name: Extract branch folder name
+      - name: "Extract branch folder name"
         shell: bash
         run: |
           if [[ $GITHUB_EVENT_NAME = 'push' ]]
@@ -56,7 +56,7 @@ jobs:
           fi
         id: extract_branch
 
-      - name: Build App and Storybook
+      - name: "Build App and Storybook"
         run: |
           yarn run build
           yarn run build-storybook -- -o sb-build-files
@@ -65,19 +65,19 @@ jobs:
           REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
           NODE_OPTIONS: --openssl-legacy-provider
 
-      - name: Upload script files
+      - name: "Upload script files"
         uses: actions/upload-artifact@v2
         with:
           name: script-files
           path: ./scripts
 
-      - name: Upload production-ready Storybook build files
+      - name: "Upload production-ready Storybook build files"
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.storybook-build-artifact-name }}
           path: ./sb-build-files
 
-      - name: Upload production-ready App build files
+      - name: "Upload production-ready App build files"
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}

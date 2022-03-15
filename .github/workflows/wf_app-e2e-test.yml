@@ -1,4 +1,4 @@
-name: E2E testing App
+name: "E2E testing App"
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: "Build"
     uses: ./.github/workflows/_called_build.yml
     with:
       app-build-artifact-name: app-build-files
@@ -16,7 +16,7 @@ jobs:
       app-node-modules-cache-key: cache-node-modules-ui-app
 
   app-e2e-tests:
-    name: Run tests
+    name: "Run tests"
     needs: build
     uses: ./.github/workflows/_called_run-e2e-tests-app.yml
     if: ${{ needs.build.result=='success' }}

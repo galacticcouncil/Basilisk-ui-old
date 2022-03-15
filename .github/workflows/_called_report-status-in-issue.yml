@@ -1,4 +1,4 @@
-name: Reusable :: Report in issue
+name: "Reusable :: Report in issue"
 
 on:
   workflow_call:
@@ -48,12 +48,13 @@ on:
 
 jobs:
   publish-report-issue-comment:
-    name: Publish comment
+    name: "Publish comment"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/github-script@v6
+      - name: "Run github-script for preparation and publication comment content"
+        uses: actions/github-script@v6
         id: issue-comment-data
         env:
           REPORT_MSG_TITLE: ${{inputs.report-msg-title}}

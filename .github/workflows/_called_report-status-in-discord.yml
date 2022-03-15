@@ -1,4 +1,4 @@
-name: Reusable :: Reports in Discord
+name: "Reusable :: Reports in Discord"
 
 on:
   workflow_call:
@@ -39,12 +39,12 @@ on:
 
 jobs:
   publish-report-in-discord:
-    name: Publish
+    name: "Publish"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: Prepare report content
+      - name: "Prepare report content"
         uses: actions/github-script@v6
         id: discord_embed_report
         env:
@@ -71,7 +71,7 @@ jobs:
             const script = require('./scripts/ci/github-script-src/create-discord-report-embed-body.js')
             return await script({github, context, core})
 
-      - name: Publish Discord message
+      - name: "Publish Discord message"
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_ALERT_UI_WEB_HOOK }}
           DISCORD_USERNAME: Basilisk-UI GH Bot

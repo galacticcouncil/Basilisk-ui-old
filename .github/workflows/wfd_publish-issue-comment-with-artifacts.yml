@@ -1,5 +1,5 @@
 
-name: Report in issue with artifacts (dispatch)
+name: "Report in issue with artifacts (dispatch)"
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   report-with-artifacts:
-    name: Report
+    name: "Report"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
