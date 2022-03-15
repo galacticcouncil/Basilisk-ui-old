@@ -497,7 +497,7 @@ export const TradeForm = ({
             fromPrecision12(outBeforeTrade),
             fromPrecision12(outAfterTrade)
           )?.multipliedBy(100)
-        : new BigNumber(outAfterTrade !== '0' ? '100.000' : '0');
+        : new BigNumber(outAfterTrade && outAfterTrade !== '0' ? '100.000' : '0');
 
     const assetInAmount = getValues('assetInAmount');
     const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
@@ -511,7 +511,7 @@ export const TradeForm = ({
             fromPrecision12(inBeforeTrade),
             fromPrecision12(inAfterTrade)
           )?.multipliedBy(100)
-        : new BigNumber(inAfterTrade !== '0' ? '-100.000' : '0');
+        : new BigNumber(inAfterTrade && inAfterTrade !== '0' ? '-100.000' : '0');
 
     return {
       outBeforeTrade,
