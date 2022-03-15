@@ -41,12 +41,12 @@ jobs:
   report-statuses-in-issue:
     # | Publish build and deployment statuses as pull request comment,
     # | if any pull request is associated with the latest commit.
-    name: "Report in issue"
+    name: "Report in PR"
     uses: ./.github/workflows/_called_report-status-in-issue.yml
     if: always()
     needs: [ build, deploy ]
     with:
-      report-msg-title: "Basilisk-UI build reporter"
+      report-msg-title: "Basilisk-UI build/deploy reporter"
       publish-artifacts-list: true
 
       app-storybook-build-pub-report: true
