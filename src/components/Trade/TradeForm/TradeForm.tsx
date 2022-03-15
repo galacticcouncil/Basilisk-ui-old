@@ -246,6 +246,7 @@ export const TradeForm = ({
     activeAccountTradeBalances,
     assetInLiquidity,
     assetOutLiquidity,
+    allowedSlippage,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
