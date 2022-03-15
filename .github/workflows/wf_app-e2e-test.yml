@@ -1,4 +1,4 @@
-name: App E2E testing
+name: E2E testing app
 on:
   push:
     branches:
@@ -6,19 +6,19 @@ on:
       - 'feat/**'
 
 jobs:
-  build-app-storybook:
-    name: Build App and Storybook
-    uses: ./.github/workflows/_called_build-app-and-storybook.yml
+  build:
+    name: Build
+    uses: ./.github/workflows/_called_build.yml
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
       app-node-modules-cache-key: cache-node-modules-ui-app
 
   app-e2e-tests:
-    name: Run App e2e tests
-    needs: build-app-storybook
-    uses: ./.github/workflows/_called_run-app-e2e-tests.yml
-    if: ${{ needs.build-app-storybook.result=='success' }}
+    name: Run tests
+    needs: build
+    uses: ./.github/workflows/_called_run-e2e-tests-app.yml
+    if: ${{ needs.build.result=='success' }}
     with:
       app-build-artifact-name: app-build-files
       app-node-modules-cache-key: cache-node-modules-ui-app

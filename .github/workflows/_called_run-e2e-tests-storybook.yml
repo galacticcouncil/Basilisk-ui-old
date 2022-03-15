@@ -1,4 +1,4 @@
-name: Build App and Storybook
+name: E2E tests :: Storybook
 
 on:
   workflow_call:
@@ -12,11 +12,11 @@ on:
 
 jobs:
   run-storybook-e2e-tests:
-    name: Run SB e2e tests
+    name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - name: Install Node.js
-        uses: actions/setup-node@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: 17.3
 

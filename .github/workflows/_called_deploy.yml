@@ -1,4 +1,4 @@
-name: Deploy App and Storybook
+name: Deploy
 
 on:
   workflow_call:
@@ -16,14 +16,14 @@ on:
         required: true
 
 jobs:
-  clear_build:
+  clear_existing_build:
     name: Clear existing build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Check gh-pages branch existence
+      - name: Check GH Pages branch existence
         shell: bash
         run: |
           chmod -R 777 ./scripts
@@ -32,13 +32,13 @@ jobs:
           GH_PAGES_FULL_BRANCH: ${{ secrets.gh_pages_full_branch }}
         id: ghp_branch_existence
 
-      - name: Checkout gh-pages branch
+      - name: Checkout GH Pages branch
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         uses: actions/checkout@v2
         with:
           ref: ${{ secrets.gh_pages_full_branch }}
 
-      - name: Download artifact
+      - name: Download artifact (script-files)
         if: ${{ steps.ghp_branch_existence.outputs.is_ghp_branch_exists == 'true' }}
         uses: actions/download-artifact@v2
         with:
@@ -85,10 +85,10 @@ jobs:
   deploy:
     name: Deploy new builds
     if: ${{ always() }}
-    needs: clear_build
+    needs: clear_existing_build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+#      - uses: actions/checkout@v2
 
       - name: Download artifact - Storybook (build files)
         uses: actions/download-artifact@v2

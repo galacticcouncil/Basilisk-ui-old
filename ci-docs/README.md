@@ -29,9 +29,45 @@ _**IMPORTANT** - All updates in such workflow file will be applied only if they 
 
 ---
 
+## Configured root workflows
+
+#### :file_folder: Build Deploy App and Storybook
+```yaml
+on:
+  push:
+    branches:
+      - 'fix/**'
+      - 'feat/**'
+      - develop
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+```
+Jobs:
+- Build App and Storybook (`build-app-storybook`);
+- Deploy App&Storybook builds (`deploy-app-storybook-builds`);
+- Report issue comment (`report-statuses-issue-comment`);
+
+
+#### :file_folder: App E2E testing
+```yaml
+on:
+  push:
+    branches:
+      - 'fix/**'
+      - 'feat/**'
+```
+Jobs:
+- Build App and Storybook (`build-app-storybook`);
+- Run App e2e tests (`app-e2e-tests`);
+
+---
+
 ## Existing reusing workflows
 
-#### :chains:  Build App and Storybook ([.github/workflows/_called_build-app-and-storybook.yml](.github/workflows/_called_build-app-and-storybook.yml))
+#### :chains:  Build App and Storybook ([.github/workflows/_called_build.yml](.github/workflows/_called_build.yml))
 Build application and storybook. Results are saved as artifacts with passed names.
 
 :inbox_tray: ***Inputs***:
@@ -47,7 +83,7 @@ Build application and storybook. Results are saved as artifacts with passed name
 
 <hr />
 
-#### :chains:  Deploy App and Storybook ([.github/workflows/_called_deploy-app-and-storybook.yml](.github/workflows/_called_deploy-app-and-storybook.yml))
+#### :chains:  Deploy App and Storybook ([.github/workflows/_called_deploy-to-gh-pages.yml](.github/workflows/_called_deploy-to-gh-pages.yml))
 Deploy application and storybook to github pages.
 
 
@@ -62,20 +98,6 @@ For access to the builds you can use these paths:
 
 - **UI app** - `https://galacticcouncil.github.io/Basilisk-ui/<folder_name>/<subfolder_name?>/app`
 - **Storybook build** - `https://galacticcouncil.github.io/Basilisk-ui/<folder_name>/<subfolder_name?>/storybook`
-
-Deployment triggers:
-
-```yaml
-push:
-  branches:
-    - develop
-    - 'fix/**'
-    - 'feat/**'
-pull_request:
-  branches:
-    - 'fix/**'
-    - 'feat/**'
-```
 
 :inbox_tray: ***Inputs***:
 - `app-build-artifact-name`: _String, required_
@@ -152,7 +174,7 @@ Publish statuses and reports from different steps of root workflow in Discord ch
 
 <hr />
 
-### :chains:  Publish reports as issue comment ([.github/workflows/_called_publish-report-issue-comment.yml](.github/workflows/_called_publish-report-issue-comment.yml))
+### :chains:  Report status in issue ([.github/workflows/_called_report-status-in-issue.yml](.github/workflows/_called_report-in-issue.yml))
 Publish statuses and reports from different steps of root workflow as comment in related PR. Workflow is based on libraries
 `GitHub Script`. If we need fetch available artifacts, so it can be done only in separate/next workflow run after workflow run
 which generates these artifacts. Artifacts are not visible for API before run is completed. More details in 

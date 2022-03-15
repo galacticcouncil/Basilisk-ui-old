@@ -15,7 +15,7 @@ module.exports = async ({ github, context, core }) => {
     APP_UNIT_TEST_PERCENTAGE,
     APP_UNIT_TEST_DIFF,
 
-    APP_BUILD_STATUS,
+    APP_STORYBOOK_BUILD_STATUS,
     APP_UNIT_TEST_STATUS,
     APP_DEPLOYMENT_STATUS,
 
@@ -31,8 +31,7 @@ module.exports = async ({ github, context, core }) => {
 
   process.env.GITHUB_TOKEN = GH_TOKEN;
 
-  console.log('context 1 - ', context);
-  console.log('process.env - ', process.env);
+  console.log('[LOG]:: context - ', context);
 
   const [owner, repo] = context.payload.repository.full_name.split('/');
   const currentBranchName =
@@ -54,7 +53,7 @@ module.exports = async ({ github, context, core }) => {
   if (IS_APP_SB_BUILD_REPORT === 'true') {
     commentBody += `:small_blue_diamond: **Application/Storybook build:** <br /> 
     - Status: ${
-      APP_BUILD_STATUS === 'true'
+      APP_STORYBOOK_BUILD_STATUS === 'true'
         ? ':white_check_mark: _Built_ '
         : ':no_entry_sign: _Failed_ '
     }`;
@@ -106,7 +105,7 @@ module.exports = async ({ github, context, core }) => {
         commit_sha: context.sha,
       }
     );
-    console.log('prList - ', prList);
+    console.log('[LOG]:: prList - ', prList);
     const relatedPr = prList.data.filter((prItem) => prItem.state === 'open');
 
     issueNumber = relatedPr.length > 0 ? relatedPr[0].number : null;
@@ -149,12 +148,12 @@ module.exports = async ({ github, context, core }) => {
     }
   );
 
-  console.log('suitesList - ', suitesList);
+  console.log('[LOG]:: suitesList - ', suitesList);
 
   for (let suiteItem of suitesList.data.check_suites.filter(
     (item) => item.status === 'in_progress'
   )) {
-    console.log('suiteItem - ', suiteItem);
+    console.log('[LOG]:: suiteItem - ', suiteItem);
     suiteId = suiteItem.id;
   }
 
@@ -189,7 +188,7 @@ module.exports = async ({ github, context, core }) => {
         )
       : null;
 
-  console.log('publishArtifactsWf - ', publishArtifactsWf);
+  console.log('[LOG]:: publishArtifactsWf - ', publishArtifactsWf);
 
   if (!publishArtifactsWf) return 0;
 
@@ -203,7 +202,7 @@ module.exports = async ({ github, context, core }) => {
     },
   });
 
-  console.log('dispatchResp - ', dispatchResp);
+  console.log('[LOG]:: dispatchResp - ', dispatchResp);
 
   return 0;
 };

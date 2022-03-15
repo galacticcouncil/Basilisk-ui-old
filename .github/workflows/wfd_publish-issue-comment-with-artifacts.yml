@@ -1,4 +1,5 @@
-name: Publish issue comment with artifacts (dispatch)
+
+name: Report in issue with artifacts (dispatch)
 
 on:
   workflow_dispatch:
@@ -10,8 +11,8 @@ on:
         type: string
 
 jobs:
-  issue-comment-publish:
-    name: Publish issue comment
+  report-with-artifacts:
+    name: Report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

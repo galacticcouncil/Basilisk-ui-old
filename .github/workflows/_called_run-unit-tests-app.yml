@@ -1,4 +1,4 @@
-name: Run unit tests on UI app
+name: Unit tests :: App
 
 on:
   workflow_call:
@@ -22,14 +22,14 @@ on:
 
 jobs:
   base_branch_coverage_check:
-    name: Generate base branch tests coverage report
+    name: Run base branch
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.base_ref }}
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 17.3
@@ -41,7 +41,7 @@ jobs:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Dependencies for ui-app
+      - name: Install Node modules for ui-app
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: rm -rf node_modules && yarn install --frozen-lockfile
 
@@ -55,7 +55,7 @@ jobs:
           path: ./coverage/lcov.info
 
   unit_testing:
-    name: Build UI application
+    name: Run work branch
     runs-on: macos-11
     outputs:
       codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}

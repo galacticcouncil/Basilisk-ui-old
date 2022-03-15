@@ -1,10 +1,9 @@
-const getAppUnitTestReportData = require('./_app-unit-test-report');
-const getAppSbBuildReportData = require('./_app-sb-build-report');
-const getAppSbDeploymentReportData = require('./_app-sb-deployment-report');
+const getAppUnitTestReportData = require('./discord-reporter-components/app-unit-test-report');
+const getAppSbBuildReportData = require('./discord-reporter-components/app-storybpook-build-report');
+const getAppSbDeploymentReportData = require('./discord-reporter-components/app-storybpook-deployment-report');
 
 module.exports = async ({ github, context, core }) => {
   const {
-    SHA,
     IS_APP_SB_BUILD_REPORT,
     IS_APP_SB_DEPLOYMENT_REPORT,
     IS_APP_UNIT_TEST_REPORT,
@@ -14,7 +13,7 @@ module.exports = async ({ github, context, core }) => {
 
     APP_UNIT_TEST_PERCENTAGE,
     APP_UNIT_TEST_DIFF,
-    APP_BUILD_STATUS,
+    APP_STORYBOOK_BUILD_STATUS,
     APP_UNIT_TEST_REF_BRANCH,
     APP_UNIT_TEST_STATUS,
     APP_DEPLOYMENT_STATUS,
@@ -36,7 +35,7 @@ module.exports = async ({ github, context, core }) => {
     title: REPORT_MSG_TITLE,
     description: `Check workflow execution results and artifacts [here](${context.payload.repository.html_url}/actions/runs/${context.runId})`,
     color:
-      APP_BUILD_STATUS === 'true' &&
+      APP_STORYBOOK_BUILD_STATUS === 'true' &&
       APP_UNIT_TEST_STATUS === 'true' &&
       APP_DEPLOYMENT_STATUS === 'true'
         ? '65280'
@@ -47,7 +46,7 @@ module.exports = async ({ github, context, core }) => {
   if (IS_APP_SB_BUILD_REPORT === 'true') {
     embedBody.fields.push(
       ...getAppSbBuildReportData({
-        APP_BUILD_STATUS,
+        APP_STORYBOOK_BUILD_STATUS,
         context,
       })
     );

@@ -1,4 +1,4 @@
-name: Generate unit tests code coverage report
+name: Generate unit tests codecov report
 
 on:
   workflow_call:
@@ -10,7 +10,7 @@ on:
         required: true
         type: string
 
-    #https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow:
+    # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow:
     outputs:
       codecov_unit_percentage:
         description: "Total Percentage coverage"
@@ -23,8 +23,8 @@ on:
         required: true
 
 jobs:
-  unit_tests_codecov_pub_report:
-    name: Unit test codecov reports
+  generate_report:
+    name: Generate
     runs-on: ubuntu-latest
     outputs:
       codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}
@@ -52,12 +52,5 @@ jobs:
           barecheck-github-app-token: ${{ secrets.barecheck_github_app_token }}
           lcov-file: './working-report/lcov.info'
           base-lcov-file: './ref-report/lcov.info'
-#          send-summary-comment: ${{ inputs.app-unit-test-pub-report-in-pr }}
           send-summary-comment: false
           show-annotations: 'warning'
-
-#      - name: Echo cov report
-#        run: |
-#          echo sum - ${{ toJson(steps.code-coverage.outputs) }}
-#          echo percentage - ${{ steps.code-coverage.outputs.percentage }}
-#          echo diff - ${{ steps.code-coverage.outputs.diff }}

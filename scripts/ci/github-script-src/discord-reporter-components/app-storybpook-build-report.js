@@ -1,4 +1,4 @@
-module.exports = ({ APP_BUILD_STATUS, context }) => {
+module.exports = ({ APP_STORYBOOK_BUILD_STATUS, context }) => {
   const workingBranch = context.ref.replace('refs/heads/', '');
   const repoUrl = context.payload.repository.html_url;
   const noticeText =
@@ -11,7 +11,7 @@ module.exports = ({ APP_BUILD_STATUS, context }) => {
     {
       name: ':small_blue_diamond:  App / Storybook build',
       value: `${
-        APP_BUILD_STATUS === 'true'
+        APP_STORYBOOK_BUILD_STATUS === 'true'
           ? ':white_check_mark: Built.'
           : ':no_entry_sign: Failed'
       }\n ${noticeText}`,

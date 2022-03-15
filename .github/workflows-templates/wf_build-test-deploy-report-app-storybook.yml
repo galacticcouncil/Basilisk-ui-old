@@ -8,7 +8,7 @@ jobs:
 
   build-app-storybook:
     name: Build App and Storybook
-    uses: ./.github/workflows/_called_build-app-and-storybook.yml
+    uses: ./.github/workflows/_called_build.yml
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
@@ -45,7 +45,7 @@ jobs:
   deploy-app-storybook-builds:
     name: Deploy App&Storybook builds
     needs: [build-app-storybook, app-unit-tests, storybook-e2e-tests, app-e2e-tests]
-    uses: ./.github/workflows/_called_deploy-app-and-storybook.yml
+    uses: ./.github/workflows/_called_deploy-to-gh-pages.yml
     if: ${{ needs.build-app-storybook.result=='success' }}
     with:
       app-build-artifact-name: app-build-files

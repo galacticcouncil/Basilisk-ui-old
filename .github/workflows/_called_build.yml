@@ -1,4 +1,4 @@
-name: Build App and Storybook
+name: Build
 
 on:
   workflow_call:
@@ -14,13 +14,13 @@ on:
         type: string
 jobs:
   build:
-    name: Build App and Storybook
+    name: Build
     runs-on: macos-11
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
         with:
           node-version: 17.3
 
@@ -31,9 +31,8 @@ jobs:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install NPM packages
+      - name: Install Node modules
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-#        if: steps.app_node_modules_cache_status.outputs.app_node_modules_cache_exists != 'true'
         run: rm -rf node_modules && yarn install --frozen-lockfile
 
       - name: Update browserslist
@@ -72,7 +71,7 @@ jobs:
           name: script-files
           path: ./scripts
 
-      - name: Upload production-ready SB build files
+      - name: Upload production-ready Storybook build files
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.storybook-build-artifact-name }}
