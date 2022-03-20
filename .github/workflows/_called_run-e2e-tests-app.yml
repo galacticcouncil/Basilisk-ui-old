@@ -80,6 +80,7 @@ jobs:
           yarn fullruntime:clean-setup-start
 
       # | Double check of testnet status
+      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: "Wait for Basilisk Node port :9988"
         shell: bash
         timeout-minutes: 2
@@ -92,6 +93,7 @@ jobs:
           http-server -s -p 3030 -a 127.0.0.1 &
 
       # | Check of UI app status
+      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: "Wait for UI app port :3030"
         shell: bash
         timeout-minutes: 2
@@ -104,7 +106,7 @@ jobs:
         run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
         shell: bash
 
-      - name: "Prepate E2E Tests Env Variables"
+      - name: "Prepare E2E Tests Env Variables"
         uses: falnyr/replace-env-vars-action@master
         env:
           E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}

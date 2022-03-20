@@ -1,5 +1,5 @@
 # | IMPORTANT - any changes to workflow with trigger event "workflow_dispatch" requires to push changes to default
-# | branch first (eg. "develop" branch) to take effect.
+# | branch first (eg. "develop" branch) to take effect. This concerns all github-scripts which are used in such workflow.
 # | More details - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
 
 
@@ -16,15 +16,9 @@ on:
       issue_comment_data:
         # | Data passed from caller workflow - "Reusable :: Report in issue" (.github/workflows/_called_report-status-in-issue.yml)
         # | {
-        # |   publishArtifactsList: bool;
-        # |   repoUrl: string;
-        # |   runId: number;
-        # |   commentBody: string;
-        # |   owner: string;
-        # |   repo: string;
-        # |   suiteId: number;
-        # |   existingIssueCommentId: number;
-        # |   issueNumber: string;
+        # |   commentMeta: metadata for issue comment;
+        # |   commentSections: scope of comment sections data;
+        # |   availableArtifacts: available artifacts for current PR;;
         # | }
         description: 'Stringified JSON with prepared data for publication comment'
         required: false

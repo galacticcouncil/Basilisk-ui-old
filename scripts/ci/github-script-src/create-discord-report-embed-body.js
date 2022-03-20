@@ -1,6 +1,8 @@
-const getAppUnitTestReportData = require('./discord-reporter-components/app-unit-test-report');
-const getAppSbBuildReportData = require('./discord-reporter-components/app-storybpook-build-report');
-const getAppSbDeploymentReportData = require('./discord-reporter-components/app-storybpook-deployment-report');
+const {
+  getAppStorybookBuildMarkdownBody,
+  getAppStorybookDeploymentMarkdownBody,
+  getAppUnitTestsMarkdownBody,
+} = require('./utils/discord-comment');
 
 module.exports = async ({ github, context, core }) => {
   const {
@@ -17,7 +19,7 @@ module.exports = async ({ github, context, core }) => {
     APP_UNIT_TEST_REF_BRANCH,
     APP_UNIT_TEST_STATUS,
     APP_STORYBOOK_DEPLOYMENT_STATUS,
-    REPORT_MSG_TITLE = 'Basilisk-UI APP/Storybook build | testing | deployment',
+    REPORT_MSG_TITLE = 'Basilisk-UI reporter',
 
     GITHUB_HEAD_REF,
     GITHUB_REF,
@@ -41,7 +43,7 @@ module.exports = async ({ github, context, core }) => {
 
   if (IS_APP_STORYBOOK_BUILD_REPORT === 'true') {
     embedBody.fields.push(
-      ...getAppSbBuildReportData({
+      ...getAppStorybookBuildMarkdownBody({
         APP_STORYBOOK_BUILD_STATUS,
         context,
       })
@@ -50,7 +52,7 @@ module.exports = async ({ github, context, core }) => {
 
   if (IS_APP_UNIT_TEST_REPORT === 'true') {
     embedBody.fields.push(
-      ...getAppUnitTestReportData({
+      ...getAppUnitTestsMarkdownBody({
         APP_UNIT_TEST_PERCENTAGE,
         APP_UNIT_TEST_DIFF,
         APP_UNIT_TEST_REF_BRANCH,
@@ -62,7 +64,7 @@ module.exports = async ({ github, context, core }) => {
 
   if (IS_APP_STORYBOOK_DEPLOYMENT_REPORT === 'true') {
     embedBody.fields.push(
-      ...getAppSbDeploymentReportData({
+      ...getAppStorybookDeploymentMarkdownBody({
         APP_STORYBOOK_DEPLOYMENT_STATUS,
         context,
       })

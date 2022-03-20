@@ -6,22 +6,17 @@ name: "Reusable :: Report in issue"
 on:
   workflow_call:
     inputs:
-      # | Title for matching already existing comments in PR for update particular comment.
-      report-msg-title:
-        required: false
-        type: string
 
       # | If we need publish available run artifacts list, separate workflow must be invoked as artifacts
-      # | from current workflow run are not visible for API before run is completed.
+      # | from current workflow run are not visible for API before run is completed. Dispatch event will be created
+      # | automatically from github-script action via GutHub API call in step "Run github-script for preparation and
+      # | publication comment content".
       # | Related issue - https://github.com/actions/upload-artifact/issues/50
-      # | If "publish-artifacts-list === false", comment won't contain artifacts list and will be published
-      # | in current step.
-      # | If "publish-artifacts-list === true", comment will contain artifacts list and will be published
-      # | in dispatched workflow.
       publish-artifacts-list:
         required: true
         type: boolean
 
+      # | App Storybook build
       app-storybook-build-pub-report:
         required: true
         type: boolean
@@ -29,6 +24,7 @@ on:
         required: false
         type: boolean
 
+      # | App Storybook deployment to GitHub Pages
       app-storybook-deploy-pub-report:
         required: true
         type: boolean
@@ -36,8 +32,9 @@ on:
         required: false
         type: boolean
 
+      # | App unit Tests
       app-unit-test-pub-report:
-        required: false
+        required: true
         type: boolean
       app-unit-test-status:
         required: false
@@ -48,6 +45,14 @@ on:
       app-unit-test-codecov-diff:
         required: false
         type: string
+
+      # | App E2E Tests
+      app-e2e-test-pub-report:
+        required: true
+        type: boolean
+      app-e2e-test-status:
+        required: false
+        type: boolean
 
     secrets:
       gh_token:
@@ -67,35 +72,108 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: "Get Timestamp"
+        id: timestamp
+        uses: nanzm/get-time-action@v1.1
+        with:
+          format: 'YYYYMMDDHHmmssSSS'
+
+      - name: "Cache issue comment content"
+        uses: actions/cache@v2
+        id: cache-reporter-content
+        env:
+          TIMESTAMP: ${{ steps.timestamp.outputs.time }}
+        with:
+          path: ./reporter-artifacts
+          key: reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-${{ steps.timestamp.outputs.time }}
+          restore-keys: |
+            reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-
+
+      - name: "Check if comment data folder exists"
+        id: check-cache-existance
+        run: |
+          DIR="./reporter-artifacts"
+          if [ -d "$DIR" ]; then
+            echo "::set-output name=cached-comment-data-exists::true"
+          else
+            echo "::set-output name=cached-comment-data-exists::false"
+          fi
+
+      - name: "Parse issue comment data from cache"
+        id: parse-issue-comment-data
+        if: steps.check-cache-existance.outputs.cached-comment-data-exists == 'true'
+        run: |
+          issueCommentDataJson=$(cat ./reporter-artifacts/issue-comment-data.txt)
+          echo $issueCommentDataJson
+          echo "::set-output name=issueCommentDataJson::$issueCommentDataJson"
+          
+#                    issueCommentDataJson="${issueCommentDataJson//'%'/'%25'}"
+      #          issueCommentDataJson="${issueCommentDataJson//$'\n'/'%0A'}"
+      #          issueCommentDataJson="${issueCommentDataJson//$'\r'/'%0D'}"
+
+      - run: mkdir -p reporter-artifacts
+        if: steps.check-cache-existance.outputs.cached-comment-data-exists != 'true'
+
       - name: "Run github-script for preparation and publication comment content"
         uses: actions/github-script@v6
         id: issue-comment-data
         env:
-          REPORT_MSG_TITLE: ${{inputs.report-msg-title}}
-          PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
+          # | Title for matching already existing comments in PR for update particular comment.
+          REPORT_MSG_TITLE: "Basilisk UI reporter"
+
           # | Workflow file which will be dispatched from github-script via API for fetching and publication
           # | artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
           PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: wfd_publish-issue-comment-with-artifacts.yml
 
-          IS_APP_STORYBOOK_BUILD_REPORT: ${{ inputs.app-storybook-build-pub-report }}
-          IS_APP_UNIT_TEST_REPORT: ${{ inputs.app-unit-test-pub-report }}
-          IS_APP_E2E_TEST_REPORT: false
-          IS_STORYBOOK_UNIT_TEST_REPORT: false
-          IS_STORYBOOK_E2E_TEST_REPORT: false
-          IS_APP_STORYBOOK_DEPLOYMENT_REPORT: ${{ inputs.app-storybook-deploy-pub-report }}
+          # | Cached comment data from previous run which has been triggerred for the same PR as for current run.
+          COMMENT_CACHED_CONTENT: ${{steps.parse-issue-comment-data.outputs.issueCommentDataJson || false}}
 
+          # | Artifacts
+          PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
+
+          # | App Storybook build
+          IS_APP_STORYBOOK_BUILD_REPORT: ${{ inputs.app-storybook-build-pub-report }}
+          APP_STORYBOOK_BUILD_STATUS: ${{ inputs.app-storybook-build-status }}
+
+          # | App Storybook deployment to GitHub Pages
+          IS_APP_STORYBOOK_DEPLOYMENT_REPORT: ${{ inputs.app-storybook-deploy-pub-report }}
+          APP_STORYBOOK_DEPLOYMENT_STATUS: ${{ inputs.app-storybook-deploy-status }}
+
+          # | App E2E Tests
+          IS_APP_E2E_TEST_REPORT: ${{ inputs.app-e2e-test-pub-report }}
+          APP_E2E_TEST_STATUS: ${{ inputs.app-e2e-test-status }}
+
+          # | Storybook E2E Tests
+          IS_STORYBOOK_E2E_TEST_REPORT: false # | Functionality must be implemented
+
+          # | Storybook unit Tests
+          IS_STORYBOOK_UNIT_TEST_REPORT: false # | Functionality must be implemented
+
+          # | App unit Tests
+          IS_APP_UNIT_TEST_REPORT: ${{ inputs.app-unit-test-pub-report }}
           APP_UNIT_TEST_PERCENTAGE: ${{ inputs.app-unit-test-codecov-percentage }}
           APP_UNIT_TEST_DIFF: ${{ inputs.app-unit-test-codecov-diff }}
           APP_UNIT_TEST_STATUS: ${{ inputs.app-unit-test-status }}
 
-          APP_STORYBOOK_BUILD_STATUS: ${{ inputs.app-storybook-build-status }}
-          APP_STORYBOOK_DEPLOYMENT_STATUS: ${{ inputs.app-storybook-deploy-status }}
-
+          # | Env variables
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.gh_pages_custom_domain }}
 
         with:
+          # | "github-token" parameter is required for work with github API
+          github-token: ${{ secrets.GH_TOKEN }}
           script: |
             const script = require('./scripts/ci/github-script-src/publish-issue-comment.js')
-            await script({github, context, core})
+            return await script({github, context, core})
+
+      - name: "Save issue comment prepared content into file"
+        run: |
+          echo ${{ steps.issue-comment-data.outputs.result }}
+          echo ${{ steps.issue-comment-data.outputs.result }} > ./reporter-artifacts/issue-comment-data.txt
+
+      - name: Upload test art
+        uses: actions/upload-artifact@v2
+        with:
+          name: wf-maint-issue-comment-data
+          path: ./reporter-artifacts/issue-comment-data.txt

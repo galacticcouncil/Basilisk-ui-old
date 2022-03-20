@@ -1,7 +1,7 @@
 # | Build Application and Storybook. Deploy builds into GihHub Pages. Publish build and deployment statuses as
 # | pull request comment, if any pull request is associated with latest commit.
 
-name: "Build-Deploy-Report App and Storybook"
+name: 'Build-Deploy-Report App and Storybook'
 
 on:
   push:
@@ -18,7 +18,7 @@ on:
 jobs:
   build:
     # | Build Application and Storybook.
-    name: "Build"
+    name: 'Build'
     uses: ./.github/workflows/_called_build.yml
     with:
       app-build-artifact-name: app-build-files
@@ -27,7 +27,7 @@ jobs:
 
   deploy:
     # | Deploy Application and Storybook into GitHub Pages. Folder name is the same as working branch.
-    name: "Deploy"
+    name: 'Deploy'
     needs: build
     uses: ./.github/workflows/_called_deploy.yml
     if: ${{ needs.build.result=='success' }}
@@ -40,13 +40,12 @@ jobs:
 
   report-statuses-in-issue:
     # | Publish build and deployment statuses as pull request comment,
-    # | if any pull request is associated with the latest commit.
-    name: "Report in PR"
+    # | if any pull request is associated with triggered commit.
+    name: 'Report in PR'
     uses: ./.github/workflows/_called_report-status-in-issue.yml
     if: always()
-    needs: [ build, deploy ]
+    needs: [build, deploy]
     with:
-      report-msg-title: "Basilisk-UI build/deploy reporter"
       publish-artifacts-list: true
 
       app-storybook-build-pub-report: true
@@ -56,6 +55,7 @@ jobs:
       app-storybook-deploy-status: ${{ needs.deploy.result == 'success' }}
 
       app-unit-test-pub-report: false
+      app-e2e-test-pub-report: false
     secrets:
       gh_token: ${{ secrets.GH_TOKEN }}
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}

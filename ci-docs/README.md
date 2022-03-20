@@ -210,5 +210,10 @@ workflow runs for update the comment_
 
 # FAQ
 
-#### Workflow level `env` variables
+#### :question: Workflow level `env` variables
 We cannot use `env` variables in workflow level because of [this](https://github.com/actions/runner/issues/480) issue.
+
+___
+
+#### :question: `RequestError [HttpError]: Bad credentials` in GitHub API calls
+Probably access token is expired or wrong. Check `GH_TOKEN` token which is saved in Actions secrets.
