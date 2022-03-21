@@ -43,6 +43,8 @@ export const TradeInfo = ({
         return 'Slippage higher than tolerance';
       case 'notEnoughBalanceIn':
         return 'Insufficient balance';
+      case 'notEnoughFeeBalance':
+        return 'Insufficient fee balance'
     }
     return;
   }, [errors?.submit]);

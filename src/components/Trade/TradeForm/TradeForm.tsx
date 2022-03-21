@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import { Balance, Pool, TradeType } from '../../../generated/graphql';
+import { Account, Balance, Maybe, Pool, TradeType } from '../../../generated/graphql';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { useMath } from '../../../hooks/math/useMath';
 import { percentageChange } from '../../../hooks/math/usePercentageChange';
@@ -149,6 +149,7 @@ export interface TradeFormProps {
     inBalance?: Balance;
   };
   activeAccountTradeBalancesLoading: boolean;
+  activeAccount?: Maybe<Account>
 }
 
 export interface TradeFormFields {
@@ -201,6 +202,7 @@ export const TradeForm = ({
   assets,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
+  activeAccount
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
@@ -464,13 +466,13 @@ export const TradeForm = ({
     (async () => {
       switch (tradeType) {
         case TradeType.Buy: {
-          const partialFee = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
-            ?.partialFee.toString();
+          const estimate = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
+          const partialFee = estimate?.partialFee.toString();
           return setPaymentInfo(partialFee);
         }
         case TradeType.Sell: {
-          const partialFee = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
-            ?.partialFee.toString();
+          const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
+          const partialFee = estimate?.partialFee.toString();
           return setPaymentInfo(partialFee);
         }
         default:
@@ -831,6 +833,28 @@ export const TradeForm = ({
                   if (!allowedSlippage) return false;
                   return slippage?.lt(allowedSlippage);
                 },
+                notEnoughFeeBalance: () => {
+                  const assetIn = getValues('assetIn');
+                  const assetInAmount = getValues('assetInAmount');
+
+                  let nativeAssetBalance = find(activeAccount?.balances, {
+                    assetId: '0'
+                  })?.balance;
+
+                  let balanceForFee = nativeAssetBalance;
+
+                  if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
+                    balanceForFee = new BigNumber(nativeAssetBalance)
+                      .minus(assetInAmount)
+                      .toString();
+                  }
+
+                  // this can haunt us later, maybe if !paymentInfo then true?
+                  if (!paymentInfo || !balanceForFee) return false;
+
+                  return new BigNumber(balanceForFee)
+                    .gte(paymentInfo);
+                }
               },
             })}
             disabled={!isValid || tradeLoading || !isDirty}
