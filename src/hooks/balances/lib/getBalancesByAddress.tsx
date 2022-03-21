@@ -1,9 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
-import { includes } from 'lodash';
+import { includes, max } from 'lodash';
 import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 import '@polkadot/api-augment';
+import BigNumber from 'bignumber.js';
 
 /**
  * This function fetches asset balances only for a given set of assetIds.
@@ -48,10 +49,24 @@ export const fetchNativeAssetBalance = async (
 ): Promise<Balance> => {
   // no handling of undefined because apiInstance returns default value of 0 for native asset
   const nativeAssetBalance = await apiInstance.query.system.account(address);
+  // usable native asset balance
+  const freeBalance = nativeAssetBalance.data.free.toString();
+  const miscFrozenBalance = nativeAssetBalance.data.miscFrozen.toString();  
+  const feeFrozenBalance = nativeAssetBalance.data.feeFrozen.toString();
+  const maxFrozenBalance = max([
+    miscFrozenBalance,
+    feeFrozenBalance
+  ]);
+
+  if (!maxFrozenBalance) throw new Error('Unable to determine usable balance');
+
+  const balance = new BigNumber(freeBalance)
+    .minus(maxFrozenBalance)
+    .toString();
 
   return {
     assetId: constants.nativeAssetId,
-    balance: nativeAssetBalance.data.free.toString(),
+    balance
   };
 };
 
