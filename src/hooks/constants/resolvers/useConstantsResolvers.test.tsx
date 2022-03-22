@@ -28,8 +28,6 @@ describe('useConstantsResolvers', () => {
     apiInstance: {} as ApiPromise,
     loading: false,
   });
-  const useTestResolvers = () => useConstantsResolvers();
-
   const renderHookOptions = (
     cache: InMemoryCache,
     resolvers: RenderResult<any>
@@ -113,7 +111,7 @@ describe('useConstantsResolvers', () => {
 
       test(`${name}`, async () => {
         specificMocks && specificMocks();
-        const { result: resolvers } = renderHook(() => useTestResolvers());
+        const { result: resolvers } = renderHook(() => useConstantsResolvers());
         const { result: query, waitForNextUpdate } = renderHook(
           () => hook(),
           renderHookOptions(cache, resolvers)
