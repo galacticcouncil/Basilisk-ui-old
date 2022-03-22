@@ -1,6 +1,18 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
+
+# | Workflow prepares and publishes comment in PR which is related with trigger commit. "Cache issue comment content"
+# | step fetches cached data with prepared and posted comment sections from previous workflow run related with the
+# | same PR. This prepared data (comment sections) will be parsed and extended by report data from current workflow.
+# | Extended data will be used for update of existing comment. With such approach one comment can collect report
+# | data from different workflows which are executed independently one from each other but in context of the same PR.
+# | Currently such report sections are available:
+# | - App Storybook build
+# | - App Storybook deployment to GitHub Pages
+# | - App unit Tests
+# | - App E2E Tests
+
 name: "Reusable :: Report in issue"
 
 on:
@@ -106,10 +118,6 @@ jobs:
           issueCommentDataJson=$(cat ./reporter-artifacts/issue-comment-data.txt)
           echo $issueCommentDataJson
           echo "::set-output name=issueCommentDataJson::$issueCommentDataJson"
-          
-#                    issueCommentDataJson="${issueCommentDataJson//'%'/'%25'}"
-      #          issueCommentDataJson="${issueCommentDataJson//$'\n'/'%0A'}"
-      #          issueCommentDataJson="${issueCommentDataJson//$'\r'/'%0D'}"
 
       - run: mkdir -p reporter-artifacts
         if: steps.check-cache-existance.outputs.cached-comment-data-exists != 'true'
@@ -171,9 +179,3 @@ jobs:
         run: |
           echo ${{ steps.issue-comment-data.outputs.result }}
           echo ${{ steps.issue-comment-data.outputs.result }} > ./reporter-artifacts/issue-comment-data.txt
-
-      - name: Upload test art
-        uses: actions/upload-artifact@v2
-        with:
-          name: wf-maint-issue-comment-data
-          path: ./reporter-artifacts/issue-comment-data.txt

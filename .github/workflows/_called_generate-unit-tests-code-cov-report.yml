@@ -1,7 +1,12 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-name: "Reusable :: Generate unit tests codecov report"
+# | Generate unit tests code coverage overall report with "lcov.info" files from artifacts
+# | ("base-branch-codecov-artifact-name", "working-branch-codecov-artifact-name"). Workflow generates 2 output values:
+# | - codecov_unit_percentage - tests code coverage percent in working branch ;
+# | - codecov_unit_diff - tests code coverage difference with base branch, if PR is available for current commit;
+
+name: "Reusable :: Generate unit tests code coverage overall report"
 
 on:
   workflow_call:

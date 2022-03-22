@@ -15,14 +15,15 @@ on:
       - develop
 
 jobs:
+  # | Build Application and Storybook
   build:
     name: 'Build'
     uses: ./.github/workflows/_called_build.yml
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
-      app-node-modules-cache-key: cache-node-modules-ui-app
 
+  #| Run Ent-To-Ent tests for Application
   app-e2e-tests:
     name: 'Run tests'
     needs: build
@@ -30,8 +31,8 @@ jobs:
     if: ${{ needs.build.result=='success' }}
     with:
       app-build-artifact-name: app-build-files
-      app-node-modules-cache-key: cache-node-modules-ui-app
 
+  # | Publish status of testing in PR comment, if PRr is available.
   report-statuses-in-issue:
     # | Publish build and deployment statuses as pull request comment,
     # | if any pull request is associated with triggered commit.

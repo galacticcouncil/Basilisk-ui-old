@@ -1,14 +1,24 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
+
+# | Deploy Application and Storybook production ready builds into GitHub Pages.
+# | Workflow uses build files from artifacts ("app-build-artifact-name", "storybook-build-artifact-name"), which are
+# | prepared by previous workflows.
+# | Each branch `develop|feat|fix/**` deploys to appropriate folder in "gh_pages_full_branch" (value: `app-builds-gh-pages`)
+# | branch. Branch folder contains 2 sub-folders: `app` and `storybook` for UI app and Storybook builds
+# | accordingly.
+
 name: "Reusable :: Deploy"
 
 on:
   workflow_call:
     inputs:
+      # | Application build files artifact name
       app-build-artifact-name:
         required: true
         type: string
+      # | Storybook build files artifact name
       storybook-build-artifact-name:
         required: true
         type: string

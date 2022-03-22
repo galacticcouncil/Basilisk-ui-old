@@ -1,19 +1,19 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
+# | Run End-To-End tests in Application.
 name: "Reusable :: E2E tests :: App"
 
 on:
   workflow_call:
     inputs:
+      # | Application build files artifact name
       app-build-artifact-name:
-        required: true
-        type: string
-      app-node-modules-cache-key:
         required: true
         type: string
 
 jobs:
+  # | Run E2E tests
   run:
     name: "Run"
     runs-on: ubuntu-latest
@@ -144,19 +144,19 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: traces_screenshots
+          name: app-e2e-tests-traces-screenshots
           path: ./ui-app/traces
 
       - name: "Upload e2e tests report file"
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: e2e_tests_report_html
+          name: app-e2e-tests-report-html
           path: ./ui-app/ui-app-e2e-results.html
 
       - name: "Upload testnet logs"
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: testnet-sandbox-logs
+          name: app-e2e-tests-testnet-sandbox-logs
           path: ./Basilisk-api/testnet-sandbox-logs

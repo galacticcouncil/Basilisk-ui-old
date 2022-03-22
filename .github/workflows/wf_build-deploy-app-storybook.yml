@@ -23,10 +23,9 @@ jobs:
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
-      app-node-modules-cache-key: cache-node-modules-ui-app
 
   deploy:
-    # | Deploy Application and Storybook into GitHub Pages. Folder name is the same as working branch.
+    # | Deploy Application and Storybook into GitHub Pages.
     name: 'Deploy'
     needs: build
     uses: ./.github/workflows/_called_deploy.yml
@@ -38,6 +37,7 @@ jobs:
       gh_token: ${{ secrets.GH_TOKEN }}
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
 
+  # | Publish status of testing in PR comment, if PRr is available.
   report-statuses-in-issue:
     # | Publish build and deployment statuses as pull request comment,
     # | if any pull request is associated with triggered commit.

@@ -1,6 +1,10 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
+
+# | Build Application and Storybook production ready files. Build results will be saved as artifacts with names, passed
+# | in "app-build-artifact-name" and "storybook-build-artifact-name" inputs.
+
 name: "Reusable :: Build"
 
 on:
@@ -12,9 +16,7 @@ on:
       storybook-build-artifact-name:
         required: true
         type: string
-      app-node-modules-cache-key:
-        required: true
-        type: string
+
 jobs:
   build:
     name: Build
