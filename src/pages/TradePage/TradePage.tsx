@@ -424,6 +424,7 @@ export const TradePage = () => {
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}
           assets={assets}
+          activeAccount={activeAccountData?.activeAccount}
           activeAccountTradeBalances={tradeBalances}
           activeAccountTradeBalancesLoading={
             activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
