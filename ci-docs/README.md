@@ -63,11 +63,28 @@ Jobs:
 - Build App and Storybook (`build-app-storybook`);
 - Run App e2e tests (`app-e2e-tests`);
 
+
+#### :file_folder: App Unit testing
+```yaml
+push:
+  branches:
+    - 'fix/**'
+    - 'feat/**'
+    - develop
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+```
+Jobs:
+- Testing (`testing`);
+
 ---
 
 ## Existing reusing workflows
 
-#### :chains:  Build App and Storybook ([.github/workflows/_called_build.yml](.github/workflows/_called_build.yml))
+#### :chains:  Build App and Storybook ([.github/workflows/_called_build.yml](/.github/workflows/_called_build.yml))
 Build application and storybook. Results are saved as artifacts with passed names.
 
 :inbox_tray: ***Inputs***:
@@ -83,7 +100,7 @@ Build application and storybook. Results are saved as artifacts with passed name
 
 <hr />
 
-#### :chains:  Deploy App and Storybook ([.github/workflows/_called_deploy-to-gh-pages.yml](.github/workflows/_called_deploy-to-gh-pages.yml))
+#### :chains:  Deploy App and Storybook ([.github/workflows/_called_deploy.yml](/.github/workflows/_called_deploy.yml))
 Deploy application and storybook to github pages.
 
 
@@ -113,7 +130,7 @@ For access to the builds you can use these paths:
 
 <hr />
 
-#### :chains:  Run unit tests on UI app ([.github/workflows/_called_run-app-unit-tests.yml](.github/workflows/_called_run-app-unit-tests.yml))
+#### :chains:  Run unit tests on UI app ([.github/workflows/_called_run-unit-tests-app.yml](/.github/workflows/_called_run-unit-tests-app.yml))
 Run unit tests in UI application. If trigger event is `pull_request`, workflow builds/tests target branch as well.
 Reports can be used in `Publish reports in PR and Discord` workflow for generating code coverage difference value.
 
@@ -131,7 +148,7 @@ Reports can be used in `Publish reports in PR and Discord` workflow for generati
 
 <hr />
 
-#### :chains:  Generate tests code coverage reports ([.github/workflows/_called_generate-unit-tests-code-cov-report.yml](.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
+#### :chains:  Generate tests code coverage reports ([.github/workflows/_called_generate-unit-tests-code-cov-report.yml](/.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
 Generate unit tests code coverage report from report files, which must be provided as artifacts and names of artifacts as 
 workflow inputs.
 
@@ -150,31 +167,7 @@ workflow inputs.
 
 <hr />
 
-#### :chains:  Publish reports in Discord ([.github/workflows/_called_publish-report-discord.yml](.github/workflows/_called_publish-report-discord.yml))
-Publish statuses and reports from different steps of root workflow in Discord channel. Workflow is based on libraries
-`GitHub Script`, `Discord for GitHub Actions`.
-
-:inbox_tray: ***Inputs***:
-- `app-build-pub-in-discord`: **Boolean, required** - _publish application build status in Discord channel_
-- `app-build-status`: **Boolean** - _is application build successful_
-- `app-sb-deploy-pub-report-in-discord`: **Boolean, required** - _publish application and Storybook in Discord channel_
-- `app-sb-deploy-status`: **Boolean** - _is application and storybook deployment successful_
-- `app-unit-test-pub-report-in-discord`: **Boolean** - _publish application unit tests report in Discord channel_
-- `app-unit-test-status`: **Boolean** - _is application unit testing successful_
-- `app-unit-test-codecov-percentage`: **String** - _Total Percentage coverage_
-- `app-unit-test-codecov-diff`: **String** - _Percentage difference between head branch_
-
-:outbox_tray: ***Outputs***: -//-
-
-:bricks: ***Artifacts***: -//-
-
-:lock: ***Secrets***:
-- `gh_pages_full_branch`: _required_
-- `discord_alert_ui_web_hook`: _required_
-
-<hr />
-
-### :chains:  Report status in issue ([.github/workflows/_called_report-status-in-issue.yml](.github/workflows/_called_report-in-issue.yml))
+### :chains:  Report status in issue ([.github/workflows/_called_report-status-in-issue.yml](/.github/workflows/_called_report-status-in-issue.yml))
 Publish statuses and reports from different steps of root workflow as comment in related PR. Workflow is based on libraries
 `GitHub Script`. If we need fetch available artifacts, so it can be done only in separate/next workflow run after workflow run
 which generates these artifacts. Artifacts are not visible for API before run is completed. More details in 
@@ -186,16 +179,16 @@ explained in diagram below:
 
 :inbox_tray: ***Inputs***:
 - `publish-artifacts-list`: **Boolean, required** - _publish available artifacts list. Needs automatic run of dispatched workflow_
-- `report-msg-title`: **String, required** - _Title for comment post. This title will be used for matching comment in next
-workflow runs for update the comment_
-- `app-build-pub-report`: **Boolean, required** - _publish application build status_
-- `app-build-status`: **Boolean** - _is application build successful_
-- `app-sb-deploy-pub-report`: **Boolean, required** - _publish application and Storybook_
-- `app-sb-deploy-status`: **Boolean** - _is application and storybook deployment successful_
+- `app-storybook-build-pub-report`: **Boolean, required** - _publish application build status_
+- `app-storybook-build-status`: **Boolean** - _is application build successful_
+- `app-storybook-deploy-pub-report`: **Boolean, required** - _publish application and Storybook_
+- `app-storybook-deploy-status`: **Boolean** - _is application and storybook deployment successful_
 - `app-unit-test-pub-report`: **Boolean** - _publish application unit tests report in related PR_
 - `app-unit-test-status`: **Boolean** - _is application unit testing successful_
 - `app-unit-test-codecov-percentage`: **String** - _Total Percentage coverage_
 - `app-unit-test-codecov-diff`: **String** - _Percentage difference between head branch_
+- `app-e2e-test-pub-report`: **String** - _publish application E2E tests report in related PR_
+- `app-e2e-test-status`: **String** - _is application E2E testing successful_
 
 :outbox_tray: ***Outputs***: -//-
 
