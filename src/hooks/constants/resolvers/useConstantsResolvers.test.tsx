@@ -12,7 +12,7 @@ import { __typename } from './query/constants/constants';
 interface HooksTestParams {
   name: string;
   hook: () => any;
-  specificMocks: () => any;
+  specificMocks?: () => any;
   expectedData: any;
   expectedCache: any;
 }
@@ -111,7 +111,7 @@ describe('useConstantsResolvers', () => {
       expectedCache,
     }: HooksTestParams) => {
       test(`${name}`, async () => {
-        specificMocks();
+        specificMocks && specificMocks();
         const { result: resolvers } = renderHook(() => useTestResolvers());
         const { result: query, waitForNextUpdate } = renderHook(
           () => hook(),
