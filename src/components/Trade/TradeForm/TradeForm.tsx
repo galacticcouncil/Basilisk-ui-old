@@ -31,6 +31,7 @@ import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
 import { estimateBuy } from '../../../hooks/pools/xyk/buy';
 import { estimateSell } from '../../../hooks/pools/xyk/sell';
+import { payment } from '@polkadot/types/interfaces/definitions';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -457,29 +458,34 @@ export const TradeForm = ({
   const { apiInstance } = usePolkadotJsContext()
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
-  useEffect(() => {
+  const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
-    const [ assetIn, assetOut, assetInAmount, assetOutAmount ] = getValues(['assetIn', 'assetOut', 'assetInAmount', 'assetOutAmount']);
-    
+    let [ assetIn, assetOut, assetInAmount, assetOutAmount ] = getValues(['assetIn', 'assetOut', 'assetInAmount', 'assetOutAmount']);
+
     if (!assetIn || !assetOut || !assetInAmount || !assetOutAmount || !tradeLimit) return;
 
-    (async () => {
-      switch (tradeType) {
-        case TradeType.Buy: {
-          const estimate = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
-          const partialFee = estimate?.partialFee.toString();
-          return setPaymentInfo(partialFee);
-        }
-        case TradeType.Sell: {
-          const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
-          const partialFee = estimate?.partialFee.toString();
-          return setPaymentInfo(partialFee);
-        }
-        default:
-          return;
+    switch (tradeType) {
+      case TradeType.Buy: {
+        const estimate = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
+        const partialFee = estimate?.partialFee.toString();
+        return partialFee
       }
-    })();
-    
+      case TradeType.Sell: {
+        const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
+        const partialFee = estimate?.partialFee.toString();
+        return partialFee
+      }
+      default:
+        return;
+    }
+  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount']), tradeLimit, tradeType]);
+
+  useEffect(() => {
+    (async () => {
+      const paymentInfo = await calculatePaymentInfo();
+      if (!paymentInfo) return;
+      setPaymentInfo(paymentInfo)
+    })()
   }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount']), tradeLimit, tradeType]);
 
   useEffect(() => {
@@ -533,7 +539,6 @@ export const TradeForm = ({
   const { debugComponent } = useDebugBoxContext();
 
   useEffect(() => {
-    console.log('all values', getValues());
     debugComponent('TradeForm', {
       ...getValues(),
       spotPrice,
@@ -542,11 +547,12 @@ export const TradeForm = ({
       assetOutLiquidity,
       tradeBalances: {
         ...tradeBalances,
-        inTradeChange: tradeBalances.inTradeChange?.toString(),
-        outTradeChange: tradeBalances.outTradeChange?.toString(),
+        inTradeChange: tradeBalances.inTradeChange?.toFixed(10),
+        outTradeChange: tradeBalances.outTradeChange?.toFixed(10),
       },
       tradeType,
-      slippage: slippage?.toString(),
+      isDirty: formState.isDirty,
+      slippage: slippage?.toFixed(10),
       errors: Object.keys(errors).reduce((reducedErrors, error) => {
         return {
           ...reducedErrors,
@@ -563,8 +569,77 @@ export const TradeForm = ({
     errors,
     assetInLiquidity,
     assetOutLiquidity,
-    slippage
+    slippage,
+    formState.isDirty
   ]);
+
+  const minTradeLimitIn = useCallback((assetInAmount?: Maybe<string>) => {
+    if (!assetInAmount || assetInAmount === '0') return false;
+    return new BigNumber(assetInLiquidity || '0')
+      .dividedBy(3)
+      .gte(assetInAmount);
+  }, [assetInLiquidity]);
+
+  const [maxAmountInLoading, setMaxAmountInLoading] = useState(false);
+
+  const calculateMaxAmountIn = useCallback(async () => {
+    const [assetIn, assetOut] = getValues(['assetIn', 'assetOut']);
+    console.log('calculateMaxAmountIn1', 
+      tradeBalances.inBeforeTrade,
+      cache,
+      apiInstance,
+      assetIn,
+      assetOut,
+    )
+    if (!tradeBalances.inBeforeTrade || !cache || !apiInstance || !assetIn || !assetOut) return;
+    console.log('calculateMaxAmountIn11')
+    const maxAmount = tradeBalances.inBeforeTrade;
+    const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, maxAmount, '0'))
+    console.log('calculateMaxAmountIn11 estimate done', estimate)
+    const paymentInfo = estimate?.partialFee.toString()
+    const maxAmountWithoutFee = new BigNumber(maxAmount).minus(paymentInfo || '0');
+    console.log('calculateMaxAmountIn12', { estimate, paymentInfo });
+
+    return (
+      getValues('assetIn') === '0'
+        // max amount changed when all fields are filled out since that allows
+        // us to calculate paymentInfo
+        ? maxAmountWithoutFee.gt('0')
+            ? maxAmountWithoutFee.toFixed(10) : undefined
+        : maxAmount
+    );
+  }, [tradeBalances.inBeforeTrade, paymentInfo, cache, apiInstance, ...watch(['assetIn'])])
+
+  // useEffect(() => {
+  //   if (!maxAmountInLoading || !paymentInfo) return;
+  //   calculateMaxAmountIn();
+  // }, [maxAmountIn, paymentInfo, maxAmountInLoading, cache, apiInstance]);
+
+  const handleMaxButtonOnClick = useCallback(async () => {
+    setMaxAmountInLoading(true);
+    const maxAmountIn = await calculateMaxAmountIn();
+    console.log('setting max amount in', maxAmountIn);
+    if (maxAmountIn && new BigNumber(maxAmountIn).gt('0')) setValue('assetInAmount', maxAmountIn, {
+      shouldDirty: true,
+      shouldValidate: true
+    })
+    setMaxAmountInLoading(false);
+  }, [calculateMaxAmountIn]);
+
+  const [maxAmountIn, setMaxAmountIn] = useState<string | undefined>();
+  useEffect(() => {
+    (async () => {
+      setMaxAmountIn(await calculateMaxAmountIn())
+    })()
+  }, [calculateMaxAmountIn, activeAccount]);
+
+  useEffect(() => {
+    (async () => {
+      setMaxAmountIn(await calculateMaxAmountIn())
+    })()
+  }, [])
+
+  console.log('maxAmountIn', maxAmountIn);
 
   return (
     <div className="trade-form-wrapper">
@@ -591,8 +666,18 @@ export const TradeForm = ({
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
               assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
+              maxBalanceLoading={maxAmountInLoading}
             />
+            {console.log('maxBalanceLoading', maxAmountInLoading, maxAmountIn)}
             <div className="balance-info balance-out-info">
+              <div 
+                className={classNames('max-button', {
+                  disabled: maxAmountInLoading || (!maxAmountInLoading && !(maxAmountIn && new BigNumber(maxAmountIn).gt('0')))
+                })}
+                onClick={() => (maxAmountIn && new BigNumber(maxAmountIn).gt('0')) && handleMaxButtonOnClick()}
+              >
+                MAX
+              </div>
               {activeAccountTradeBalancesLoading ||
               isPoolLoading
               ? (
@@ -813,7 +898,7 @@ export const TradeForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.inBalance.balance
-                  ).gt(assetInAmount);
+                  ).gte(assetInAmount);
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
@@ -824,10 +909,7 @@ export const TradeForm = ({
                 },
                 maxTradeLimitIn: () => {
                   const assetInAmount = getValues('assetInAmount');
-                  if (!assetInAmount || assetInAmount === '0') return false;
-                  return new BigNumber(assetInLiquidity || '0')
-                    .dividedBy(3)
-                    .gte(assetInAmount);
+                  return minTradeLimitIn(assetInAmount);
                 },
                 slippageHigherThanTolerance: () => {
                   if (!allowedSlippage) return false;
@@ -846,7 +928,7 @@ export const TradeForm = ({
                   if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
                     balanceForFee = new BigNumber(nativeAssetBalance)
                       .minus(assetInAmount)
-                      .toString();
+                      .toFixed(0);
                   }
 
                   // this can haunt us later, maybe if !paymentInfo then true?

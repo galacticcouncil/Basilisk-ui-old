@@ -62,7 +62,15 @@ export const fetchNativeAssetBalance = async (
 
   const balance = new BigNumber(freeBalance)
     .minus(maxFrozenBalance)
-    .toString();
+    .toFixed(0);
+
+  console.log('fetchNativeAssetBalance', {
+    miscFrozenBalance,
+    freeBalance,
+    feeFrozenBalance,
+    maxFrozenBalance,
+    balance
+  })
 
   return {
     assetId: constants.nativeAssetId,

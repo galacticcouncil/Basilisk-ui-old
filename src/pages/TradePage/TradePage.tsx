@@ -388,6 +388,8 @@ export const TradePage = () => {
       assetId: assetIds.assetIn,
     }) as Balance | undefined;
 
+    console.log('tradeBalances', outBalance, inBalance);
+
     return { outBalance, inBalance };
   }, [activeAccountTradeBalancesData, assetIds]);
 
