@@ -66,8 +66,8 @@ describe('useConstantsResolvers', () => {
           __typename: __typename,
           lbp: {
             repayFee: {
-              numerator: expect.anything(),
-              denominator: expect.anything(),
+              numerator: expect.any(String),
+              denominator: expect.any(String),
             },
           },
         },
@@ -78,8 +78,8 @@ describe('useConstantsResolvers', () => {
           id: __typename,
           lbp: {
             repayFee: {
-              numerator: expect.anything(),
-              denominator: expect.anything(),
+              numerator: expect.any(String),
+              denominator: expect.any(String),
             },
           },
         },

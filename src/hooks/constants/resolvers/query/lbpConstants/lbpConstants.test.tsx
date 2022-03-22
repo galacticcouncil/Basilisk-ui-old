@@ -29,8 +29,8 @@ describe('lbpConstants', () => {
 
       expect(lbpConstantsQueryResolver).toEqual({
         repayFee: {
-          numerator: expect.anything(),
-          denominator: expect.anything(),
+          numerator: expect.any(String),
+          denominator: expect.any(String),
         },
       });
     });
