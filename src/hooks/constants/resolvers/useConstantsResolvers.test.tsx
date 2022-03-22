@@ -64,29 +64,40 @@ describe('useConstantsResolvers', () => {
         const getRepayFeeMock = getRepayFee as unknown as jest.Mock<
           typeof getRepayFee
         >;
-        getRepayFeeMock.mockImplementationOnce(() => jest.fn());
+        getRepayFeeMock.mockImplementationOnce(() =>
+          jest.fn().mockReturnValueOnce({
+            numerator: 'mock',
+            denominator: 'mock',
+          })()
+        );
       },
-      expectedData: expect.objectContaining({
-        constants: expect.objectContaining({
+      expectedData: {
+        constants: {
           __typename: __typename,
-          lbp: expect.objectContaining({
-            repayFee: expect.anything(),
-          }),
-        }),
-      }),
-      expectedCache: expect.objectContaining({
-        [cacheKey]: expect.objectContaining({
+          lbp: {
+            repayFee: {
+              numerator: expect.anything(),
+              denominator: expect.anything(),
+            },
+          },
+        },
+      },
+      expectedCache: {
+        [cacheKey]: {
           __typename: __typename,
           id: __typename,
-          lbp: expect.objectContaining({
-            repayFee: expect.anything(),
-          }),
-        }),
+          lbp: {
+            repayFee: {
+              numerator: expect.anything(),
+              denominator: expect.anything(),
+            },
+          },
+        },
         ROOT_QUERY: {
           __typename: 'Query',
           constants: { __ref: cacheKey },
         },
-      }),
+      },
     },
   ];
 
@@ -108,7 +119,6 @@ describe('useConstantsResolvers', () => {
         );
 
         await waitForNextUpdate();
-
         expect(query.current.data).toEqual(expectedData);
         const updatedCache = cache.extract();
         expect(updatedCache).toEqual(expectedCache);

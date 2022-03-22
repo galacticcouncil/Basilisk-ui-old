@@ -15,18 +15,24 @@ describe('lbpConstants', () => {
 
     beforeEach(() => {
       apiInstance = getMockApiPromise();
-      getRepayFeeMock.mockImplementationOnce(() => jest.fn());
+      getRepayFeeMock.mockImplementationOnce(() =>
+        jest.fn().mockReturnValueOnce({
+          numerator: 'mock',
+          denominator: 'mock',
+        })()
+      );
     });
 
     it('resolves with apiInstance', () => {
       const lbpConstantsQueryResolver =
         lbpConstantsQueryResolverFactory(apiInstance)();
 
-      expect(lbpConstantsQueryResolver).toEqual(
-        expect.objectContaining({
-          repayFee: expect.anything(),
-        })
-      );
+      expect(lbpConstantsQueryResolver).toEqual({
+        repayFee: {
+          numerator: expect.anything(),
+          denominator: expect.anything(),
+        },
+      });
     });
   });
 
