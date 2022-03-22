@@ -28,8 +28,6 @@ describe('useConstantsResolvers', () => {
     apiInstance: {} as ApiPromise,
     loading: false,
   });
-  const cacheKey = `${__typename}:${__typename}`;
-  const cache: InMemoryCache = new InMemoryCache();
   const useTestResolvers = () => useConstantsResolvers();
 
   const renderHookOptions = (
@@ -49,13 +47,7 @@ describe('useConstantsResolvers', () => {
       },
     };
   };
-
-  beforeEach(() => {
-    usePolkadotJsContextMock.mockImplementationOnce(() =>
-      jest.fn().mockImplementationOnce(getMockedPolkadotJsContext)()
-    );
-  });
-
+  const cacheKey = `${__typename}:${__typename}`;
   const testHooks = [
     {
       name: 'useGetLbpConstantsQuery',
@@ -110,6 +102,15 @@ describe('useConstantsResolvers', () => {
       expectedData,
       expectedCache,
     }: HooksTestParams) => {
+      let cache: InMemoryCache;
+
+      beforeEach(() => {
+        cache = new InMemoryCache();
+        usePolkadotJsContextMock.mockImplementationOnce(() =>
+          jest.fn().mockImplementationOnce(getMockedPolkadotJsContext)()
+        );
+      });
+
       test(`${name}`, async () => {
         specificMocks && specificMocks();
         const { result: resolvers } = renderHook(() => useTestResolvers());
