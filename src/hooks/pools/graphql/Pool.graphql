@@ -1,3 +1,4 @@
+#import './../../constants/graphql/Constants.graphql'
 #import './../../balances/graphql/Balance.graphql'
 
 enum PoolType {
@@ -25,11 +26,6 @@ type LBPAssetWeights {
   initial: String!
   final: String!
   current: String!
-}
-
-type Fee {
-  numerator: String!
-  denominator: String!
 }
 
 # TODO: figure out which fields are populated at creation and at update
