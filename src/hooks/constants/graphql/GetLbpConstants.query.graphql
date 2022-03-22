@@ -1,0 +1,10 @@
+query GetLbpConstants {
+  constants @client {
+    lbp {
+      repayFee {
+        numerator
+        denominator
+      }
+    }
+  }
+}

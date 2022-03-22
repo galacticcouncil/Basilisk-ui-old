@@ -6,7 +6,7 @@ type LbpConstants {
 
 type Constants {
   id: String!
-  lbp: LbpConstants
+  lbp: LbpConstants!
 }
 
 extend type Query {

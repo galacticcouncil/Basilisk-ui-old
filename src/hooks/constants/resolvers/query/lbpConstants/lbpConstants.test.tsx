@@ -1,112 +1,44 @@
-import { useQuery } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
-import { gql } from 'graphql.macro';
 import { ApiPromise } from '@polkadot/api';
-import {
-  lbpConstantsQueryResolverFactory,
-  useLbpConstantsQueryResolver,
-} from './lbpConstants';
-import { LbpConstants } from '../../../../../generated/graphql';
-import { renderHook, RenderResult } from '@testing-library/react-hooks';
-import { ReactNode } from 'react';
+import { getRepayFee } from '../../../lib/getRepayFee';
+import { lbpConstantsQueryResolverFactory } from './lbpConstants';
 import errors from '../../../../../errors';
 
-const mockedApiInstance = jest.fn();
-jest.mock('../../../../polkadotJs/usePolkadotJs', () => ({
-  usePolkadotJsContext: () => mockedApiInstance(),
-}));
-
-const mockedGetRepayFee = jest.fn();
-jest.mock('../../../lib/getRepayFee', () => ({
-  getRepayFee: () => mockedGetRepayFee(),
-}));
+jest.mock('../../../lib/getRepayFee');
 
 describe('lbpConstants', () => {
-  describe('useLbpConstantsQueryResolver', () => {
-    const mockedUsePolkadotJsContext = {
-      apiInstance: {},
-      loading: false,
-    } as unknown as ApiPromise;
-
-    const mockedGetRepayFeeValue = {
-      numerator: '3',
-      denominator: '4',
-    };
+  describe('success case', () => {
+    const getMockApiPromise = () => ({} as unknown as ApiPromise);
+    let apiInstance: ApiPromise;
+    const getRepayFeeMock = getRepayFee as unknown as jest.Mock<
+      typeof getRepayFee
+    >;
 
     beforeEach(() => {
-      mockedApiInstance.mockReturnValueOnce(mockedUsePolkadotJsContext);
-      mockedGetRepayFee.mockReturnValueOnce(mockedGetRepayFeeValue);
+      apiInstance = getMockApiPromise();
+      getRepayFeeMock.mockImplementationOnce(() => jest.fn());
     });
 
-    describe('success case', () => {
-      const useTestResolvers = () => {
-        return {
-          Query: {
-            ...useLbpConstantsQueryResolver(),
-          },
-        };
-      };
+    it('resolves with apiInstance', () => {
+      const lbpConstantsQueryResolver =
+        lbpConstantsQueryResolverFactory(apiInstance)();
 
-      interface TestQueryResponse {
-        lbp: LbpConstants;
-      }
-
-      const useTestQuery = () => {
-        return useQuery<TestQueryResponse>(
-          gql`
-            query GetLbp {
-              lbp @client
-            }
-          `
-        );
-      };
-
-      const renderHookOptions = (resolvers: RenderResult<any>) => {
-        return {
-          wrapper: (props: { children: ReactNode }) => {
-            // 14.3.2022 ... https://github.com/testing-library/eslint-plugin-testing-library/issues/386
-            // eslint-disable-next-line testing-library/no-node-access
-            const children = props.children;
-            return (
-              <MockedProvider resolvers={resolvers.current}>
-                {children}
-              </MockedProvider>
-            );
-          },
-        };
-      };
-
-      it('can resolve the query within the rendered component', async () => {
-        const { result: resolvers } = renderHook(() => useTestResolvers());
-
-        const { result: query, waitForNextUpdate } = renderHook(
-          () => useTestQuery(),
-          renderHookOptions(resolvers)
-        );
-
-        await waitForNextUpdate();
-
-        expect(query.current.data).toEqual({
-          lbp: {
-            repayFee: {
-              numerator: mockedGetRepayFeeValue.numerator,
-              denominator: mockedGetRepayFeeValue.denominator,
-            },
-          },
-        });
-      });
+      expect(lbpConstantsQueryResolver).toEqual(
+        expect.objectContaining({
+          repayFee: expect.anything(),
+        })
+      );
     });
+  });
 
-    describe('fail case', () => {
-      it('fails to resolve with missing ApiInstance', () => {
-        const brokenApiInstance = undefined as unknown as ApiPromise;
-        const lbpConstantsQueryResolver =
-          lbpConstantsQueryResolverFactory(brokenApiInstance);
+  describe('fail case', () => {
+    it('fails to resolve with missing ApiInstance', () => {
+      let brokenApiInstance: undefined = undefined;
+      const lbpConstantsQueryResolver =
+        lbpConstantsQueryResolverFactory(brokenApiInstance);
 
-        expect(lbpConstantsQueryResolver).toThrowError(
-          errors.apiInstanceNotInitialized
-        );
-      });
+      expect(lbpConstantsQueryResolver).toThrowError(
+        errors.apiInstanceNotInitialized
+      );
     });
   });
 });
