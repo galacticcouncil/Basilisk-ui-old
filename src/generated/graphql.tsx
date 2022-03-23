@@ -50,6 +50,7 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
+  extension?: Maybe<Extension>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };
