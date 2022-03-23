@@ -4,7 +4,7 @@ import { InMemoryCache } from '@apollo/client';
 import { renderHook, RenderResult } from '@testing-library/react-hooks';
 import { ReactNode } from 'react';
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
-import { getRepayFee } from '../lib/getRepayFee';
+import { getRepayFee, GetRepayFee } from '../lib/getRepayFee';
 import { useGetLbpConstantsQuery } from '../queries/useGetLbpConstantsQuery/useGetLbpConstantsQuery';
 import { useConstantsResolvers } from './useConstantsResolvers';
 import { __typename } from './query/constants/constants';
@@ -51,15 +51,12 @@ describe('useConstantsResolvers', () => {
       name: 'useGetLbpConstantsQuery',
       hook: useGetLbpConstantsQuery,
       specificMocks: () => {
-        const getRepayFeeMock = getRepayFee as unknown as jest.Mock<
-          typeof getRepayFee
-        >;
-        getRepayFeeMock.mockImplementationOnce(() =>
-          jest.fn().mockReturnValueOnce({
-            numerator: 'mock',
-            denominator: 'mock',
-          })()
-        );
+        const getRepayFeeMock =
+          getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
+        getRepayFeeMock.mockReturnValueOnce({
+          numerator: 'mock',
+          denominator: 'mock',
+        });
       },
       expectedData: {
         constants: {

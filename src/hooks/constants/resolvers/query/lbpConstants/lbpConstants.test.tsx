@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { getRepayFee } from '../../../lib/getRepayFee';
+import { getRepayFee, GetRepayFee } from '../../../lib/getRepayFee';
 import { lbpConstantsQueryResolverFactory } from './lbpConstants';
 import errors from '../../../../../errors';
 
@@ -9,25 +9,21 @@ describe('lbpConstants', () => {
   describe('success case', () => {
     const getMockApiPromise = () => ({} as unknown as ApiPromise);
     let apiInstance: ApiPromise;
-    const getRepayFeeMock = getRepayFee as unknown as jest.Mock<
-      typeof getRepayFee
-    >;
+    const getRepayFeeMock =
+      getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
 
     beforeEach(() => {
       apiInstance = getMockApiPromise();
-      getRepayFeeMock.mockImplementationOnce(() =>
-        jest.fn().mockReturnValueOnce({
-          numerator: 'mock',
-          denominator: 'mock',
-        })()
-      );
+      getRepayFeeMock.mockReturnValueOnce({
+        numerator: 'mock',
+        denominator: 'mock',
+      });
     });
 
-    it('resolves with apiInstance', () => {
-      const lbpConstantsQueryResolver =
-        lbpConstantsQueryResolverFactory(apiInstance)();
+    it('resolves lbpConstants with apiInstance', () => {
+      const lbpConstants = lbpConstantsQueryResolverFactory(apiInstance)();
 
-      expect(lbpConstantsQueryResolver).toEqual({
+      expect(lbpConstants).toEqual({
         repayFee: {
           numerator: expect.any(String),
           denominator: expect.any(String),

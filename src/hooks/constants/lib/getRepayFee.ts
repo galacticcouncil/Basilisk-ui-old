@@ -1,6 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { Fee } from '../../../generated/graphql';
 
+export type GetRepayFee = (apiInstance: ApiPromise) => Fee;
+
 export const repayFeeDataType = '(u32, u32)';
 
 export const getRepayFee = (apiInstance: ApiPromise): Fee => {
