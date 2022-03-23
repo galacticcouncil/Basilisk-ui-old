@@ -13,13 +13,18 @@ export type Scalars = {
   Float: number;
 };
 
-export type Account = {
+export type Account = Balances & {
   __typename?: 'Account';
   balances: Array<Balance>;
   genesisHash?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
+};
+
+
+export type AccountBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type Asset = {
@@ -40,6 +45,20 @@ export type Balance = {
   id?: Maybe<Scalars['String']>;
 };
 
+export type Balances = {
+  balances: Array<Balance>;
+};
+
+
+export type BalancesBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export enum ChromeExtension {
+  Polkadotjs = 'POLKADOTJS',
+  Talisman = 'TALISMAN'
+}
+
 export type Config = {
   __typename?: 'Config';
   appName: Scalars['String'];
@@ -50,7 +69,7 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
-  extension?: Maybe<Extension>;
+  extension?: Maybe<ChromeExtension>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };
@@ -95,9 +114,15 @@ export type LastBlock = {
   relaychainBlockNumber?: Maybe<Scalars['String']>;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  setActiveAccount?: Maybe<Account>;
+};
+
 export type Pool = LbpPool | XykPool;
 
-export type Query = {
+export type Query = Balances & {
   __typename?: 'Query';
   _assetIds?: Maybe<AssetIds>;
   _empty?: Maybe<Scalars['String']>;
@@ -110,7 +135,12 @@ export type Query = {
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
-  pools?: Maybe<Array<Pool>>;
+  pools: Array<Pool>;
+};
+
+
+export type QueryBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export enum TradeType {
