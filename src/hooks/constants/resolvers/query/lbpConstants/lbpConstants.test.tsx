@@ -6,41 +6,39 @@ import errors from '../../../../../errors';
 jest.mock('../../../lib/getRepayFee');
 
 describe('lbpConstants', () => {
-  describe('success case', () => {
-    const getMockApiPromise = () => ({} as unknown as ApiPromise);
-    let apiInstance: ApiPromise;
-    const getRepayFeeMock =
-      getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
+  describe('lbpConstantsQueryResolverFactory', () => {
+    describe('success case', () => {
+      const getRepayFeeMock =
+        getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
 
-    beforeEach(() => {
-      apiInstance = getMockApiPromise();
-      getRepayFeeMock.mockReturnValueOnce({
-        numerator: 'mock',
-        denominator: 'mock',
+      it('resolves lbpConstants with apiInstance', () => {
+        getRepayFeeMock.mockReturnValueOnce({
+          numerator: 'mock',
+          denominator: 'mock',
+        });
+        const lbpConstants = lbpConstantsQueryResolverFactory(
+          {} as unknown as ApiPromise
+        )();
+
+        expect(lbpConstants).toEqual({
+          repayFee: {
+            numerator: expect.any(String),
+            denominator: expect.any(String),
+          },
+        });
       });
     });
 
-    it('resolves lbpConstants with apiInstance', () => {
-      const lbpConstants = lbpConstantsQueryResolverFactory(apiInstance)();
+    describe('fail case', () => {
+      it('fails to resolve with missing ApiInstance', () => {
+        let brokenApiInstance: undefined = undefined;
+        const lbpConstantsQueryResolver =
+          lbpConstantsQueryResolverFactory(brokenApiInstance);
 
-      expect(lbpConstants).toEqual({
-        repayFee: {
-          numerator: expect.any(String),
-          denominator: expect.any(String),
-        },
+        expect(lbpConstantsQueryResolver).toThrowError(
+          errors.apiInstanceNotInitialized
+        );
       });
-    });
-  });
-
-  describe('fail case', () => {
-    it('fails to resolve with missing ApiInstance', () => {
-      let brokenApiInstance: undefined = undefined;
-      const lbpConstantsQueryResolver =
-        lbpConstantsQueryResolverFactory(brokenApiInstance);
-
-      expect(lbpConstantsQueryResolver).toThrowError(
-        errors.apiInstanceNotInitialized
-      );
     });
   });
 });
