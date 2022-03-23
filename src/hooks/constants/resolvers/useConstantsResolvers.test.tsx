@@ -21,13 +21,10 @@ jest.mock('../../polkadotJs/usePolkadotJs');
 jest.mock('../lib/getRepayFee');
 
 describe('useConstantsResolvers', () => {
-  const usePolkadotJsContextMock = usePolkadotJsContext as unknown as jest.Mock<
-    typeof usePolkadotJsContext
-  >;
-  const getMockedPolkadotJsContext = () => ({
-    apiInstance: {} as ApiPromise,
-    loading: false,
-  });
+  const usePolkadotJsContextMock =
+    usePolkadotJsContext as unknown as jest.MockedFunction<
+      typeof usePolkadotJsContext
+    >;
   const renderHookOptions = (
     cache: InMemoryCache,
     resolvers: RenderResult<any>
@@ -101,9 +98,10 @@ describe('useConstantsResolvers', () => {
 
       beforeEach(() => {
         cache = new InMemoryCache();
-        usePolkadotJsContextMock.mockImplementationOnce(() =>
-          jest.fn().mockImplementationOnce(getMockedPolkadotJsContext)()
-        );
+        usePolkadotJsContextMock.mockReturnValueOnce({
+          apiInstance: {} as ApiPromise,
+          loading: false,
+        });
       });
 
       test(`${name}`, async () => {
