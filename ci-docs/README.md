@@ -174,13 +174,13 @@ which generates these artifacts. Artifacts are not visible for API before run is
 [this](https://github.com/actions/upload-artifact/issues/50) issue. As result current called workflow has logic, 
 explained in diagram below:
 
-![Publish reports as issue comment](./Publish reports in issue comment flow.png)
+![Publish reports as issue comment](./publish-reports-in-issue-comment-flow.png)
 
 Report status workflow can collect statuses from different workflows and publish them in one single comment.
 This is possible through the use actions caching feature (`actions/cache@v2`). Flow is explained in schema below 
 (_workflow names are provided only for example purposes and can be different in real case_):
 
-![Cached comment data flows](./Cached comment data flows.png)
+![Cached comment data flows](./cached-comment-data-flows.png)
 
 
 :inbox_tray: ***Inputs***:
