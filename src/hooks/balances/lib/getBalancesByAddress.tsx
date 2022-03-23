@@ -60,9 +60,11 @@ export const fetchNativeAssetBalance = async (
 
   if (!maxFrozenBalance) throw new Error('Unable to determine usable balance');
 
-  const balance = new BigNumber(freeBalance)
+  let balance = new BigNumber(freeBalance)
     .minus(maxFrozenBalance)
     .toString();
+
+  balance = new BigNumber(balance).gte('0') ? balance : '0';
 
   return {
     assetId: constants.nativeAssetId,
@@ -96,10 +98,16 @@ export const fetchNonNativeAssetBalances = async (
   return searchResult.map((balanceData, i) => {
     // extract free balance as string
     const freeBalance = balanceData.free.toString();
+    const frozenBalance = balanceData.frozen.toString();
+    let balance = new BigNumber(freeBalance)
+      .minus(frozenBalance)
+      .toString()
+
+    balance = new BigNumber(balance).gte('0') ? balance: '0';
 
     return {
       assetId: assetIds[i], // pair assetId in the same order as provided in query parameter
-      balance: freeBalance,
+      balance,
     };
   });
 };
