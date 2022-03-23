@@ -8,10 +8,9 @@ jest.mock('../../../lib/getRepayFee');
 describe('lbpConstants', () => {
   describe('lbpConstantsQueryResolverFactory', () => {
     describe('success case', () => {
-      const getRepayFeeMock =
-        getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
-
       it('resolves lbpConstants with apiInstance', () => {
+        const getRepayFeeMock =
+          getRepayFee as unknown as jest.MockedFunction<GetRepayFee>;
         getRepayFeeMock.mockReturnValueOnce({
           numerator: 'mock',
           denominator: 'mock',
