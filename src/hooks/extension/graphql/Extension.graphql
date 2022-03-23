@@ -1,8 +1,14 @@
+enum ChromeExtension {
+  POLKADOTJS
+  TALISMAN
+}
+
 # Extension entity that lives in the normalized cache
 # We also use this to generate an Extension type to be used within the implementation
 type Extension {
   id: String!
-  isAvailable: Boolean!
+  isAvailable: Boolean!,
+  extension: ChromeExtension,
 }
 
 # Specify what entity is returned under the `extension` field when queried
