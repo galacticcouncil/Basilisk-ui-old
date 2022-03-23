@@ -176,6 +176,12 @@ explained in diagram below:
 
 ![Publish reports as issue comment](./Publish reports in issue comment flow.png)
 
+Report status workflow can collect statuses from different workflows and publish them in one single comment.
+This is possible through the use actions caching feature (`actions/cache@v2`). Flow is explained in schema below 
+(_workflow names are provided only for example purposes and can be different in real case_):
+
+![Cached comment data flows](./Cached comment data flows.png)
+
 
 :inbox_tray: ***Inputs***:
 - `publish-artifacts-list`: **Boolean, required** - _publish available artifacts list. Needs automatic run of dispatched workflow_
@@ -210,3 +216,8 @@ ___
 
 #### :question: `RequestError [HttpError]: Bad credentials` in GitHub API calls
 Probably access token is expired or wrong. Check `GH_TOKEN` token which is saved in Actions secrets.
+
+___
+
+#### :question: `*.sh: Permission denied` 
+Change file permission (`chmod +x`) and push updated file.

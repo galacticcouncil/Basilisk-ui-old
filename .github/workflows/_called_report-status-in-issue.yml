@@ -1,7 +1,6 @@
 # | This workflow can be invoked only from root workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-
 # | Workflow prepares and publishes comment in PR which is related with trigger commit. "Cache issue comment content"
 # | step fetches cached data with prepared and posted comment sections from previous workflow run related with the
 # | same PR. This prepared data (comment sections) will be parsed and extended by report data from current workflow.
@@ -13,12 +12,11 @@
 # | - App unit Tests
 # | - App E2E Tests
 
-name: "Reusable :: Report in issue"
+name: 'Reusable :: Report in issue'
 
 on:
   workflow_call:
     inputs:
-
       # | If we need publish available run artifacts list, separate workflow must be invoked as artifacts
       # | from current workflow run are not visible for API before run is completed. Dispatch event will be created
       # | automatically from github-script action via GutHub API call in step "Run github-script for preparation and
@@ -79,62 +77,61 @@ on:
 
 jobs:
   publish-report-issue-comment:
-    name: "Publish comment"
+    name: 'Publish comment'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Get Timestamp"
-        id: timestamp
+      - name: 'Get Timestamp'
+        id: get-timestamp
         uses: nanzm/get-time-action@v1.1
         with:
           format: 'YYYYMMDDHHmmssSSS'
 
-      - name: "Cache issue comment content"
-        uses: actions/cache@v2
+      - name: 'Cache issue comment content'
         id: cache-reporter-content
+        uses: actions/cache@v2
         env:
-          TIMESTAMP: ${{ steps.timestamp.outputs.time }}
+          TIMESTAMP: ${{ steps.get-timestamp.outputs.time }}
         with:
           path: ./reporter-artifacts
           key: reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-${{ steps.timestamp.outputs.time }}
           restore-keys: |
             reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-
 
-      - name: "Check if comment data folder exists"
-        id: check-cache-existance
+      - name: 'Check if comment data folder exists'
+        id: check-cache-dir-existance
+        shell: bash
         run: |
-          DIR="./reporter-artifacts"
-          if [ -d "$DIR" ]; then
-            echo "::set-output name=cached-comment-data-exists::true"
-          else
-            echo "::set-output name=cached-comment-data-exists::false"
-          fi
+          sudo chmod +x ./scripts/ci/gh-actions-is-dir-exists.sh
+          echo "##[set-output name=exists;]$(./scripts/ci/gh-actions-is-dir-exists.sh "./reporter-artifacts")"
 
-      - name: "Parse issue comment data from cache"
+      - name: 'Parse issue comment data from cache'
         id: parse-issue-comment-data
-        if: steps.check-cache-existance.outputs.cached-comment-data-exists == 'true'
+        if: steps.check-cache-dir-existance.outputs.exists == 'true'
         run: |
-          issueCommentDataJson=$(cat ./reporter-artifacts/issue-comment-data.txt)
-          echo $issueCommentDataJson
-          echo "::set-output name=issueCommentDataJson::$issueCommentDataJson"
+          ISSUE_COMMENT_DATA=$(cat ./reporter-artifacts/issue-comment-data.txt)
+          echo $ISSUE_COMMENT_DATA
+          echo "::set-output name=data::$ISSUE_COMMENT_DATA"
 
-      - run: mkdir -p reporter-artifacts
-        if: steps.check-cache-existance.outputs.cached-comment-data-exists != 'true'
+      # | Create folder for reporter artifacts if folder is not existing. It can be necessary if comment data is not
+      # | available in cache from previous workflow.
+      - name: 'Create reporter artifacts dir'
+        run: mkdir -p reporter-artifacts
 
-      - name: "Run github-script for preparation and publication comment content"
-        uses: actions/github-script@v6
+      - name: 'Run github-script for preparation and publication comment content'
         id: issue-comment-data
+        uses: actions/github-script@v6
         env:
           # | Title for matching already existing comments in PR for update particular comment.
-          REPORT_MSG_TITLE: "Basilisk UI reporter"
+          REPORT_MSG_TITLE: 'Basilisk UI reporter'
 
           # | Workflow file which will be dispatched from github-script via API for fetching and publication
           # | artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
           PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: wfd_publish-issue-comment-with-artifacts.yml
 
           # | Cached comment data from previous run which has been triggerred for the same PR as for current run.
-          COMMENT_CACHED_CONTENT: ${{steps.parse-issue-comment-data.outputs.issueCommentDataJson || false}}
+          COMMENT_CACHED_CONTENT: ${{steps.parse-issue-comment-data.outputs.data || false}}
 
           # | Artifacts
           PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
@@ -175,7 +172,6 @@ jobs:
             const script = require('./scripts/ci/github-script-src/publish-issue-comment.js')
             return await script({github, context, core})
 
-      - name: "Save issue comment prepared content into file"
-        run: |
-          echo ${{ steps.issue-comment-data.outputs.result }}
-          echo ${{ steps.issue-comment-data.outputs.result }} > ./reporter-artifacts/issue-comment-data.txt
+      # | Save issue comment prepared content into file which will be cached for further workflows
+      - name: 'Save issue comment data'
+        run: echo ${{ steps.issue-comment-data.outputs.result }} > ./reporter-artifacts/issue-comment-data.txt

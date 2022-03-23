@@ -19,15 +19,15 @@ on:
 
 jobs:
   build:
-    name: Build
-    runs-on: macos-11
+    name: "Build"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
       - name: "Setup Node.js"
         uses: actions/setup-node@v2
         with:
-          node-version: 17.3
+          node-version: 17
 
       - name: "Cache Node Modules"
         id: cache-node-modules-ui-app
@@ -38,28 +38,26 @@ jobs:
 
       - name: "Install Node modules"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-        run: rm -rf node_modules && yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
-      - name: "Update browserslist"
-        run: npx browserslist@latest --update-db
+#      - name: "Update browserslist"
+#        run: npx browserslist@latest --update-db
 
-      - name: "Update script file"
-        shell: bash
-        run: chmod -R 777 ./scripts/ci/gh-actions-branch-name-serialize.sh
-
-      - name: "Extract branch folder name"
+      - name: "Extract branch name"
+        id: extract-branch-name
         shell: bash
         run: |
-          if [[ $GITHUB_EVENT_NAME = 'push' ]]
-          then
-            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-          elif [[ $GITHUB_EVENT_NAME = 'pull_request' ]]
-          then
-            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$GITHUB_BASE_REF")"
-          else
-            echo "##[set-output name=branch;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "${GITHUB_REF#refs/heads/}")"
-          fi
-        id: extract_branch
+          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
+          echo "##[set-output name=name;]$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")"
+
+      - name: "Sanitize branch name"
+        id: branch-name-sanitized
+        env:
+          BRANCH_NAME: ${{ steps.extract-branch-name.outputs.name }}
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-branch-name-serialize.sh
+          echo "##[set-output name=name;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$BRANCH_NAME")"
 
       - name: "Build App and Storybook"
         run: |
@@ -67,23 +65,18 @@ jobs:
           yarn run build-storybook -- -o sb-build-files
         env:
           CI: false
-          REACT_APP_GIT_BRANCH: ${{ steps.extract_branch.outputs.branch }}
+          REACT_APP_GIT_BRANCH: ${{ steps.extract-branch-name.outputs.name }}
+          REACT_APP_GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}
           NODE_OPTIONS: --openssl-legacy-provider
-
-      - name: "Upload script files"
-        uses: actions/upload-artifact@v2
-        with:
-          name: script-files
-          path: ./scripts
-
-      - name: "Upload production-ready Storybook build files"
-        uses: actions/upload-artifact@v2
-        with:
-          name: ${{ inputs.storybook-build-artifact-name }}
-          path: ./sb-build-files
 
       - name: "Upload production-ready App build files"
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./build
+
+      - name: "Upload production-ready Storybook build files"
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.storybook-build-artifact-name }}
+          path: ./sb-build-files

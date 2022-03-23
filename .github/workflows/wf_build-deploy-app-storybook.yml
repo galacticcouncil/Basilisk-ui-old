@@ -28,8 +28,8 @@ jobs:
     # | Deploy Application and Storybook into GitHub Pages.
     name: 'Deploy'
     needs: build
-    uses: ./.github/workflows/_called_deploy.yml
     if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_deploy.yml
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
@@ -37,14 +37,14 @@ jobs:
       gh_token: ${{ secrets.GH_TOKEN }}
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
 
-  # | Publish status of testing in PR comment, if PRr is available.
+  # | Publish status of testing in PR comment, if it's available.
   report-statuses-in-issue:
     # | Publish build and deployment statuses as pull request comment,
     # | if any pull request is associated with triggered commit.
     name: 'Report in PR'
-    uses: ./.github/workflows/_called_report-status-in-issue.yml
-    if: always()
     needs: [build, deploy]
+    if: always()
+    uses: ./.github/workflows/_called_report-status-in-issue.yml
     with:
       publish-artifacts-list: true
 

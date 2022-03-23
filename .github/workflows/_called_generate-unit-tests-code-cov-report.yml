@@ -18,7 +18,8 @@ on:
         required: true
         type: string
 
-    # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow:
+    # | More details about reusable workflow outputs -
+    # | https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
     outputs:
       codecov_unit_percentage:
         description: "Total Percentage coverage"
@@ -39,15 +40,15 @@ jobs:
       codecov_output_diff: ${{ steps.code-coverage.outputs.diff }}
     steps:
       - name: "Download code coverage report from base branch"
-        uses: actions/download-artifact@v2
         id: download-base
+        uses: actions/download-artifact@v2
         with:
           name: ${{inputs.base-branch-codecov-artifact-name}}
           path: ./base-report
 
       - name: "Download code coverage report from working branch"
-        uses: actions/download-artifact@v2
         id: download-working
+        uses: actions/download-artifact@v2
         with:
           name: ${{inputs.working-branch-codecov-artifact-name}}
           path: ./working-report
