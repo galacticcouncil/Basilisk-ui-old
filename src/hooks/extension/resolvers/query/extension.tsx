@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { Extension } from '../../../../generated/graphql';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getExtension } from '../../lib/getExtension';
@@ -17,20 +17,25 @@ const withTypename = (extension: Extension) => ({
  *
  * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */
-export const extensionQueryResolver = async () =>
-  withTypename(await getExtension());
+export const extensionQueryResolverFactory = () => 
+  async (): Promise<Extension> =>
+    withTypename(await getExtension());
+
+  
 
 /**
  * For standardization purposes, we expose the resolver as a hook.
  * Since many more complex resolvers require contextual dependency injection,
  * and thus need to apply the useContext hook.
  */
-export const useExtensionQueryResolver = () => ({
-  // key is the entity, value is the resolver
-  extension: withErrorHandler(
-    // practically we dont have to wrap this in useCallback
-    // since it does not have any contextual dependencies
-    useCallback(extensionQueryResolver, []),
-    'extension'
-  ),
-});
+export const useExtensionQueryResolver = () => {
+  return {
+    // key is the entity, value is the resolver
+    extension: withErrorHandler(
+      // practically we dont have to wrap this in useCallback
+      // since it does not have any contextual dependencies
+      useMemo(extensionQueryResolverFactory, []),
+      'extension'
+    ),
+  };
+}

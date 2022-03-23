@@ -1,4 +1,4 @@
-enum ChromeExtension {
+enum BrowserExtension {
   POLKADOTJS
   TALISMAN
 }
@@ -8,7 +8,8 @@ enum ChromeExtension {
 type Extension {
   id: String!
   isAvailable: Boolean!,
-  extension: ChromeExtension,
+  browserExtensions: [BrowserExtension]!,
+  activeBrowserExtension: BrowserExtension
 }
 
 # Specify what entity is returned under the `extension` field when queried

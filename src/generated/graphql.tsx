@@ -54,7 +54,7 @@ export type BalancesBalancesArgs = {
   assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
-export enum ChromeExtension {
+export enum BrowserExtension {
   Polkadotjs = 'POLKADOTJS',
   Talisman = 'TALISMAN'
 }
@@ -69,7 +69,8 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
-  extension?: Maybe<ChromeExtension>;
+  activeBrowserExtension?: Maybe<BrowserExtension>;
+  browserExtensions: Array<Maybe<BrowserExtension>>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };

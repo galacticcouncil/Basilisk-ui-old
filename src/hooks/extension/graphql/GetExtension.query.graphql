@@ -1,6 +1,8 @@
 # Query that triggers the local extension resolver
 query GetExtension {
   extension @client {
-    isAvailable
+    isAvailable,
+    browserExtensions,
+    activeBrowserExtension
   }
 }
