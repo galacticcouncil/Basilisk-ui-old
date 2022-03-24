@@ -86,6 +86,8 @@ describe('balances', () => {
         ['0', '1', '2'],
         ['0', '1', '2'],
       ],
+      [[], []],
+      [[undefined], []],
     ])('can convert an object to an array', (assetIds, expectedAssetIds) => {
       const assetIdsFilteredTransformed = objectToArrayWithFilter(assetIds);
 
