@@ -2,12 +2,13 @@ import { useCallback } from 'react';
 import { getAccounts } from '../../lib/getAccounts';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { withTypename } from '../../types';
+import { ApolloCache } from '@apollo/client';
 
 export const useAccountsQueryResolver = () => {
   return {
     accounts: withErrorHandler(
-      useCallback(async (_obj) => {
-        const accounts = await getAccounts();
+      useCallback(async (_obj, _args, { cache }: { cache: ApolloCache<any> }) => {
+        const accounts = await getAccounts(cache);
 
         console.log('got accounts', accounts);
 

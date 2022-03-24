@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Account } from '../../../../generated/graphql';
+import { Account, BrowserExtension, Maybe } from '../../../../generated/graphql';
 import { AccountSelector } from './../AccountSelector';
 import {
   ModalPortalElementFactory,
@@ -22,7 +22,12 @@ export type ModalPortalElement = ({
   | 'onAccountCleared'
   | 'account'
   | 'isExtensionAvailable'
->) => ModalPortalElementFactory;
+> & {
+  activeBrowserExtension?: Maybe<BrowserExtension>,
+  browserExtensions?: Maybe<BrowserExtension>[],
+  extensionLoading?: boolean,
+  onExtensionChange: (extension?: Maybe<BrowserExtension>) => void
+}) => ModalPortalElementFactory;
 export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
 
 export const useModalPortalElement: ModalPortalElement = ({
@@ -32,6 +37,10 @@ export const useModalPortalElement: ModalPortalElement = ({
   onAccountCleared,
   account,
   isExtensionAvailable,
+  activeBrowserExtension,
+  browserExtensions,
+  extensionLoading,
+  onExtensionChange
 }) => {
   const handleAccountSelected = useCallback(
     (closeModal: CloseModal) => (account: Account) => {
@@ -61,6 +70,10 @@ export const useModalPortalElement: ModalPortalElement = ({
           onAccountCleared={handleAccountCleared(closeModal)}
           closeModal={closeModal}
           isExtensionAvailable={isExtensionAvailable}
+          activeBrowserExtension={activeBrowserExtension}
+          browserExtensions={browserExtensions}
+          extensionLoading={extensionLoading}
+          onExtensionChange={onExtensionChange}
         />
       ) : (
         <></>

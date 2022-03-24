@@ -1,6 +1,7 @@
 enum BrowserExtension {
   POLKADOTJS
-  TALISMAN
+  TALISMAN,
+  UNSET
 }
 
 # Extension entity that lives in the normalized cache
@@ -16,4 +17,10 @@ type Extension {
 # This is again useful for strict typing down the line
 extend type Query {
   extension: Extension!
+}
+
+extend type Mutation {
+  # returning a nullable type to signify an empty returb
+  # TODO: https://stackoverflow.com/questions/44737043/is-it-possible-to-not-return-any-data-when-using-a-graphql-mutation
+  setActiveBrowserExtension(browserExtension: BrowserExtension): Boolean
 }

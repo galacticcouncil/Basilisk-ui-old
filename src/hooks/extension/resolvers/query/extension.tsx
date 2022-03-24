@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from 'react';
-import { Extension } from '../../../../generated/graphql';
+import { BrowserExtension, Extension, InputMaybe } from '../../../../generated/graphql';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getExtension } from '../../lib/getExtension';
+import { usePersistBrowserExtension } from '../mutation/setActiveBrowserExtension';
 
 // make sure the __typename is well typed
 export const __typename: Extension['__typename'] = 'Extension';
@@ -14,12 +15,12 @@ const withTypename = (extension: Extension) => ({
 /**
  * Resolver for the `Extension` entity which uses the standalone lib/getExtension
  * function to resolve the reqested data.
- *
- * There are no arguments in this resolver, it only returns the normalized `Extension` entity.
  */
-export const extensionQueryResolverFactory = () => 
+export const extensionQueryResolverFactory = (persistedBrowserExtension?: {
+  browserExtension?: InputMaybe<BrowserExtension> | undefined
+}) => 
   async (): Promise<Extension> =>
-    withTypename(await getExtension());
+    withTypename(await getExtension(persistedBrowserExtension));
 
   
 
@@ -29,13 +30,12 @@ export const extensionQueryResolverFactory = () =>
  * and thus need to apply the useContext hook.
  */
 export const useExtensionQueryResolver = () => {
+  const [persistedBrowserExtension] = usePersistBrowserExtension()
   return {
     // key is the entity, value is the resolver
-    extension: withErrorHandler(
-      // practically we dont have to wrap this in useCallback
-      // since it does not have any contextual dependencies
-      useMemo(extensionQueryResolverFactory, []),
-      'extension'
-    ),
+    extension: useMemo(
+      () => withErrorHandler(extensionQueryResolverFactory(persistedBrowserExtension)),
+      [persistedBrowserExtension]
+    )
   };
 }

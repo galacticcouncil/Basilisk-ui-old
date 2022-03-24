@@ -13,6 +13,7 @@ import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationRe
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
+import { useSetActiveBrowserExtensionMutationResolver } from '../extension/resolvers/mutation/setActiveBrowserExtension';
 
 /**
  * Add all local gql resolvers here
@@ -41,7 +42,8 @@ export const useResolvers: () => Resolvers = () => {
       ...useVestingMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
-      ...useFaucetResolvers().Mutation
+      ...useFaucetResolvers().Mutation,
+      ...useSetActiveBrowserExtensionMutationResolver()
     },
     XYKPool,
     LBPPool,

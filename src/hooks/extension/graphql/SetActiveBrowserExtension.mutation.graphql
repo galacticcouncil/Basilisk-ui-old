@@ -1,0 +1,3 @@
+mutation SetActiveBrowserExtension($browserExtension: BrowserExtension) {
+    setActiveBrowserExtension(browserExtension: $browserExtension) @client
+}

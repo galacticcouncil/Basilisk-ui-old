@@ -1,6 +1,6 @@
-import { MutableRefObject, useCallback, useEffect } from 'react';
+import { MutableRefObject, useCallback, useEffect, useState } from 'react';
 import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
-import { Account } from '../../generated/graphql';
+import { Account, BrowserExtension, Maybe } from '../../generated/graphql';
 import Icon from '../Icon/Icon';
 import Identicon from '@polkadot/react-identicon';
 import './Wallet.scss';
@@ -32,6 +32,9 @@ export interface WalletProps {
   activeAccountLoading: boolean;
   faucetMint: () => void;
   faucetMintLoading?: boolean;
+  activeBrowserExtension?: Maybe<BrowserExtension>,
+  browserExtensions?: Maybe<BrowserExtension>[],
+  onExtensionChange: (extension?: Maybe<BrowserExtension>) => void
 }
 
 export const Wallet = ({
@@ -45,6 +48,9 @@ export const Wallet = ({
   isExtensionAvailable,
   setAccountSelectorOpen,
   activeAccountLoading,
+  activeBrowserExtension,
+  browserExtensions,
+  onExtensionChange,
   faucetMint,
   faucetMintLoading,
 }: WalletProps) => {
@@ -53,8 +59,12 @@ export const Wallet = ({
     accountsLoading,
     onAccountSelected,
     onAccountCleared,
+    onExtensionChange,
     account,
     isExtensionAvailable,
+    activeBrowserExtension,
+    browserExtensions,
+    extensionLoading
   });
   const { isModalOpen, toggleModal, modalPortal, toggleId } = useModalPortal(
     modalPortalElement,

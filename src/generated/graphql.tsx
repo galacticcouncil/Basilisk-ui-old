@@ -56,7 +56,8 @@ export type BalancesBalancesArgs = {
 
 export enum BrowserExtension {
   Polkadotjs = 'POLKADOTJS',
-  Talisman = 'TALISMAN'
+  Talisman = 'TALISMAN',
+  Unset = 'UNSET'
 }
 
 export type Config = {
@@ -119,6 +120,12 @@ export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
   setActiveAccount?: Maybe<Account>;
+  setActiveBrowserExtension?: Maybe<Scalars['Boolean']>;
+};
+
+
+export type MutationSetActiveBrowserExtensionArgs = {
+  browserExtension?: InputMaybe<BrowserExtension>;
 };
 
 export type Pool = LbpPool | XykPool;

@@ -1,13 +1,13 @@
 import { QueryHookOptions, useQuery } from '@apollo/client';
 import { loader } from 'graphql.macro';
-import { Extension } from '../../../generated/graphql';
+import { Extension, Query } from '../../../generated/graphql';
 
 // graphql query
 export const GET_EXTENSION = loader('./../graphql/GetExtension.query.graphql');
 
 // data shape returned from the query
 export interface GetExtensionQueryResponse {
-  extension: Pick<Extension, 'isAvailable'>;
+  extension: Query['extension']
 }
 
 // hook wrapping the built-in apollo useQuery hook with proper types & configuration

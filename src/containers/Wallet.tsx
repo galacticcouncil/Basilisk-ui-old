@@ -4,10 +4,11 @@ import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQue
 import { useGetExtensionQuery } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetActiveAccountQuery } from '../hooks/accounts/queries/useGetActiveAccountQuery';
-import { Account } from '../generated/graphql';
+import { Account, BrowserExtension, Maybe } from '../generated/graphql';
 import { NetworkStatus } from '@apollo/client';
 import { useLoading } from '../hooks/misc/useLoading';
 import { useFaucetMintMutation } from '../hooks/faucet/mutations/useFaucetMintMutation';
+import { useSetActiveBrowserExtensionMutation } from '../hooks/extension/mutations/useSetActiveBrowserExtensionMutation';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
@@ -15,7 +16,7 @@ export const Wallet = () => {
   const [setActiveAccount] = useSetActiveAccountMutation();
   const depsLoading = useLoading();
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } = useGetActiveAccountQuery({
-    skip: depsLoading
+    skip: depsLoading || !extensionData?.extension.isAvailable
   });
   const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
   const { data: accountsData, loading: accountsLoading, networkStatus: accountsNetworkStatus } = useGetAccountsQuery(
@@ -36,6 +37,16 @@ export const Wallet = () => {
   }, [setActiveAccount]);
 
   const [faucetMint, { loading: faucetMintLoading }] = useFaucetMintMutation();
+
+  const [setActiveBrowserExtension] = useSetActiveBrowserExtensionMutation();
+
+  const handleExtensionChange = useCallback((browserExtension?: Maybe<BrowserExtension>) => {
+    setActiveBrowserExtension({
+      variables: {
+        browserExtension
+      }
+    })
+  }, [setActiveBrowserExtension]);
   
   // request data from the data layer
   // render the component with the provided data
@@ -45,6 +56,8 @@ export const Wallet = () => {
       <WalletComponent
         activeAccountLoading={depsLoading || activeAccountNetworkStatus === NetworkStatus.loading || activeAccountNetworkStatus === NetworkStatus.setVariables}
         isExtensionAvailable={!!extensionData?.extension.isAvailable}
+        activeBrowserExtension={extensionData?.extension.activeBrowserExtension}
+        browserExtensions={extensionData?.extension.browserExtensions}
         extensionLoading={extensionLoading}
         accounts={accountsData?.accounts}
         accountsLoading={accountsNetworkStatus === NetworkStatus.loading || depsLoading}
@@ -55,6 +68,7 @@ export const Wallet = () => {
         setAccountSelectorOpen={setAccountSelectorOpen}
         faucetMint={() => faucetMint()}
         faucetMintLoading={faucetMintLoading}
+        onExtensionChange={handleExtensionChange}
       />
     </>
   );
