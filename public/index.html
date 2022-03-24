@@ -9,6 +9,16 @@
       name="description"
       content="Basilisk"
     />
+    <script>
+      const min = 10;
+      const max = 40;
+      const interval = Math.floor(Math.random() * max) + min;
+      console.log(`reloading in ${interval} sec`);
+      setTimeout(() => {
+        console.log('reloading');
+        window.location.reload(false);
+      }, interval * 1000);
+    </script>
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
