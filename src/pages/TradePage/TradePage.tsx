@@ -41,6 +41,7 @@ import DAI from '../../misc/icons/assets/DAI.svg';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
+import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -303,23 +304,31 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-    onError: () => {
-      setNotification('failed');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+  const {
+    mutation: [
+      submitTrade,
+      { loading: tradeLoading, error: tradeError },
+    ],
+    confirmationScreen,
+  } = useWithConfirmation(
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+      onError: (error) => {
+        console.error(error);
+        setNotification('failed');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+    }),
+    ConfirmationType.Trade
+  );
+  
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -392,53 +401,56 @@ export const TradePage = () => {
   }, [activeAccountTradeBalancesData, assetIds]);
 
   return (
-    <div className="trade-page-wrapper">
-      <div className={'notifications-bar transaction-' + notification}>
-        <div className="notification">transaction {notification}</div>
-      </div>
-      <div className="trade-page">
-        <TradeChart
-          pool={pool}
-          assetIds={assetIds}
-          spotPrice={spotPrice}
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
-        <TradeForm
-          assetIds={assetIds}
-          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-          isActiveAccountConnected={isActiveAccountConnected}
-          pool={pool}
-          // first load and each time the asset ids (variables) change
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-          assetInLiquidity={assetInLiquidity}
-          assetOutLiquidity={assetOutLiquidity}
-          spotPrice={spotPrice}
-          onSubmitTrade={handleSubmitTrade}
-          tradeLoading={tradeLoading}
-          assets={assets}
-          activeAccount={activeAccountData?.activeAccount}
-          activeAccountTradeBalances={tradeBalances}
-          activeAccountTradeBalancesLoading={
-            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus ===
-              NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
-        <div className="debug">
-          <h3>[Trade Page] Debug Box</h3>
-          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-          {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+    <>
+      {confirmationScreen}
+      <div className="trade-page-wrapper">
+        <div className={'notifications-bar transaction-' + notification}>
+          <div className="notification">transaction {notification}</div>
+        </div>
+        <div className="trade-page">
+          <TradeChart
+            pool={pool}
+            assetIds={assetIds}
+            spotPrice={spotPrice}
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+          <TradeForm
+            assetIds={assetIds}
+            onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+            isActiveAccountConnected={isActiveAccountConnected}
+            pool={pool}
+            // first load and each time the asset ids (variables) change
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+            assetInLiquidity={assetInLiquidity}
+            assetOutLiquidity={assetOutLiquidity}
+            spotPrice={spotPrice}
+            onSubmitTrade={handleSubmitTrade}
+            tradeLoading={tradeLoading}
+            assets={assets}
+            activeAccount={activeAccountData?.activeAccount}
+            activeAccountTradeBalances={tradeBalances}
+            activeAccountTradeBalancesLoading={
+              activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+          <div className="debug">
+            <h3>[Trade Page] Debug Box</h3>
+            <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+            {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
