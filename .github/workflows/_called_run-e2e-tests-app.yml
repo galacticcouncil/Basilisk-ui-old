@@ -1,4 +1,4 @@
-# | This workflow can be invoked only from root workflow.
+# | This workflow can be invoked only from caller workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 # | Run End-To-End tests in Application.
@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: 17
 
+      # | HTTP-Server is necessary for running UI Application built files
       - name: 'Install Node.js HTTP-Server'
         run: yarn global add http-server
 
@@ -30,13 +31,15 @@ jobs:
         with:
           path: 'ui-app'
 
-      - name: 'Download artifact - UI app build'
+      # | Download artifacts with App build
+      - name: 'Download UI app build'
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./ui-app/build
 
-      # | Prepare Basilisk-api ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
+      # | Clone Basilisk-api project required for running testnet sandbox
+      # | ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
@@ -123,15 +126,6 @@ jobs:
       - name: 'Make e2e testing env vars file hidden'
         shell: bash
         run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
-
-      # | For debug and monitoring purposes
-      - name: 'Check Docker containers and ports'
-        if: always()
-        shell: bash
-        run: |
-          docker ps
-          docker network ls
-          sudo lsof -i -P -n | grep LISTEN
 
       - name: 'Run e2e tests'
         shell: bash

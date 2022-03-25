@@ -1,4 +1,4 @@
-# | This workflow can be invoked only from root workflow.
+# | This workflow can be invoked only from caller workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 # | Workflow prepares and publishes comment in PR which is related with trigger commit. "Cache issue comment content"

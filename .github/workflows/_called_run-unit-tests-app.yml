@@ -1,4 +1,4 @@
-# | This workflow can be invoked only from root workflow.
+# | This workflow can be invoked only from caller workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 # | Run Unit tests in Application.

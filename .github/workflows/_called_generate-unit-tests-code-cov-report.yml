@@ -1,4 +1,4 @@
-# | This workflow can be invoked only from root workflow.
+# | This workflow can be invoked only from caller workflow.
 # | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 # | Generate unit tests code coverage overall report with "lcov.info" files from artifacts
