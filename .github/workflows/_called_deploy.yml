@@ -32,7 +32,7 @@ jobs:
     name: 'Clear existing build'
     runs-on: ubuntu-latest
     outputs:
-      build_dir: ${{ steps.build_folder_name.outputs.name }}
+      build_dir: ${{ steps.extract-build-folder-name.outputs.name }}
     steps:
       - name: 'Checkout working branch'
         uses: actions/checkout@v2
@@ -91,6 +91,7 @@ jobs:
         run: rm -r ./scripts
 
       # | Commit build files if changes are existing.
+      # | Outputs "changes_detected" is default output of "stefanzweifel/git-auto-commit-action"
       - name: 'Commit changes'
         if: steps.auto-commit-action.outputs.changes_detected == 'true' && steps.check-branch-existence.outputs.exists == 'true'
         uses: stefanzweifel/git-auto-commit-action@v4

@@ -88,7 +88,8 @@ jobs:
         with:
           format: 'YYYYMMDDHHmmssSSS'
 
-      - name: 'Cache issue comment content'
+      # | Restore cached issue comment data from previous/parallel runs.
+      - name: 'Restore cache'
         id: cache-reporter-content
         uses: actions/cache@v2
         env:
@@ -99,8 +100,16 @@ jobs:
           restore-keys: |
             reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-
 
-      - name: 'Check if comment data folder exists'
-        id: check-cache-dir-existance
+      # | Check existence of restored comment data.
+      # | We cannot use output from "actions/cache" - "cache-hit" because it has value "true" only in exact match of
+      # | cache key (https://github.com/actions/cache#outputs). In current case we need search cached data by
+      # | "restore-keys" value. It's necessary though previous workflow run must save cache with unique key
+      # | ("steps.timestamp.outputs.time" is unique part for each workflow run even if it's triggered by the same commit).
+      # | As result current workflow will fetch the latest cache for triggered commit from previous/parallel runs.
+      # | More details about matching cache keys here -
+      # | https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+      - name: 'Check folder existence'
+        id: check-cache-dir-existence
         shell: bash
         run: |
           sudo chmod +x ./scripts/ci/gh-actions-is-dir-exists.sh
@@ -108,7 +117,7 @@ jobs:
 
       - name: 'Parse issue comment data from cache'
         id: parse-issue-comment-data
-        if: steps.check-cache-dir-existance.outputs.exists == 'true'
+        if: steps.check-cache-dir-existence.outputs.exists == 'true'
         run: |
           ISSUE_COMMENT_DATA=$(cat ./reporter-artifacts/issue-comment-data.txt)
           echo $ISSUE_COMMENT_DATA

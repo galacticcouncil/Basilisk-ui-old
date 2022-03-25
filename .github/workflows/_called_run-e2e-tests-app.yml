@@ -40,28 +40,33 @@ jobs:
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
-      - name: 'Cache Node Modules for Basilisk-api'
+      # | Restore cached Node modules for Basilisk-api.
+      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
+      - name: 'Restore cached Node modules'
         id: cache-node-modules-basilisk-api
         uses: actions/cache@v2
         with:
           path: Basilisk-api/node_modules
           key: node-modules-basilisk-api-${{ hashFiles('Basilisk-api/yarn.lock') }}
 
-      - name: 'Install Dependencies for Basilisk-api'
+      # | Install Node modules if cached resources are not available
+      - name: 'Install Node modules for Basilisk-api'
         if: steps.cache-node-modules-basilisk-api.outputs.cache-hit != 'true'
         run: |
           cd Basilisk-api
           yarn install --frozen-lockfile
 
-      # | Install NPM deps for running tests
-      - name: 'Cache Node Modules for ui-app'
+      # | Restore cached Node modules for ui-app.
+      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
+      - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: ui-app/node_modules
           key: node-modules-ui-app-${{ hashFiles('ui-app/yarn.lock') }}
 
-      - name: 'Install Dependencies for ui-app'
+      # | Install Node modules if cached resources are not available
+      - name: 'Install Node modules for App'
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: |
           cd ui-app

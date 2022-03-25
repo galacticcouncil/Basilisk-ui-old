@@ -29,13 +29,16 @@ jobs:
         with:
           node-version: 17
 
-      - name: "Cache Node Modules"
+      # | Restore cached Node modules for App.
+      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
+      - name: "Restore cached Node modules"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
+      # | Install Node modules if cached resources are not available
       - name: "Install Node modules"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
