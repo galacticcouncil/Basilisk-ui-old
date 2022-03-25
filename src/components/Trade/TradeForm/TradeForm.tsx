@@ -238,20 +238,6 @@ export const TradeForm = ({
     trigger('submit');
   }, []);
 
-  useEffect(() => {
-    // must provide input name otherwise it does not validate appropriately
-    trigger('submit');
-  }, [
-    isActiveAccountConnected,
-    pool,
-    isPoolLoading,
-    activeAccountTradeBalances,
-    assetInLiquidity,
-    assetOutLiquidity,
-    allowedSlippage,
-    ...watch(['assetInAmount', 'assetOutAmount']),
-  ]);
-
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
     const { assetIn, assetOut } = getValues();
@@ -564,6 +550,22 @@ export const TradeForm = ({
     assetInLiquidity,
     assetOutLiquidity,
     slippage
+  ]);
+
+  useEffect(() => {
+    // must provide input name otherwise it does not validate appropriately
+    trigger('submit');
+  }, [
+    isActiveAccountConnected,
+    pool,
+    isPoolLoading,
+    activeAccountTradeBalances,
+    assetInLiquidity,
+    assetOutLiquidity,
+    allowedSlippage,
+    paymentInfo,
+    tradeBalances,
+    ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
   return (
