@@ -1,5 +1,5 @@
-# | Build Application and Storybook. Deploy builds into GihHub Pages. Publish build and deployment statuses as
-# | pull request comment, if any pull request is associated with latest commit.
+# Build Application and Storybook. Deploy builds into GitHub Pages. Publish build and deployment statuses as
+# pull request comment, if any pull request is associated with latest commit.
 
 name: 'Build-Deploy-Report App and Storybook'
 
@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    # | Build Application and Storybook.
+    # Build Application and Storybook.
     name: 'Build'
     uses: ./.github/workflows/_called_build.yml
     with:
@@ -25,7 +25,7 @@ jobs:
       storybook-build-artifact-name: sb-build-files
 
   deploy:
-    # | Deploy Application and Storybook into GitHub Pages.
+    # Deploy Application and Storybook into GitHub Pages.
     name: 'Deploy'
     needs: build
     if: ${{ needs.build.result=='success' }}
@@ -37,14 +37,14 @@ jobs:
       gh_token: ${{ secrets.GH_TOKEN }}
       gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
 
-  # | Publish status of testing in PR comment, if it's available.
-  report-statuses-in-issue:
-    # | Publish build and deployment statuses as pull request comment,
-    # | if any pull request is associated with triggered commit.
+  # Publish status of testing in PR comment, if it's available.
+  report-statuses-in-pr:
+    # Publish build and deployment statuses as pull request comment,
+    # if any pull request is associated with triggered commit.
     name: 'Report in PR'
     needs: [build, deploy]
     if: always()
-    uses: ./.github/workflows/_called_report-status-in-issue.yml
+    uses: ./.github/workflows/_called_report-status-in-pr.yml
     with:
       publish-artifacts-list: true
 

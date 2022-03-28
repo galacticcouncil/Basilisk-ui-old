@@ -57,7 +57,7 @@ on:
 Jobs:
 - Build App and Storybook (`build-app-storybook`);
 - Deploy App&Storybook builds (`deploy-app-storybook-builds`);
-- Report issue comment (`report-statuses-issue-comment`);
+- Report PR comment (`report-statuses-pr-comment`);
 
 
 #### :file_folder: App E2E testing
@@ -176,7 +176,7 @@ workflow inputs.
 
 <hr />
 
-### :chains:  Report status in issue ([.github/workflows/_called_report-status-in-issue.yml](/.github/workflows/_called_report-status-in-issue.yml))
+### :chains:  Report status in PR ([.github/workflows/_called_report-status-in-pr.yml](/.github/workflows/_called_report-status-in-pr.yml))
 Publish statuses and reports from different steps of caller workflow as comment in related PR. Workflow is based on libraries
 `GitHub Script`. 
 
@@ -186,13 +186,13 @@ which generates these artifacts. Artifacts are not visible for API before run is
 [this](https://github.com/actions/upload-artifact/issues/50) issue. If `publish-artifacts-list == true`, current called 
 workflow generates dispatch event for workflow, which can fetch artifacts from current workflow run.
 
-As result `Report status in issue` workflow has logic, explained in diagram below:
+As result `Report status in PR` workflow has logic, explained in diagram below:
 
 <img src="./publish-reports-in-issue-comment-flow.png" alt="Publish reports as issue comment" width="700px">
 
 Report status workflow can collect statuses from different workflows and publish them in one single comment.
 This is possible through the usage of actions caching feature (`actions/cache@v2`). Each `push` or `pull_request` events can 
-trigger multiple workflows, which contains `Report status in issue` job (_called workflow_). If trigger commit is related
+trigger multiple workflows, which contains `Report status in PR` job (_called workflow_). If trigger commit is related
 with some open pull request or trigger event is [pull_rerquest:opened](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request),
 each run will publish it's statuses/artifacts as comment in appropriate Pull Request post. If comment is already existing,
 reporter from each caller workflow will update existing comment by it's own status and republish statuses from other 
@@ -214,7 +214,7 @@ Illustrations below show flow with 3 workflows, which has been triggered in para
 
 <img src="./cached-comment-data-flows.png" alt="Cached comment data flows" width="900px">
 
-Crucial point of this example (**improvement is required in this place**) is that each `Report status in issue` job in each 
+Crucial point of this example (**improvement is required in this place**) is that each `Report status in PR` job in each 
 parallel workflow must be started after completion of reporter job from another parallel workflow. If we get overlapping 
 of reporter jobs A and B, comment data (statuses) from reporter A or B will be lost.
 

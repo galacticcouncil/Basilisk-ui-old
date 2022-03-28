@@ -1,19 +1,19 @@
-# | This workflow can be invoked only from caller workflow.
-# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-# | Run End-To-End tests in Application.
+# Run End-To-End tests in Application.
 name: 'Reusable :: E2E tests :: App'
 
 on:
   workflow_call:
     inputs:
-      # | Application build files artifact name
+      # Application build files artifact name
       app-build-artifact-name:
         required: true
         type: string
 
 jobs:
-  # | Run E2E tests
+  # Run E2E tests
   run:
     name: 'Run'
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 17
 
-      # | HTTP-Server is necessary for running UI Application built files
+      # HTTP-Server is necessary for running UI Application built files
       - name: 'Install Node.js HTTP-Server'
         run: yarn global add http-server
 
@@ -31,23 +31,22 @@ jobs:
         with:
           path: 'ui-app'
 
-      # | Download artifacts with App build
+      # Download artifacts with App build
       - name: 'Download UI app build'
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./ui-app/build
 
-      # | Clone Basilisk-api project required for running testnet sandbox
-      # | "feature/dockerize-testnet" branch contains feature of running testnet sandbox in Docker container from prebuilt
-      # | image - https://hub.docker.com/repository/docker/mckrava/polkadot-basilisk-testnet-sandbox-multiarch/general
-      # | Checking out to "feature/dockerize-testnet" branch the is temporary solution, "develop" branch must be used
-      # | after merge current feature into "develop".
+      # Clone Basilisk-api project required for running testnet sandbox
+      # "feature/dockerize-testnet" branch contains feature of running testnet sandbox in Docker container from prebuilt
+      # image - https://hub.docker.com/repository/docker/mckrava/polkadot-basilisk-testnet-sandbox-multiarch/general
+      # Checking out to "feature/dockerize-testnet" branch the is temporary solution, "develop" branch must be used
+      # after merge current feature into "develop".
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
       # | Restore cached Node modules for Basilisk-api.
-      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
       - name: 'Restore cached Node modules'
         id: cache-node-modules-basilisk-api
         uses: actions/cache@v2
@@ -55,7 +54,6 @@ jobs:
           path: Basilisk-api/node_modules
           key: node-modules-basilisk-api-${{ hashFiles('Basilisk-api/yarn.lock') }}
 
-      # | Install Node modules if cached resources are not available
       - name: 'Install Node modules for Basilisk-api'
         if: steps.cache-node-modules-basilisk-api.outputs.cache-hit != 'true'
         run: |
@@ -63,7 +61,6 @@ jobs:
           yarn install --frozen-lockfile
 
       # | Restore cached Node modules for ui-app.
-      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
       - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -71,7 +68,6 @@ jobs:
           path: ui-app/node_modules
           key: node-modules-ui-app-${{ hashFiles('ui-app/yarn.lock') }}
 
-      # | Install Node modules if cached resources are not available
       - name: 'Install Node modules for App'
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: |

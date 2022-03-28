@@ -1,4 +1,4 @@
-# | Run Unit test for UI Application
+# Run Unit test for UI Application
 
 name: 'Unit testing App'
 
@@ -15,9 +15,8 @@ on:
       - develop
 
 jobs:
-  # | Run unit tests for Application.
-  testing:
-    name: 'Testing'
+  tests:
+    name: 'Unit tests'
     uses: ./.github/workflows/_called_run-unit-tests-app.yml
     with:
       base-branch-codecov-artifact-name: base-lcov.info

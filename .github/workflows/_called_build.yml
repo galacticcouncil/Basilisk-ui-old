@@ -1,9 +1,9 @@
-# | This workflow can be invoked only from caller workflow.
-# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
 
-# | Build Application and Storybook production ready files. Build results will be saved as artifacts with names, passed
-# | in "app-build-artifact-name" and "storybook-build-artifact-name" inputs.
+# Build Application and Storybook production ready files. Build results will be saved as artifacts with names, passed
+# in "app-build-artifact-name" and "storybook-build-artifact-name" inputs.
 
 name: "Reusable :: Build"
 
@@ -29,8 +29,6 @@ jobs:
         with:
           node-version: 17
 
-      # | Restore cached Node modules for App.
-      # | Example of usage "actions/cache@v2" - https://github.com/actions/cache#example-workflow
       - name: "Restore cached Node modules"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -38,13 +36,9 @@ jobs:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      # | Install Node modules if cached resources are not available
       - name: "Install Node modules"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
-
-#      - name: "Update browserslist"
-#        run: npx browserslist@latest --update-db
 
       - name: "Extract branch name"
         id: extract-branch-name
@@ -67,6 +61,7 @@ jobs:
           yarn run build
           yarn run build-storybook -- -o sb-build-files
         env:
+          # CI=false is a workaround for this issue - https://github.com/facebook/create-react-app/issues/3657
           CI: false
           REACT_APP_GIT_BRANCH: ${{ steps.extract-branch-name.outputs.name }}
           REACT_APP_GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}

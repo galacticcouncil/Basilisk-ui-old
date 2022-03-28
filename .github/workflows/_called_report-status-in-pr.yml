@@ -1,32 +1,32 @@
-# | This workflow can be invoked only from caller workflow.
-# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-# | Workflow prepares and publishes comment in PR which is related with trigger commit. "Cache issue comment content"
-# | step fetches cached data with prepared and posted comment sections from previous workflow run related with the
-# | same PR. This prepared data (comment sections) will be parsed and extended by report data from current workflow.
-# | Extended data will be used for update of existing comment. With such approach one comment can collect report
-# | data from different workflows which are executed independently one from each other but in context of the same PR.
-# | Currently such report sections are available:
-# | - App Storybook build
-# | - App Storybook deployment to GitHub Pages
-# | - App unit Tests
-# | - App E2E Tests
+# Workflow prepares and publishes comment in PR which is related with trigger commit. "Restore PR comment cache"
+# step fetches cached data with prepared and posted comment sections from previous workflow run related with the
+# same PR. This prepared data (comment sections) will be parsed and extended by report data from current workflow.
+# Extended data will be used for update of existing comment. With such approach one comment can collect report
+# data from different workflows which are executed independently one from each other but in context of the same PR.
+# Currently, such report sections are available:
+# - App Storybook build
+# - App Storybook deployment to GitHub Pages
+# - App unit Tests
+# - App E2E Tests
 
-name: 'Reusable :: Report in issue'
+name: 'Reusable :: Report in PR'
 
 on:
   workflow_call:
     inputs:
-      # | If we need publish available run artifacts list, separate workflow must be invoked as artifacts
-      # | from current workflow run are not visible for API before run is completed. Dispatch event will be created
-      # | automatically from github-script action via GutHub API call in step "Run github-script for preparation and
-      # | publication comment content".
-      # | Related issue - https://github.com/actions/upload-artifact/issues/50
+      # If we need publish available run artifacts list, separate workflow must be invoked as artifacts
+      # from current workflow run are not visible for API before run is completed. Dispatch event will be created
+      # automatically from github-script action via GutHub API call in step "Run github-script for preparation and
+      # publication comment content".
+      # Related issue - https://github.com/actions/upload-artifact/issues/50
       publish-artifacts-list:
         required: true
         type: boolean
 
-      # | App Storybook build
+      # App Storybook build
       app-storybook-build-pub-report:
         required: true
         type: boolean
@@ -34,7 +34,7 @@ on:
         required: false
         type: boolean
 
-      # | App Storybook deployment to GitHub Pages
+      # App Storybook deployment to GitHub Pages
       app-storybook-deploy-pub-report:
         required: true
         type: boolean
@@ -42,7 +42,7 @@ on:
         required: false
         type: boolean
 
-      # | App unit Tests
+      # App unit Tests
       app-unit-test-pub-report:
         required: true
         type: boolean
@@ -56,7 +56,7 @@ on:
         required: false
         type: string
 
-      # | App E2E Tests
+      # App E2E Tests
       app-e2e-test-pub-report:
         required: true
         type: boolean
@@ -67,16 +67,16 @@ on:
     secrets:
       gh_token:
         required: true
-      # | Branch name which is configured as a root branch for GitHub Pages
+      # Branch name which is configured as a root branch for GitHub Pages
       gh_pages_full_branch:
         required: true
-      # | Custom domain for configured GitHub Pages, where App and Storybook builds are deployed. Must be passed
+      # Custom domain for configured GitHub Pages, where App and Storybook builds are deployed. Must be passed
       # | as a secret because API doesn't receive this value.
       gh_pages_custom_domain:
         required: true
 
 jobs:
-  publish-report-issue-comment:
+  publish-report-pr-comment:
     name: 'Publish comment'
     runs-on: ubuntu-latest
     steps:
@@ -88,8 +88,8 @@ jobs:
         with:
           format: 'YYYYMMDDHHmmssSSS'
 
-      # | Restore cached issue comment data from previous/parallel runs.
-      - name: 'Restore cache'
+      # | Restore cached PR comment data from previous/parallel runs.
+      - name: 'Restore PR comment cache'
         id: cache-reporter-content
         uses: actions/cache@v2
         env:
@@ -115,11 +115,11 @@ jobs:
           sudo chmod +x ./scripts/ci/gh-actions-is-dir-exists.sh
           echo "##[set-output name=exists;]$(./scripts/ci/gh-actions-is-dir-exists.sh "./reporter-artifacts")"
 
-      - name: 'Parse issue comment data from cache'
-        id: parse-issue-comment-data
+      - name: 'Parse PR comment data from cache'
+        id: parse-pr-comment-data
         if: steps.check-cache-dir-existence.outputs.exists == 'true'
         run: |
-          ISSUE_COMMENT_DATA=$(cat ./reporter-artifacts/issue-comment-data.txt)
+          ISSUE_COMMENT_DATA=$(cat ./reporter-artifacts/pr-comment-data.txt)
           echo $ISSUE_COMMENT_DATA
           echo "::set-output name=data::$ISSUE_COMMENT_DATA"
 
@@ -129,7 +129,7 @@ jobs:
         run: mkdir -p reporter-artifacts
 
       - name: 'Run github-script for preparation and publication comment content'
-        id: issue-comment-data
+        id: pr-comment-data
         uses: actions/github-script@v6
         env:
           # | Title for matching already existing comments in PR for update particular comment.
@@ -137,10 +137,10 @@ jobs:
 
           # | Workflow file which will be dispatched from github-script via API for fetching and publication
           # | artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
-          PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: wfd_publish-issue-comment-with-artifacts.yml
+          PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: _dispatch_publish-pr-comment-with-artifacts.yml
 
           # | Cached comment data from previous run which has been triggerred for the same PR as for current run.
-          COMMENT_CACHED_CONTENT: ${{steps.parse-issue-comment-data.outputs.data || false}}
+          COMMENT_CACHED_CONTENT: ${{steps.parse-pr-comment-data.outputs.data || false}}
 
           # | Artifacts
           PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
@@ -175,12 +175,12 @@ jobs:
           GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.gh_pages_custom_domain }}
 
         with:
-          # | "github-token" parameter is required for work with github API
+          # | "github-token" parameter is required for work with GitHub API
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
-            const script = require('./scripts/ci/github-script-src/publish-issue-comment.js')
+            const script = require('./scripts/ci/github-script-src/publish-pr-comment.js')
             return await script({github, context, core})
 
-      # | Save issue comment prepared content into file which will be cached for further workflows
-      - name: 'Save issue comment data'
-        run: echo ${{ steps.issue-comment-data.outputs.result }} > ./reporter-artifacts/issue-comment-data.txt
+      # | Save PR comment data into file which will be cached for further workflows
+      - name: 'Save PR comment data'
+        run: echo ${{ steps.pr-comment-data.outputs.result }} > ./reporter-artifacts/pr-comment-data.txt

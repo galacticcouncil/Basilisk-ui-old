@@ -1,10 +1,10 @@
-# | This workflow can be invoked only from caller workflow.
-# | More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-# | Generate unit tests code coverage overall report with "lcov.info" files from artifacts
-# | ("base-branch-codecov-artifact-name", "working-branch-codecov-artifact-name"). Workflow generates 2 output values:
-# | - codecov_unit_percentage - tests code coverage percent in working branch ;
-# | - codecov_unit_diff - tests code coverage difference with base branch, if PR is available for current commit;
+# Generate unit tests code coverage overall report with "lcov.info" files from artifacts
+# ("base-branch-codecov-artifact-name", "working-branch-codecov-artifact-name"). Workflow generates 2 output values:
+# - codecov_unit_percentage - tests code coverage percent in working branch ;
+# - codecov_unit_diff - tests code coverage difference with base branch, if PR is available for current commit;
 
 name: "Reusable :: Generate unit tests code coverage overall report"
 
@@ -18,8 +18,8 @@ on:
         required: true
         type: string
 
-    # | More details about reusable workflow outputs -
-    # | https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
+    # More details about reusable workflow outputs -
+    # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
     outputs:
       codecov_unit_percentage:
         description: "Total Percentage coverage"

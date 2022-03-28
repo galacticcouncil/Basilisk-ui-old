@@ -1,0 +1,43 @@
+# IMPORTANT - any changes to workflow with trigger event "workflow_dispatch" requires to push changes to default
+# branch first (eg. "develop" branch) to take effect. This concerns all github-scripts which are used in such workflow.
+# More details - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+
+
+# Publish statuses as PR comment with available run artifacts list.
+# Fetching available artifacts can be done only in separate/next workflow run after workflow run
+# which generates these artifacts. Artifacts are not visible for API before run is completed. More details in
+# this issue - https://github.com/actions/upload-artifact/issues/50.
+name: "Report in PR with artifacts (dispatch)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_comment_data:
+        # Data passed from caller workflow - "Reusable :: Report in PR" (.github/workflows/_called_report-status-in-pr.yml)
+        # {
+        #   commentMeta: metadata for PR comment;
+        #   commentSections: scope of comment sections data;
+        #   availableArtifacts: available artifacts for current PR;;
+        # }
+        description: 'Stringified JSON with prepared data for publication comment'
+        required: false
+        default: '{}'
+        type: string
+
+jobs:
+  report-with-artifacts:
+    name: "Report"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      # Compile artifacts list from required runs and publish PR comment.
+      - name: "Publish comment"
+        uses: actions/github-script@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          ISSUE_COMMENT_DATA: ${{ github.event.inputs.pr_comment_data }}
+        with:
+          script: |
+            const script = require('./scripts/ci/github-script-src/publish-pr-comment-with-artifacts.js')
+            await script({github, context, core})
