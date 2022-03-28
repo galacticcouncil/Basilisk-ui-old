@@ -3,10 +3,10 @@
 
 # Run Unit tests in Application.
 # Unit tests will be executed for both base and working branches in order to generate delta values for code coverage.
-# If trigger commit is not mentioned in any open PR, "base_branch_coverage_check" step will be failed, because no any
+# If trigger commit is not mentioned in any open PR, "base_branch_coverage_check" step will fail, because no any other
 # related open PR is available for working branch. "unit_testing" step will be executed anyway.
-# Tests code coverage reports ("lcov.info" files) will be saved as artifacts and can be used in further steps for
-# creation overall tests code coverage report.
+# Tests code coverage reports ("lcov.info" files) will be saved as artifacts and can be used in further steps for the
+# creation of overall tests code coverage report.
 
 name: "Reusable :: Unit tests :: App"
 
