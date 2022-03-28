@@ -188,7 +188,7 @@ workflow generates dispatch event for workflow, which can fetch artifacts from c
 
 As result `Report status in issue` workflow has logic, explained in diagram below:
 
-![Publish reports as issue comment](./publish-reports-in-issue-comment-flow.png)
+<img src="./publish-reports-in-issue-comment-flow.png" alt="Publish reports as issue comment" width="700px">
 
 Report status workflow can collect statuses from different workflows and publish them in one single comment.
 This is possible through the usage of actions caching feature (`actions/cache@v2`). Each `push` or `pull_request` events can 
@@ -212,7 +212,7 @@ will be ignored in search (more details [here](https://docs.github.com/en/action
 Illustrations below show flow with 3 workflows, which has been triggered in parallel by the same event.
 (_workflow names are provided only for example purposes and can be different in real case_):
 
-![Cached comment data flows](./cached-comment-data-flows.png)
+<img src="./cached-comment-data-flows.png" alt="Cached comment data flows" width="900px">
 
 Crucial point of this example (**improvement is required in this place**) is that each `Report status in issue` job in each 
 parallel workflow must be started after completion of reporter job from another parallel workflow. If we get overlapping 
@@ -238,7 +238,7 @@ of reporter jobs A and B, comment data (statuses) from reporter A or B will be l
 
 :lock: ***Secrets***:
 - `gh_token`: _required_
-- `gh_pages_full_branch`: _required_ 
+- `gh_pages_full_branch`: _required_ - branch name which is configured as a root branch for GitHub Pages
 - `gh_pages_custom_domain`: _required_ - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data 
 
 <hr />

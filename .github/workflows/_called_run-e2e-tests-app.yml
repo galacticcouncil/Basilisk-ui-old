@@ -39,7 +39,10 @@ jobs:
           path: ./ui-app/build
 
       # | Clone Basilisk-api project required for running testnet sandbox
-      # | ("feature/dockerize-testnet" is temporary solution, "develop" branch must be used)
+      # | "feature/dockerize-testnet" branch contains feature of running testnet sandbox in Docker container from prebuilt
+      # | image - https://hub.docker.com/repository/docker/mckrava/polkadot-basilisk-testnet-sandbox-multiarch/general
+      # | Checking out to "feature/dockerize-testnet" branch the is temporary solution, "develop" branch must be used
+      # | after merge current feature into "develop".
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
@@ -75,10 +78,9 @@ jobs:
           cd ui-app
           yarn install --frozen-lockfile
 
+      # | Change CI scripts files permissions to prevent "Permission denied" error.
       - name: 'Change folders permissions'
-        run: |
-          chmod -R 777 Basilisk-api
-          chmod -R 777 ui-app
+        run: chmod -R 777 ui-app/scripts/ci
 
       - name: 'Run sandbox testnet'
         timeout-minutes: 10
