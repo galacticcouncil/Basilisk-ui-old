@@ -59,7 +59,7 @@ describe('balances', () => {
     );
   });
 
-  describe.only('objectToArrayWithFilter', () => {
+  describe('objectToArrayWithFilter', () => {
     describe.each([
       [
         {
