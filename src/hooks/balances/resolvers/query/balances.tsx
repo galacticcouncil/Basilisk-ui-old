@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { AssetIds, Balance, Scalars } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { getBalancesByAddress } from '../../lib/getBalancesByAddress';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
@@ -66,7 +66,7 @@ export const useBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    balances: useResolverToRef(
+    balances: withErrorHandler(
       // practically we dont have to wrap this in useCallback
       // since it does not have any contextual dependencies
       useMemo(

@@ -1,0 +1,65 @@
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Generate unit tests code coverage overall report with "lcov.info" files from artifacts
+# ("base-branch-codecov-artifact-name", "working-branch-codecov-artifact-name"). Workflow generates 2 output values:
+# - codecov_unit_percentage - tests code coverage percent in working branch ;
+# - codecov_unit_diff - tests code coverage difference with base branch, if PR is available for current commit;
+
+name: "Reusable :: Generate unit tests code coverage overall report"
+
+on:
+  workflow_call:
+    inputs:
+      base-branch-codecov-artifact-name:
+        required: true
+        type: string
+      working-branch-codecov-artifact-name:
+        required: true
+        type: string
+
+    # More details about reusable workflow outputs -
+    # https://docs.github.com/en/actions/using-workflows/reusing-workflows#using-outputs-from-a-reusable-workflow
+    outputs:
+      codecov_unit_percentage:
+        description: "Total Percentage coverage"
+        value: ${{ jobs.generate_report.outputs.codecov_output_percentage }}
+      codecov_unit_diff:
+        description: "Percentage difference between head branch, if PR is available for current workflow run"
+        value: ${{ jobs.generate_report.outputs.codecov_output_diff }}
+    secrets:
+      barecheck_github_app_token:
+        required: true
+
+jobs:
+  generate_report:
+    name: "Generate"
+    runs-on: ubuntu-latest
+    outputs:
+      codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}
+      codecov_output_diff: ${{ steps.code-coverage.outputs.diff }}
+    steps:
+      - name: "Download code coverage report from base branch"
+        id: download-base
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{inputs.base-branch-codecov-artifact-name}}
+          path: ./base-report
+
+      - name: "Download code coverage report from working branch"
+        id: download-working
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{inputs.working-branch-codecov-artifact-name}}
+          path: ./working-report
+
+      - name: "Generate code coverage report"
+        id: code-coverage
+        continue-on-error: true
+        uses: barecheck/code-coverage-action@v0.5.1
+        with:
+          barecheck-github-app-token: ${{ secrets.barecheck_github_app_token }}
+          lcov-file: './working-report/lcov.info'
+          base-lcov-file: './base-report/lcov.info'
+          send-summary-comment: "false"
+          show-annotations: 'warning'
