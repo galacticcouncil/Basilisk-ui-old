@@ -7,11 +7,12 @@ import '@polkadot/api-augment';
 import BigNumber from 'bignumber.js';
 
 /**
- * This function fetches asset balances only for a given set of assetIds.
+ * This function fetches asset balances for a given set of assetIds.
+ * If no assetIds are specified, then it will fetch all asset balances.
  *
  * @param apiInstance polkadotJs ApiPromise instance
  * @param address of the entity eg. account, LBPPool, XYKPool
- * @param assetIds an array of assets
+ * @param assetIds an array of assetIds, can be empty
  * @returns an array of balances
  */
 export const getBalancesByAddress = async (
@@ -20,7 +21,8 @@ export const getBalancesByAddress = async (
   assetIds: string[]
 ): Promise<Balance[]> => {
   let balances: Balance[] = [];
-  if (includes(assetIds, constants.nativeAssetId)) {
+  // fetch native balance if native assetId is specified OR no assetIds are specified
+  if (includes(assetIds, constants.nativeAssetId) || !assetIds.length) {
     const nativeBalance = await fetchNativeAssetBalance(apiInstance, address);
     balances.push(nativeBalance);
   }
@@ -29,7 +31,7 @@ export const getBalancesByAddress = async (
   const nonNativeAssetIds = assetIds.filter(
     (id) => id !== constants.nativeAssetId
   );
-  // fetch non-native assets only if needed
+  // fetch non-native assets by assetId
   if (nonNativeAssetIds.length) {
     const nonNativeBalances = await fetchNonNativeAssetBalancesByAssetIds(
       apiInstance,
@@ -40,13 +42,14 @@ export const getBalancesByAddress = async (
     balances.push(...nonNativeBalances);
   }
 
-  if (assetIds.length === 0) {
-    const nonNativeBalances = await fetchNonNativeAssetBalances(
+  // fetch all non-native assets if no assetIds are specified
+  if (!assetIds.length) {
+    const allNonNativeBalances = await fetchNonNativeAssetBalances(
       apiInstance,
       address
     );
 
-    balances.push(...nonNativeBalances);
+    balances.push(...allNonNativeBalances);
   }
 
   return balances;
