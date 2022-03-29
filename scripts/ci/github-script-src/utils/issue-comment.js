@@ -6,7 +6,7 @@ const {
 } = require('./variables');
 
 /**
- * Prepare metadata for issue comment, which will be used in current
+ * Prepare metadata for PR comment, which will be used in current
  * and the next workflows vai actions cache.
  * @param github
  * @param context
@@ -487,7 +487,7 @@ async function runPublishArtifactsWorkflow({ github, commentData }) {
     workflow_id: publishArtifactsWf.id,
     ref: commentMeta.defaultBranch,
     inputs: {
-      issue_comment_data: preparedInputs,
+      pr_comment_data: preparedInputs,
     },
   });
 
