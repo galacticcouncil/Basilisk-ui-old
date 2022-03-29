@@ -1,5 +1,5 @@
 #!/bin/bash
-# Sanitize $STRING for a container name
+# Sanitize $STRING
 STRING=$1
 
 # first, strip underscores

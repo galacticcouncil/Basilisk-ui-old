@@ -1,0 +1,24 @@
+# Run Unit test for UI Application
+
+name: 'Unit testing App'
+
+on:
+  push:
+    branches:
+      - 'fix/**'
+      - 'feat/**'
+      - develop
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+
+jobs:
+  tests:
+    name: 'Unit tests'
+    uses: ./.github/workflows/_called_run-unit-tests-app.yml
+    with:
+      base-branch-codecov-artifact-name: base-lcov.info
+      working-branch-codecov-artifact-name: working-lcov.info
+      app-node-modules-cache-key: cache-node-modules-ui-app
