@@ -8,4 +8,5 @@ export default {
     denominator: '1000',
   } as Fee,
   nativeAssetId: '0',
+  defaultValue: '0',
 };
