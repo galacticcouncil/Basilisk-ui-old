@@ -56,7 +56,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: "Run unit tests"
-        run: yarn test:ci --collectCoverageFrom="./src/**" --coverage
+        run: yarn test:ci
 
       - name: "Upload code coverage for ref branch"
         uses: actions/upload-artifact@v2
