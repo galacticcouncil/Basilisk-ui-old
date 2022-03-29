@@ -12,6 +12,8 @@ name: "Report in PR with artifacts (dispatch)"
 on:
   workflow_dispatch:
     inputs:
+      # Input name must be consistent with input name in GitHub API call "github.rest.actions.createWorkflowDispatch"
+      # (scripts/ci/github-script-src/utils/issue-comment.js)
       pr_comment_data:
         # Data passed from caller workflow - "Reusable :: Report in PR" (.github/workflows/_called_report-status-in-pr.yml)
         # {
