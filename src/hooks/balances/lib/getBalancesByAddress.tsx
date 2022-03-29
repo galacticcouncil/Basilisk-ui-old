@@ -31,10 +31,19 @@ export const getBalancesByAddress = async (
   );
   // fetch non-native assets only if needed
   if (nonNativeAssetIds.length) {
-    const nonNativeBalances = await fetchNonNativeAssetBalances(
+    const nonNativeBalances = await fetchNonNativeAssetBalancesByAssetIds(
       apiInstance,
       address,
       nonNativeAssetIds
+    );
+
+    balances.push(...nonNativeBalances);
+  }
+
+  if (assetIds.length === 0) {
+    const nonNativeBalances = await fetchNonNativeAssetBalances(
+      apiInstance,
+      address
     );
 
     balances.push(...nonNativeBalances);
@@ -80,7 +89,7 @@ export const fetchNativeAssetBalance = async (
  * @param assetIds of non-native tokens
  * @returns balance object with assetId and balance
  */
-export const fetchNonNativeAssetBalances = async (
+export const fetchNonNativeAssetBalancesByAssetIds = async (
   apiInstance: ApiPromise,
   address: string,
   assetIds: string[]
@@ -110,4 +119,33 @@ export const fetchNonNativeAssetBalances = async (
       balance,
     };
   });
+};
+
+/**
+ * This function fetches all non-native token balances for given address.
+ *
+ * @param apiInstance PolkadotJS ApiPromise
+ * @param address of the account
+ * @returns balance object with assetId and balance
+ */
+export const fetchNonNativeAssetBalances = async (
+  apiInstance: ApiPromise,
+  address: string
+) => {
+  const allNonNativeTokens =
+    await apiInstance.query.tokens.accounts.entries<OrmlAccountData>(address);
+
+  const balances: Balance[] = allNonNativeTokens.map(([key, balanceData]) => {
+    // TODO: better type casting for next line
+    const [, assetId] = key.toHuman() as [string, string]; // [Address, AssetId]
+
+    const freeBalance = balanceData.free.toString();
+
+    return {
+      assetId: assetId,
+      balance: freeBalance,
+    };
+  });
+
+  return balances;
 };

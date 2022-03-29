@@ -1,4 +1,14 @@
-name: Run unit tests on UI app
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Run Unit tests in Application.
+# Unit tests will be executed for both base and working branches in order to generate delta values for code coverage.
+# If trigger commit is not mentioned in any open PR, "base_branch_coverage_check" step will fail, because no any other
+# related open PR is available for working branch. "unit_testing" step will be executed anyway.
+# Tests code coverage reports ("lcov.info" files) will be saved as artifacts and can be used in further steps for the
+# creation of overall tests code coverage report.
+
+name: "Reusable :: Unit tests :: App"
 
 on:
   workflow_call:
@@ -17,80 +27,80 @@ on:
         description: "Total Percentage coverage"
         value: ${{ jobs.unit_testing.outputs.codecov_output_percentage }}
       codecov_app_unit_diff:
-        description: "Percentage difference between head branch"
+        description: "Percentage difference between base branch, if PR is available"
         value: ${{ jobs.unit_testing.outputs.codecov_output_diff }}
 
 jobs:
   base_branch_coverage_check:
-    name: Generate base branch tests coverage report
-    runs-on: macos-11
+    name: "Run base branch"
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.base_ref }}
 
-      - name: Install Node.js
+      - name: "Setup Node.js"
         uses: actions/setup-node@v1
         with:
-          node-version: 17.3
+          node-version: 17
 
-      - name: Cache Node Modules for ui-app
+      - name: "Restore cached Node modules"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Dependencies for ui-app
+      - name: "Install Node modules for ui-app"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-        run: rm -rf node_modules && yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
-      - name: Run unit tests
+      - name: "Run unit tests"
         run: yarn test:ci --collectCoverageFrom="./src/**" --coverage
 
-      - name: Upload code coverage for ref branch
+      - name: "Upload code coverage for ref branch"
         uses: actions/upload-artifact@v2
         with:
           name: ${{inputs.base-branch-codecov-artifact-name}}
           path: ./coverage/lcov.info
 
   unit_testing:
-    name: Build UI application
-    runs-on: macos-11
+    name: "Run working branch"
+    runs-on: ubuntu-latest
+    if: ${{ always() && needs.base_branch_coverage_check.result != 'cancelled' }}
     outputs:
       codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}
       codecov_output_diff: ${{ steps.code-coverage.outputs.diff }}
     steps:
-      - name: Install Node.js
+      - name: "Install Node.js"
         uses: actions/setup-node@v1
         with:
-          node-version: 17.3
+          node-version: 17
 
       - uses: actions/checkout@v2
 
-      - name: Cache Node Modules for ui-app
+      - name: "Restore cached Node modules"
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: Install Dependencies for ui-app
+      - name: "Install Node modules for ui-app"
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
-        run: rm -rf node_modules && yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile
 
-      - name: Run unit tests
-        id: run_unit_tests
+      - name: "Run unit tests"
         run: yarn test:ci
 
-      - name: Upload unit tests report file
+      - name: "Upload unit tests report file"
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: ci-app-unit-tests-results
           path: ./ui-app-unit-tests-results.html
 
-      - name: Upload code coverage info
+      - name: "Upload code coverage info"
         uses: actions/upload-artifact@v2
         with:
           name: ${{inputs.working-branch-codecov-artifact-name}}

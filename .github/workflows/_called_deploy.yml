@@ -1,0 +1,132 @@
+# This workflow can be invoked only from caller workflow.
+# More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
+
+# Deploy Application and Storybook production ready builds into GitHub Pages.
+# Workflow uses build files from artifacts ("app-build-artifact-name", "storybook-build-artifact-name"), which are
+# prepared by previous workflows.
+# Each branch `develop|feat|fix/**` deploys to appropriate folder in "gh_pages_full_branch" (value: `app-builds-gh-pages`)
+# branch. Branch folder contains 2 sub-folders: `app` and `storybook` for UI app and Storybook builds
+# accordingly.
+
+name: 'Reusable :: Deploy'
+
+on:
+  workflow_call:
+    inputs:
+      # Application build files artifact name
+      app-build-artifact-name:
+        required: true
+        type: string
+      # Storybook build files artifact name
+      storybook-build-artifact-name:
+        required: true
+        type: string
+    secrets:
+      gh_token:
+        required: true
+      gh_pages_full_branch:
+        required: true
+
+jobs:
+  clear_existing_build:
+    name: 'Clear existing build'
+    runs-on: ubuntu-latest
+    outputs:
+      build_dir: ${{ steps.extract-build-folder-name.outputs.name }}
+    steps:
+      - name: 'Checkout working branch'
+        uses: actions/checkout@v2
+
+      - name: 'Check GH Pages branch existence'
+        id: check-branch-existence
+        env:
+          GH_PAGES_FULL_BRANCH: ${{ secrets.gh_pages_full_branch }}
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
+          echo "##[set-output name=exists;]$(./scripts/ci/gh-actions-is-branch-exists.sh "$GH_PAGES_FULL_BRANCH")"
+
+      # Upload "./scripts" folder with shell scripts to artifacts for further usage in next steps where context will
+      # be changed to another branch ("gh_pages_full_branch").
+      - name: "Upload scripts"
+        uses: actions/upload-artifact@v2
+        with:
+          name: gh-actions-scripts
+          path: ./scripts
+
+      - name: 'Checkout GH Pages branch'
+        if: ${{ steps.check-branch-existence.outputs.exists == 'true' }}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ secrets.gh_pages_full_branch }}
+
+      - name: 'Download artifact (gh-actions-scripts)'
+        if: ${{ steps.check-branch-existence.outputs.exists == 'true' }}
+        uses: actions/download-artifact@v2
+        with:
+          name: gh-actions-scripts
+          path: ./scripts
+
+      - name: 'Extract existing build folder name'
+        id: extract-build-folder-name
+        if: ${{ steps.check-branch-existence.outputs.exists == 'true' }}
+        shell: bash
+        run: |
+          sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
+          sudo chmod +x ./scripts/ci/gh-actions-branch-name-serialize.sh
+          BRANCH_NAME="$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")"
+          echo "##[set-output name=name;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$BRANCH_NAME")"
+
+      # This step removes build files for current branch, if files are existing.
+      - name: 'Remove Existing build folder (app and storybook)'
+        if: ${{ success() && steps.check-branch-existence.outputs.exists == 'true' }}
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: ${{ steps.extract-build-folder-name.outputs.name }}
+
+      - name: 'Clean-up redundant files'
+        if: ${{ steps.check-branch-existence.outputs.exists == 'true' }}
+        shell: bash
+        run: rm -r ./scripts
+
+      # Commit build files if changes are existing.
+      # Outputs "changes_detected" is default output of "stefanzweifel/git-auto-commit-action"
+      - name: 'Commit changes'
+        if: steps.auto-commit-action.outputs.changes_detected == 'true' && steps.check-branch-existence.outputs.exists == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ secrets.gh_pages_full_branch }}
+
+  deploy:
+    name: 'Deploy new builds'
+    if: always()
+    needs: clear_existing_build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Download artifact - App (build files)'
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.app-build-artifact-name }}
+          path: ./app-build-files
+
+      - name: 'Download artifact - Storybook (build files)'
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.storybook-build-artifact-name }}
+          path: ./sb-build-files
+
+      - name: 'Deploy App to GH Pages'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.gh_token }}
+          publish_branch: ${{ secrets.gh_pages_full_branch }}
+          publish_dir: ./app-build-files
+          destination_dir: ${{ format('{0}/{1}', needs.clear_existing_build.outputs.build_dir, 'app') }}
+
+      - name: 'Deploy Storybook to GH Pages'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.gh_token }}
+          publish_branch: ${{ secrets.gh_pages_full_branch }}
+          publish_dir: ./sb-build-files
+          destination_dir: ${{ format('{0}/{1}', needs.clear_existing_build.outputs.build_dir, 'storybook') }}

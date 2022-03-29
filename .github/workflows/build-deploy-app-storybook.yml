@@ -1,0 +1,62 @@
+# Build Application and Storybook. Deploy builds into GitHub Pages. Publish build and deployment statuses as
+# pull request comment, if any pull request is associated with latest commit.
+
+name: 'Build-Deploy-Report App and Storybook'
+
+on:
+  push:
+    branches:
+      - 'fix/**'
+      - 'feat/**'
+      - develop
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+
+jobs:
+  build:
+    # Build Application and Storybook.
+    name: 'Build'
+    uses: ./.github/workflows/_called_build.yml
+    with:
+      app-build-artifact-name: app-build-files
+      storybook-build-artifact-name: sb-build-files
+
+  deploy:
+    # Deploy Application and Storybook into GitHub Pages.
+    name: 'Deploy'
+    needs: build
+    if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_deploy.yml
+    with:
+      app-build-artifact-name: app-build-files
+      storybook-build-artifact-name: sb-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+
+  # Publish status of testing in PR comment, if it's available.
+  report-statuses-in-pr:
+    # Publish build and deployment statuses as pull request comment,
+    # if any pull request is associated with triggered commit.
+    name: 'Report in PR'
+    needs: [build, deploy]
+    if: always()
+    uses: ./.github/workflows/_called_report-status-in-pr.yml
+    with:
+      publish-artifacts-list: true
+
+      app-storybook-build-pub-report: true
+      app-storybook-build-status: ${{ needs.build.result == 'success' }}
+
+      app-storybook-deploy-pub-report: true
+      app-storybook-deploy-status: ${{ needs.deploy.result == 'success' }}
+
+      app-unit-test-pub-report: false
+      app-e2e-test-pub-report: false
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+      gh_pages_custom_domain: ${{ secrets.GH_PAGES_CUSTOM_DOMAIN }}
