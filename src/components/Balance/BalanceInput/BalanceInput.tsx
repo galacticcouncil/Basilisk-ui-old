@@ -1,82 +1,140 @@
 import log from 'loglevel';
-import { useMemo, useState } from 'react';
-import MaskedInput from 'react-text-mask';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import React, {
+  forwardRef,
+  MutableRefObject,
+  Ref,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import MaskedInput, { MaskedInputProps } from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import { useFormContext, Controller } from 'react-hook-form';
-import {  MetricUnit } from '../metricUnit';
+import { formatToSIWithPrecision12, MetricUnit } from '../metricUnit';
 import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
 import { useDefaultUnit } from './hooks/useDefaultUnit';
 import { useHandleOnChange } from './hooks/useHandleOnChange';
 import classNames from 'classnames';
 
 import './BalanceInput.scss';
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import BigNumber from 'bignumber.js';
 
-log.setDefaultLevel('debug')
+log.setDefaultLevel('debug');
 // TODO Make default unit non-required?
 export interface BalanceInputProps {
-    defaultUnit?: MetricUnit,
-    name: string,
-    showMetricUnitSelector?: boolean
+  defaultUnit?: MetricUnit;
+  name: string;
+  showMetricUnitSelector?: boolean;
+  /**
+   * This whole property exists due to my inability to figure out
+   * how to pass an actual input ref through react-hook-form controller's field.ref
+   *
+   * field.ref ends up being a wrapper for validationa and input focusing, without the ability to
+   * retrieve the actual input element from the form state
+   */
+  inputRef?: MutableRefObject<HTMLInputElement | null>;
+  required?: boolean
 }
+
+const MaskedInputWithRef = React.forwardRef(
+  (topLevelProps: MaskedInputProps, ref: Ref<HTMLInputElement>) => {
+    return (
+      <MaskedInput
+        render={(textMaskRef, props) => (
+          <input
+            {...props}
+            ref={(node) => {
+              if (node) {
+                textMaskRef(node);
+                if (ref) {
+                  (ref as MutableRefObject<HTMLInputElement>).current = node;
+                }
+              }
+            }}
+          />
+        )}
+        {...topLevelProps}
+      />
+    );
+  }
+);
 
 export const thousandsSeparatorSymbol = ' ';
 export const currencyMaskOptions = {
-    prefix: '',
-    suffix: '',
-    includeThousandsSeparator: true,
-    thousandsSeparatorSymbol,
-    allowDecimal: true,
-    decimalSymbol: '.',
-    // TODO: adjust decimal limit dependin on the selected MetricUnit
-    decimalLimit: 12,
-    // integerLimit: 7,
-    allowNegative: false,
-    allowLeadingZeroes: false,
-}
+  prefix: '',
+  suffix: '',
+  includeThousandsSeparator: true,
+  thousandsSeparatorSymbol,
+  allowDecimal: true,
+  decimalSymbol: '.',
+  // TODO: adjust decimal limit dependin on the selected MetricUnit
+  decimalLimit: 12,
+  // integerLimit: 7,
+  allowNegative: false,
+  allowLeadingZeroes: false,
+};
 
 export const BalanceInput = ({
-    name,
-    defaultUnit = MetricUnit.NONE,
-    showMetricUnitSelector = true,
+  name,
+  defaultUnit = MetricUnit.NONE,
+  showMetricUnitSelector = true,
+  inputRef,
+  required
 }: BalanceInputProps) => {
-    const { control, setValue, getValues } = useFormContext();
-    const [rawValue, setRawValue] = useState<string | undefined>();
-    const { unit, setUnit } = useDefaultUnit(defaultUnit);
+  const { control, register, setValue, getValues, watch } = useFormContext();
+  const { unit, setUnit } = useDefaultUnit(defaultUnit);
 
-    const currencyMask = useMemo(() => createNumberMask({
-        ...currencyMaskOptions
-    }), [unit])
+  const currencyMask = useMemo(
+    () =>
+      createNumberMask({
+        ...currencyMaskOptions,
+      }),
+    [unit]
+  );
 
-    const handleOnChange = useHandleOnChange({ setValue, unit, name });
+  const { handleOnChange, rawValue } = useHandleOnChange({ setValue, unit, name, inputRef, getValues, value: watch(name) });
 
-    return <div className={'balance-input flex-container ' + classNames({
-        'no-selector': !showMetricUnitSelector
-    })}>
-        <div className='balance-input__input-wrapper'>
-            <Controller 
-                control={control}
-                name={name}
-                render={
-                    (({ field }) => (
-                        <MaskedInput 
-                            mask={currencyMask}
-                            ref={field.ref}
-                            onChange={e => handleOnChange(field, e)}
-                        />
-                    ))
-                }
-            />
+  return (
+    <div
+      className={
+        'balance-input ' +
+        classNames({
+          'no-selector': !showMetricUnitSelector,
+        })
+      }
+    >
+      <div className="balance-input__input-wrapper">
+        <Controller
+          control={control}
+          name={name}
+          render={({ field }) => (
+            <>
+              <MaskedInputWithRef
+                mask={currencyMask}
+                inputMode="decimal"
+                // TODO: get rid of this
+                // value={new BigNumber(
+                //   formatToSIWithPrecision12(field.value, unit) || ''
+                // ).toString() + (persistLastChar ? lastChar : '')}
+                value={rawValue}
+                onBlur={field.onBlur}
+                ref={inputRef}
+                required={required}
+                onChange={(e) => handleOnChange(field, e)}
+                placeholder="0.00"
+              />
+            </>
+          )}
+        />
+      </div>
+      {showMetricUnitSelector ? (
+        <div className="balance-input__info">
+          <MetricUnitSelector unit={unit} onUnitSelected={setUnit} />
         </div>
-        {showMetricUnitSelector
-            ? (
-                <div className='balance-input__info flex-container column'>
-                    <MetricUnitSelector 
-                        unit={unit}
-                        onUnitSelected={setUnit}
-                    />
-                </div>
-            )
-            : <></>
-        }
+      ) : (
+        <></>
+      )}
     </div>
-}
+  );
+};

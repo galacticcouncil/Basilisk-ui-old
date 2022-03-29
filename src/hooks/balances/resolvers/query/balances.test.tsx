@@ -230,7 +230,7 @@ describe('balances', () => {
     const Test = () => {
       const { data } = useQuery<TestQueryResponse>(
         gql`
-          query GetBalances {
+          query TestGetBalances {
             mockEntity @client {
               balances(assetIds: { a: "0" }) {
                 id

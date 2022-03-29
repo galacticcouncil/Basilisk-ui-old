@@ -2,18 +2,15 @@ import { useMemo } from 'react';
 import { Account as AccountModel } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
+import { usePersistActiveAccount } from '../hooks/accounts/lib/usePersistActiveAccount';
 
 export const Account = ({ account }: { account?: AccountModel }) => {
   // TODO: you can get the loading state of the mutation here as well
   // but it probably needs to be turned into a contextual mutation
   // in order to share the loading state accross multiple mutation hook calls
-  const [setActiveAccount] = useSetActiveAccountMutation({
-    id: account?.id,
-  });
+  const [setActiveAccount] = useSetActiveAccountMutation();
 
-  const [unsetActiveAccount] = useSetActiveAccountMutation({
-    id: undefined,
-  });
+  const { persistedActiveAccount } = usePersistActiveAccount();
 
   return (
     <div
@@ -25,7 +22,7 @@ export const Account = ({ account }: { account?: AccountModel }) => {
     >
       <h3>
         {account?.name}
-        {account?.isActive ? ' [active]' : <></>}
+        {account?.id === persistedActiveAccount?.id ? ' [active]' : <></>}
       </h3>
       <p>
         <b>Address:</b>
@@ -41,10 +38,14 @@ export const Account = ({ account }: { account?: AccountModel }) => {
       </div>
       <button
         onClick={(_) =>
-          account?.isActive ? unsetActiveAccount() : setActiveAccount()
+          account?.id === persistedActiveAccount?.id
+            ? setActiveAccount({ variables: { id: undefined } })
+            : setActiveAccount({ variables: { id: account?.id } })
         }
       >
-        {account?.isActive ? 'Unset active' : 'Set active'}
+        {account?.id === persistedActiveAccount?.id
+          ? 'Unset active'
+          : 'Set active'}
       </button>
     </div>
   );
@@ -52,8 +53,7 @@ export const Account = ({ account }: { account?: AccountModel }) => {
 
 export const WalletPage = () => {
   const { data: accountsData, loading: accountsLoading } =
-    useGetAccountsQuery();
-  // const { data: extensionData, loading: extensionLoading } = useGetExtensionQuery();
+    useGetAccountsQuery(false);
 
   const loading = useMemo(() => {
     return accountsLoading;
@@ -76,15 +76,13 @@ export const WalletPage = () => {
       <br />
       <br />
 
-      {true ? (
+      {
         <div>
           {accountsData?.accounts?.map((account, i) => (
             <Account key={i} account={account} />
           ))}
         </div>
-      ) : (
-        <p>Extension unavailable</p>
-      )}
+      }
     </div>
   );
 };

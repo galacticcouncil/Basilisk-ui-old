@@ -1,9 +1,10 @@
 import { ApiPromise } from '@polkadot/api';
-import { includes } from 'lodash';
+import { includes, max } from 'lodash';
 import { Balance } from '../../../generated/graphql';
 import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 import '@polkadot/api-augment';
+import BigNumber from 'bignumber.js';
 
 /**
  * This function fetches asset balances only for a given set of assetIds.
@@ -19,7 +20,6 @@ export const getBalancesByAddress = async (
   assetIds: string[]
 ): Promise<Balance[]> => {
   let balances: Balance[] = [];
-
   if (includes(assetIds, constants.nativeAssetId)) {
     const nativeBalance = await fetchNativeAssetBalance(apiInstance, address);
     balances.push(nativeBalance);
@@ -58,10 +58,26 @@ export const fetchNativeAssetBalance = async (
 ): Promise<Balance> => {
   // no handling of undefined because apiInstance returns default value of 0 for native asset
   const nativeAssetBalance = await apiInstance.query.system.account(address);
+  // usable native asset balance
+  const freeBalance = nativeAssetBalance.data.free.toString();
+  const miscFrozenBalance = nativeAssetBalance.data.miscFrozen.toString();  
+  const feeFrozenBalance = nativeAssetBalance.data.feeFrozen.toString();
+  const maxFrozenBalance = max([
+    miscFrozenBalance,
+    feeFrozenBalance
+  ]);
+
+  if (!maxFrozenBalance) throw new Error('Unable to determine usable balance');
+
+  let balance = new BigNumber(freeBalance)
+    .minus(maxFrozenBalance)
+    .toString();
+
+  balance = new BigNumber(balance).gte('0') ? balance : '0';
 
   return {
     assetId: constants.nativeAssetId,
-    balance: nativeAssetBalance.data.free.toString(),
+    balance
   };
 };
 
@@ -88,16 +104,21 @@ export const fetchNonNativeAssetBalancesByAssetIds = async (
       queryParameter
     );
 
-  const balances: Balance[] = searchResult.map((balanceData, i) => {
+  return searchResult.map((balanceData, i) => {
     // extract free balance as string
     const freeBalance = balanceData.free.toString();
+    const frozenBalance = balanceData.frozen.toString();
+    let balance = new BigNumber(freeBalance)
+      .minus(frozenBalance)
+      .toString()
+
+    balance = new BigNumber(balance).gte('0') ? balance: '0';
 
     return {
       assetId: assetIds[i], // pair assetId in the same order as provided in query parameter
-      balance: freeBalance,
+      balance,
     };
   });
-  return balances;
 };
 
 /**
