@@ -182,21 +182,6 @@ describe('balances', () => {
         Error(errors.apiInstanceNotInitialized)
       );
     });
-
-    it('fails to fetch with wrong arguments', async () => {
-      const balancesByAddressQueryResolver =
-        await balancesByAddressQueryResolverFactory(mockApiInstance);
-      const brokenArgs = {
-        assetIds: undefined,
-      } as unknown as BalancesByAddressResolverArgs;
-
-      const balancesByAddressQueryResolverPromise =
-        balancesByAddressQueryResolver(entity, brokenArgs);
-
-      await expect(balancesByAddressQueryResolverPromise).rejects.toMatchObject(
-        Error(errors.noArgumentsProvidedBalanceQuery)
-      );
-    });
   });
 
   describe('useBalanceQueryResolvers', () => {
