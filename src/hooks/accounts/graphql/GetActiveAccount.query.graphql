@@ -9,9 +9,12 @@ query GetActiveAccount {
     id
     name
     source
-    balances(assetIds: ["0"]) {
+    balances {
       assetId
       balance
+    },
+    vestingSchedule {
+      start
     }
   }
 }

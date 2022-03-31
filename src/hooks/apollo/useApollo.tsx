@@ -13,6 +13,7 @@ import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationRe
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
+import { useVestingScheduleQueryResolvers } from '../vesting/useVestingScheduleQueryResolvers';
 
 /**
  * Add all local gql resolvers here
@@ -46,7 +47,8 @@ export const useResolvers: () => Resolvers = () => {
     XYKPool,
     LBPPool,
     Account: {
-      ...useBalanceQueryResolvers()
+      ...useBalanceQueryResolvers(),
+      ...useVestingScheduleQueryResolvers()
     }
   };
 };

@@ -9,7 +9,9 @@ export const GET_ACTIVE_ACCOUNT = loader(
 
 // data shape returned from the query
 export interface GetActiveAccountQueryResponse {
-  activeAccount: Query['activeAccount'];
+  activeAccount: Query['activeAccount'] & {
+    vestingSchedules: any
+  }
 }
 
 // hook wrapping the built-in apollo useQuery hook with proper types & configuration

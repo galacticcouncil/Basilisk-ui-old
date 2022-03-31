@@ -10,6 +10,7 @@ import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { withTypename } from '../../types';
 import { Account } from '../../../../generated/graphql';
 
+// TODO: turn the active account into a cache ref to Account
 export const activeAccountQueryResolverFactory =
   (persistedActiveAccount?: PersistedAccount) =>
   /**

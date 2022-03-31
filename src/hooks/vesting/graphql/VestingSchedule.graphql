@@ -11,3 +11,8 @@ type VestingSchedule {
     # claimable amount per period
     perPeriod: String
 }
+
+# TODO: resolver needs to support multiple vesting schedules
+interface VestingSchedules {
+    vestingSchedule: VestingSchedule
+}

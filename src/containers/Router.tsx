@@ -8,6 +8,7 @@ export const Router = () => {
   return (
     <Routes>
       <Route path="trade" element={<TradePage />} />
+      <Route path="wallet" element={<WalletPage />} />
       <Route path="*" element={<Navigate to="/trade" />} />
     </Routes>
   );

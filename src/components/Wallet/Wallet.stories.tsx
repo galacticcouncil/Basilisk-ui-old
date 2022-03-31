@@ -95,26 +95,26 @@ const Template: ComponentStory<typeof Wallet> = (args) => {
 };
 
 export const Default = Template.bind({});
-export const NoAccountConnected = Template.bind({});
-NoAccountConnected.args = {
-  account: undefined,
-};
-export const AccountsLoading = Template.bind({});
-AccountsLoading.args = {
-  accountsLoading: true,
-};
-export const NoAccountsAvailable = Template.bind({});
-NoAccountsAvailable.args = {
-  account: undefined,
-  accounts: [],
-};
-export const ExtensionUnavailable = Template.bind({});
-ExtensionUnavailable.args = {
-  isExtensionAvailable: false,
-  account: undefined,
-  accounts: [],
-};
-export const LoadingData = Template.bind({});
-LoadingData.args = {
-  extensionLoading: true,
-};
+// export const NoAccountConnected = Template.bind({});
+// NoAccountConnected.args = {
+//   account: undefined,
+// };
+// export const AccountsLoading = Template.bind({});
+// AccountsLoading.args = {
+//   accountsLoading: true,
+// };
+// export const NoAccountsAvailable = Template.bind({});
+// NoAccountsAvailable.args = {
+//   account: undefined,
+//   accounts: [],
+// };
+// export const ExtensionUnavailable = Template.bind({});
+// ExtensionUnavailable.args = {
+//   isExtensionAvailable: false,
+//   account: undefined,
+//   accounts: [],
+// };
+// export const LoadingData = Template.bind({});
+// LoadingData.args = {
+//   extensionLoading: true,
+// };

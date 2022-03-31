@@ -1,18 +1,18 @@
 #import "./../../balances/graphql/Balance.graphql"
 #import './../../vesting/graphql/VestingSchedule.graphql'
 
-type Account implements Balances {
+type Account implements Balances & VestingSchedules {
   id: String!
   name: String
   source: String
   genesisHash: String
-  # TODO: Can the balances query definition be re-used here?
   balances(assetIds: [String]): [Balance!]!
+  vestingSchedule: VestingSchedule
 }
 
 extend type Query {
   accounts: [Account!]!
-  activeAccount: Account!
+  activeAccount: Account
 }
 
 extend type Mutation {
