@@ -3,4 +3,5 @@ export default {
   apiInstanceNotInitialized: 'ApiPromise is not initialized',
   noArgumentsProvidedBalanceQuery:
     'No Arguments have been provided to the balance query',
+  invalidTransferVariables: 'Invalid transfer parameters provided',
 };
