@@ -42,8 +42,10 @@ type XYKPool {
   balances: [Balance!]
 }
 
+union Pool = LBPPool | XYKPool
+
 extend type Query {
-  pools: [LBPPool! | XYKPool!]!
+  pools: [Pool!]!
   # Just to make sure TradeType makes it through the codegen
   # otherwise it'd be ignored
   _tradeType: TradeType
