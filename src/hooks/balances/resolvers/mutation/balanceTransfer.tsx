@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import errors from '../../../../errors';
-import { useMutation } from '@apollo/client';
+import { ApolloCache, useMutation } from '@apollo/client';
 import { loader } from 'graphql.macro';
 import {
   withGracefulErrors,
@@ -12,6 +12,7 @@ import { DispatchError, ExtrinsicStatus } from '@polkadot/types/interfaces';
 import log from 'loglevel';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { useMemo } from 'react';
+import { readActiveAccount } from '../../../accounts/lib/readActiveAccount';
 
 export const TRANSFER_BALANCE = loader(
   './graphql/TransferBalance.mutation.graphql'
@@ -72,6 +73,27 @@ export const transferBalanceHandler =
     }
   };
 
+const transferBalanceExtrinsic = (apiInstance: ApiPromise) =>
+  apiInstance.tx.currencies.transfer;
+
+export const estimateBalanceTransfer = async (
+  cache: ApolloCache<object>,
+  apiInstance: ApiPromise,
+  args: TransferBalanceMutationVariables
+) => {
+  const activeAccount = readActiveAccount(cache);
+  const address = activeAccount?.id;
+
+  if (!address)
+    throw new Error(`Can't retrieve sender's address for estimation`);
+  if (!args.from || !args.to || !args.currencyId || !args.amount)
+    throw new Error(errors.invalidTransferVariables);
+
+  return transferBalanceExtrinsic(apiInstance)
+    .apply(apiInstance, [args.to, args.currencyId, args.amount])
+    .paymentInfo(address);
+};
+
 const balanceTransferMutationResolverFactory =
   (apiInstance?: ApiPromise) =>
   async (_obj: any, args: TransferBalanceMutationVariables) => {
@@ -83,7 +105,7 @@ const balanceTransferMutationResolverFactory =
       async (resolve, reject) => {
         const { signer } = await web3FromAddress(args.from!);
 
-        await apiInstance.tx.currencies.transfer
+        await transferBalanceExtrinsic(apiInstance)
           .apply(apiInstance, [args.to, args.currencyId, args.amount])
           .signAndSend(
             args.from!,
