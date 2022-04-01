@@ -33,9 +33,7 @@ export const getLockedBalanceByAddressAndLockId = async (
       balanceLockDataType,
       await apiInstance.query.balances.locks(address)
     ),
-    (lockedAmount) =>
-      // lockedAmount.id.eq(lockId)
-      false
+    (lockedAmount) => lockedAmount.id.eq(lockId)
   );
 
   const tokenBalanceLocks = (
@@ -99,7 +97,7 @@ export const calculateFutureLock = (
 // get lockedVestingAmount from function getLockedBalanceByAddressAndLockId
 export const calculateClaimableAmount = (
   vestingSchedules: VestingSchedule[],
-  lockedVestingAmount: BalanceLock | LockedTokens,
+  lockedVestingAmount: string,
   currentBlockNumber: BigNumber
 ): BigNumber => {
   // calculate futureLock for every vesting schedule and sum to total
@@ -113,7 +111,7 @@ export const calculateClaimableAmount = (
   new BigNumber(0));
 
   // calculate claimable amount
-  const remainingVestingAmount = toBN(lockedVestingAmount?.amount?.toString());
+  const remainingVestingAmount = toBN(lockedVestingAmount);
   const claimableAmount = remainingVestingAmount.minus(totalFutureLocks);
 
   return claimableAmount;

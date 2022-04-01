@@ -13,6 +13,6 @@ type VestingSchedule {
 }
 
 # TODO: resolver needs to support multiple vesting schedules
-interface VestingSchedules {
+interface VestingSchedule {
     vestingSchedule: VestingSchedule
-}
+}   
