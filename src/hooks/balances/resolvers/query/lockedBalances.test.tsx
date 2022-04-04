@@ -1,10 +1,9 @@
 import {
   Entity,
   lockedBalancesByLockIdQueryResolverFactory,
-  LockedBalancesByLockIdResolverArgs,
   useLockedBalanceQueryResolvers,
 } from './lockedBalances';
-import { LockedBalance } from '../../../../generated/graphql';
+import { LockedBalance, QueryLockedBalancesArgs } from '../../../../generated/graphql';
 import { Resolvers, useQuery } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import TestRenderer, { act } from 'react-test-renderer';
@@ -74,7 +73,7 @@ describe('lockedBalances', () => {
       it('fails to fetch with wrong arguments', async () => {
         const brokenArgs = {
           lockId: undefined,
-        } as unknown as LockedBalancesByLockIdResolverArgs;
+        } as unknown as QueryLockedBalancesArgs;
 
         const lockedBalancesByLockIdQueryResolverPromise =
           lockedBalancesByLockIdQueryResolver(entity, brokenArgs);
@@ -89,7 +88,7 @@ describe('lockedBalances', () => {
       it('fails to fetch with wrong arguments and missing parent entity', async () => {
         const brokenArgs = {
           lockId: 'lockId',
-        } as unknown as LockedBalancesByLockIdResolverArgs;
+        } as unknown as QueryLockedBalancesArgs;
         const brokenEntity = {} as unknown as Entity;
 
         const lockedBalancesByLockIdQueryResolverPromise =
