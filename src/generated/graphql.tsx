@@ -127,6 +127,11 @@ export type Query = {
   pools?: Maybe<Array<Pool>>;
 };
 
+export type QueryLockedBalancesArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  lockId: Scalars['String'];
+};
+
 export enum TradeType {
   Buy = 'Buy',
   Sell = 'Sell',

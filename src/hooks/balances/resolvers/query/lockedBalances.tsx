@@ -1,10 +1,15 @@
 import { useMemo } from 'react';
-import { Scalars, LockedBalance } from '../../../../generated/graphql';
-import { useResolverToRef } from '../../../accounts/resolvers/useAccountsMutationResolvers';
+import {
+  Scalars,
+  LockedBalance,
+  Query,
+  QueryLockedBalancesArgs,
+} from '../../../../generated/graphql';
 import { getLockedBalancesByLockId } from '../../lib/getLockedBalancesByLockId';
 import { ApiPromise } from '@polkadot/api';
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs';
 import errors from '../../../../errors';
+import { withErrorHandler } from '../../../apollo/withErrorHandler';
 
 const __typename: LockedBalance['__typename'] = 'LockedBalance';
 
@@ -12,11 +17,6 @@ const withTypename = (lockedBalance: LockedBalance) => ({
   __typename,
   ...lockedBalance,
 });
-
-export interface LockedBalancesByLockIdResolverArgs {
-  address?: string;
-  lockId: string;
-}
 
 export interface Entity {
   id: Scalars['String'];
@@ -32,8 +32,8 @@ export const lockedBalancesByLockIdQueryResolverFactory =
    */
   async (
     obj: Entity,
-    args: LockedBalancesByLockIdResolverArgs
-  ): Promise<LockedBalance[]> => {
+    args: QueryLockedBalancesArgs
+  ): Promise<Query['lockedBalances']> => {
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
     if (!args.lockId) throw Error(errors.missingArgumentsLockedBalanceQuery);
@@ -62,9 +62,7 @@ export const useLockedBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    lockedBalances: useResolverToRef(
-      // practically we dont have to wrap this in useCallback
-      // since it does not have any contextual dependencies
+    lockedBalances: withErrorHandler(
       useMemo(
         () => lockedBalancesByLockIdQueryResolverFactory(apiInstance),
         [apiInstance]
