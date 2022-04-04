@@ -49,13 +49,13 @@ export const getVestingSchedulesByAddressFactory =
 
     const currentBlockNumber = readLastBlock(client)?.lastBlock?.relaychainBlockNumber;
 
-    if (!lockedVestingBalance || !currentBlockNumber) throw new Error('unable to calculate claimable amount');
+    const shouldCalculate = lockedVestingBalance && currentBlockNumber;
 
-    const claimableAmount = calculateClaimableAmount(
+    const claimableAmount = shouldCalculate ? calculateClaimableAmount(
       vestingSchedules,
       lockedVestingBalance,
       new BigNumber(currentBlockNumber)
-    )
+    ) : '0'
 
     console.log('claimableAmount', {
       claimableAmount: fromPrecision12(claimableAmount.toString()),
