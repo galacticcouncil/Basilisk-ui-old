@@ -152,3 +152,32 @@ export const fetchNonNativeAssetBalances = async (
 
   return balances;
 };
+
+/**
+ * This function fetches all non-native token balances for given address.
+ *
+ * @param apiInstance PolkadotJS ApiPromise
+ * @param address of the account
+ * @returns balance object with assetId and balance
+ */
+export const fetchNonNativeAssetBalances = async (
+  apiInstance: ApiPromise,
+  address: string
+) => {
+  const allNonNativeTokens =
+    await apiInstance.query.tokens.accounts.entries<OrmlAccountData>(address);
+
+  const balances: Balance[] = allNonNativeTokens.map(([key, balanceData]) => {
+    // TODO: better type casting for next line
+    const [, assetId] = key.toHuman() as [string, string]; // [Address, AssetId]
+
+    const freeBalance = balanceData.free.toString();
+
+    return {
+      assetId: assetId,
+      balance: freeBalance,
+    };
+  });
+
+  return balances;
+};
