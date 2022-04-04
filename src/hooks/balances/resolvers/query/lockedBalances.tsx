@@ -62,12 +62,13 @@ export const useLockedBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    lockedBalances: withErrorHandler(
-      useMemo(
-        () => lockedBalancesByLockIdQueryResolverFactory(apiInstance),
-        [apiInstance]
-      ),
-      'lockedBalances'
+    lockedBalances: useMemo(
+      () =>
+        withErrorHandler(
+          lockedBalancesByLockIdQueryResolverFactory(apiInstance),
+          'lockedBalances'
+        ),
+      [apiInstance]
     ),
   };
 };
