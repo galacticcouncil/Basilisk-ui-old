@@ -60,14 +60,6 @@ export const getLockedBalanceByAddressAndLockId = async (
 };
 
 /**
- * This function casts a number in string representation
- * to a BigNumber.
- */
-export const toBN = (numberAsString: string) => {
-  return new BigNumber(numberAsString);
-};
-
-/**
  * Calculates original and future lock for given VestingSchedule.
  * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
  */
@@ -84,16 +76,16 @@ export const calculateLock = (
   )
     throw Error(errors.vestingScheduleIncomplete);
 
-  const startPeriod = toBN(vestingSchedule.start);
-  const period = toBN(vestingSchedule.period);
-  const numberOfPeriods = toBN(currentBlockNumber)
+  const startPeriod = new BigNumber(vestingSchedule.start);
+  const period = new BigNumber(vestingSchedule.period);
+  const numberOfPeriods = new BigNumber(currentBlockNumber)
     .minus(startPeriod)
     .dividedBy(period);
 
-  const perPeriod = toBN(vestingSchedule.perPeriod);
+  const perPeriod = new BigNumber(vestingSchedule.perPeriod);
   const vestedOverPeriods = numberOfPeriods.multipliedBy(perPeriod);
 
-  const periodCount = toBN(vestingSchedule.periodCount);
+  const periodCount = new BigNumber(vestingSchedule.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
   const futureLock = originalLock.minus(vestedOverPeriods);
@@ -118,7 +110,7 @@ export const calculateTotalLocks = (
 
       return total;
     },
-    { original: toBN('0'), future: toBN('0') }
+    { original: new BigNumber('0'), future: new BigNumber('0') }
   );
 
   return {
