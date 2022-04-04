@@ -1,15 +1,9 @@
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -22,10 +16,10 @@ export type Scalars = {
 export type Account = {
   __typename?: 'Account';
   balances: Array<Balance>;
+  genesisHash?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
-  vestingSchedule: VestingSchedule;
+  source?: Maybe<Scalars['String']>;
 };
 
 export type Asset = {
@@ -56,6 +50,7 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
+  extension?: Maybe<Extension>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };
@@ -115,8 +110,8 @@ export type Query = {
   _assetIds?: Maybe<AssetIds>;
   _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
-  account?: Maybe<Account>;
   accounts: Array<Account>;
+  activeAccount: Account;
   assets?: Maybe<Array<Asset>>;
   balances: Array<Balance>;
   config: Config;
@@ -134,17 +129,8 @@ export type QueryLockedBalancesArgs = {
 
 export enum TradeType {
   Buy = 'Buy',
-  Sell = 'Sell',
+  Sell = 'Sell'
 }
-
-export type VestingSchedule = {
-  __typename?: 'VestingSchedule';
-  perPeriod?: Maybe<Scalars['String']>;
-  period?: Maybe<Scalars['String']>;
-  periodCount?: Maybe<Scalars['String']>;
-  remainingVestingAmount?: Maybe<Scalars['String']>;
-  start?: Maybe<Scalars['String']>;
-};
 
 export type XykPool = {
   __typename?: 'XYKPool';

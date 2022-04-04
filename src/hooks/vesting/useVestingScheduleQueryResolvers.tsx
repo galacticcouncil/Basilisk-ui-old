@@ -7,7 +7,7 @@ export const useVestingScheduleQueryResolvers = () => {
   const getVestingScheduleByAddress = useGetVestingScheduleByAddress();
   const vestingSchedule = withErrorHandler(
     useCallback(
-      async (account: Account) => await getVestingScheduleByAddress(account.id),
+      async (account: Account) => await getVestingScheduleByAddress(),
       [getVestingScheduleByAddress]
     ),
     'vestingSchedule'

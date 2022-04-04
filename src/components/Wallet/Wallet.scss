@@ -1,0 +1,78 @@
+@import '../../misc/colors.module.scss';
+@import '../../misc/misc.module.scss';
+
+.wallet {
+  width: auto;
+
+  max-width: 550px;
+  min-width: 350px;
+
+  // flex-basis: 350px;
+
+  gap: 12px;
+
+  background-color: $d-gray4;
+  border-radius: $border-radius;
+  padding: 16px;
+
+  &__info {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    min-width: 100px;
+
+    &__account {
+      display: flex;
+      flex-direction: column;
+      min-width: 100px;
+
+      font-size: 14px;
+    }
+
+    // TODO: Hack for snek identicon - should do generic
+    svg {
+      transform: scale(125%);
+    }
+  }
+
+  &__address {
+    font-size: 12px;
+    line-height: 12px;
+    min-width: 100px;
+    flex-shrink: 1;
+    overflow: visible;
+    text-align: end;
+
+    letter-spacing: 1px;
+  }
+
+  &__account-btn {
+    min-width: 90px;
+
+    padding: 8px 12px;
+
+    font-weight: 600;
+    line-height: 16px;
+    font-size: 16px;
+
+    color: $l-gray2;
+    background-color: $d-gray5;
+    border-radius: $border-radius;
+
+    text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:hover {
+      color: $green1;
+      cursor: pointer;
+    }
+  }
+
+  @media only screen and (max-width: 500px) {
+    display: none;
+  }
+}

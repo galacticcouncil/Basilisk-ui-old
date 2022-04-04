@@ -1,1 +1,94 @@
 @import './misc/colors.module.scss';
+
+.debug {
+  display: none;
+
+  &.visible {
+    display: block;
+  }
+}
+
+.green {
+  color: $green1;
+}
+
+.red {
+  color: $red1;
+}
+
+.modal-component-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  padding-bottom: 8px;
+  gap: 16px;
+
+  background-color: $d-gray6;
+  overflow: hidden;
+
+  .modal-component-heading {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    background-color: $d-gray4;
+    font-size: 14px;
+    padding: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: $green1;
+  }
+
+  .close-modal-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-modal-btn:hover {
+    cursor: pointer;
+
+    svg {
+      path {
+        fill: $orange1;
+      }
+    }
+  }
+
+  .modal-component-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+
+    overflow-y: scroll;
+    margin: 0 8px;
+
+    padding: 0 8px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    /* Track */
+    &::-webkit-scrollbar-track {
+      background-color: $gray3;
+    }
+
+    /* Handle */
+    &::-webkit-scrollbar-thumb {
+      background: transparent url('/misc/images/Scrollbar.svg') no-repeat;
+      background-position: bottom;
+    }
+  }
+}
+
+// style me please
+.__react_component_tooltip {
+  // padding:  !important;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+
+  line-height: 1.2em;
+}

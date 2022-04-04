@@ -8,8 +8,40 @@
   "TradeGraph.poolTypeLabel.XYK": {
     "defaultMessage": "XYK"
   },
-  "greeting": {
-    "defaultMessage": "Today is {ts, date, ::yyyyMMdd}",
-    "description": "Application wide greeting"
+  "Wallet.InstallExtension": {
+    "defaultMessage": "Install extension"
+  },
+  "Wallet.ConnectAccount": {
+    "defaultMessage": "Connect account"
+  },
+  "Wallet.ClearAccount": {
+    "defaultMessage": "Clear account"
+  },
+  "Wallet.SelectAccount": {
+    "defaultMessage": "Select an account"
+  },
+  "Wallet.InstallInstructions": {
+    "defaultMessage": "To connect your account, please {link}."
+  },
+  "Wallet.InstallLinkText": {
+    "defaultMessage": "install or enable the polkadot.js extension"
+  },
+  "Wallet.ReloadInstructions": {
+    "defaultMessage": "You can {link} once you're done with the installation."
+  },
+  "Wallet.ReloadLinkText": {
+    "defaultMessage": "reload the page"
+  },
+  "Wallet.NoAccountsAvailable": {
+    "defaultMessage": "No accounts available"
+  },
+  "Wallet.Loading": {
+    "defaultMessage": "Loading..."
+  },
+  "Wallet.SelectAccountHelp": {
+    "defaultMessage": "Need help creating an account?"
+  },
+  "Wallet.ClickHere": {
+    "defaultMessage": "Click here"
   }
 }
