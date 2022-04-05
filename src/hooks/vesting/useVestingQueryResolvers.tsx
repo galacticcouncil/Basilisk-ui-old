@@ -1,19 +1,19 @@
-import { ApolloCache, ApolloClient } from '@apollo/client';
+import {  ApolloClient } from '@apollo/client';
 import { useCallback } from 'react';
 import { Account } from '../../generated/graphql';
 import { withErrorHandler } from '../apollo/withErrorHandler';
-import { useGetVestingScheduleByAddress } from './useGetVestingScheduleByAddress';
+import { useGetVestingByAddress } from './useGetVestingByAddress';
 
-export const useVestingScheduleQueryResolvers = () => {
-  const getVestingScheduleByAddress = useGetVestingScheduleByAddress();
+export const useVestingQueryResolvers = () => {
+  const getVestingByAddress = useGetVestingByAddress();
   const vestingSchedule = withErrorHandler(
     useCallback(
       async (
         account: Account,
         _args: any,
         { client }: { client: ApolloClient<any> }
-      ) => await getVestingScheduleByAddress(client, account.id),
-      [getVestingScheduleByAddress]
+      ) => await getVestingByAddress(client, account.id),
+      [getVestingByAddress]
     ),
     'vestingSchedule'
   );

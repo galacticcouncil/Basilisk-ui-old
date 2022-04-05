@@ -1,10 +1,9 @@
 import { ApiPromise } from '@polkadot/api';
-import { BalanceLock } from '@polkadot/types/interfaces';
 import { Codec } from '@polkadot/types/types';
 import BigNumber from 'bignumber.js';
 import { find } from 'lodash';
-import constants from '../../constants';
-import { VestingSchedule } from './useGetVestingScheduleByAddress';
+import errors from '../../errors';
+import { VestingSchedule } from './useGetVestingByAddress';
 
 export const balanceLockDataType = 'Vec<BalanceLock>';
 export const tokensLockDataType = balanceLockDataType;
@@ -61,58 +60,61 @@ export const getLockedBalanceByAddressAndLockId = async (
 };
 
 /**
- * This function casts a number in string representation
- * to a BigNumber. If the input is undefined, it returns
- * a default value.
+ * Calculates original and future lock for given VestingSchedule.
+ * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
  */
-export const toBN = (numberAsString: string | undefined) => {
-  // TODO: check if it is any good to use default values
-  // on undefined VestingSchedule properties!
-  if (!numberAsString) return new BigNumber(constants.defaultValue);
-  return new BigNumber(numberAsString);
-};
-
-// https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
-// TODO: check if calc makes sense for undefined VestingSchedule properties
-export const calculateFutureLock = (
+export const calculateLock = (
   vestingSchedule: VestingSchedule,
-  currentBlockNumber: BigNumber
-) => {
-  const startPeriod = toBN(vestingSchedule.start);
-  const period = toBN(vestingSchedule.period);
-  const numberOfPeriods = currentBlockNumber
+  currentBlockNumber: string
+): [BigNumber, BigNumber] => {
+  // check for undefined property in vestingSchedule
+  if (
+    !vestingSchedule.perPeriod ||
+    !vestingSchedule.period ||
+    !vestingSchedule.periodCount ||
+    !vestingSchedule.start
+  )
+    throw Error(errors.vestingScheduleIncomplete);
+
+  const startPeriod = new BigNumber(vestingSchedule.start);
+  const period = new BigNumber(vestingSchedule.period);
+  const numberOfPeriods = new BigNumber(currentBlockNumber)
     .minus(startPeriod)
     .dividedBy(period);
 
-  const perPeriod = toBN(vestingSchedule.perPeriod);
+  const perPeriod = new BigNumber(vestingSchedule.perPeriod);
   const vestedOverPeriods = numberOfPeriods.multipliedBy(perPeriod);
 
-  const periodCount = toBN(vestingSchedule.periodCount);
+  const periodCount = new BigNumber(vestingSchedule.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
   const futureLock = originalLock.minus(vestedOverPeriods);
-  return futureLock;
+
+  return [originalLock, futureLock];
 };
 
-// get lockedVestingAmount from function getLockedBalanceByAddressAndLockId
-export const calculateClaimableAmount = (
+export const calculateTotalLocks = (
   vestingSchedules: VestingSchedule[],
-  lockedVestingAmount: string,
-  currentBlockNumber: BigNumber
-): BigNumber => {
-  // calculate futureLock for every vesting schedule and sum to total
-  const totalFutureLocks = vestingSchedules.reduce(function (
-    total,
-    vestingSchedule
-  ) {
-    const futureLock = calculateFutureLock(vestingSchedule, currentBlockNumber);
-    return total.plus(futureLock);
-  },
-  new BigNumber(0));
+  currentBlockNumber: string
+) => {
+  // calculate originalLock and futureLock for every vesting schedule and sum to total
+  const total = vestingSchedules.reduce(
+    function (total, vestingSchedule) {
+      const [originalLock, futureLock] = calculateLock(
+        vestingSchedule,
+        currentBlockNumber
+      );
 
-  // calculate claimable amount
-  const remainingVestingAmount = toBN(lockedVestingAmount);
-  const claimableAmount = remainingVestingAmount.minus(totalFutureLocks);
+      total.original.plus(originalLock);
+      total.future.plus(futureLock);
 
-  return claimableAmount;
+      return total;
+    },
+    { original: new BigNumber('0'), future: new BigNumber('0') }
+  );
+
+  return {
+    original: total.original.toString(),
+    future: total.future.toString(),
+  };
 };
