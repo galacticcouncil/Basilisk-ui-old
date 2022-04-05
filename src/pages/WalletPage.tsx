@@ -40,6 +40,9 @@ export const ActiveAccount = ({
           </div>
           <div onClick={() => onOpenAccountSelector()}>Change account</div>
           <div onClick={() => handleClearAccount()}>Clear account</div>
+
+          <Vesting vestingSchedules={[account?.vestingSchedule]}/>
+          <BalanceList balances={account.balances}/>
         </>
       ) : (
         <div>Please connect a wallet first</div>
@@ -142,8 +145,6 @@ export const WalletPage = () => {
                   loading={loading}
                   onOpenAccountSelector={openModal}
                 />
-                <Vesting vestingSchedules={[activeAccount?.vestingSchedule]}/>
-                <BalanceList balances={activeAccount.balances}/>
               </>
             ) : (
               <div onClick={() => openModal()}>

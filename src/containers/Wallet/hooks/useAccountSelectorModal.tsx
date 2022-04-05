@@ -59,8 +59,6 @@ export const useAccountSelectorModal = ({
     false // don't auto close when clicking outside the modalPortalElement
   );
 
-  console.log('accountsNetworkStatus', accountsNetworkStatus)
-
   useEffect(() => {
     modal.isModalOpen && getAccounts();
   }, [modal.isModalOpen])
