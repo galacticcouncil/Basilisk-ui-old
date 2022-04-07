@@ -11,13 +11,16 @@ import {
 import { readLastBlock } from '../lastBlock/readLastBlock';
 import { ApolloClient } from '@apollo/client';
 import BigNumber from 'bignumber.js';
-import { Vesting } from '../../generated/graphql';
+import { Query, Vesting, VestingSchedule } from '../../generated/graphql';
 
 export const vestingScheduleDataType = 'Vec<VestingScheduleOf>';
 
 export const getVestingByAddressFactory =
   (apiInstance?: ApiPromise) =>
-  async (client: ApolloClient<object>, address?: string) => {
+  async (
+    client: ApolloClient<object>,
+    address?: string
+  ): Promise<Query['vesting']> => {
     if (!apiInstance || !address) return;
 
     const currentBlockNumber =
@@ -39,7 +42,7 @@ export const getVestingByAddressFactory =
         period: vestingSchedule?.period.toString(),
         periodCount: vestingSchedule?.periodCount.toString(),
         perPeriod: vestingSchedule?.perPeriod.toString(),
-      } as Vesting;
+      } as VestingSchedule;
     });
 
     const totalLocks = calculateTotalLocks(
@@ -68,7 +71,7 @@ export const getVestingByAddressFactory =
       claimableAmount: claimableAmount.toString(),
       originalLockBalance: totalLocks.original,
       lockedVestingBalance: totalRemainingVesting.toString(),
-    };
+    } as Vesting;
   };
 
 export const useGetVestingByAddress = () => {

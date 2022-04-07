@@ -2,7 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import BigNumber from 'bignumber.js';
 import { find } from 'lodash';
-import { Vesting } from '../../generated/graphql';
+import { VestingSchedule } from '../../generated/graphql';
 
 export const balanceLockDataType = 'Vec<BalanceLock>';
 export const tokensLockDataType = balanceLockDataType;
@@ -63,7 +63,7 @@ export const getLockedBalanceByAddressAndLockId = async (
  * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
  */
 export const calculateLock = (
-  vesting: Vesting,
+  vesting: VestingSchedule,
   currentBlockNumber: string
 ): [BigNumber, BigNumber] => {
   const startPeriod = new BigNumber(vesting.start);
@@ -88,20 +88,20 @@ export const calculateLock = (
  * sums it to total.
  */
 export const calculateTotalLocks = (
-  vestings: Vesting[],
+  vestingSchedules: VestingSchedule[],
   currentBlockNumber: string
 ) => {
   /**
    * .reduce did not play well with an object that has multiple BigNumbers
    * that's why the summation runs twice.
    */
-  const sumOriginalLock = vestings.reduce((accumulator, vesting) => {
-    const [originalLock] = calculateLock(vesting, currentBlockNumber);
+  const sumOriginalLock = vestingSchedules.reduce((accumulator, vestingSchedule) => {
+    const [originalLock] = calculateLock(vestingSchedule, currentBlockNumber);
     return accumulator.plus(originalLock);
   }, new BigNumber(0));
 
-  const sumFutureLock = vestings.reduce((accumulator, vesting) => {
-    const [, futureLock] = calculateLock(vesting, currentBlockNumber);
+  const sumFutureLock = vestingSchedules.reduce((accumulator, vestingSchedule) => {
+    const [, futureLock] = calculateLock(vestingSchedule, currentBlockNumber);
     return accumulator.plus(futureLock);
   }, new BigNumber(0));
 

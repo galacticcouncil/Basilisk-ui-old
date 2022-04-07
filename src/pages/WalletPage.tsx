@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react';
-import { Account, Account as AccountModel, Balance, Maybe, VestingSchedule } from '../generated/graphql';
+import { Account, Account as AccountModel, Balance, Maybe, Vesting } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../hooks/accounts/lib/usePersistActiveAccount';
@@ -11,6 +11,7 @@ import { useModalPortalElement } from '../components/Wallet/AccountSelector/hook
 import { useAccountSelectorModal } from '../containers/Wallet/hooks/useAccountSelectorModal';
 import { FormattedBalance } from '../components/Balance/FormattedBalance/FormattedBalance';
 import BigNumber from 'bignumber.js';
+import { precision12 } from '../hooks/math/useFromPrecision';
 
 export const ActiveAccount = ({
   account,
@@ -41,7 +42,7 @@ export const ActiveAccount = ({
           <div onClick={() => onOpenAccountSelector()}>Change account</div>
           <div onClick={() => handleClearAccount()}>Clear account</div>
 
-          <Vesting vestingSchedules={[account?.vestingSchedule]}/>
+          <VestingInfo vesting={account?.vesting}/>
           <BalanceList balances={account.balances}/>
         </>
       ) : (
@@ -66,23 +67,23 @@ export const BalanceList = ({
   </>
 }
 
-export const Vesting = ({ vestingSchedules }: {
-  vestingSchedules?: Maybe<VestingSchedule | undefined>[]
+export const VestingInfo = ({ vesting }: {
+  vesting?: Maybe<Vesting | undefined>
 }) => {
   // how much is claimable atm
   const claimable = useMemo(() => {
     return new BigNumber('0').toFixed(0);
-  }, [vestingSchedules]);
+  }, [vesting]);
 
   // sum of vesting schedules
   const original = useMemo(() => {
     return new BigNumber('0').toFixed(0);
-  }, [vestingSchedules]);
+  }, [vesting]);
 
   // lock
   const remaining = useMemo(() => {
     return new BigNumber('0').toFixed(0);
-  }, [vestingSchedules]);
+  }, [vesting]);
 
   // TODO: run mutation with confirmation
   const handleClaimClick = useCallback(() => {

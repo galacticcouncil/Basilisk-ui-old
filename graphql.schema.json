@@ -111,9 +111,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Vesting",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Vesting",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -128,7 +132,7 @@
           },
           {
             "kind": "INTERFACE",
-            "name": "Vestings",
+            "name": "IVesting",
             "ofType": null
           }
         ],
@@ -557,6 +561,40 @@
         "possibleTypes": null
       },
       {
+        "kind": "INTERFACE",
+        "name": "IVesting",
+        "description": null,
+        "fields": [
+          {
+            "name": "vesting",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Vesting",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": [
+          {
+            "kind": "OBJECT",
+            "name": "Account",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "Query",
+            "ofType": null
+          }
+        ]
+      },
+      {
         "kind": "OBJECT",
         "name": "LBPAssetWeights",
         "description": null,
@@ -927,6 +965,18 @@
             "deprecationReason": null
           },
           {
+            "name": "_vestingSchedule",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "VestingSchedule",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "accounts",
             "description": null,
             "args": [],
@@ -1110,6 +1160,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "vesting",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Vesting",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -1117,6 +1179,11 @@
           {
             "kind": "INTERFACE",
             "name": "Balances",
+            "ofType": null
+          },
+          {
+            "kind": "INTERFACE",
+            "name": "IVesting",
             "ofType": null
           }
         ],
@@ -1159,6 +1226,65 @@
       {
         "kind": "OBJECT",
         "name": "Vesting",
+        "description": null,
+        "fields": [
+          {
+            "name": "claimableAmount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "lockedVestingBalance",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "originalLockBalance",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "VestingSchedule",
         "description": null,
         "fields": [
           {
@@ -1230,35 +1356,6 @@
         "interfaces": [],
         "enumValues": null,
         "possibleTypes": null
-      },
-      {
-        "kind": "INTERFACE",
-        "name": "Vestings",
-        "description": null,
-        "fields": [
-          {
-            "name": "vesting",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Vesting",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": [
-          {
-            "kind": "OBJECT",
-            "name": "Account",
-            "ofType": null
-          }
-        ]
       },
       {
         "kind": "OBJECT",

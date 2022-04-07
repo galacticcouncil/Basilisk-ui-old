@@ -13,14 +13,14 @@ export type Scalars = {
   Float: number;
 };
 
-export type Account = Balances & Vestings & {
+export type Account = Balances & IVesting & {
   __typename?: 'Account';
   balances: Array<Balance>;
   genesisHash?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   name?: Maybe<Scalars['String']>;
   source?: Maybe<Scalars['String']>;
-  vesting?: Maybe<Vesting>;
+  vesting: Vesting;
 };
 
 
@@ -87,6 +87,10 @@ export type FeePaymentAsset = {
   fallbackPrice?: Maybe<Scalars['String']>;
 };
 
+export type IVesting = {
+  vesting?: Maybe<Vesting>;
+};
+
 export type LbpAssetWeights = {
   __typename?: 'LBPAssetWeights';
   current: Scalars['String'];
@@ -123,10 +127,11 @@ export type Mutation = {
 
 export type Pool = LbpPool | XykPool;
 
-export type Query = Balances & {
+export type Query = Balances & IVesting & {
   __typename?: 'Query';
   _assetIds?: Maybe<AssetIds>;
   _tradeType?: Maybe<TradeType>;
+  _vestingSchedule?: Maybe<VestingSchedule>;
   accounts: Array<Account>;
   activeAccount?: Maybe<Account>;
   assets?: Maybe<Array<Asset>>;
@@ -136,6 +141,7 @@ export type Query = Balances & {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   pools: Array<Pool>;
+  vesting?: Maybe<Vesting>;
 };
 
 
@@ -150,14 +156,17 @@ export enum TradeType {
 
 export type Vesting = {
   __typename?: 'Vesting';
+  claimableAmount: Scalars['String'];
+  lockedVestingBalance: Scalars['String'];
+  originalLockBalance: Scalars['String'];
+};
+
+export type VestingSchedule = {
+  __typename?: 'VestingSchedule';
   perPeriod: Scalars['String'];
   period: Scalars['String'];
   periodCount: Scalars['String'];
   start: Scalars['String'];
-};
-
-export type Vestings = {
-  vesting?: Maybe<Vesting>;
 };
 
 export type XykPool = {
