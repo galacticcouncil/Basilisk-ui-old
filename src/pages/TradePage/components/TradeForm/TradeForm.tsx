@@ -11,26 +11,26 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import { Account, Balance, Maybe, Pool, TradeType } from '../../../generated/graphql';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { useMath } from '../../../hooks/math/useMath';
-import { percentageChange } from '../../../hooks/math/usePercentageChange';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
-import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
-import { idToAsset, TradeAssetIds } from '../../../pages/TradePage/TradePage';
-import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput';
-import { PoolType } from '../../Chart/shared';
+import { Account, Balance, Maybe, Pool, TradeType } from '../../../../generated/graphql';
+import { fromPrecision12 } from '../../../../hooks/math/useFromPrecision';
+import { useMath } from '../../../../hooks/math/useMath';
+import { percentageChange } from '../../../../hooks/math/usePercentageChange';
+import { toPrecision12 } from '../../../../hooks/math/useToPrecision';
+import { SubmitTradeMutationVariables } from '../../../../hooks/pools/mutations/useSubmitTradeMutation';
+import { idToAsset, TradeAssetIds } from '../../TradePage';
+import { AssetBalanceInput } from '../../../../components/Balance/AssetBalanceInput/AssetBalanceInput';
+import { PoolType } from '../../../../components/Chart/shared';
 import { TradeInfo } from './TradeInfo/TradeInfo';
 import './TradeForm.scss';
-import Icon from '../../Icon/Icon';
-import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
-import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
-import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
+import Icon from '../../../../components/Icon/Icon';
+import { useModalPortal } from '../../../../components/Balance/AssetBalanceInput/hooks/useModalPortal';
+import { FormattedBalance } from '../../../../components/Balance/FormattedBalance/FormattedBalance';
+import { useDebugBoxContext } from '../../hooks/useDebugBox';
+import { horizontalBar } from '../../../../components/Chart/ChartHeader/ChartHeader';
+import { usePolkadotJsContext } from '../../../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
-import { estimateBuy } from '../../../hooks/pools/xyk/buy';
-import { estimateSell } from '../../../hooks/pools/xyk/sell';
+import { estimateBuy } from '../../../../hooks/pools/xyk/buy';
+import { estimateSell } from '../../../../hooks/pools/xyk/sell';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;

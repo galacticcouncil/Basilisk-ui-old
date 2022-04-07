@@ -14,6 +14,7 @@ import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolv
 import { usePersistentConfig } from '../config/usePersistentConfig';
 import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
 import { useVestingQueryResolvers } from '../vesting/useVestingQueryResolvers';
+import { useBalanceMutationsResolvers } from '../balances/resolvers/mutation/balanceTransfer';
 
 /**
  * Add all local gql resolvers here
@@ -42,7 +43,8 @@ export const useResolvers: () => Resolvers = () => {
       ...useVestingMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
-      ...useFaucetResolvers().Mutation
+      ...useFaucetResolvers().Mutation,
+      ...useBalanceMutationsResolvers()
     },
     XYKPool,
     LBPPool,

@@ -22,7 +22,7 @@ export type ModalPortalElement = ({
   onAccountSelected: (account: Account) => void,
   onAccountCleared: () => void
 }) => ModalPortalElementFactory;
-export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
+export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal'];
 
 export const useModalPortalElement: ModalPortalElement = ({
   accounts,
