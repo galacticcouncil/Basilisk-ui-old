@@ -1,13 +1,13 @@
 #import "./../../balances/graphql/Balance.graphql"
-#import './../../vesting/graphql/VestingSchedule.graphql'
+#import './../../vesting/graphql/Vesting.graphql'
 
-type Account implements Balances & VestingSchedules {
+type Account implements Balances & Vestings {
   id: String!
   name: String
   source: String
   genesisHash: String
   balances(assetIds: [String]): [Balance!]!
-  vestingSchedule: VestingSchedule
+  vesting: Vesting
 }
 
 extend type Query {

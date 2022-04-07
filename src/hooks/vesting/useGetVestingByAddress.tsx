@@ -11,18 +11,9 @@ import {
 import { readLastBlock } from '../lastBlock/readLastBlock';
 import { ApolloClient } from '@apollo/client';
 import BigNumber from 'bignumber.js';
-import { fromPrecision12 } from '../math/useFromPrecision';
+import { Vesting } from '../../generated/graphql';
 
 export const vestingScheduleDataType = 'Vec<VestingScheduleOf>';
-
-// TODO: use type from graphql in VestingSchedule.graphql
-// without remainingVestingAmount property - currently yarn run codegen is broken
-export type VestingSchedule = {
-  start: string | undefined;
-  period: string | undefined;
-  periodCount: string | undefined;
-  perPeriod: string | undefined;
-};
 
 export const getVestingByAddressFactory =
   (apiInstance?: ApiPromise) =>
@@ -48,7 +39,7 @@ export const getVestingByAddressFactory =
         period: vestingSchedule?.period.toString(),
         periodCount: vestingSchedule?.periodCount.toString(),
         perPeriod: vestingSchedule?.perPeriod.toString(),
-      } as VestingSchedule;
+      } as Vesting;
     });
 
     const totalLocks = calculateTotalLocks(
@@ -74,9 +65,9 @@ export const getVestingByAddressFactory =
     );
 
     return {
-      claimableAmount: fromPrecision12(claimableAmount.toString()),
-      originalLockBalance: fromPrecision12(totalLocks.original),
-      lockedVestingBalance: fromPrecision12(totalRemainingVesting.toString()),
+      claimableAmount: claimableAmount.toString(),
+      originalLockBalance: totalLocks.original,
+      lockedVestingBalance: totalRemainingVesting.toString(),
     };
   };
 

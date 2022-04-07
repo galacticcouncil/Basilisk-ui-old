@@ -2,8 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Codec } from '@polkadot/types/types';
 import BigNumber from 'bignumber.js';
 import { find } from 'lodash';
-import errors from '../../errors';
-import { VestingSchedule } from './useGetVestingByAddress';
+import { Vesting } from '../../generated/graphql';
 
 export const balanceLockDataType = 'Vec<BalanceLock>';
 export const tokensLockDataType = balanceLockDataType;
@@ -64,28 +63,19 @@ export const getLockedBalanceByAddressAndLockId = async (
  * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
  */
 export const calculateLock = (
-  vestingSchedule: VestingSchedule,
+  vesting: Vesting,
   currentBlockNumber: string
 ): [BigNumber, BigNumber] => {
-  // check for undefined property in vestingSchedule
-  if (
-    !vestingSchedule.perPeriod ||
-    !vestingSchedule.period ||
-    !vestingSchedule.periodCount ||
-    !vestingSchedule.start
-  )
-    throw Error(errors.vestingScheduleIncomplete);
-
-  const startPeriod = new BigNumber(vestingSchedule.start);
-  const period = new BigNumber(vestingSchedule.period);
+  const startPeriod = new BigNumber(vesting.start);
+  const period = new BigNumber(vesting.period);
   const numberOfPeriods = new BigNumber(currentBlockNumber)
     .minus(startPeriod)
     .dividedBy(period);
 
-  const perPeriod = new BigNumber(vestingSchedule.perPeriod);
+  const perPeriod = new BigNumber(vesting.perPeriod);
   const vestedOverPeriods = numberOfPeriods.multipliedBy(perPeriod);
 
-  const periodCount = new BigNumber(vestingSchedule.periodCount);
+  const periodCount = new BigNumber(vesting.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
   const futureLock = originalLock.minus(vestedOverPeriods);
@@ -93,28 +83,30 @@ export const calculateLock = (
   return [originalLock, futureLock];
 };
 
+/**
+ * Calculates originalLock and futureLock for every vesting schedule and
+ * sums it to total.
+ */
 export const calculateTotalLocks = (
-  vestingSchedules: VestingSchedule[],
+  vestings: Vesting[],
   currentBlockNumber: string
 ) => {
-  // calculate originalLock and futureLock for every vesting schedule and sum to total
-  const total = vestingSchedules.reduce(
-    function (total, vestingSchedule) {
-      const [originalLock, futureLock] = calculateLock(
-        vestingSchedule,
-        currentBlockNumber
-      );
+  /**
+   * .reduce did not play well with an object that has multiple BigNumbers
+   * that's why the summation runs twice.
+   */
+  const sumOriginalLock = vestings.reduce((accumulator, vesting) => {
+    const [originalLock] = calculateLock(vesting, currentBlockNumber);
+    return accumulator.plus(originalLock);
+  }, new BigNumber(0));
 
-      total.original.plus(originalLock);
-      total.future.plus(futureLock);
-
-      return total;
-    },
-    { original: new BigNumber('0'), future: new BigNumber('0') }
-  );
+  const sumFutureLock = vestings.reduce((accumulator, vesting) => {
+    const [, futureLock] = calculateLock(vesting, currentBlockNumber);
+    return accumulator.plus(futureLock);
+  }, new BigNumber(0));
 
   return {
-    original: total.original.toString(),
-    future: total.future.toString(),
+    original: sumOriginalLock.toString(),
+    future: sumFutureLock.toString(),
   };
 };

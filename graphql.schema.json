@@ -107,12 +107,12 @@
             "deprecationReason": null
           },
           {
-            "name": "vestingSchedule",
+            "name": "vesting",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "VestingSchedule",
+              "name": "Vesting",
               "ofType": null
             },
             "isDeprecated": false,
@@ -128,7 +128,7 @@
           },
           {
             "kind": "INTERFACE",
-            "name": "VestingSchedules",
+            "name": "Vestings",
             "ofType": null
           }
         ],
@@ -1158,7 +1158,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "VestingSchedule",
+        "name": "Vesting",
         "description": null,
         "fields": [
           {
@@ -1166,9 +1166,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1178,9 +1182,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1190,21 +1198,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "remainingVestingAmount",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1214,9 +1214,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1229,16 +1233,16 @@
       },
       {
         "kind": "INTERFACE",
-        "name": "VestingSchedules",
+        "name": "Vestings",
         "description": null,
         "fields": [
           {
-            "name": "vestingSchedule",
+            "name": "vesting",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "VestingSchedule",
+              "name": "Vesting",
               "ofType": null
             },
             "isDeprecated": false,
