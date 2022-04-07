@@ -119,6 +119,14 @@ export type LastBlock = {
   relaychainBlockNumber?: Maybe<Scalars['String']>;
 };
 
+export type LockedBalance = {
+  __typename?: 'LockedBalance';
+  assetId: Scalars['String'];
+  balance: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
+  lockId: Scalars['String'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
@@ -140,6 +148,7 @@ export type Query = Balances & IVesting & {
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
+  lockedBalances: Array<LockedBalance>;
   pools: Array<Pool>;
   vesting?: Maybe<Vesting>;
 };
@@ -147,6 +156,12 @@ export type Query = Balances & IVesting & {
 
 export type QueryBalancesArgs = {
   assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
+export type QueryLockedBalancesArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  lockId: Scalars['String'];
 };
 
 export enum TradeType {

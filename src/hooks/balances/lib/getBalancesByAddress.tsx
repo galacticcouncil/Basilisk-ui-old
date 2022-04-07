@@ -5,6 +5,7 @@ import constants from '../../../constants';
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces';
 import '@polkadot/api-augment';
 import BigNumber from 'bignumber.js';
+import errors from '../../../errors';
 
 /**
  * This function fetches asset balances for a given set of assetIds.
@@ -63,24 +64,19 @@ export const fetchNativeAssetBalance = async (
   const nativeAssetBalance = await apiInstance.query.system.account(address);
   // usable native asset balance
   const freeBalance = nativeAssetBalance.data.free.toString();
-  const miscFrozenBalance = nativeAssetBalance.data.miscFrozen.toString();  
+  const miscFrozenBalance = nativeAssetBalance.data.miscFrozen.toString();
   const feeFrozenBalance = nativeAssetBalance.data.feeFrozen.toString();
-  const maxFrozenBalance = max([
-    miscFrozenBalance,
-    feeFrozenBalance
-  ]);
+  const maxFrozenBalance = max([miscFrozenBalance, feeFrozenBalance]);
 
-  if (!maxFrozenBalance) throw new Error('Unable to determine usable balance');
+  if (!maxFrozenBalance) throw new Error(errors.usableBalanceNotAvailable);
 
-  let balance = new BigNumber(freeBalance)
-    .minus(maxFrozenBalance)
-    .toString();
+  let balance = new BigNumber(freeBalance).minus(maxFrozenBalance).toString();
 
   balance = new BigNumber(balance).gte('0') ? balance : '0';
 
   return {
     assetId: constants.nativeAssetId,
-    balance
+    balance,
   };
 };
 
@@ -111,11 +107,9 @@ export const fetchNonNativeAssetBalancesByAssetIds = async (
     // extract free balance as string
     const freeBalance = balanceData.free.toString();
     const frozenBalance = balanceData.frozen.toString();
-    let balance = new BigNumber(freeBalance)
-      .minus(frozenBalance)
-      .toString()
+    let balance = new BigNumber(freeBalance).minus(frozenBalance).toString();
 
-    balance = new BigNumber(balance).gte('0') ? balance: '0';
+    balance = new BigNumber(balance).gte('0') ? balance : '0';
 
     return {
       assetId: assetIds[i], // pair assetId in the same order as provided in query parameter
@@ -143,10 +137,14 @@ export const fetchNonNativeAssetBalances = async (
     const [, assetId] = key.toHuman() as [string, string]; // [Address, AssetId]
 
     const freeBalance = balanceData.free.toString();
+    const frozenBalance = balanceData.frozen.toString();
+    let balance = new BigNumber(freeBalance).minus(frozenBalance).toString();
+
+    balance = new BigNumber(balance).gte('0') ? balance : '0';
 
     return {
       assetId: assetId,
-      balance: freeBalance,
+      balance: balance,
     };
   });
 
