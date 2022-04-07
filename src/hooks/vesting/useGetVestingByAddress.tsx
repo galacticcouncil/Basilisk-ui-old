@@ -64,8 +64,11 @@ export const getVestingByAddressFactory =
       )
     )?.amount?.toString();
 
-    if (!lockedVestingBalance)
-      throw Error(`Can't fetch remaining vesting balance`);
+    if (!lockedVestingBalance) return {
+      claimableAmount: '0',
+      originalLockBalance: '0',
+      lockedVestingBalance: '0',
+    }
 
     const totalRemainingVesting = new BigNumber(lockedVestingBalance!);
     // claimable = remainingVesting - all future locks
@@ -74,9 +77,10 @@ export const getVestingByAddressFactory =
     );
 
     return {
-      claimableAmount: fromPrecision12(claimableAmount.toString()),
-      originalLockBalance: fromPrecision12(totalLocks.original),
-      lockedVestingBalance: fromPrecision12(totalRemainingVesting.toString()),
+      claimableAmount: claimableAmount.toFixed(0),
+      // TODO: this is probably not calculated correctly?
+      originalLockBalance: totalLocks.original,
+      lockedVestingBalance: totalRemainingVesting.toFixed(0),
     };
   };
 

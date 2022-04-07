@@ -98,8 +98,7 @@ export const calculateTotalLocks = (
   currentBlockNumber: string
 ) => {
   // calculate originalLock and futureLock for every vesting schedule and sum to total
-  const total = vestingSchedules.reduce(
-    function (total, vestingSchedule) {
+  const total = vestingSchedules.reduce((total, vestingSchedule) => {
       const [originalLock, futureLock] = calculateLock(
         vestingSchedule,
         currentBlockNumber
@@ -114,7 +113,7 @@ export const calculateTotalLocks = (
   );
 
   return {
-    original: total.original.toString(),
-    future: total.future.toString(),
+    original: total.original.toFixed(0),
+    future: total.future.toFixed(0),
   };
 };

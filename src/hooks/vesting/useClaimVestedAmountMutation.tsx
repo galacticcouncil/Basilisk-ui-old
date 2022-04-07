@@ -1,18 +1,15 @@
-import { useMutation } from '@apollo/client';
+import { MutationHookOptions, useMutation } from '@apollo/client';
 import { loader } from 'graphql.macro';
 
 export const CLAIM_VESTED_AMOUNT = loader('./graphql/ClaimVestedAmount.mutation.graphql');
 
 export type ClaimVestedAmountMutationResponse = void;
-export interface ClaimVestedAmountMutationVariables {
-    address?: string
-}
 
 // no need to refetch queries, active account will refetch with every new block anyways
-export const useClaimVestedAmountMutation = (variables?: ClaimVestedAmountMutationVariables) => useMutation<ClaimVestedAmountMutationResponse, ClaimVestedAmountMutationVariables>(
+export const useClaimVestedAmountMutation = (options?: MutationHookOptions<any, any>) => useMutation<ClaimVestedAmountMutationResponse>(
     CLAIM_VESTED_AMOUNT,
     { 
-        variables,
         notifyOnNetworkStatusChange: true,
+        ...options,
     }
 )

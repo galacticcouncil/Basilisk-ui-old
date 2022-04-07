@@ -12,7 +12,18 @@ type VestingSchedule {
     perPeriod: String
 }
 
-# TODO: resolver needs to support multiple vesting schedules
-interface VestingSchedule {
+type Vesting {
+    claimableAmount: String!,
+    originalLockBalance: String!,
+    lockedVestingBalance: String!
+}
+
+interface IVesting {
+    vesting: Vesting!
+}
+
+# just to get VestingSchedule through schema, it should be removed
+# and the type definition moved out of the schema
+extend type Query {
     vestingSchedule: VestingSchedule
-}   
+}
