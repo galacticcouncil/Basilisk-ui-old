@@ -20,7 +20,7 @@ export const useFormatSI = (
         );
 
         // TODO: get rid of the 'as' call
-        const unitName: string | undefined = unitMap[siFormat.unit as MetricUnit];
+        const unitName: string | undefined = unitMap[siFormat.unit as MetricUnit]
 
         return {
             ...siFormat,
@@ -37,9 +37,14 @@ export const useFormatSI = (
 
         const unit = formattedBalance.unit;
         const unitName = unit === '' ? '' : formattedBalance.unitName;
-        const displayUnit = unitStyle === UnitStyle.LONG
-            ? unitName || unit
-            : unit
+        // TODO: refactor
+        const displayUnit = formattedBalance.value !== '0.00'
+            ? (
+                unitStyle === UnitStyle.LONG
+                    ? unitName || unit
+                    : unit
+            )
+            : ''
 
         return ` ${displayUnit}`;
     }, [formattedBalance, unitStyle])

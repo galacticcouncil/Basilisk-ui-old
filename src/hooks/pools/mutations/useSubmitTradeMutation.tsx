@@ -1,4 +1,4 @@
-import { useMutation } from '@apollo/client';
+import { MutationHookOptions, useMutation } from '@apollo/client';
 import { loader } from 'graphql.macro';
 import { PoolType } from '../../../components/Chart/shared';
 import { TradeType } from '../../../generated/graphql';
@@ -15,10 +15,11 @@ export interface SubmitTradeMutationVariables {
     amountWithSlippage: string
 }
 
-export const useSubmitTradeMutation = () => useMutation<void, SubmitTradeMutationVariables>(
+export const useSubmitTradeMutation = (options?: MutationHookOptions<any, any>) => useMutation<void, SubmitTradeMutationVariables>(
     SUBMIT_TRADE, 
     {
-        notifyOnNetworkStatusChange: true
+        notifyOnNetworkStatusChange: true,
+        ...options
     }
 )
 

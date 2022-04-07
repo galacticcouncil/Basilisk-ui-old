@@ -1,12 +1,9 @@
 import { useEffect, useMemo } from 'react';
 import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client';
-import { useAccountsQueryResolvers } from '../accounts/resolvers/useAccountsQueryResolvers';
+import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers';
 import { loader } from 'graphql.macro';
-import { useAccountsMutationResolvers } from '../accounts/resolvers/useAccountsMutationResolvers';
 import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
-
-import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
 import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
@@ -15,13 +12,16 @@ import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResol
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
 import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
 import { usePersistentConfig } from '../config/usePersistentConfig';
+import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
+import { useVestingQueryResolvers } from '../vesting/useVestingQueryResolvers';
 
 /**
  * Add all local gql resolvers here
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolver, Account } = useAccountsQueryResolvers();
+  const { Query: AccountsQueryResolvers, Mutation: AccountsMutationResolvers } =
+    useAccountsResolvers();
   const {
     Query: PoolsQueryResolver,
     XYKPool,
@@ -30,23 +30,26 @@ export const useResolvers: () => Resolvers = () => {
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
   return {
     Query: {
-      ...AccountsQueryResolver,
+      ...AccountsQueryResolvers,
       ...ExtensionQueryResolver,
-      ...useConfigQueryResolvers(),
       ...useFeePaymentAssetsQueryResolvers(),
       ...useBalanceQueryResolvers(),
       ...PoolsQueryResolver,
       ...useAssetsQueryResolvers(),
     },
     Mutation: {
-      ...useAccountsMutationResolvers(),
+      ...AccountsMutationResolvers,
       ...useVestingMutationResolvers(),
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
+      ...useFaucetResolvers().Mutation
     },
-    Account,
     XYKPool,
     LBPPool,
+    Account: {
+      ...useBalanceQueryResolvers(),
+      ...useVestingQueryResolvers()
+    }
   };
 };
 
@@ -82,7 +85,6 @@ export const useConfigureApolloClient = () => {
   }, [processorUrl, cache]);
 
   useEffect(() => {
-    console.log('updating resolvers');
     client?.setResolvers(resolvers);
   }, [resolvers, client]);
 

@@ -2,39 +2,101 @@
 @import '../../../misc/misc.module.scss';
 
 .asset-balance-input {
-    position: relative;
+  display: flex;
+  position: relative;
+  align-items: center;
+
+  height: 60px;
+
+  background-color: $d-gray2;
+  border-radius: $border-radius;
+
+  .balance-input {
+    height: 20px;
+    border-radius: 0;
+  }
+
+  &__asset-info {
+    height: 100%;
+
+    padding: 16px 12px;
+
+    display: flex;
     align-items: center;
+    gap: 8px;
 
-    background-color: $gray1;
-    border-radius: $border-radius;
+    width: 130px;
 
-    &__info {
-        width: 4.5rem;
-        align-items: center;
-        font-weight: bold;
+    font-size: 0.95rem;
+    font-weight: bold;
+    cursor: pointer;
+
+    .asset-icon {
+      width: 32px;
+      height: 32px;
+
+      flex-basis: 32px;
+      flex-shrink: 0;
+      flex-grow: 0;
+
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
-    &__asset-icon {
-        height: 2rem;
-
+    &__names {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      &__ticker {
         display: flex;
         align-items: center;
-        justify-content: center;
+        gap: 4px;
 
-        width: 4rem;
+        font-size: 16px;
+        line-height: 18px;
 
-        font-size: 0.95rem;
-        font-weight: bold;
-        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      &__full-name {
+        font-size: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+    }
 
-        box-shadow: -1px 0 0 $gray2 inset;
+    &:hover {
+      color: $green1;
 
-        &:hover {
-            color: $green1;
+      svg {
+        path {
+          fill: $green1;
         }
+      }
     }
 
-    &__input-wrapper {
-        flex-grow: 1;
+    box-shadow: 1px 0 $d-gray4;
+  }
+
+  &__input-wrapper {
+    flex-grow: 1;
+    padding: 16px 12px;
+
+    &__unit-selector {
+      display: flex;
+      justify-content: end;
+
+      &__asset-name {
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+      }
+      .horizontal-bar {
+        position: relative;
+        top: -1px;
+      }
     }
+  }
 }

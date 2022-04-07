@@ -1,26 +1,22 @@
-# TODO: fetch only balances for the active fee payment asset
+# Query that triggers the local extension resolver
 query GetActiveAccount {
-    lastBlock @client { 
-        parachainBlockNumber,
-        relaychainBlockNumber,
+  lastBlock @client {
+    parachainBlockNumber
+    relaychainBlockNumber
+  }
+
+  activeAccount @client {
+    id
+    name
+    source
+    balances {
+      assetId
+      balance
+    },
+    vesting {
+      claimableAmount,
+      originalLockBalance,
+      lockedVestingBalance
     }
-    
-    account: accounts(isActive: true) @client {
-        id,
-        name,
-        isActive,
-        balances {
-            assetId,
-            balance
-        },
-        vestingSchedule {
-            # figure out why this fragment doesnt work
-            # ...VestingScheduleFields,
-            remainingVestingAmount,
-            start,
-            period,
-            periodCount,
-            perPeriod
-        }
-    } 
+  }
 }

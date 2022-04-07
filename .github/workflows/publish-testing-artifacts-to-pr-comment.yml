@@ -1,0 +1,23 @@
+name: Add artifact links to pull request
+on:
+  workflow_run:
+    workflows:
+      - Application E2E Testing Flow
+    types:
+      - completed
+
+jobs:
+  artifacts-url-comments:
+    name: Add artifact links to pull request
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add artifact links to pull request
+        uses: tonyhallett/artifacts-url-comments@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          prefix: 'Testing flow artifacts: '
+          suffix: Or check GH Actions for more logs.
+          format: '- [{name}]({url});'
+          addTo: pull
+          errorNoArtifacts: 'false'

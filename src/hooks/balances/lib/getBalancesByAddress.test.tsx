@@ -7,16 +7,36 @@ import {
   fetchNonNativeAssetBalancesByAssetIds,
   fetchNonNativeAssetBalances,
 } from './getBalancesByAddress';
+import BigNumber from 'bignumber.js';
+import { max } from 'lodash';
+import errors from '../../../errors';
 
 const nativeAssetBalance = '10';
 const nonNativeAssetBalance = '20';
+const miscFrozenAssetBalance = '6';
+const feeFrozenAssetBalance = '6';
+// this logic is taken from the implementation
+const getNativeBalance = () => {
+  return new BigNumber(nativeAssetBalance)
+    .minus(new BigNumber(max([miscFrozenAssetBalance, feeFrozenAssetBalance])!))
+    .toString();
+};
+// this logic is taken from the implementation
+const getNonNativeBalance = () => {
+  return new BigNumber(nonNativeAssetBalance)
+    .minus(miscFrozenAssetBalance)
+    .toString();
+};
 const mockedAccountInfoNativeBalanceReturn = {
   data: {
     free: nativeAssetBalance,
+    miscFrozen: miscFrozenAssetBalance,
+    feeFrozen: feeFrozenAssetBalance,
   },
 };
 const mockedAccountInfoNonNativeBalanceReturn = {
   free: nonNativeAssetBalance,
+  frozen: miscFrozenAssetBalance,
 };
 const mockedAccountInfoNativeBalance = jest.fn();
 const mockedAccountInfoNonNativeBalanceMulti = jest.fn();
@@ -81,7 +101,7 @@ describe('getBalancesByAddress', () => {
       expect(balances).toEqual([
         {
           assetId: nativeAssetId,
-          balance: nativeAssetBalance,
+          balance: getNativeBalance(),
         },
       ]);
       expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
@@ -106,7 +126,7 @@ describe('getBalancesByAddress', () => {
       expect(balances).toEqual([
         {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
       ]);
       expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
@@ -131,11 +151,11 @@ describe('getBalancesByAddress', () => {
       expect(balances).toEqual([
         {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
         {
           assetId: nonNativeAssetIdB,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
       ]);
       expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
@@ -161,11 +181,11 @@ describe('getBalancesByAddress', () => {
       expect(balances).toEqual([
         {
           assetId: nativeAssetId,
-          balance: nativeAssetBalance,
+          balance: getNativeBalance(),
         },
         {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
       ]);
       expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
@@ -183,7 +203,7 @@ describe('getBalancesByAddress', () => {
       ).toHaveBeenCalledTimes(0);
     });
 
-    it('can retrieve non-native asset balances when no assetIds are provided', async () => {
+    it('can retrieve all asset balances when no assetIds are provided', async () => {
       const balances: Balance[] = await getBalancesByAddress(
         mockApiInstance,
         address,
@@ -192,15 +212,19 @@ describe('getBalancesByAddress', () => {
 
       expect(balances).toEqual([
         {
+          assetId: nativeAssetId,
+          balance: getNativeBalance(),
+        },
+        {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
         {
           assetId: nonNativeAssetIdB,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
       ]);
-      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(0);
+      expect(mockApiInstance.query.system.account).toHaveBeenCalledTimes(1);
       expect(mockApiInstance.query.tokens.accounts.multi).toHaveBeenCalledTimes(
         0
       );
@@ -214,19 +238,47 @@ describe('getBalancesByAddress', () => {
   });
 
   describe('fetchNativeAssetBalance', () => {
-    it('can fetch native asset balance for address', async () => {
-      const balance: Balance = await fetchNativeAssetBalance(
-        mockApiInstance,
-        address
-      );
+    describe('success case', () => {
+      it('can fetch native asset balance for address', async () => {
+        const balance: Balance = await fetchNativeAssetBalance(
+          mockApiInstance,
+          address
+        );
 
-      expect(balance).toEqual({
-        assetId: constants.nativeAssetId,
-        balance: nativeAssetBalance,
+        expect(balance).toEqual({
+          assetId: constants.nativeAssetId,
+          balance: getNativeBalance(),
+        });
+        expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
+          address
+        );
       });
-      expect(mockApiInstance.query.system.account).toHaveBeenCalledWith(
-        address
-      );
+    });
+
+    describe('failing case', () => {
+      beforeEach(() => {
+        jest.resetAllMocks();
+        mockApiInstance = getMockApiPromise();
+
+        mockedAccountInfoNativeBalance.mockReturnValueOnce({
+          data: {
+            free: '',
+            miscFrozen: '',
+            feeFrozen: '',
+          },
+        });
+      });
+
+      it(`can't fetch native asset balance for broken balance data`, async () => {
+        const fetchNativeBalancePromise = fetchNativeAssetBalance(
+          mockApiInstance,
+          address
+        );
+
+        await expect(fetchNativeBalancePromise).rejects.toMatchObject(
+          Error(errors.usableBalanceNotAvailable)
+        );
+      });
     });
   });
 
@@ -241,9 +293,9 @@ describe('getBalancesByAddress', () => {
       expect(balance).toEqual([
         {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
-        { assetId: nonNativeAssetIdB, balance: nonNativeAssetBalance },
+        { assetId: nonNativeAssetIdB, balance: getNonNativeBalance() },
       ]);
       // assigns assetId in the correct order
       expect(balance[0].assetId).not.toEqual(nonNativeAssetIdB);
@@ -264,9 +316,9 @@ describe('getBalancesByAddress', () => {
       expect(balance).toEqual([
         {
           assetId: nonNativeAssetIdA,
-          balance: nonNativeAssetBalance,
+          balance: getNonNativeBalance(),
         },
-        { assetId: nonNativeAssetIdB, balance: nonNativeAssetBalance },
+        { assetId: nonNativeAssetIdB, balance: getNonNativeBalance() },
       ]);
 
       expect(

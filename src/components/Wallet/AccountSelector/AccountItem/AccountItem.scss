@@ -1,0 +1,117 @@
+@import '../../../../misc/colors.module.scss';
+@import '../../../../misc/misc.module.scss';
+
+.account-item {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  gap: 4px;
+
+  cursor: pointer;
+
+  padding: 8px 16px;
+
+  border: 1px solid transparent;
+  border-radius: $border-radius;
+
+  background-color: $gray3;
+
+  &--active {
+    background-color: $gray5;
+  }
+
+  &__address-entry {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__address-info {
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__chain-info {
+    position: relative;
+    min-width: 100px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__heading {
+    width: 100%;
+    display: flex;
+    gap: 16px;
+    font-weight: 500;
+    justify-content: space-between;
+
+    &__left {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+
+      &__name {
+        flex-shrink: 100px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        min-width: 0;
+        font-weight: 800;
+      }
+
+      &__source {
+        font-size: 10px;
+        font-weight: 800;
+        background: $gray2;
+        color: $gray4;
+        padding: 4px 8px;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  &:hover {
+    border-color: $green1;
+
+    .account-item {
+      &__heading {
+        &__left {
+          &__source {
+            opacity: 1;
+          }
+        }
+      }
+    }
+  }
+
+  .account-item &__identicon {
+    display: flex;
+    width: 40px;
+    height: 40px;
+    line-height: 32px;
+    flex-shrink: 0;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      position: relative;
+      left: -2px;
+    }
+  }
+
+  &__chain-name {
+    font-size: 12px;
+    line-height: 1.1em;
+    font-weight: 500;
+  }
+
+  &__chain-address {
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 1.1em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

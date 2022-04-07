@@ -2,5 +2,16 @@
   "TradeGraph.granularity": "{granularity, select, ALL {ALL} D7 {D7} D3 {D3} H24 {24H} H12 {12H} H1 {1H} other {-}}",
   "TradeGraph.poolTypeLabel.LBP": "LBP",
   "TradeGraph.poolTypeLabel.XYK": "XYK",
-  "greeting": "Today is {ts, date, ::yyyyMMdd}"
+  "Wallet.ClearAccount": "Clear account",
+  "Wallet.ClickHere": "Click here",
+  "Wallet.ConnectAccount": "Connect account",
+  "Wallet.InstallExtension": "Install extension",
+  "Wallet.InstallInstructions": "To connect your account, please {link} ",
+  "Wallet.InstallLinkText": "install or enable",
+  "Wallet.Loading": "Loading...",
+  "Wallet.NoAccountsAvailable": "You have no accounts available",
+  "Wallet.ReloadInstructions": "the polkadot.js extension. Once you're done with the installation, you can {link}",
+  "Wallet.ReloadLinkText": "reload the page",
+  "Wallet.SelectAccount": "Select an account",
+  "Wallet.SelectAccountHelp": "Do you need help creating an account?"
 }

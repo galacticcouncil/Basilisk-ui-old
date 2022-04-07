@@ -1,19 +1,20 @@
 #import "./../../balances/graphql/Balance.graphql"
-#import './../../vesting/graphql/VestingSchedule.graphql'
+#import './../../vesting/graphql/Vesting.graphql'
 
-type Account {
-    id: String!,
-    name: String,
-    isActive: Boolean!,
-    balances: [Balance!]!,
-    vestingSchedule: VestingSchedule!
+type Account implements Balances & IVesting {
+  id: String!
+  name: String
+  source: String
+  genesisHash: String
+  balances(assetIds: [String]): [Balance!]!
+  vesting: Vesting!
 }
 
 extend type Query {
-    accounts: [Account!]!
-    account: Account
+  accounts: [Account!]!
+  activeAccount: Account
 }
 
 extend type Mutation {
-    setActiveAccount: Account
+  setActiveAccount: Account
 }

@@ -1,32 +1,20 @@
-import { useApolloClient, useQuery } from '@apollo/client';
-import constate from 'constate';
-import { loader } from 'graphql.macro'
-import { useEffect } from 'react';
-import { Account, LastBlock, Query } from '../../../generated/graphql';
-import { GET_CONFIG } from '../../config/useGetConfigQuery';
+import { QueryHookOptions, useQuery } from '@apollo/client';
+import { loader } from 'graphql.macro';
+import { Query, Vesting } from '../../../generated/graphql';
 
-export const GET_ACTIVE_ACCOUNT = loader('./../graphql/GetActiveAccount.query.graphql');
+// graphql query
+export const GET_ACTIVE_ACCOUNT = loader(
+  './../graphql/GetActiveAccount.query.graphql'
+);
 
+// data shape returned from the query
 export interface GetActiveAccountQueryResponse {
-    account: Query['account'],
-    lastBlock: Query['lastBlock'],
+  activeAccount: Query['activeAccount']
 }
 
-// TODO: turn this into a lazy query instead, so it does not get fetched right away
-export const useGetActiveAccountQuery = () => {
-    const client = useApolloClient();
-    const result = useQuery<GetActiveAccountQueryResponse>(GET_ACTIVE_ACCOUNT, {
-        notifyOnNetworkStatusChange: true,
-    });
-
-    // when the active account updates, refetch the config
-    // since the config for `feePaymentAsset` depends on the active account
-    useEffect(() => {
-        client.refetchQueries({
-            // include: [GET_CONFIG]
-        });
-    }, [result.data?.account?.id])
-
-    return result;
-}
-export const [GetActiveAccountQueryProvider, useGetActiveAccountQueryContext] = constate(useGetActiveAccountQuery);
+// hook wrapping the built-in apollo useQuery hook with proper types & configuration
+export const useGetActiveAccountQuery = (options?: QueryHookOptions) =>
+  useQuery<GetActiveAccountQueryResponse>(GET_ACTIVE_ACCOUNT, {
+    notifyOnNetworkStatusChange: true,
+    ...options
+  });

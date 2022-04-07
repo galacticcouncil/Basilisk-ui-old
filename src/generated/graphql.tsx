@@ -1,15 +1,9 @@
 import { gql } from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = {
-  [K in keyof T]: T[K];
-};
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -19,13 +13,19 @@ export type Scalars = {
   Float: number;
 };
 
-export type Account = {
+export type Account = Balances & IVesting & {
   __typename?: 'Account';
   balances: Array<Balance>;
+  genesisHash?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  isActive: Scalars['Boolean'];
   name?: Maybe<Scalars['String']>;
-  vestingSchedule: VestingSchedule;
+  source?: Maybe<Scalars['String']>;
+  vesting: Vesting;
+};
+
+
+export type AccountBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
 };
 
 export type Asset = {
@@ -46,6 +46,20 @@ export type Balance = {
   id?: Maybe<Scalars['String']>;
 };
 
+export type Balances = {
+  balances: Array<Balance>;
+};
+
+
+export type BalancesBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+export enum ChromeExtension {
+  Polkadotjs = 'POLKADOTJS',
+  Talisman = 'TALISMAN'
+}
+
 export type Config = {
   __typename?: 'Config';
   appName: Scalars['String'];
@@ -56,6 +70,7 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
+  extension?: Maybe<ChromeExtension>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };
@@ -70,6 +85,10 @@ export type FeePaymentAsset = {
   __typename?: 'FeePaymentAsset';
   assetId?: Maybe<Scalars['String']>;
   fallbackPrice?: Maybe<Scalars['String']>;
+};
+
+export type IVesting = {
+  vesting?: Maybe<Vesting>;
 };
 
 export type LbpAssetWeights = {
@@ -100,36 +119,69 @@ export type LastBlock = {
   relaychainBlockNumber?: Maybe<Scalars['String']>;
 };
 
+export type LockedBalance = {
+  __typename?: 'LockedBalance';
+  assetId: Scalars['String'];
+  balance: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
+  lockId: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  setActiveAccount?: Maybe<Account>;
+};
+
 export type Pool = LbpPool | XykPool;
 
-export type Query = {
+export type Query = Balances & IVesting & {
   __typename?: 'Query';
   _assetIds?: Maybe<AssetIds>;
-  _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
-  account?: Maybe<Account>;
+  _vestingSchedule?: Maybe<VestingSchedule>;
   accounts: Array<Account>;
+  activeAccount?: Maybe<Account>;
   assets?: Maybe<Array<Asset>>;
   balances: Array<Balance>;
   config: Config;
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
-  pools?: Maybe<Array<Pool>>;
+  lockedBalances: Array<LockedBalance>;
+  pools: Array<Pool>;
+  vesting?: Maybe<Vesting>;
+};
+
+
+export type QueryBalancesArgs = {
+  assetIds?: InputMaybe<Array<InputMaybe<Scalars['String']>>>;
+};
+
+
+export type QueryLockedBalancesArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  lockId: Scalars['String'];
 };
 
 export enum TradeType {
   Buy = 'Buy',
-  Sell = 'Sell',
+  Sell = 'Sell'
 }
+
+export type Vesting = {
+  __typename?: 'Vesting';
+  claimableAmount: Scalars['String'];
+  lockedVestingBalance: Scalars['String'];
+  originalLockBalance: Scalars['String'];
+};
 
 export type VestingSchedule = {
   __typename?: 'VestingSchedule';
-  perPeriod?: Maybe<Scalars['String']>;
-  period?: Maybe<Scalars['String']>;
-  periodCount?: Maybe<Scalars['String']>;
-  remainingVestingAmount?: Maybe<Scalars['String']>;
-  start?: Maybe<Scalars['String']>;
+  perPeriod: Scalars['String'];
+  period: Scalars['String'];
+  periodCount: Scalars['String'];
+  start: Scalars['String'];
 };
 
 export type XykPool = {

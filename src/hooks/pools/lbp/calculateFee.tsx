@@ -23,5 +23,4 @@ export const calculateFee = async (apiInstance: ApiPromise, pool: LbpPool) => {
   // const accumulatedAssetBalance = find(balances, {
   //     assetId: pool.assetInId
   // });
-  // console.log('accumulatedAssetBalance', accumulatedAssetBalance, pool.repayTarget);
 };
