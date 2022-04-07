@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { Account, Account as AccountModel, Balance, Maybe, Vesting } from '../generated/graphql';
 import { useSetActiveAccountMutation } from '../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../hooks/accounts/queries/useGetAccountsQuery';
@@ -12,15 +12,21 @@ import { useAccountSelectorModal } from '../containers/Wallet/hooks/useAccountSe
 import { FormattedBalance } from '../components/Balance/FormattedBalance/FormattedBalance';
 import BigNumber from 'bignumber.js';
 import { precision12 } from '../hooks/math/useFromPrecision';
+import { fromPrecision12 } from '../hooks/math/useFromPrecision';
+import { useClaimVestedAmountMutation } from '../hooks/vesting/useClaimVestedAmountMutation';
+
+export type Notification = 'standby' | 'pending' | 'success' | 'failed';
 
 export const ActiveAccount = ({
   account,
   loading,
-  onOpenAccountSelector
+  onOpenAccountSelector,
+  setNotification
 }: {
   account?: Maybe<Account>;
   loading: boolean;
   onOpenAccountSelector: () => void,
+  setNotification: (notification: Notification) => void
 }) => {
   const [setActiveAccount] = useSetActiveAccountMutation();
 
@@ -42,7 +48,7 @@ export const ActiveAccount = ({
           <div onClick={() => onOpenAccountSelector()}>Change account</div>
           <div onClick={() => handleClearAccount()}>Clear account</div>
 
-          <VestingInfo vesting={account?.vesting}/>
+          <VestingClaim vesting={account?.vesting} setNotification={setNotification}/>
           <BalanceList balances={account.balances}/>
         </>
       ) : (
@@ -67,8 +73,9 @@ export const BalanceList = ({
   </>
 }
 
-export const VestingInfo = ({ vesting }: {
-  vesting?: Maybe<Vesting | undefined>
+export const VestingClaim = ({ vesting, setNotification }: {
+  vesting?: Maybe<Vesting | undefined>,
+  setNotification: (notification: Notification) => void
 }) => {
   // how much is claimable atm
   const claimable = useMemo(() => {
@@ -79,6 +86,21 @@ export const VestingInfo = ({ vesting }: {
   const original = useMemo(() => {
     return new BigNumber('0').toFixed(0);
   }, [vesting]);
+  const clearNotificationIntervalRef = useRef<any>();
+  const [claimVestedAmount] = useClaimVestedAmountMutation({
+    onCompleted: () => {
+      setNotification('success');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+    onError: () => {
+      setNotification('failed');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+  });
 
   // lock
   const remaining = useMemo(() => {
@@ -87,19 +109,21 @@ export const VestingInfo = ({ vesting }: {
 
   // TODO: run mutation with confirmation
   const handleClaimClick = useCallback(() => {
-    console.log('claiming');
+    claimVestedAmount()
   }, []);
 
   return <>
     <h2>Vesting</h2>
-    <p>{original}</p>
-    <p>{remaining}</p>
-    <p>{claimable}</p>
+    <p>Claimable: {fromPrecision12(vesting?.claimableAmount)} BSX</p>
+    <p>Original vesting (TODO: fix calc): {fromPrecision12(vesting?.originalLockBalance)} BSX</p>
+    <p>Remaining vesting: {fromPrecision12(vesting?.lockedVestingBalance)} BSX</p>
     <button onClick={() => handleClaimClick()}>claim</button>
   </>
 }
 
 export const WalletPage = () => {
+  const [notification, setNotification] = useState<Notification>('standby');
+
   const { data: extensionData, loading: extensionLoading } =
     useGetExtensionQuery();
 
@@ -128,7 +152,7 @@ export const WalletPage = () => {
     modalContainerRef,
   });
 
-  console.log('activeAccount', activeAccount?.vestingSchedules);
+  console.log('activeAccount', activeAccount?.vesting);
 
   return (
     <>
@@ -139,12 +163,14 @@ export const WalletPage = () => {
           <div>Wallet loading...</div>
         ) : (
           <div>
+            <div>Notification: {notification}</div>
             {activeAccount ? (
               <>
                 <ActiveAccount 
                   account={activeAccount} 
                   loading={loading}
                   onOpenAccountSelector={openModal}
+                  setNotification={setNotification}
                 />
               </>
             ) : (

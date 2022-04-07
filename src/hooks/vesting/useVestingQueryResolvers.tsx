@@ -6,7 +6,7 @@ import { useGetVestingByAddress } from './useGetVestingByAddress';
 
 export const useVestingQueryResolvers = () => {
   const getVestingByAddress = useGetVestingByAddress();
-  const vestingSchedule = withErrorHandler(
+  const vesting = withErrorHandler(
     useCallback(
       async (
         account: Account,
@@ -15,10 +15,10 @@ export const useVestingQueryResolvers = () => {
       ) => await getVestingByAddress(client, account.id),
       [getVestingByAddress]
     ),
-    'vestingSchedule'
+    'vesting'
   );
 
   return {
-    vestingSchedule,
+    vesting,
   };
 };

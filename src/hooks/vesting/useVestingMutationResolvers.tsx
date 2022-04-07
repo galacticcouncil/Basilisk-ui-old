@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { withErrorHandler } from '../apollo/withErrorHandler';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
 import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
@@ -123,14 +122,12 @@ export const useVestingMutationResolvers = () => {
     useCallback(
       async (
         _obj,
-        variables: ClaimVestedAmountMutationVariables,
+        _variables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
-        const address = variables?.address
-          ? variables.address
-          : cache.readQuery<GetActiveAccountQueryResponse>({
-              query: GET_ACTIVE_ACCOUNT,
-            })?.activeAccount?.id;
+        const address = cache.readQuery<GetActiveAccountQueryResponse>({
+          query: GET_ACTIVE_ACCOUNT,
+        })?.activeAccount?.id
 
         // TODO: error handling?
         if (!address) throw new Error(noAccountSelectedError);

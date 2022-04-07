@@ -27,7 +27,7 @@ export const activeAccountQueryResolverFactory =
     _obj: any,
     _args: any,
     { client }: { client: ApolloClient<NormalizedCacheObject> }
-  ): Promise<Account | null> => {
+  ): Promise<Partial<Account> | null> => {
     if (persistedActiveAccount?.id) {
       const { data: accountsData } = await client.query({
         query: GET_ACCOUNTS,
