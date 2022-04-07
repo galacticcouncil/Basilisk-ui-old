@@ -510,10 +510,17 @@ export const TradeForm = ({
 
     const assetInAmount = getValues('assetInAmount');
     const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
-    const inAfterTrade =
+    let inAfterTrade =
       inBeforeTrade &&
       assetInAmount &&
       new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0) || undefined
+
+    inAfterTrade = getValues('assetIn') !== '0'
+          ? inAfterTrade
+          : paymentInfo && inAfterTrade && new BigNumber(inAfterTrade)
+              .minus(paymentInfo)
+              .toFixed(0);
+
     const inTradeChange =
       inBeforeTrade !== '0'
         ? percentageChange(
@@ -533,7 +540,8 @@ export const TradeForm = ({
     };
   }, [
     activeAccountTradeBalances,
-    ...watch(['assetOutAmount', 'assetInAmount']),
+    ...watch(['assetOutAmount', 'assetInAmount', 'assetIn']),
+    paymentInfo
   ]);
 
   const { debugComponent } = useDebugBoxContext();
@@ -598,7 +606,13 @@ export const TradeForm = ({
     console.log('calculateMaxAmountIn11 estimate done', estimate)
     const paymentInfo = estimate?.partialFee.toString()
     const maxAmountWithoutFee = new BigNumber(maxAmount).minus(paymentInfo || '0');
-    console.log('calculateMaxAmountIn12', { estimate, paymentInfo });
+    console.log('calculateMaxAmountIn12', { 
+      inBeforeTrade: tradeBalances.inBeforeTrade, 
+      estimate, 
+      paymentInfo,
+      maxAmount,
+      maxAmountWithoutFee: maxAmountWithoutFee.toFixed(10)
+    });
 
     return (
       getValues('assetIn') === '0'
@@ -610,36 +624,20 @@ export const TradeForm = ({
     );
   }, [tradeBalances.inBeforeTrade, paymentInfo, cache, apiInstance, ...watch(['assetIn'])])
 
-  // useEffect(() => {
-  //   if (!maxAmountInLoading || !paymentInfo) return;
-  //   calculateMaxAmountIn();
-  // }, [maxAmountIn, paymentInfo, maxAmountInLoading, cache, apiInstance]);
+  const maxButtonDisabled = useMemo(() => {
+    return maxAmountInLoading || activeAccountTradeBalancesLoading || isPoolLoading
+  }, [maxAmountInLoading, activeAccountTradeBalancesLoading, isPoolLoading])
 
   const handleMaxButtonOnClick = useCallback(async () => {
     setMaxAmountInLoading(true);
     const maxAmountIn = await calculateMaxAmountIn();
     console.log('setting max amount in', maxAmountIn);
-    if (maxAmountIn && new BigNumber(maxAmountIn).gt('0')) setValue('assetInAmount', maxAmountIn, {
+    if (maxAmountIn) setValue('assetInAmount', maxAmountIn, {
       shouldDirty: true,
       shouldValidate: true
     })
     setMaxAmountInLoading(false);
   }, [calculateMaxAmountIn]);
-
-  const [maxAmountIn, setMaxAmountIn] = useState<string | undefined>();
-  useEffect(() => {
-    (async () => {
-      setMaxAmountIn(await calculateMaxAmountIn())
-    })()
-  }, [calculateMaxAmountIn, activeAccount]);
-
-  useEffect(() => {
-    (async () => {
-      setMaxAmountIn(await calculateMaxAmountIn())
-    })()
-  }, [])
-
-  console.log('maxAmountIn', maxAmountIn);
 
   return (
     <div className="trade-form-wrapper">
@@ -668,13 +666,12 @@ export const TradeForm = ({
               assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
               maxBalanceLoading={maxAmountInLoading}
             />
-            {console.log('maxBalanceLoading', maxAmountInLoading, maxAmountIn)}
             <div className="balance-info balance-out-info">
               <div 
                 className={classNames('max-button', {
-                  disabled: maxAmountInLoading || (!maxAmountInLoading && !(maxAmountIn && new BigNumber(maxAmountIn).gt('0')))
+                  disabled: maxButtonDisabled
                 })}
-                onClick={() => (maxAmountIn && new BigNumber(maxAmountIn).gt('0')) && handleMaxButtonOnClick()}
+                onClick={() => handleMaxButtonOnClick()}
               >
                 MAX
               </div>
