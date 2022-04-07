@@ -18,6 +18,24 @@ export const buyHandler = (
   return vestingClaimHandler(resolve, reject, apiInstance);
 };
 
+export const estimateLbpBuy = async (
+  cache: ApolloCache<object>,
+  apiInstance: ApiPromise,
+  assetBuy: string,
+  assetSell: string,
+  amountBuy: string,
+  maxSold: string
+) => {
+  const activeAccount = readActiveAccount(cache);
+  const address = activeAccount?.id;
+  if (!address)
+    throw new Error(`Can't retrieve sender's address for estimation`);
+
+  return apiInstance.tx.lbp
+    .buy(assetBuy, assetSell, amountBuy, maxSold)
+    .paymentInfo(address);
+};
+
 export const buy = async (
   cache: ApolloCache<object>,
   apiInstance: ApiPromise,
