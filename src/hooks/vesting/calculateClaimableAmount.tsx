@@ -78,7 +78,8 @@ export const calculateLock = (
   const periodCount = new BigNumber(vesting.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
-  const futureLock = originalLock.minus(vestedOverPeriods);
+  const unlocked = vestedOverPeriods.gte(originalLock) ? originalLock : vestedOverPeriods;
+  const futureLock = originalLock.minus(unlocked);
 
   return [originalLock, futureLock];
 };
