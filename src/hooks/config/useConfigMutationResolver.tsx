@@ -42,7 +42,7 @@ export const useConfigMutationResolvers = () => {
           async (resolve, reject) => {
             const address = cache.readQuery<GetActiveAccountQueryResponse>({
               query: GET_ACTIVE_ACCOUNT,
-            })?.account?.id;
+            })?.activeAccount?.id;
 
             if (!address) return resolve();
 

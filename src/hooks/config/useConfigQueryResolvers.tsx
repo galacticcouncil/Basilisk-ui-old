@@ -31,7 +31,7 @@ export const useConfigQueryResolvers = () => {
         // TODO: evict config from the cache after active account changes
         const address = cache.readQuery<GetActiveAccountQueryResponse>({
           query: GET_ACTIVE_ACCOUNT,
-        })?.account?.id;
+        })?.activeAccount?.id;
 
         let feePaymentAsset = address
           ? apiInstance

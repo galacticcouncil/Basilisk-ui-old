@@ -2,40 +2,46 @@
 @import '../../../misc/misc.module.scss';
 
 .balance-input {
-    height: 2.7rem;
-    width: 100%;
-    background-color: $gray1;
+  display: flex;
+
+  height: 1em;
+  width: 100%;
+  border-radius: $border-radius;
+
+  &.no-selector {
     border-radius: $border-radius;
+    overflow: hidden;
+  }
 
-    &.no-selector {
-        border-radius: $border-radius;
-        overflow: hidden;
+  &__input-wrapper {
+    font-size: 18px;
+    flex-grow: 1;
+    position: relative;
+
+    input {
+      position: absolute;
+      font-size: 1em;
+      line-height: 1em;
+
+      padding: 0;
+      text-align: right;
+
+      height: 100%;
+      width: 100%;
+
+      border-top-left-radius: $border-radius;
+      border-bottom-left-radius: $border-radius;
     }
+  }
 
-    &__input-wrapper {
-        flex-grow: 1;
+  &__info {
+    display: flex;
+    flex-direction: column;
+    user-select: none;
 
-        input {
-            box-shadow: -1px 0 0 $gray2 inset;
+    text-align: right;
+    justify-content: right;
 
-            text-align: right;
-            padding: 0 0.8em;
-
-            height: 100%;
-            width: 100%;
-
-            border-top-left-radius: $border-radius;
-            border-bottom-left-radius: $border-radius;
-        }
-    }
-
-    &__info {
-        user-select: none;
-
-        text-align: right;
-        justify-content: center;
-        width: 5rem;
-
-        border-radius: $border-radius;
-    }
+    border-radius: $border-radius;
+  }
 }

@@ -1,0 +1,11 @@
+query GetHistoricalBalances($from: String!, $to: String!, $quantity: Float!, $poolId: String!, $poolIdID: ID!) {
+  historicalBalances: historicalBalancesXykGrouped(from: $from, quantity: $quantity, to: $to, pool_id: $poolId) {
+    assetABalance: asset_a_balance
+    assetBBalance: asset_b_balance
+    createdAt: created_at
+  }
+  XYKPool: xYKPoolById(id: $poolIdID) {
+      assetAId,
+      assetBId
+  }
+}

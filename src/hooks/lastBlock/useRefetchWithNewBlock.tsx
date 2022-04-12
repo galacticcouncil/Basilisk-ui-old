@@ -33,7 +33,7 @@ export const useRefetchWithNewBlock = (
     const lastBlockData = client?.cache.readQuery<GetLastBlockQueryResponse>({
       query: GET_LAST_BLOCK,
     });
-
+    
     if (!lastBlockData?.lastBlock?.parachainBlockNumber) {
       // received the first real lastBlockNumber, don't refetch just yet
       writeLastBlock(client?.cache, {
@@ -42,17 +42,28 @@ export const useRefetchWithNewBlock = (
         ...lastBlock,
       });
     } else {
+      writeLastBlock(client?.cache, {
+        __typename,
+        id,
+        ...lastBlock,
+      });
+
       // lastBlockNumber has been updated, and it's not the first time
       // refetch queries that depend on the lastBlockNumber
-      client?.refetchQueries({
-        updateCache(cache) {
-          writeLastBlock(cache, {
-            __typename,
-            id,
-            ...lastBlock,
-          });
-        },
-      });
+      setTimeout(() => {
+        client?.refetchQueries({
+          updateCache(cache) {
+            cache.modify({
+              fields: {
+                lastBlock(value, { INVALIDATE }) {
+                  return INVALIDATE
+                }
+              }
+            })
+          },
+          optimistic: true,
+        })
+      }, 0)
     }
   }, [lastBlock, client]);
 };
