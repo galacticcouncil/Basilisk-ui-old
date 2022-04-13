@@ -1,6 +1,6 @@
 import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
-import { find, uniq } from 'lodash';
+import { find, uniq, last } from 'lodash';
 import moment from 'moment';
 import { usePageVisibility } from 'react-page-visibility';
 import {
@@ -224,9 +224,8 @@ export const TradeChart = ({
 
     const refetchHistoricalBalancesData = () => {
       if (
-        !datasetRefreshing &&
-        (!dataset?.length || 
-          dataset?.[dataset?.length - 1]?.x <= new Date().getTime() - lastRecordOutdatedBy)
+        isVisible && !historicalBalancesLoading && !datasetRefreshing &&
+        (!dataset?.length || last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
       ) {
         setDatasetRefreshing(true);
         setHistoricalBalancesRange({
