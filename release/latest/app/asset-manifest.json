@@ -1,0 +1,37 @@
+{
+  "files": {
+    "main.css": "./static/css/main.b875a9be.css",
+    "main.js": "./static/js/main.e77efea6.js",
+    "static/js/949.b650be63.chunk.js": "./static/js/949.b650be63.chunk.js",
+    "static/js/749.c36f6f8d.chunk.js": "./static/js/749.c36f6f8d.chunk.js",
+    "static/js/651.42d1b8f7.chunk.js": "./static/js/651.42d1b8f7.chunk.js",
+    "static/media/bootstrap-icons.woff?": "./static/media/bootstrap-icons.c1d7432ee75fa194e499.woff",
+    "static/media/bootstrap-icons.woff2?": "./static/media/bootstrap-icons.a13b815539b49de48d23.woff2",
+    "static/media/Scrollbar.svg": "./static/media/Scrollbar.d6ddf22f9e4dd7719579.svg",
+    "module.wasm": "./4305f3fc15b9bf66ebbc.module.wasm",
+    "static/media/BasiliskLogoFull.svg": "./static/media/BasiliskLogoFull.088bb7fda2216eaaf9e46d2328c5f675.svg",
+    "static/media/Unknown.svg": "./static/media/Unknown.bf0c01cbafa2128c24ad9846c479c58a.svg",
+    "static/media/AssetSwitchIcon.svg": "./static/media/AssetSwitchIcon.cf45b8fa68f21cd1178cb8e8f393204b.svg",
+    "static/media/Settings.svg": "./static/media/Settings.d6f8a9b0883d922fdc58804e8140d383.svg",
+    "static/media/DAI.svg": "./static/media/DAI.d5f0f5022f93b845bc14bc725a7b45cc.svg",
+    "static/media/KSM.svg": "./static/media/KSM.6811a682c7bb4b843e41a3bf939f56b1.svg",
+    "static/media/Cancel.svg": "./static/media/Cancel.166b0fd5adaaaed1eaa625f32e832e9c.svg",
+    "static/media/HelpIcon.svg": "./static/media/HelpIcon.e78a43b1dd5ae8ef65b92bf436ebbdac.svg",
+    "static/media/DropdownArrowIcon.svg": "./static/media/DropdownArrowIcon.d9d6a76a16588df61e909cc164e43b58.svg",
+    "static/media/NotificationActiveIcon.svg": "./static/media/NotificationActiveIcon.c184ef16914bc03030a8c25550065dd5.svg",
+    "static/media/BSX.svg": "./static/media/BSX.d41d247fa851e44bf1a5e4b4091aa9fd.svg",
+    "static/media/NotificationInactiveIcon.svg": "./static/media/NotificationInactiveIcon.71a03dbb33d9bc2edd9074de70f82cf7.svg",
+    "index.html": "./index.html",
+    "static/media/index.cjs": "./static/media/index.f2b6f7ffc9a430272d20.cjs",
+    "static/media/RightArrowIcon.svg": "./static/media/RightArrowIcon.55f8be907ce6b736531b04ba3be23bda.svg",
+    "main.b875a9be.css.map": "./static/css/main.b875a9be.css.map",
+    "main.e77efea6.js.map": "./static/js/main.e77efea6.js.map",
+    "949.b650be63.chunk.js.map": "./static/js/949.b650be63.chunk.js.map",
+    "749.c36f6f8d.chunk.js.map": "./static/js/749.c36f6f8d.chunk.js.map",
+    "651.42d1b8f7.chunk.js.map": "./static/js/651.42d1b8f7.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.b875a9be.css",
+    "static/js/main.e77efea6.js"
+  ]
+}
