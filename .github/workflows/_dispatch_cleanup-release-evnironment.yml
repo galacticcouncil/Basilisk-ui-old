@@ -1,0 +1,39 @@
+# IMPORTANT - any changes to workflow with trigger event "workflow_dispatch" requires to push changes to default
+# branch first (eg. "develop" branch) to take effect. This concerns all github-scripts which are used in such workflow.
+# More details - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+
+# Remove branch, tag, existing related pull requests for specific release.
+# Can be useful in case release has been prepared (branch, tag, pull requests have been created) but must be declined.
+
+name: 'Release :: Clean up (dispatch)'
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'Release version without prefix (branch, tag, PRs for this release will be removed)'
+        required: true
+        default: ''
+        type: string
+jobs:
+  clean-up:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v2
+        with:
+          node-version: 17
+
+      - name: 'Check out code'
+        uses: actions/checkout@v2
+
+      - name: "Delete branch"
+        uses: dawidd6/action-delete-branch@v3
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          branches: release/v${{ github.event.inputs.versionName }}
+          soft_fail: true
+
+      - name: "Delete tag"
+        run: git push --delete origin v${{ github.event.inputs.versionName }}

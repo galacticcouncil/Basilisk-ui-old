@@ -1,0 +1,154 @@
+# IMPORTANT - any changes to workflow with trigger event "workflow_dispatch" requires to push changes to default
+# branch first (eg. "develop" branch) to take effect. This concerns all github-scripts which are used in such workflow.
+# More details - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+
+
+# Prepare new release environment accordingly combination of provided parameters. It must be run manually for
+# starting a new release flow. This workflow contains such crucial steps as:
+#
+# - automatically updates application version in package.json file regarding Semantic Versioning and conventional
+#   commit messages which are included into current release. Version bumping rules:
+#      "fix" - this correlates with PATCH in Semantic Versioning;
+#      "feat" - this correlates with MINOR in Semantic Versioning;
+#      "!"(BREAKING CHANGE) - this correlates with MAJOR in Semantic Versioning;
+#   Specific version can be defined manually as well. Prerelease can be created with or without custom suffix.
+#
+# - generates CHANGELOG.md regarding conventional commit messages (https://www.conventionalcommits.org/en/v1.0.0/).
+#   Includes commits since latest release.
+#
+# - creates branch for new release with new app version (e.g. "release/vX.X.X")
+#
+# - tags commit with updated CHANGELOG and package.json files by new version value (e.g. "vX.X.X")
+#
+# - creates pull requests from new release branch into "main" and "develop" branches. Merge of pull request into "main"
+#   branch triggers workflow (create-release.yml) which creates new release with release notes based on CHANGELOG.md.
+#
+# Matrix of available inputs combinations mentioned below:
+# VERSION_NAME [ ] - FIRST_RELEASE [ ] - PRERELEASE [ ] - PRERELEASE_NAME [ ] - bump version automatically;
+# VERSION_NAME [+] - FIRST_RELEASE [ ] - PRERELEASE [ ] - PRERELEASE_NAME [ ] - bump version to provided value;
+# VERSION_NAME [ ] - FIRST_RELEASE [+] - PRERELEASE [ ] - PRERELEASE_NAME [ ] - keep current version, generate changelog since last release;
+# VERSION_NAME [ ] - FIRST_RELEASE [ ] - PRERELEASE [+] - PRERELEASE_NAME [ ] - create prerelease version e.g. vX.X.X-X
+# VERSION_NAME [ ] - FIRST_RELEASE [ ] - PRERELEASE [+] - PRERELEASE_NAME [+] - create prerelease version with suffix e.g. vX.X.X-alpha.X
+#
+# NOTICE: if you need change version and create prerelease with/without custom prerelease suffix, you need define it in
+# version name (e.g. "1.5.7-alpha.0" or "1.5.7-0"). This is workaround of "standard-version" library issue.
+
+
+name: 'Release :: Prepare (dispatch)'
+
+on:
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: 'Release version without prefix (must fit to Semantic Versioning). If empty, version will be bumped automatically regarding conventional commit messages.'
+        required: false
+        default: ''
+        type: string
+
+      prerelease:
+        description: 'Prerelease (result will look like 1.0.1-0). NOTICE - cannot be used together with defined version name.'
+        required: true
+        default: false
+        type: boolean
+
+      prereleaseName:
+        description: 'Prerelease suffix (e.g. alpha | beta, version will look like 1.0.1-alpha.0). NOTICE - cannot be used without selected "Prerelease" option.'
+        required: false
+        default: ''
+        type: string
+
+      firstRelease:
+        description: "First release (rebuild CHANGELOG.md since last release and don't bump version automatically). NOTICE - cannot be used together with any other option."
+        required: true
+        default: false
+        type: boolean
+
+jobs:
+  prepare:
+    name: 'Prepare release environment'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Setup Node.js'
+        uses: actions/setup-node@v2
+        with:
+          node-version: 17
+
+      # Check out code with full commits history for generation of CHANGELOG by commit messages.
+      - name: 'Check out code'
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      # Set default git config with credentials of default GitHub Actions account.
+      # More options are explained here - https://github.com/actions/checkout/issues/13#issuecomment-724415212
+      - name: 'Initialize git config'
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email noreply@github.com
+
+      # Generate CHANGELOG and change application version regarding conventional commit messages and Semantic Versioning
+      # with CLI tool "standard-version" (https://github.com/conventional-changelog/standard-version)
+      - name: 'Run standard-version script'
+        timeout-minutes: 2
+        shell: bash
+        env:
+          VERSION_NAME: ${{ github.event.inputs.versionName }}
+          FIRST_RELEASE: ${{ github.event.inputs.firstRelease }}
+          PRERELEASE: ${{ github.event.inputs.prerelease }}
+          PRERELEASE_NAME: ${{ github.event.inputs.prereleaseName }}
+        run: |
+          . ./scripts/ci/gh-actions-run-standard-version.sh "$VERSION_NAME" "$FIRST_RELEASE" "$PRERELEASE" "$PRERELEASE_NAME"
+
+      # Extract new application version from package.json file for further usage.
+      # As alternative actions can be use this one - martinbeentjes/npm-get-version-action@main
+      - name: 'Extract version'
+        id: package-version
+        uses: Saionaro/extract-package-version@v1.0.6
+
+      # Stash updated files (CHANGELOG.md and package.json) for further applying into new release/vX.X.X branch.
+      # Such steps order is required because we need a new version value for creation of a new release branch. Therefore,
+      # version is bumping in default branch in previous steps.
+      - name: 'Stash updated release files'
+        run: git stash
+
+      - name: 'Create release branch'
+        run: git checkout -b release/v${{ steps.package-version.outputs.version }}
+
+      - name: 'Apply stash'
+        run: git stash pop
+
+      # Commit and push updated CHANGELOG.md and package.json files into new "release/vX.X.X" branch. Tag current
+      # commit with new version value (e.g. vX.X.X).
+      - name: 'Commit/push release files'
+        id: make-commit
+        run: |
+          git add package.json
+          git add CHANGELOG.md
+          git commit --message "Prepare release ${{ steps.package-version.outputs.version }}"
+          git tag v${{ steps.package-version.outputs.version }} HEAD
+          echo "::set-output name=commit::$(git rev-parse HEAD)"
+          git push origin release/v${{ steps.package-version.outputs.version }} --tags
+
+      - name: "Create pull request into main"
+        uses: thomaseizinger/create-pull-request@1.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          head: release/v${{ steps.package-version.outputs.version }}
+          base: main
+          title: v${{ steps.package-version.outputs.version }} into main
+          reviewers: ${{ github.event.issue.user.login }}
+          body: |
+            This PR was created in response Release workflow running.
+            I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
+
+      - name: "Create pull request to develop"
+        uses: thomaseizinger/create-pull-request@1.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          head: release/v${{ steps.package-version.outputs.version }}
+          base: develop
+          title: v${{ steps.package-version.outputs.version }} into develop
+          reviewers: ${{ github.event.issue.user.login }}
+          body: |
+            This PR was created in response Release workflow running.
+            I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
