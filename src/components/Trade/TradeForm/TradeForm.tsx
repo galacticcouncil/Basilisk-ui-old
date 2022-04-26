@@ -555,12 +555,11 @@ export const TradeForm = ({
       assetOutLiquidity,
       tradeBalances: {
         ...tradeBalances,
-        inTradeChange: tradeBalances.inTradeChange?.toFixed(10),
-        outTradeChange: tradeBalances.outTradeChange?.toFixed(10),
+        inTradeChange: tradeBalances.inTradeChange?.toString(),
+        outTradeChange: tradeBalances.outTradeChange?.toString(),
       },
       tradeType,
-      isDirty: formState.isDirty,
-      slippage: slippage?.toFixed(10),
+      slippage: slippage?.toString(),
       errors: Object.keys(errors).reduce((reducedErrors, error) => {
         return {
           ...reducedErrors,
@@ -895,7 +894,7 @@ export const TradeForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.inBalance.balance
-                  ).gte(assetInAmount);
+                  ).gt(assetInAmount);
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
@@ -925,11 +924,11 @@ export const TradeForm = ({
                   if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
                     balanceForFee = new BigNumber(nativeAssetBalance)
                       .minus(assetInAmount)
-                      .toFixed(0);
+                      .toString();
                   }
 
-                  // this can haunt us later, maybe if !paymentInfo then true?
-                  if (!paymentInfo || !balanceForFee) return false;
+                  if (!paymentInfo) return true;
+                  if (!balanceForFee) return false;
 
                   return new BigNumber(balanceForFee)
                     .gte(paymentInfo);

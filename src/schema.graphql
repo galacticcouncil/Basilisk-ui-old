@@ -6,10 +6,15 @@
 #import './hooks/feePaymentAssets/graphql/FeePaymentAssets.graphql'
 #import './hooks/pools/graphql/Pool.graphql'
 #import './hooks/assets/graphql/Asset.graphql'
+#import './hooks/balances/graphql/LockedBalance.graphql'
 
-directive @client on FIELD
+type Query {
+  # just a placeholder to make the codegen not complain about
+  # root query not being defined
+  _empty: String
+}
 
-extend type Query {
+type Mutation {
   # just a placeholder to make the codegen not complain about
   # root query not being defined
   _empty: String

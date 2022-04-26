@@ -50,6 +50,7 @@ export type Config = {
 
 export type Extension = {
   __typename?: 'Extension';
+  extension?: Maybe<Extension>;
   id: Scalars['String'];
   isAvailable: Scalars['Boolean'];
 };
@@ -94,6 +95,14 @@ export type LastBlock = {
   relaychainBlockNumber?: Maybe<Scalars['String']>;
 };
 
+export type LockedBalance = {
+  __typename?: 'LockedBalance';
+  assetId: Scalars['String'];
+  balance: Scalars['String'];
+  id?: Maybe<Scalars['String']>;
+  lockId: Scalars['String'];
+};
+
 export type Pool = LbpPool | XykPool;
 
 export type Query = {
@@ -109,7 +118,13 @@ export type Query = {
   extension: Extension;
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
+  lockedBalances: Array<LockedBalance>;
   pools?: Maybe<Array<Pool>>;
+};
+
+export type QueryLockedBalancesArgs = {
+  address?: InputMaybe<Scalars['String']>;
+  lockId: Scalars['String'];
 };
 
 export enum TradeType {
