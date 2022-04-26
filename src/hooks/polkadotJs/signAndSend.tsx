@@ -8,7 +8,7 @@ import {
   ISubmittableResult,
   RegistryError,
 } from '@polkadot/types/types';
-import { readActiveAccount } from '../accounts/readActiveAccount';
+import { readActiveAccount } from '../accounts/lib/readActiveAccount';
 
 export type ExtrinsicErrors = RegistryError | DispatchError;
 
