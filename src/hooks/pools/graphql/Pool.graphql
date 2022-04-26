@@ -10,17 +10,6 @@ enum TradeType {
   Sell
 }
 
-# figure out how to create a union between two types
-# that extend an interface, apparently this isnt possible as of now
-#
-# interface Pool {
-#     poolType: PoolType!,
-#     assetInId: String!,
-#     assetOutId: String!,
-#     assetABalance: String!,
-#     assetBBalance: String!,
-# }
-
 type LBPAssetWeights {
   initial: String!
   final: String!
@@ -53,10 +42,8 @@ type XYKPool {
   balances: [Balance!]
 }
 
-union Pool = LBPPool | XYKPool
-
 extend type Query {
-  pools: [Pool!]
+  pools: XYKPool
   # Just to make sure TradeType makes it through the codegen
   # otherwise it'd be ignored
   _tradeType: TradeType

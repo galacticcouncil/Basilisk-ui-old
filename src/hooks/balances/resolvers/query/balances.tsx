@@ -38,19 +38,21 @@ export const balancesByAddressQueryResolverFactory =
    * @returns
    */
   async (
-    _obj: Entity,
+    obj: Entity,
     args: BalancesByAddressResolverArgs
-  ): Promise<Balance[] | undefined> => {
+  ): Promise<Balance[]> => {
+    // TODO: add apiInstance loading handling, this isnt sufficient
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!args.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
+    
+    // if no arguments are provided, use an empty array of assets
+    const resolverArguments = args ? args.assetIds : [] as string[];
+    const assetIds = objectToArrayWithFilter(resolverArguments);
 
-    const assets = objectToArrayWithFilter(args.assetIds);
-
-    return (await getBalancesByAddress(apiInstance, _obj.id, assets))?.map(
+    return (await getBalancesByAddress(apiInstance, obj.id, assetIds))?.map(
       (balance: Balance) => {
         // add id and typename to each balance
-        balance.id = `${_obj.id}-${balance.assetId}`;
+        balance.id = `${obj.id}-${balance.assetId}`;
         return withTypename(balance);
       }
     );
@@ -66,14 +68,18 @@ export const useBalanceQueryResolvers = () => {
 
   return {
     // key is the entity, value is the resolver
-    balances: withErrorHandler(
-      // practically we dont have to wrap this in useCallback
-      // since it does not have any contextual dependencies
+    balances:
+      /**
+       * practically we dont have to wrap this in useCallback
+       * since it does not have any contextual dependencies
+       */
       useMemo(
-        () => balancesByAddressQueryResolverFactory(apiInstance),
+        () =>
+          withErrorHandler(
+            balancesByAddressQueryResolverFactory(apiInstance),
+            'balances'
+          ),
         [apiInstance]
       ),
-      'balances'
-    ),
   };
 };

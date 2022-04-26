@@ -8,22 +8,25 @@
   background: none;
   user-select: none;
 
-  padding: 0.875rem;
   border-radius: $border-radius;
-  text-transform: uppercase;
   font-weight: bold;
   width: 100%;
 
   &--primary {
+    padding: 0.875rem;
     background: $green1;
+    text-transform: uppercase;
     &:hover {
       background: darken($color: $green1, $amount: 5);
     }
   }
+
   &--secondary {
-    background: $pink1;
+    padding: 0.3125rem;
+    color: $white1;
+    background: $gray3;
     &:hover {
-      background: darken($color: $pink1, $amount: 5);
+      background: darken($color: $green1, $amount: 5);
     }
   }
 

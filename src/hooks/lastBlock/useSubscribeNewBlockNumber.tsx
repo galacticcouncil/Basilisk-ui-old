@@ -19,12 +19,12 @@ export const useSubscribeNewBlock = () => {
   const [unsubscribe, setUnsubscribe] = useState<() => void | undefined>();
 
   const subscribeNewBlocks = useCallback(async () => {
-    if (!apiInstance) return;
+    if (!apiInstance || loading) return;
     // TODO: how to unsubscribe?
-    const unsubscribe = await apiInstance.derive.chain.subscribeNewBlocks(
-      async (block) => {
+     await apiInstance.derive.chain.bestNumber(
+      async (number) => {
         const validationData =
-          await apiInstance.query.parachainSystem.validationData();
+         await apiInstance.query.parachainSystem.validationData();
 
         const validationDataOption = apiInstance.createType(
           validationDataDataType,
@@ -36,20 +36,21 @@ export const useSubscribeNewBlock = () => {
           const validationData =
             validationDataOption.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData;
           setLastBlock({
-            parachainBlockNumber: block.block.header.number.toString(),
-            relaychainBlockNumber:
-              '821' || validationData.relayParentNumber.toString(),
+            parachainBlockNumber: number.toString(),
+            relaychainBlockNumber: validationData.relayParentNumber.toString(),
           });
         }
       }
     );
-    setUnsubscribe(unsubscribe);
-  }, [apiInstance]);
+    //setUnsubscribe(unsubscribe);
+  }, [apiInstance, loading]);
 
   useEffect(() => {
     if (loading) return;
     subscribeNewBlocks();
-    return () => unsubscribe && unsubscribe();
+    return () => {
+      unsubscribe && unsubscribe();
+    }
   }, [loading, subscribeNewBlocks, unsubscribe]);
 
   return lastBlock;

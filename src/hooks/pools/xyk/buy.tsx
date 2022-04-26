@@ -1,48 +1,74 @@
-import { ApolloCache, NormalizedCacheObject, useApolloClient } from '@apollo/client';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
 import { ApiPromise } from '@polkadot/api';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { useCallback } from 'react'
-import { GetActiveAccountQueryResponse, GET_ACTIVE_ACCOUNT } from '../../accounts/queries/useGetActiveAccountQuery';
-import { readActiveAccount } from '../../accounts/readActiveAccount';
-import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
-import { withGracefulErrors, gracefulExtensionCancelationErrorHandler, vestingClaimHandler, resolve, reject } from '../../vesting/useVestingMutationResolvers';
+import { readActiveAccount } from '../../accounts/lib/readActiveAccount';
+import {
+  withGracefulErrors,
+  gracefulExtensionCancelationErrorHandler,
+  vestingClaimHandler,
+  resolve,
+  reject,
+} from '../../vesting/useVestingMutationResolvers';
 
-export const xykBuyHandler = (resolve: resolve, reject: reject, apiInstance: ApiPromise) => {
-    return vestingClaimHandler(resolve, reject, apiInstance);
-}
+export const xykBuyHandler = (
+  resolve: resolve,
+  reject: reject,
+  apiInstance: ApiPromise
+) => {
+  return vestingClaimHandler(resolve, reject, apiInstance);
+};
 
 export const discount = false;
 
-export const buy = async (
-    cache: ApolloCache<NormalizedCacheObject>,
-    apiInstance: ApiPromise,
-    assetBuy: string, // 1
-    assetSell: string, // 49.7 + 0.2% = 49.9
-    amountBuy: string, // 99
-    maxSold: string, // 49.5 + 0.5%
+export const estimateBuy = async (
+  cache: ApolloCache<object>,
+  apiInstance: ApiPromise,
+  assetBuy: string,
+  assetSell: string,
+  amountBuy: string,
+  maxSold: string
 ) => {
-    await withGracefulErrors(async (resolve, reject) => {
-        const activeAccount = readActiveAccount(cache);
-        const address = activeAccount?.id;
+  const activeAccount = readActiveAccount(cache);
+  const address = activeAccount?.id;
 
-        // TODO: extract this error
+  if (!address) return;
+  
+  return apiInstance.tx.xyk
+    .buy(assetBuy, assetSell, amountBuy, maxSold, discount)
+    .paymentInfo(address);
+}
+
+export const buy = async (
+  cache: ApolloCache<NormalizedCacheObject>,
+  apiInstance: ApiPromise,
+  assetBuy: string, // 1
+  assetSell: string, // 49.7 + 0.2% = 49.9
+  amountBuy: string, // 99
+  maxSold: string // 49.5 + 0.5%
+) => {
+  // await withGracefulErrors(
+    // async (resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
+      const activeAccount = readActiveAccount(cache);
+      const address = activeAccount?.id;
+
+      // TODO: extract this error
+      try {
         if (!address) return reject(new Error('No active account found!'));
 
-        const { signer } = await web3FromAddress(address);
+      const { signer } = await web3FromAddress(address);
 
-        await apiInstance.tx.xyk.buy(
-            assetBuy,
-            assetSell,
-            amountBuy,
-            maxSold,
-            discount
-        )
-            .signAndSend(
-                address,
-                { signer },
-                xykBuyHandler(resolve, reject, apiInstance)
-            )
-    }, [
-        gracefulExtensionCancelationErrorHandler
-    ])
-}
+      await apiInstance.tx.xyk
+        .buy(assetBuy, assetSell, amountBuy, maxSold, discount)
+        .signAndSend(
+          address,
+          { signer },
+          xykBuyHandler(resolve, reject, apiInstance)
+        );
+      } catch (e) {
+        reject(e)
+      }
+    })
+  //   [gracefulExtensionCancelationErrorHandler]
+  // );
+};

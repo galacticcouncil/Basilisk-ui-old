@@ -1,17 +1,17 @@
-
 query GetAccounts {
-    lastBlock @client {
-        parachainBlockNumber,
-        relaychainBlockNumber
+  lastBlock @client {
+    parachainBlockNumber
+    relaychainBlockNumber
+  }
+
+  accounts @client {
+    id
+    name
+    source,
+    genesisHash,
+    balances(assetIds: ["0"]) {
+      assetId
+      balance
     }
-    
-    accounts @client {
-        id,
-        name,
-        isActive,
-        balances {
-            assetId,
-            balance
-        }
-    }
+  }
 }

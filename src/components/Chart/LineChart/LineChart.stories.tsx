@@ -9,7 +9,8 @@ import { Story } from '@storybook/react';
  const primaryDataset = createDataset(assetPair, 60);
 
 const args = {
-    primaryDataset
+    primaryDataset,
+    onHandleTooltip: console.log
 };
 
 export default {

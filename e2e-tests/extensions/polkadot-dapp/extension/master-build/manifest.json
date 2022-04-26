@@ -42,5 +42,5 @@
     "page.js"
   ],
   "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'",
-  "version": "0.41.2"
+  "version": "0.42.8"
 }

@@ -13,10 +13,11 @@ export interface GetPoolQueryResponse {
     pool: Pool
 }
 
-export const useGetPoolByAssetsQuery = (variables: GetPoolByAssetsQueryVariables) => useQuery<GetPoolQueryResponse>(
+export const useGetPoolByAssetsQuery = (variables: GetPoolByAssetsQueryVariables, skip: boolean) => useQuery<GetPoolQueryResponse>(
     GET_POOL_BY_ASSETS, 
     { 
         variables,
         notifyOnNetworkStatusChange: true,
+        skip
     }
 );

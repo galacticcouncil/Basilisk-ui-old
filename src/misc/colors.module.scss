@@ -1,32 +1,58 @@
+// GRAY
+$l-gray1: #e5ecf1;
+$l-gray2: #d1dee8;
+$l-gray3: #bdccd4;
+$l-gray4: #a2b0b8;
+$l-gray5: #73858f;
+
+$d-gray1: #686876;
+$d-gray2: #51515f;
+$d-gray3: #3e3e4b;
+$d-gray4: #26282f;
+$d-gray5: #211f24;
+$d-gray6: #1b1b1e;
+
+$black: #000000;
+$white: #ffffff;
+
 // gray
 $gray1: #424250;
-$gray2: #211F24;
+$gray2: #211f24;
 $gray3: #26282f;
-$gray4: #BDCCD4;
+$gray4: #bdccd4;
 $gray5: #3b3a49;
 $gray6: #abb4c1;
 
 // green
-$green1: #4FFFB0;
+$green0: #daffee;
+$green1: #4fffb0;
+$green2: #41db96;
 
 // orange
-$orange1: #ffa135;
+$orange0: #ffe2c3;
+$orange1: #ff931e;
+$orange2: #f38d1d;
 
 // white
-$white1: #FFFFFF;
+$white1: #ffffff;
 
 // pink
-$pink1: #FF7BAC;
+$pink1: #ff7bac;
 
-$red1: #fa4b4b;
+$red1: #ff6868;
 
 $colors: (
-    "gray": ($gray1, $gray2, $gray3, $gray4),
-    "green": $green1,
-    "orange": $orange1,
-    "white": $white1,
-    "pink": $pink1,
-    "red": $red1
+  'gray': (
+    $gray1,
+    $gray2,
+    $gray3,
+    $gray4,
+  ),
+  'green': $green1,
+  'orange': $orange1,
+  'white': $white1,
+  'pink': $pink1,
+  'red': $red1,
 );
 
 $colorsList: [];
@@ -34,35 +60,39 @@ $colorsList: [];
 $page-background: linear-gradient(107.54deg, #373741 47.92%, #424250 100%);
 
 @each $color, $values in $colors {
-    @each $value in $values {
-        $i: index($values, $value);
-        .text-#{$color}-#{$i} {
-            color: $value;
-        }
-
-        .bg-#{$color}-#{$i} {
-            background-color: $value;
-        }
-
-        $colorsList: append($colorsList, #{$color}-#{$i});
+  @each $value in $values {
+    $i: index($values, $value);
+    .text-#{$color}-#{$i} {
+      color: $value;
     }
+
+    .bg-#{$color}-#{$i} {
+      background-color: $value;
+    }
+
+    $colorsList: append($colorsList, #{$color}-#{$i});
+  }
 }
 
 :export {
-    colors: $colorsList;
+  colors: $colorsList;
 
-    gray2Opacity0: rgba($gray2, 0);
+  gray2Opacity0: rgba($gray2, 0);
 
-    red1: $red1;
-    red1Opacity70: rgba($red1, .7);
+  red1: $red1;
+  red1Opacity70: rgba($red1, 0.7);
 
-    green1: $green1;
-    green1Opacity70: rgba($green1, .7);
-    green1Opacity33: rgba($green1, .33);
+  green0: $green0;
+  green1: $green1;
+  green2: $green2;
+  green1Opacity70: rgba($green1, 0.7);
+  green1Opacity33: rgba($green1, 0.33);
 
-    orange1: $orange1;
-    orange1Opacity70: rgba($orange1, .7);
+  orange0: $orange0;
+  orange1: $orange1;
+  orange2: $orange2;
+  orange1Opacity70: rgba($orange1, 0.7);
 
-    gray1: $gray1;
-    gray2: $gray2;
+  gray1: $gray1;
+  gray2: $gray2;
 }

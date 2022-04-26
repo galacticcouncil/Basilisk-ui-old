@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import './Button.scss';
+import { ReactNode } from 'react';
 
 export enum ButtonKind {
   Primary = 'Primary',
@@ -7,7 +8,7 @@ export enum ButtonKind {
 }
 
 export interface ButtonProps {
-  children: string;
+  children: ReactNode;
   kind?: ButtonKind;
   onClick?: () => void;
 }
@@ -15,19 +16,16 @@ export interface ButtonProps {
 export const Button = ({
   // TODO: default should not be primary
   kind = ButtonKind.Primary,
-  onClick,
   children,
+  onClick,
 }: ButtonProps) => {
   return (
     <button
-      className={
-        'button ' +
-        classNames({
-          'button--primary': kind === ButtonKind.Primary,
-          'button--secondary': kind === ButtonKind.Secondary,
-        })
-      }
       onClick={onClick}
+      className={classNames('button', {
+        'button--primary': kind === ButtonKind.Primary,
+        'button--secondary': kind === ButtonKind.Secondary,
+      })}
     >
       {children}
     </button>
