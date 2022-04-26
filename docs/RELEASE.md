@@ -1,7 +1,8 @@
 # Basilisk UI releases convention
 
-Basilisk-UI releases comply with [Semantic Versioning](https://semver.org/). 
-Each release has it's own release notes, which are extracted from CHANGELOG.md. 
+Basilisk-UI releases comply with [Semantic Versioning](https://semver.org/) and implies existence of `develop` as 
+working branch and `main` branch as production source. 
+Each release has it's own tag and release notes, which are extracted from CHANGELOG.md. 
 Changelog is based on [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ### New release creation flow
@@ -13,12 +14,27 @@ This workflow:
    - create tag for a new release;
    - creates branch for a new release (`release/vX.X.X`);
    - creates pull requests `develop <- release/vX.X.X` and `main <- release/vX.X.X`.
-2) Review and merge pull requests.
+2) Review and merge pull requests. If you need decline current release flow on review step, you can manually run workflow 
+[Release :: Clean up (dispatch)](/.github/workflows/_dispatch_cleanup-release-evnironment.yml) which will remove previously
+created `release/vX.X.X` branch, tag and related pull requests. 
 3) Push action into `main` branch triggers workflow run [Release :: Create](/.github/workflows/create-release.yml). This 
 workflow:
    - extracts release notes from `CHANGELOG.md` for current release;
    - creates new release;
 4) Manually remove redundant `release/vX.X.X` branch if it's necessary.
+
+**IMPORTANT**: Workflows `.github/workflows/_dispatch_prepare-release.yml` and `.github/workflows/_dispatch_cleanup-release-evnironment.yml`
+have `workflow_dispatch` trigger event. It means that any changes to these files requires to push changes to default
+branch first (e.g. `develop` branch) to take effect. This concerns all github-scripts which are used in such workflow.
+More details - [here](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch)
+
+As alternative (not recommended), you can use such flow:
+1) Update application version and generate changelog locally with CLI command `yarn release` (look into library 
+[documentation](https://github.com/conventional-changelog/standard-version#cli-usage) for more details how to specify 
+additional parameters);
+2) Create tag for new release;
+3) Push updated `package.json`, `CHANGELOG.md` and new tag into `develop` and `main` branch.
+4) Push action into `main` branch triggers workflow run [Release :: Create](/.github/workflows/create-release.yml).
 
 ### Changelog generation and version bumping rules
 We use CLI tool [standard-version](https://github.com/conventional-changelog/standard-version) for automatic generation

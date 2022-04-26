@@ -105,7 +105,8 @@
     "translations:compile": "formatjs compile src/lang/en.json --out-file src/compiled-lang/en.json",
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "release": "standard-version"
   },
   "engines": {
     "node": ">=17"
@@ -227,6 +228,7 @@
     "react-test-renderer": "^17.0.2",
     "sass": "^1.42.1",
     "sass-loader": "10.1.1",
+    "standard-version": "^9.3.2",
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2",
