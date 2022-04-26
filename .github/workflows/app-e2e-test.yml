@@ -1,0 +1,56 @@
+# Run E2E test for UI Application
+
+name: 'E2E testing App'
+
+on:
+  push:
+    branches:
+      - 'fix/**'
+      - 'feat/**'
+      - develop
+      - 'release/**'
+  pull_request:
+    types:
+      - opened
+    branches:
+      - develop
+
+jobs:
+  # Build Application and Storybook
+  build:
+    name: 'Build'
+    uses: ./.github/workflows/_called_build.yml
+    with:
+      app-build-artifact-name: app-build-files
+      storybook-build-artifact-name: sb-build-files
+
+  # Run End-To-End tests for Application
+  app-e2e-tests:
+    name: 'E2E tests'
+    needs: build
+    if: ${{ needs.build.result=='success' }}
+    uses: ./.github/workflows/_called_run-e2e-tests-app.yml
+    with:
+      app-build-artifact-name: app-build-files
+
+  # Publish status of testing in PR comment, if PR is available.
+  report-statuses-in-pr:
+    # Publish build and deployment statuses as pull request comment,
+    # if any pull request is associated with triggered commit.
+    name: 'Report in PR'
+    needs: [ build, app-e2e-tests ]
+    if: ${{ always() && needs.build.result != 'cancelled' && needs.app-e2e-tests.result != 'cancelled' }}
+    uses: ./.github/workflows/_called_report-status-in-pr.yml
+    with:
+      publish-artifacts-list: true
+
+      app-e2e-test-pub-report: true
+      app-e2e-test-status: ${{ needs.app-e2e-tests.result == 'success' }}
+
+      app-storybook-build-pub-report: false
+      app-storybook-deploy-pub-report: false
+      app-unit-test-pub-report: false
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
+      gh_pages_full_branch: ${{ secrets.GH_PAGES_FULL_BRANCH }}
+      gh_pages_custom_domain: ${{ secrets.GH_PAGES_CUSTOM_DOMAIN }}

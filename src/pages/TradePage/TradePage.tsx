@@ -1,7 +1,8 @@
 import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
-import { find, uniq } from 'lodash';
+import { find, uniq, last } from 'lodash';
 import moment from 'moment';
+import { usePageVisibility } from 'react-page-visibility';
 import {
   Dispatch,
   SetStateAction,
@@ -96,14 +97,18 @@ export const TradeChart = ({
   spotPrice,
   isPoolLoading,
 }: TradeChartProps) => {
+  const isVisible = usePageVisibility();
+  const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
+    from: moment().subtract(1, 'days').toISOString(),
+    to: moment().toISOString(),
+  }); 
   const { math } = useMath();
   const {
     data: historicalBalancesData,
     networkStatus: historicalBalancesNetworkStatus,
   } = useGetHistoricalBalancesQuery(
     {
-      from: useMemo(() => moment().subtract(1, 'days').toISOString(), []),
-      to: useMemo(() => moment().toISOString(), []),
+      ...historicalBalancesRange,
       quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
       poolId: pool?.id || '',
@@ -122,6 +127,7 @@ export const TradeChart = ({
 
   const [dataset, setDataset] = useState<Array<any>>();
   const [datasetLoading, setDatasetLoading] = useState(true);
+  const [datasetRefreshing, setDatasetRefreshing] = useState(false);
 
   const assetOutLiquidity = useMemo(() => {
     const assetId = assetIds.assetOut || undefined;
@@ -197,6 +203,7 @@ export const TradeChart = ({
     });
 
     setDataset(dataset);
+    setDatasetRefreshing(false);
     setDatasetLoading(false);
   }, [
     historicalBalancesData?.historicalBalances,
@@ -204,6 +211,43 @@ export const TradeChart = ({
     math,
     spotPrice,
     assetIds,
+  ]);
+
+  useEffect(() => {
+    const lastRecordOutdatedBy = 60000;
+
+    if (
+      !isVisible ||
+      historicalBalancesLoading ||
+      datasetRefreshing
+    )
+      return;
+
+    const refetchHistoricalBalancesData = () => {
+      if (
+        isVisible && !historicalBalancesLoading && !datasetRefreshing &&
+        (!dataset?.length || last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
+      ) {
+        setDatasetRefreshing(true);
+        setHistoricalBalancesRange({
+          from: moment().subtract(1, 'days').toISOString(),
+          to: moment().toISOString(),
+        });
+      }
+    };
+
+    refetchHistoricalBalancesData();
+
+    const refetchData = setInterval(() => {
+      refetchHistoricalBalancesData();
+    }, lastRecordOutdatedBy)
+
+    return () => clearInterval(refetchData)
+  }, [
+    dataset,
+    isVisible,
+    historicalBalancesLoading,
+    datasetRefreshing,
   ]);
 
   // useEffect(() => {
@@ -221,10 +265,16 @@ export const TradeChart = ({
   //   })
   // }, [pool, spotPrice,])
 
-  const _isPoolLoading = useMemo(
-    () => isPoolLoading || historicalBalancesLoading || datasetLoading,
-    [datasetLoading, isPoolLoading, historicalBalancesLoading]
-  );
+  const _isPoolLoading = useMemo(() => {
+    if (!isPoolLoading || datasetRefreshing) return false;
+
+    return isPoolLoading || historicalBalancesLoading || datasetLoading;
+  }, [
+    datasetRefreshing,
+    datasetLoading,
+    isPoolLoading,
+    historicalBalancesLoading,
+  ]);
 
   console.log('graph loading status _isPoolLoading', _isPoolLoading);
 
@@ -309,7 +359,7 @@ export const TradePage = () => {
       submitTrade,
       { loading: tradeLoading, error: tradeError },
     ],
-    confirmationScreen,
+    confirmationScreen
   } = useWithConfirmation(
     useSubmitTradeMutation({
       onCompleted: () => {
@@ -318,8 +368,7 @@ export const TradePage = () => {
           setNotification('standby');
         }, 4000);
       },
-      onError: (error) => {
-        console.error(error);
+      onError: () => {
         setNotification('failed');
         clearNotificationIntervalRef.current = setTimeout(() => {
           setNotification('standby');
@@ -328,7 +377,6 @@ export const TradePage = () => {
     }),
     ConfirmationType.Trade
   );
-  
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -401,56 +449,54 @@ export const TradePage = () => {
   }, [activeAccountTradeBalancesData, assetIds]);
 
   return (
-    <>
+    <div className="trade-page-wrapper">
       {confirmationScreen}
-      <div className="trade-page-wrapper">
-        <div className={'notifications-bar transaction-' + notification}>
-          <div className="notification">transaction {notification}</div>
-        </div>
-        <div className="trade-page">
-          <TradeChart
-            pool={pool}
-            assetIds={assetIds}
-            spotPrice={spotPrice}
-            isPoolLoading={
-              poolNetworkStatus === NetworkStatus.loading ||
-              poolNetworkStatus === NetworkStatus.setVariables ||
-              depsLoading
-            }
-          />
-          <TradeForm
-            assetIds={assetIds}
-            onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-            isActiveAccountConnected={isActiveAccountConnected}
-            pool={pool}
-            // first load and each time the asset ids (variables) change
-            isPoolLoading={
-              poolNetworkStatus === NetworkStatus.loading ||
-              poolNetworkStatus === NetworkStatus.setVariables ||
-              depsLoading
-            }
-            assetInLiquidity={assetInLiquidity}
-            assetOutLiquidity={assetOutLiquidity}
-            spotPrice={spotPrice}
-            onSubmitTrade={handleSubmitTrade}
-            tradeLoading={tradeLoading}
-            assets={assets}
-            activeAccount={activeAccountData?.activeAccount}
-            activeAccountTradeBalances={tradeBalances}
-            activeAccountTradeBalancesLoading={
-              activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-              activeAccountTradeBalancesNetworkStatus ===
-                NetworkStatus.setVariables ||
-              depsLoading
-            }
-          />
-          <div className="debug">
-            <h3>[Trade Page] Debug Box</h3>
-            <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-            {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
-          </div>
+      <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification">transaction {notification}</div>
+      </div>
+      <div className="trade-page">
+        <TradeChart
+          pool={pool}
+          assetIds={assetIds}
+          spotPrice={spotPrice}
+          isPoolLoading={
+            poolNetworkStatus === NetworkStatus.loading ||
+            poolNetworkStatus === NetworkStatus.setVariables ||
+            depsLoading
+          }
+        />
+        <TradeForm
+          assetIds={assetIds}
+          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+          isActiveAccountConnected={isActiveAccountConnected}
+          pool={pool}
+          // first load and each time the asset ids (variables) change
+          isPoolLoading={
+            poolNetworkStatus === NetworkStatus.loading ||
+            poolNetworkStatus === NetworkStatus.setVariables ||
+            depsLoading
+          }
+          assetInLiquidity={assetInLiquidity}
+          assetOutLiquidity={assetOutLiquidity}
+          spotPrice={spotPrice}
+          onSubmitTrade={handleSubmitTrade}
+          tradeLoading={tradeLoading}
+          assets={assets}
+          activeAccount={activeAccountData?.activeAccount}
+          activeAccountTradeBalances={tradeBalances}
+          activeAccountTradeBalancesLoading={
+            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
+            activeAccountTradeBalancesNetworkStatus ===
+              NetworkStatus.setVariables ||
+            depsLoading
+          }
+        />
+        <div className="debug">
+          <h3>[Trade Page] Debug Box</h3>
+          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+          {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
         </div>
       </div>
-    </>
+    </div>
   );
 };
