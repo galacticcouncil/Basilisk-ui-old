@@ -851,8 +851,8 @@ export const TradeForm = ({
                       .toString();
                   }
 
-                  // this can haunt us later, maybe if !paymentInfo then true?
-                  if (!paymentInfo || !balanceForFee) return false;
+                  if (!paymentInfo) return true;
+                  if (!balanceForFee) return false;
 
                   return new BigNumber(balanceForFee)
                     .gte(paymentInfo);

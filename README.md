@@ -59,10 +59,10 @@ push:
     - develop
     - 'fix/**'
     - 'feat/**'
+    - 'release/**'
 pull_request:
   branches:
-    - 'fix/**'
-    - 'feat/**'
+    - 'develop'
 ```
 
 To build optimized production artifacts locally you can run
