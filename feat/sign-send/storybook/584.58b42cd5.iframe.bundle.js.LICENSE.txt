@@ -18,9 +18,9 @@ object-assign
 */
 
 /*!
- * Chart.js v3.7.0
+ * Chart.js v3.7.1
  * https://www.chartjs.org
- * (c) 2021 Chart.js Contributors
+ * (c) 2022 Chart.js Contributors
  * Released under the MIT License
  */
 
@@ -65,6 +65,21 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+
+/*! noble-secp256k1 - MIT License (c) 2019 Paul Miller (paulmillr.com) */
+
+/*! scure-base - MIT License (c) 2022 Paul Miller (paulmillr.com) */
+
+/**
+	 * A handy class to calculate color values.
+	 *
+	 * @version 1.0
+	 * @author Robert Eisele <robert@xarg.org>
+	 * @copyright Copyright (c) 2010, Robert Eisele
+	 * @link http://www.xarg.org/2010/03/generate-client-side-png-files-using-javascript/
+	 * @license http://www.opensource.org/licenses/bsd-license.php BSD License
+	 *
+	 */
 
 /**
  * @license
