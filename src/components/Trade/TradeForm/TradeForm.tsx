@@ -238,20 +238,6 @@ export const TradeForm = ({
     trigger('submit');
   }, []);
 
-  useEffect(() => {
-    // must provide input name otherwise it does not validate appropriately
-    trigger('submit');
-  }, [
-    isActiveAccountConnected,
-    pool,
-    isPoolLoading,
-    activeAccountTradeBalances,
-    assetInLiquidity,
-    assetOutLiquidity,
-    allowedSlippage,
-    ...watch(['assetInAmount', 'assetOutAmount']),
-  ]);
-
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
     const { assetIn, assetOut } = getValues();
@@ -566,6 +552,21 @@ export const TradeForm = ({
     slippage
   ]);
 
+  useEffect(() => {
+    // must provide input name otherwise it does not validate appropriately
+    trigger('submit');
+  }, [
+    isActiveAccountConnected,
+    pool,
+    isPoolLoading,
+    activeAccountTradeBalances,
+    assetInLiquidity,
+    assetOutLiquidity,
+    allowedSlippage,
+    paymentInfo,
+    ...watch(['assetInAmount', 'assetOutAmount']),
+  ]);
+
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
@@ -849,8 +850,8 @@ export const TradeForm = ({
                       .toString();
                   }
 
-                  // this can haunt us later, maybe if !paymentInfo then true?
-                  if (!paymentInfo || !balanceForFee) return false;
+                  if (!paymentInfo) return true;
+                  if (!balanceForFee) return false;
 
                   return new BigNumber(balanceForFee)
                     .gte(paymentInfo);
