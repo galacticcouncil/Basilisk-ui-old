@@ -70,11 +70,7 @@ export const fetchNativeAssetBalance = async (
 
   if (!maxFrozenBalance) throw new Error(errors.usableBalanceNotAvailable);
 
-<<<<<<< HEAD
-  let balance = new BigNumber(freeBalance).minus(maxFrozenBalance).toString();
-=======
   let balance = new BigNumber(freeBalance).minus(maxFrozenBalance).toFixed();
->>>>>>> b9bd747b56d6cd58772c19fb978e047ab6a33136
 
   balance = new BigNumber(balance).gte('0') ? balance : '0';
 

@@ -1,13 +1,8 @@
 import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
-<<<<<<< HEAD
 import { find, uniq, last } from 'lodash';
 import moment from 'moment';
 import { usePageVisibility } from 'react-page-visibility';
-=======
-import { find, uniq } from 'lodash';
-import moment from 'moment';
->>>>>>> b9bd747b56d6cd58772c19fb978e047ab6a33136
 import {
   Dispatch,
   SetStateAction,
