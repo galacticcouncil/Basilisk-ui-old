@@ -54,8 +54,8 @@ export const applyTradeFee = (
 export const useSubmitTradeMutationResolver = () => {
   const { apiInstance } = usePolkadotJsContext();
 
-  return withErrorHandler(
-    useCallback(
+  // return withErrorHandler(
+  return useCallback(
       async (
         _obj,
         args: Maybe<SubmitTradeMutationVariables>,
@@ -122,5 +122,5 @@ export const useSubmitTradeMutationResolver = () => {
       },
       [apiInstance]
     )
-  );
+  // );
 };

@@ -11,10 +11,10 @@ export const isReadyOrRefetching = (
 export const Test = () => {
   const { data, refetch, networkStatus } = useGetExtensionQuery();
 
-  const ready = useMemo(
-    () => isReadyOrRefetching(data, networkStatus),
-    [networkStatus, data]
-  );
+  const ready = useMemo(() => isReadyOrRefetching(data, networkStatus), [
+    networkStatus,
+    data,
+  ]);
 
   return (
     <div>

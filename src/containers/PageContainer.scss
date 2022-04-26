@@ -1,0 +1,105 @@
+@import './../misc/colors.module.scss';
+@import './../misc/misc.module.scss';
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+  width: 100%;
+  padding: 16px;
+
+  gap: 36px;
+
+  max-width: 1100px;
+
+  left: 0;
+  right: 0;
+  margin: auto;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 10px;
+
+    &__wallet-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      a {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+
+        color: $l-gray2;
+      }
+
+      a:visited {
+        color: $l-gray2;
+      }
+
+      a:hover {
+        color: $green1;
+      }
+
+      &__help {
+        svg {
+          height: 20px;
+          width: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+
+          svg {
+            path {
+              fill: $green1;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    color: #bdccd4;
+    font-weight: 400;
+    font-size: 12px;
+    gap: 4px;
+
+    .liveliness-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .liveliness {
+        width: 12px;
+        height: 12px;
+        border-radius: 100%;
+        margin-right: 6px;
+        transition: background-color ease 200ms;
+        &.green {
+          background-color: $green2;
+        }
+        &.orange {
+          background-color: $orange1;
+        }
+        &.red {
+          background-color: $red1;
+        }
+        &.gray {
+          background-color: $gray1;
+        }
+      }
+    }
+  }
+}

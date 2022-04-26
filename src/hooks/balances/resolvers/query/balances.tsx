@@ -40,14 +40,16 @@ export const balancesByAddressQueryResolverFactory =
   async (
     obj: Entity,
     args: BalancesByAddressResolverArgs
-  ): Promise<Balance[] | undefined> => {
+  ): Promise<Balance[]> => {
+    // TODO: add apiInstance loading handling, this isnt sufficient
     // every component is supposed to have an initialized apiInstance
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!args.assetIds) throw Error(errors.noArgumentsProvidedBalanceQuery);
+    
+    // if no arguments are provided, use an empty array of assets
+    const resolverArguments = args ? args.assetIds : [] as string[];
+    const assetIds = objectToArrayWithFilter(resolverArguments);
 
-    const assets = objectToArrayWithFilter(args.assetIds);
-
-    return (await getBalancesByAddress(apiInstance, obj.id, assets))?.map(
+    return (await getBalancesByAddress(apiInstance, obj.id, assetIds))?.map(
       (balance: Balance) => {
         // add id and typename to each balance
         balance.id = `${obj.id}-${balance.assetId}`;

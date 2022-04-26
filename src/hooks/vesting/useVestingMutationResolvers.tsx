@@ -31,7 +31,6 @@ export const withGracefulErrors = async (
     try {
       resolve(await fn(resolve, reject));
     } catch (e: any) {
-      console.log('graceful error', e);
       // eslint-disable-next-line no-ex-assign
       e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
       // rejecting this promise with an error instead of throwing an error
@@ -73,7 +72,7 @@ export const vestingClaimHandler =
     events: EventRecord[];
     dispatchError?: DispatchError;
   }) => {
-    if (status.isFinalized) log.info('operation finalized');
+    if (status.isFinalized) log.info('transaction operation finalized');
 
     // TODO: extract intention registred for exchange buy/sell
     events.forEach(({ event: { data, method, section }, phase }) => {
@@ -87,26 +86,29 @@ export const vestingClaimHandler =
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
-      console.log('is in block', status.createdAtHash?.toString());
+      console.log('transaction is in block', status.createdAtHash?.toString());
       if (dispatchError?.isModule) {
+        reject();
         return log.info(
-          'operation unsuccessful',
+          'transaction unsuccessful',
           !apiInstance
             ? dispatchError
             : apiInstance.registry.findMetaError(dispatchError.asModule)
         );
       }
 
-      return log.info('operation successful');
+      resolve();
+
+      return log.info('transaction successful');
     }
 
     // if the operation has been broadcast, finish the mutation
     if (status.isBroadcast) {
       log.info('transaction has been broadcast', status.hash.toHuman());
-      return resolve();
+      // return resolve();
     }
     if (dispatchError) {
-      log.error('There was a dispatch error', dispatchError);
+      log.error('transaction There was a dispatch error', dispatchError);
       return reject('Dispatch error');
     }
   };
@@ -128,7 +130,7 @@ export const useVestingMutationResolvers = () => {
           ? variables.address
           : cache.readQuery<GetActiveAccountQueryResponse>({
               query: GET_ACTIVE_ACCOUNT,
-            })?.account?.id;
+            })?.activeAccount?.id;
 
         // TODO: error handling?
         if (!address) throw new Error(noAccountSelectedError);
@@ -136,19 +138,30 @@ export const useVestingMutationResolvers = () => {
           throw new Error(polkadotJsNotReadyYetError);
 
         // // TODO: why does this not return a tx hash?
-        return await withGracefulErrors(
-          async (resolve, reject) => {
-            const { signer } = await web3FromAddress(address);
-            await apiInstance.tx.vesting
-              .claim()
-              .signAndSend(
-                address,
-                { signer },
-                vestingClaimHandler(resolve, reject)
-              );
-          },
-          [gracefulExtensionCancelationErrorHandler]
-        );
+        // return await withGracefulErrors(
+          // async (resolve, reject) => {
+          //   const { signer } = await web3FromAddress(address);
+          //   await apiInstance.tx.vesting
+          //     .claim()
+          //     .signAndSend(
+          //       address,
+          //       { signer },
+          //       vestingClaimHandler(resolve, reject)
+          //     );
+          // },
+          // [gracefulExtensionCancelationErrorHandler]
+        // );
+
+        return new Promise(async (resolve, reject) => {
+          const { signer } = await web3FromAddress(address);
+          await apiInstance.tx.vesting
+            .claim()
+            .signAndSend(
+              address,
+              { signer },
+              vestingClaimHandler(resolve, reject)
+            );
+        });
       },
       [loading, apiInstance]
     ),
