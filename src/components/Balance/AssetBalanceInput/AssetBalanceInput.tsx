@@ -1,6 +1,6 @@
 import classNames from 'classnames';
-import { MutableRefObject, useCallback } from 'react';
-import { Asset } from '../../../generated/graphql';
+import { MutableRefObject, useCallback, useEffect } from 'react';
+import { Asset, Maybe } from '../../../generated/graphql';
 import { BalanceInput, BalanceInputProps } from '../BalanceInput/BalanceInput';
 import { useModalPortal } from './hooks/useModalPortal';
 import { useModalPortalElement } from './hooks/useModalPortalElement';
@@ -24,7 +24,8 @@ export interface AssetBalanceInputProps {
   isAssetSelectable?: boolean;
   // onAssetSelected: (asset: Asset) => void,
   balanceInputRef?: MutableRefObject<HTMLInputElement | null>;
-  required?: boolean
+  required?: boolean;
+  maxBalanceLoading?: boolean,
 }
 
 export const AssetBalanceInput = ({
@@ -38,6 +39,7 @@ export const AssetBalanceInput = ({
   // onAssetSelected,
   balanceInputRef,
   required,
+  maxBalanceLoading,
 }: AssetBalanceInputProps) => {
   const modalPortalElement = useModalPortalElement({
     assets,
@@ -58,7 +60,9 @@ export const AssetBalanceInput = ({
   const methods = useFormContext();
 
   return (
-    <div className="asset-balance-input">
+    <div className={classNames('asset-balance-input', {
+      disabled: maxBalanceLoading
+    })}>
       {/* This portal will be rendered at it's container ref as defined above */}
       {modalPortal}
       <div
@@ -88,14 +92,24 @@ export const AssetBalanceInput = ({
         </div>
       </div>
       <div className="asset-balance-input__input-wrapper">
-        <div className="asset-balance-input__input-wrapper__unit-selector">
-          <MetricUnitSelector unit={unit} onUnitSelected={setUnit}>
-            <div className={classNames("asset-balance-input__input-wrapper__unit-selector__asset-name", {
-              'horizontal-bar': !idToAsset(methods.getValues(assetInputName))?.symbol
-            })}>
-              {idToAsset(methods.getValues(assetInputName))?.symbol || `${horizontalBar}`}
-            </div>
-          </MetricUnitSelector>
+        <div className='asset-balance-input__input-wrapper__controls'>
+          <div className="asset-balance-input__input-wrapper__controls__unit-selector">
+            <MetricUnitSelector unit={unit} onUnitSelected={setUnit}>
+              <div
+                className={classNames(
+                  'asset-balance-input__input-wrapper__controls__unit-selector__asset-name',
+                  {
+                    'horizontal-bar': !idToAsset(
+                      methods.getValues(assetInputName)
+                    )?.symbol,
+                  }
+                )}
+              >
+                {idToAsset(methods.getValues(assetInputName))?.symbol ||
+                  `${horizontalBar}`}
+              </div>
+            </MetricUnitSelector>
+          </div>
         </div>
 
         <BalanceInput

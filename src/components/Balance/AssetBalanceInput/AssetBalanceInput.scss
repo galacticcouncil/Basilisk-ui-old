@@ -83,20 +83,42 @@
   &__input-wrapper {
     flex-grow: 1;
     padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
 
-    &__unit-selector {
+    &__controls {
       display: flex;
       justify-content: end;
 
-      &__asset-name {
-        font-size: 10px;
-        font-weight: 600;
-        letter-spacing: 0.5px;
+      &__unit-selector {
+        display: flex;
+        justify-content: end;
+  
+        &__asset-name {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+        }
+        .horizontal-bar {
+          position: relative;
+          top: -1px;
+        }
       }
-      .horizontal-bar {
-        position: relative;
-        top: -1px;
-      }
+    }
+  }
+
+  &.disabled {
+    &::after {
+      content: '';
+      width: 100%;
+      height: 100%;
+      background-color: rgba($d-gray2, 0.4);
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: $border-radius;
+      transition: all ease-in-out 500ms;
+      cursor: progress;
     }
   }
 }
