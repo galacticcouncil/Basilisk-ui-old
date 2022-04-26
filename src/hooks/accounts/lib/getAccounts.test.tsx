@@ -40,7 +40,7 @@ describe('getAccounts', () => {
       });
 
       it('can retrieve one account', async () => {
-        const accounts: Account[] = await getAccounts();
+        const accounts: Partial<Account>[] = await getAccounts();
 
         expect(accounts).toEqual([
           {
@@ -76,7 +76,7 @@ describe('getAccounts', () => {
       });
 
       it('can retrieve multiple accounts', async () => {
-        const accounts: Account[] = await getAccounts();
+        const accounts: Partial<Account>[] = await getAccounts();
 
         expect(accounts).toEqual([
           {
@@ -104,7 +104,7 @@ describe('getAccounts', () => {
     });
 
     it('returns an empty array when no accounts are returned from wallet', async () => {
-      const accounts: Account[] = await getAccounts();
+      const accounts: Partial<Account>[] = await getAccounts();
 
       expect(accounts).toEqual([]);
       expect(mockWeb3Accounts).toHaveBeenCalledTimes(1);

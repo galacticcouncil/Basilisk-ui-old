@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery';
-import { Wallet } from './Wallet';
+import { Wallet } from './Wallet/Wallet';
 import Icon from '../components/Icon/Icon';
 import './PageContainer.scss';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import { NetworkStatus } from '@apollo/client';
 import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader';
 import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox';
+import { Link } from 'react-router-dom';
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { data: lastBlockData } = useLastBlockQuery();
@@ -38,6 +39,18 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
       <div className="page-container">
         <div className="page-header">
           <Icon name="BasiliskLogoFull" />
+          <div className="page-header__menu-wrapper">
+            <div className="page-header__menu-wrapper__menu-item">
+              <Link to='trade'>
+                Trade
+              </Link>
+            </div>
+            <div className="page-header__menu-wrapper__menu-item">
+              <Link to='wallet'>
+                Wallet
+              </Link>
+            </div>
+          </div>
           <div className="page-header__wallet-wrapper">
             <a
               className="page-header__wallet-wrapper__help"

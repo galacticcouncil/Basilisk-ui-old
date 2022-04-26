@@ -13,7 +13,7 @@ import {
 } from 'react';
 import { Control, useForm, UseFormReturn } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { TradeForm } from '../../components/Trade/TradeForm/TradeForm';
+import { TradeForm } from './components/TradeForm/TradeForm';
 import { AssetIds, Balance, Pool, TradeType } from '../../generated/graphql';
 import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';

@@ -13,9 +13,10 @@ import log from 'loglevel';
 import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { useMemo } from 'react';
 import { readActiveAccount } from '../../../accounts/lib/readActiveAccount';
+import { add } from 'lodash';
 
 export const TRANSFER_BALANCE = loader(
-  './graphql/TransferBalance.mutation.graphql'
+  './../../graphql/TransferBalance.mutation.graphql'
 );
 
 export interface TransferBalanceMutationVariables {
@@ -96,19 +97,22 @@ export const estimateBalanceTransfer = async (
 
 const balanceTransferMutationResolverFactory =
   (apiInstance?: ApiPromise) =>
-  async (_obj: any, args: TransferBalanceMutationVariables) => {
-    if (!args.from || !args.to || !args.currencyId || !args.amount)
+  async (_obj: any, args: TransferBalanceMutationVariables, { cache }: { cache: ApolloCache<any> }) => {
+    if (!args.to || !args.currencyId || !args.amount)
       throw new Error(errors.invalidTransferVariables);
     if (!apiInstance) throw new Error(errors.apiInstanceNotInitialized);
 
     return withGracefulErrors(
       async (resolve, reject) => {
-        const { signer } = await web3FromAddress(args.from!);
+        const activeAccount = readActiveAccount(cache);
+        const address = activeAccount?.id;
+        if (!address) return reject(new Error('No active account found!'));
+        const { signer } = await web3FromAddress(address);
 
         await transferBalanceExtrinsic(apiInstance)
           .apply(apiInstance, [args.to, args.currencyId, args.amount])
           .signAndSend(
-            args.from!,
+            address,
             { signer },
             transferBalanceHandler(apiInstance, resolve, reject)
           );

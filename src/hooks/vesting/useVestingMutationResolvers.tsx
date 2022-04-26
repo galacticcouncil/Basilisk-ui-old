@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { withErrorHandler } from '../apollo/withErrorHandler';
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
 import { web3FromAddress } from '@polkadot/extension-dapp';
-import { ClaimVestedAmountMutationVariables } from './useClaimVestedAmountMutation';
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
 import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system';
 import log from 'loglevel';
@@ -118,6 +117,11 @@ export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet';
 
 const claimVestingExtrinsic = (apiInstance: ApiPromise) =>
   apiInstance.tx.vesting.claim;
+
+// TODO: this should be generated with graphql
+export interface ClaimVestedAmountMutationVariables {
+  address?: string
+}
 
 const getAddress = (
   cache: ApolloCache<NormalizedCacheObject>,

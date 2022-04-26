@@ -2,11 +2,11 @@ import BigNumber from 'bignumber.js';
 import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Balance, Fee } from '../../../../generated/graphql';
-import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
-import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader';
+import { Balance, Fee } from '../../../../../generated/graphql';
+import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
+import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader';
 import { TradeFormFields } from '../TradeForm';
-import constants from './../../../../constants';
+import constants from '../../../../../constants';
 import './TradeInfo.scss';
 
 export interface TradeInfoProps {

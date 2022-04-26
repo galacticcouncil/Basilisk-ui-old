@@ -25,7 +25,7 @@ const getPoolAccount = {
   ],
   type: 'AccountId',
 };
-const rpc = {
+export const rpc = {
   xyk: {
     getPoolAccount,
   },
@@ -34,12 +34,12 @@ const rpc = {
   },
 };
 
-const types = {
+export const types = {
   ...typesConfig.types[0],
   ...ormlTypes,
 };
 
-const typesAlias = {
+export const typesAlias = {
   ...typesConfig.alias,
   ...ormlTypesAlias,
 };
