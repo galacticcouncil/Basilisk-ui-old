@@ -4795,6 +4795,13 @@
   dependencies:
     "@types/react" "*"
 
+"@types/react-page-visibility@^6.4.1":
+  version "6.4.1"
+  resolved "https://registry.yarnpkg.com/@types/react-page-visibility/-/react-page-visibility-6.4.1.tgz#21c3bc4a3f310d38d188916cadc55f2bde65f27d"
+  integrity sha512-vNlYAqKhB2SU1HmF9ARFTFZN0NSPzWn8HSjBpFqYuQlJhsb/aSYeIZdygeqfSjAg0PZ70id2IFWHGULJwe59Aw==
+  dependencies:
+    "@types/react" "*"
+
 "@types/react-syntax-highlighter@11.0.5":
   version "11.0.5"
   resolved "https://registry.yarnpkg.com/@types/react-syntax-highlighter/-/react-syntax-highlighter-11.0.5.tgz#0d546261b4021e1f9d85b50401c0a42acb106087"
@@ -16260,6 +16267,13 @@ react-multi-provider@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/react-multi-provider/-/react-multi-provider-0.1.5.tgz#fd712b2340eca3311273fdd9e8e8efd3ac31d7e2"
   integrity sha512-eJWrjtSPIXZKQxN6ieNPb1TaZHlHSqWFBrwAgvCrhRd2GIFVJqZz08/atQSY421kMVeravzFZv1HfiLbrltiZA==
+
+react-page-visibility@^6.4.0:
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/react-page-visibility/-/react-page-visibility-6.4.0.tgz#0684fe80338e716c9ed2d34169fa3cbb3882096b"
+  integrity sha512-5vQ0zQU2DvKCQAxle9l5V6uxw2m180Lk7Jem+obmTeQ503fvMJLSUzFgWtTEgUVynhUx2pd+RzafnuMAG8uD6A==
+  dependencies:
+    prop-types "^15.7.2"
 
 react-popper-tooltip@^3.1.1:
   version "3.1.1"
