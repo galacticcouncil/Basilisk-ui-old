@@ -136,7 +136,7 @@ workflow generates dispatch event for workflow, which can fetch artifacts from c
 
 As result `Report status in PR` workflow has logic, explained in diagram below:
 
-<img src="./publish-reports-in-issue-comment-flow.png" alt="Publish reports as issue comment" width="700px">
+<img src="assets/publish-reports-in-issue-comment-flow.png" alt="Publish reports as issue comment" width="700px">
 
 #### Comment data inheritance
 
@@ -162,7 +162,7 @@ will be ignored in search (more details [here](https://docs.github.com/en/action
 Illustrations below show flow with 3 workflows, which has been triggered in parallel by the same event.
 (_workflow names are provided only for example purposes and can be different in real case_):
 
-<img src="./cached-comment-data-flows.png" alt="Cached comment data flows" width="900px">
+<img src="assets/cached-comment-data-flows.png" alt="Cached comment data flows" width="900px">
 
 Crucial point of this example (**improvement is required in this place**) is that each `Report status in PR` job in each 
 parallel workflow must be started after completion of reporter job from another parallel workflow. If we get overlapping 

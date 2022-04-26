@@ -14,7 +14,8 @@
 #   Specific version can be defined manually as well. Prerelease can be created with or without custom suffix.
 #
 # - generates CHANGELOG.md regarding conventional commit messages (https://www.conventionalcommits.org/en/v1.0.0/).
-#   Includes commits since latest release.
+#   Includes commits since latest release. Changelog sections titles and visibility can be configured
+#   in config file "./.versionrc".
 #
 # - creates branch for new release with new app version (e.g. "release/vX.X.X")
 #
