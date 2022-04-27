@@ -72,8 +72,8 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           </div>
           <div>
             Version:{' '}
-            {process.env.REACT_APP_GITHUB_SHA?.replaceAll('::7', '') !== ''
-              ? process.env.REACT_APP_GITHUB_SHA?.slice(0, 7)
+            {process.env.REACT_APP_VERSION_NAME !== ''
+              ? process.env.REACT_APP_VERSION_NAME
               : 'unknown'}
           </div>
         </div>

@@ -16,6 +16,9 @@ on:
       storybook-build-artifact-name:
         required: true
         type: string
+    secrets:
+      gh_token:
+        required: true
 
 jobs:
   build:
@@ -56,6 +59,21 @@ jobs:
           sudo chmod +x ./scripts/ci/gh-actions-branch-name-serialize.sh
           echo "##[set-output name=name;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$BRANCH_NAME")"
 
+      # Returns application version name as commit hash or triggered commit tag or release version.
+      # If commit which has triggered this action run has any tag, this tag will be returned. If tag is not existing but
+      # push event has been done after merge of pull request from "release/vX.X.X*" branch, "vX.X.X*" part will be
+      # returned as an application version.
+      # Default fallback value is commit hash (first 7 characters).
+      - name: 'Run github-script for get application version name'
+        id: get-app-version-name
+        uses: actions/github-script@v6
+        with:
+          # "github-token" parameter is required for work with GitHub API
+          github-token: ${{ secrets.GH_TOKEN }}
+          script: |
+            const script = require('./scripts/ci/github-script-src/get-app-version-name.js')
+            return await script({github, context, core})
+
       - name: "Build App and Storybook"
         run: |
           yarn run build
@@ -65,6 +83,7 @@ jobs:
           CI: false
           REACT_APP_GIT_BRANCH: ${{ steps.extract-branch-name.outputs.name }}
           REACT_APP_GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}
+          REACT_APP_VERSION_NAME: ${{ steps.get-app-version-name.outputs.result }}
           NODE_OPTIONS: --openssl-legacy-provider
 
       - name: "Upload production-ready App build files"

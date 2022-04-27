@@ -24,6 +24,8 @@ jobs:
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
 
   deploy:
     # Deploy Application and Storybook into GitHub Pages.

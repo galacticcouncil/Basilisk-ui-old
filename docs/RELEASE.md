@@ -49,3 +49,13 @@ Application version can be bumped automatically accordingly Semantic Versioning 
   - `fix` - this correlates with PATCH in Semantic Versioning;
   - `feat` - this correlates with MINOR in Semantic Versioning;
   - `!`(BREAKING CHANGE) - this correlates with MAJOR in Semantic Versioning;
+
+### UI side version indication
+Application footer contains version indicator. If application is built during CI flow, version value can have such 
+options as:
+1) tag of the commit which has triggered build workflow;
+2) if tag is not existing but push event has been done after merge of pull request from `release/vX.X.X*` branch, 
+`vX.X.X*` part will be used;
+3) default fallback value is commit hash (first 7 characters).
+
+Current logic is implemented [here](/scripts/ci/github-script-src/get-app-version-name.js) and used as GitHub Action step during application build flow.

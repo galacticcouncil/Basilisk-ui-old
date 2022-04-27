@@ -127,7 +127,7 @@ jobs:
       - name: Wait for Basilisk Node port :9988
         shell: bash
         timeout-minutes: 2
-        run: . ./ui-app/scripts/gh-actions-wait-for-port.sh 9988
+        run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 9988
 
       # Run UI App
       - name: Run UI application
@@ -139,7 +139,7 @@ jobs:
       - name: Wait for UI app port :3030
         shell: bash
         timeout-minutes: 2
-        run: . ./ui-app/scripts/gh-actions-wait-for-port.sh 3030
+        run: . ./ui-app/scripts/ci/gh-actions-wait-for-port.sh 3030
 
       # Prepare Playwright env
       - name: Install OS dependencies for Playwright
