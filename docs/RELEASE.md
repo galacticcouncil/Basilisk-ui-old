@@ -5,6 +5,8 @@ working branch and `main` branch as production source.
 Each release has it's own tag and release notes, which are extracted from CHANGELOG.md. 
 Changelog is based on [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
 
+---
+
 ### New release creation flow
 Creation of new release flow contains manual and automated by GitHub Actions steps. For creation of a new release:
 1) Manually run workflow [Release :: Prepare (dispatch)](/.github/workflows/_dispatch_prepare-release.yml).
@@ -36,6 +38,8 @@ additional parameters);
 3) Push updated `package.json`, `CHANGELOG.md` and new tag into `develop` and `main` branch.
 4) Push action into `main` branch triggers workflow run [Release :: Create](/.github/workflows/create-release.yml).
 
+---
+
 ### Changelog generation and version bumping rules
 We use CLI tool [standard-version](https://github.com/conventional-changelog/standard-version) for automatic generation
 of the changelog and changing application version in `package.json` file. 
@@ -49,6 +53,13 @@ Application version can be bumped automatically accordingly Semantic Versioning 
   - `fix` - this correlates with PATCH in Semantic Versioning;
   - `feat` - this correlates with MINOR in Semantic Versioning;
   - `!`(BREAKING CHANGE) - this correlates with MAJOR in Semantic Versioning;
+  
+#### Squashed commits
+If branch contains merged pull request with squashed commits, changelog will contain pull request merge commit as a single
+changelog entity. Title of the PR will be used as changelog message, PR type (`feat|fix|...`) will be used for defining 
+of the type of changelog entity. Such entity contains link to the closed PR and link to the merge commit.
+
+---
 
 ### UI side version indication
 Application footer contains version indicator. If application is built during CI flow, version value can have such 
