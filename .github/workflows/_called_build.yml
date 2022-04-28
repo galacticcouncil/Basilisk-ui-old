@@ -70,6 +70,7 @@ jobs:
         with:
           # "github-token" parameter is required for work with GitHub API
           github-token: ${{ secrets.GH_TOKEN }}
+          result-encoding: string
           script: |
             const script = require('./scripts/ci/github-script-src/get-app-version-name.js')
             return await script({github, context, core})
