@@ -115,6 +115,38 @@ export const vestingClaimHandler =
 export const noAccountSelectedError = 'No Account selected';
 export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet';
 
+const claimVestingExtrinsic = (apiInstance: ApiPromise) =>
+  apiInstance.tx.vesting.claim;
+
+// TODO: this should be generated with graphql
+export interface ClaimVestedAmountMutationVariables {
+  address?: string
+}
+
+const getAddress = (
+  cache: ApolloCache<NormalizedCacheObject>,
+  args: ClaimVestedAmountMutationVariables
+) => {
+  return args?.address
+    ? args.address
+    : cache.readQuery<GetActiveAccountQueryResponse>({
+        query: GET_ACTIVE_ACCOUNT,
+      })?.activeAccount?.id;
+};
+
+export const estimateClaimVesting = async (
+  cache: ApolloCache<NormalizedCacheObject>,
+  apiInstance: ApiPromise,
+  args: ClaimVestedAmountMutationVariables
+) => {
+  const address = getAddress(cache, args);
+
+  if (!address)
+    throw new Error(`Can't retrieve vesting address for estimation`);
+
+  return claimVestingExtrinsic(apiInstance)().paymentInfo(address);
+};
+
 export const useVestingMutationResolvers = () => {
   const { apiInstance, loading } = usePolkadotJsContext();
 
@@ -122,12 +154,10 @@ export const useVestingMutationResolvers = () => {
     useCallback(
       async (
         _obj,
-        _variables,
+        args: ClaimVestedAmountMutationVariables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
-        const address = cache.readQuery<GetActiveAccountQueryResponse>({
-          query: GET_ACTIVE_ACCOUNT,
-        })?.activeAccount?.id
+        const address = getAddress(cache, args);
 
         // TODO: error handling?
         if (!address) throw new Error(noAccountSelectedError);
@@ -136,28 +166,26 @@ export const useVestingMutationResolvers = () => {
 
         // // TODO: why does this not return a tx hash?
         // return await withGracefulErrors(
-          // async (resolve, reject) => {
-          //   const { signer } = await web3FromAddress(address);
-          //   await apiInstance.tx.vesting
-          //     .claim()
-          //     .signAndSend(
-          //       address,
-          //       { signer },
-          //       vestingClaimHandler(resolve, reject)
-          //     );
-          // },
-          // [gracefulExtensionCancelationErrorHandler]
+        // async (resolve, reject) => {
+        //   const { signer } = await web3FromAddress(address);
+        //   await apiInstance.tx.vesting
+        //     .claim()
+        //     .signAndSend(
+        //       address,
+        //       { signer },
+        //       vestingClaimHandler(resolve, reject)
+        //     );
+        // },
+        // [gracefulExtensionCancelationErrorHandler]
         // );
 
         return new Promise(async (resolve, reject) => {
           const { signer } = await web3FromAddress(address);
-          await apiInstance.tx.vesting
-            .claim()
-            .signAndSend(
-              address,
-              { signer },
-              vestingClaimHandler(resolve, reject)
-            );
+          await claimVestingExtrinsic(apiInstance)().signAndSend(
+            address,
+            { signer },
+            vestingClaimHandler(resolve, reject)
+          );
         });
       },
       [loading, apiInstance]

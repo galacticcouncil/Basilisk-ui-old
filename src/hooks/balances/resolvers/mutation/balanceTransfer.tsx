@@ -74,6 +74,27 @@ export const transferBalanceHandler =
     }
   };
 
+const transferBalanceExtrinsic = (apiInstance: ApiPromise) =>
+  apiInstance.tx.currencies.transfer;
+
+export const estimateBalanceTransfer = async (
+  cache: ApolloCache<object>,
+  apiInstance: ApiPromise,
+  args: TransferBalanceMutationVariables
+) => {
+  const activeAccount = readActiveAccount(cache);
+  const address = activeAccount?.id;
+
+  if (!address)
+    throw new Error(`Can't retrieve sender's address for estimation`);
+  if (!args.from || !args.to || !args.currencyId || !args.amount)
+    throw new Error(errors.invalidTransferVariables);
+
+  return transferBalanceExtrinsic(apiInstance)
+    .apply(apiInstance, [args.to, args.currencyId, args.amount])
+    .paymentInfo(address);
+};
+
 const balanceTransferMutationResolverFactory =
   (apiInstance?: ApiPromise) =>
   async (_obj: any, args: TransferBalanceMutationVariables, { cache }: { cache: ApolloCache<any> }) => {
@@ -88,7 +109,7 @@ const balanceTransferMutationResolverFactory =
         if (!address) return reject(new Error('No active account found!'));
         const { signer } = await web3FromAddress(address);
 
-        await apiInstance.tx.currencies.transfer
+        await transferBalanceExtrinsic(apiInstance)
           .apply(apiInstance, [args.to, args.currencyId, args.amount])
           .signAndSend(
             address,
