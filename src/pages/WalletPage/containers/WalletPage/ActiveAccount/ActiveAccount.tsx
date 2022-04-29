@@ -15,7 +15,7 @@ export const ActiveAccount = ({
     account?: Maybe<Account>;
     loading: boolean;
     onOpenAccountSelector: () => void,
-    onOpenTransferForm: () => void,
+    onOpenTransferForm: (assetId: string) => void,
     setNotification: (notification: Notification) => void
   }) => {
     const [setActiveAccount] = useSetActiveAccountMutation();

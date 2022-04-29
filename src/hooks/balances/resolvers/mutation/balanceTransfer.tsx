@@ -6,6 +6,7 @@ import { loader } from 'graphql.macro';
 import {
   withGracefulErrors,
   gracefulExtensionCancelationErrorHandler as gracefulExtensionCancellationErrorHandler,
+  vestingClaimHandler,
 } from '../../../vesting/useVestingMutationResolvers';
 import { web3FromAddress } from '@polkadot/extension-dapp';
 import { DispatchError, ExtrinsicStatus } from '@polkadot/types/interfaces';
@@ -38,41 +39,9 @@ export type reject = (error?: any) => void;
 
 // TODO: use handler from #71
 export const transferBalanceHandler =
-  (apiInstance: ApiPromise, resolve: resolve, reject: reject) =>
-  ({
-    status,
-    dispatchError,
-  }: {
-    status: ExtrinsicStatus;
-    dispatchError?: DispatchError;
-  }) => {
-    if (status.isFinalized) log.info('operation finalized');
-
-    // TODO: handle status via the action log / notification stack
-    if (status.isInBlock) {
-      if (dispatchError?.isModule) {
-        return log.error(
-          'transfer unsuccessful',
-          apiInstance.registry.findMetaError(dispatchError.asModule)
-        );
-      }
-
-      return log.info('transfer successful');
-    }
-
-    // if the operation has been broadcast, finish the mutation
-    if (status.isBroadcast) {
-      log.info('transaction has been broadcast');
-      return resolve();
-    }
-    if (dispatchError) {
-      log.error(
-        'There was a dispatch error',
-        apiInstance.registry.findMetaError(dispatchError.asModule)
-      );
-      return reject();
-    }
-  };
+  (apiInstance: ApiPromise, resolve: resolve, reject: reject) => {
+    return vestingClaimHandler(resolve, reject, apiInstance);
+  }
 
 const transferBalanceExtrinsic = (apiInstance: ApiPromise) =>
   apiInstance.tx.currencies.transfer;
@@ -102,8 +71,13 @@ const balanceTransferMutationResolverFactory =
       throw new Error(errors.invalidTransferVariables);
     if (!apiInstance) throw new Error(errors.apiInstanceNotInitialized);
 
-    return withGracefulErrors(
-      async (resolve, reject) => {
+    // return withGracefulErrors(
+    //   ,
+    //   [gracefulExtensionCancellationErrorHandler]
+    // );
+
+    await new Promise(async (resolve, reject) => {
+      try {
         const activeAccount = readActiveAccount(cache);
         const address = activeAccount?.id;
         if (!address) return reject(new Error('No active account found!'));
@@ -116,9 +90,10 @@ const balanceTransferMutationResolverFactory =
             { signer },
             transferBalanceHandler(apiInstance, resolve, reject)
           );
-      },
-      [gracefulExtensionCancellationErrorHandler]
-    );
+      } catch (e) {
+        reject(e)
+      }
+    })
   };
 
 export const useBalanceMutationsResolvers = () => {

@@ -8,19 +8,19 @@ export interface ModalPortalElementFactoryArgs<T> {
     toggleModal: () => void,
     elementRef: MutableRefObject<HTMLDivElement | null>,
     isModalOpen: boolean,
-    state: T
+    state?: T
 }
 
-export type ModalPortalElementFactory = <T>(args: ModalPortalElementFactoryArgs<T>) => ReactNode;
+export type ModalPortalElementFactory<T = undefined> = (args: ModalPortalElementFactoryArgs<T>) => ReactNode;
 
-export const useModalPortal = (
-    elementFactory: ModalPortalElementFactory,
+export const useModalPortal = <T, >(
+    elementFactory: ModalPortalElementFactory<T>,
     container: MutableRefObject<HTMLDivElement | null>,
     closeOnClickOutside: boolean = true,
 ) => {
     const [modalPortal, setModalPortal] = useState<ReactPortal | undefined>();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [state, setState] = useState();
+    const [state, setState] = useState<T>();
 
     const openModal = useCallback((state?: any) => {
         state && setState(state);

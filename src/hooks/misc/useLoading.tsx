@@ -12,7 +12,6 @@ export const useLoading = () => {
 
   useEffect(() => {
     if (!polkadotJsLoading && math && lastBlock) {
-      console.log('not loading anymore')
       setLoading(false);
     }
   }, [polkadotJsLoading, math, lastBlock]);

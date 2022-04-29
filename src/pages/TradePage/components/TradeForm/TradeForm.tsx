@@ -533,7 +533,6 @@ export const TradeForm = ({
   const { debugComponent } = useDebugBoxContext();
 
   useEffect(() => {
-    console.log('all values', getValues());
     debugComponent('TradeForm', {
       ...getValues(),
       spotPrice,

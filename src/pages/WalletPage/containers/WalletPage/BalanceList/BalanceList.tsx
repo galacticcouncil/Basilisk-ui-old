@@ -8,7 +8,7 @@ export const BalanceList = ({
     onOpenTransferForm
   }: {
     balances?: Array<Balance>,
-    onOpenTransferForm: () => void,
+    onOpenTransferForm: (assetId: string) => void,
   }) => {
     return <>
       <h2>Balances</h2>
@@ -20,7 +20,7 @@ export const BalanceList = ({
             {/* TODO: how to deal with unknown assets? (not knowing the metadata e.g. symbol/fullname) */}
             <FormattedBalance balance={balance} />
           </div>
-          <div onClick={() => onOpenTransferForm()}>Transfer</div>
+          <div onClick={() => onOpenTransferForm(balance.assetId)}>Transfer</div>
         </div>
       ))}
     </>

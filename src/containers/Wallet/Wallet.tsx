@@ -17,8 +17,6 @@ export const Wallet = () => {
   const depsLoading = useLoading();
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } = useGetActiveAccountQueryContext();
 
-  console.log('wallet', depsLoading, extensionLoading, activeAccountNetworkStatus, activeAccountData);
-
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [faucetMint, { loading: faucetMintLoading }] = useFaucetMintMutation();

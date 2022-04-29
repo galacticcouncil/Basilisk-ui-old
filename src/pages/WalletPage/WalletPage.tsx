@@ -34,7 +34,6 @@ export const WalletPage = () => {
     () => activeAccountData?.activeAccount,
     [activeAccountData]
   );
-  console.log('active account loading', activeAccountNetworkStatus);
   const activeAccountLoading = useMemo(() => (
     depsLoading || activeAccountNetworkStatus === NetworkStatus.loading
   ), [depsLoading, activeAccountNetworkStatus]);
@@ -51,7 +50,16 @@ export const WalletPage = () => {
     modalContainerRef,
   });
 
-  const { modalPortal: transferFormModalPortal, openModal: openTransferFormModalPortal } = useTransferFormModalPortal(modalContainerRef);
+  const assets = useMemo(() => {
+    return activeAccount?.balances.map((balance) => ({ id: balance.assetId }))
+  }, [activeAccount]);
+
+  const { modalPortal: transferFormModalPortal, openModal: openTransferFormModalPortal } = useTransferFormModalPortal(modalContainerRef, setNotification, assets);
+
+  const handleOpenTransformForm = useCallback((assetId: string) => {
+    console.log('asset id', assetId);
+    openTransferFormModalPortal({ assetId })
+  }, [openTransferFormModalPortal])
 
   return (
     <>
@@ -70,7 +78,7 @@ export const WalletPage = () => {
                   account={activeAccount} 
                   loading={loading}
                   onOpenAccountSelector={openModal}
-                  onOpenTransferForm={openTransferFormModalPortal}
+                  onOpenTransferForm={handleOpenTransformForm}
                   setNotification={setNotification}
                 />
               </>

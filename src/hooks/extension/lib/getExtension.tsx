@@ -12,9 +12,7 @@ export const getExtension = async (): Promise<Extension> => {
   const { isAvailable }: Pick<Extension, 'isAvailable'> = await new Promise(
     (resolve, reject) => {
       promiseRetry(async (retry, attempt) => {
-        console.log('attempt', attempt);
         const isAvailable = !!(window as any).injectedWeb3?.['polkadot-js'];
-        console.log('getExtension attempt: #', attempt, isAvailable);
         isAvailable
           ? (
             resolve({

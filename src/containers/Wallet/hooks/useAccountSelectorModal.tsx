@@ -25,8 +25,6 @@ export const useAccountSelectorModal = ({
     networkStatus: accountsNetworkStatus,
   }] = useGetAccountsLazyQuery();
 
-  console.log('account selector modal', depsLoading);
-
   const onAccountSelected = useCallback(
     (account: Account) => {
       setActiveAccount({ variables: { id: account.id } });

@@ -15,8 +15,6 @@ export const getAccounts = async (): Promise<Omit<Account, 'vesting' | 'balances
   // return all retrieved accounts
   const accounts = await web3Accounts();
 
-  console.log('accounts', accounts);
-
   // transform the returned accounts into the required entity format
   return accounts.map((account) => {
     return {

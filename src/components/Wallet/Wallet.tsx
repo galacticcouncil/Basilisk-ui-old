@@ -44,8 +44,6 @@ export const Wallet = ({
     onToggleAccountSelector
   ),[onToggleAccountSelector]);
 
-  console.log('Wallet', extensionLoading, activeAccountLoading, extensionLoading || activeAccountLoading);
-
   return (
     <div className="wallet">
 
