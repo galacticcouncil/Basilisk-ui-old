@@ -138,6 +138,7 @@ export type Pool = LbpPool | XykPool;
 export type Query = Balances & IVesting & {
   __typename?: 'Query';
   _assetIds?: Maybe<AssetIds>;
+  _empty?: Maybe<Scalars['String']>;
   _tradeType?: Maybe<TradeType>;
   _vestingSchedule?: Maybe<VestingSchedule>;
   accounts: Array<Account>;

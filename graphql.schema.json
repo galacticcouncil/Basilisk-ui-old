@@ -1024,6 +1024,18 @@
             "deprecationReason": null
           },
           {
+            "name": "_empty",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "_tradeType",
             "description": null,
             "args": [],

@@ -70,7 +70,7 @@ export const fetchNativeAssetBalance = async (
 
   if (!maxFrozenBalance) throw new Error(errors.usableBalanceNotAvailable);
 
-  let balance = new BigNumber(freeBalance).minus(maxFrozenBalance).toString();
+  let balance = new BigNumber(freeBalance).minus(maxFrozenBalance).toFixed();
 
   balance = new BigNumber(balance).gte('0') ? balance : '0';
 
@@ -107,7 +107,7 @@ export const fetchNonNativeAssetBalancesByAssetIds = async (
     // extract free balance as string
     const freeBalance = balanceData.free.toString();
     const frozenBalance = balanceData.frozen.toString();
-    let balance = new BigNumber(freeBalance).minus(frozenBalance).toString();
+    let balance = new BigNumber(freeBalance).minus(frozenBalance).toFixed();
 
     balance = new BigNumber(balance).gte('0') ? balance : '0';
 

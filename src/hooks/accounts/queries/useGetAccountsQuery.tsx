@@ -14,7 +14,7 @@ export const useGetAccountsQuery = (skip: boolean = false) =>
     skip: skip,
   });
 
-  export const useGetAccountsLazyQuery = (skip: boolean = false) =>
+export const useGetAccountsLazyQuery = (skip: boolean = false) =>
   useLazyQuery<GetAccountsQueryResponse>(GET_ACCOUNTS, {
     notifyOnNetworkStatusChange: true,
   });

@@ -30,11 +30,13 @@ export const WalletPage = () => {
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } =
     useGetActiveAccountQuery({
       skip: depsLoading || extensionLoading,
+      fetchPolicy: 'cache-only'
     });
   const activeAccount = useMemo(
     () => activeAccountData?.activeAccount,
     [activeAccountData]
   );
+  console.log('active account loading', activeAccountNetworkStatus);
   const activeAccountLoading = useMemo(() => (
     depsLoading || activeAccountNetworkStatus === NetworkStatus.loading
   ), [depsLoading, activeAccountNetworkStatus]);

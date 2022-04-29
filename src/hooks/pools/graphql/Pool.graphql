@@ -42,7 +42,7 @@ type XYKPool {
   balances: [Balance!]
 }
 
-union Pool = LBPPool | XYKPool
+union Pool = XYKPool | LBPPool
 
 extend type Query {
   pools: [Pool!]!

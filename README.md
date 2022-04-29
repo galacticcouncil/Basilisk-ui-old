@@ -13,7 +13,7 @@ yarn install
 Start Storybook component development environment.
 
 ```
-yarn storybook
+yarn storybook:start
 ```
 
 Storybook can be opened at [:6006](http://localhost:6006)
@@ -59,10 +59,10 @@ push:
     - develop
     - 'fix/**'
     - 'feat/**'
+    - 'release/**'
 pull_request:
   branches:
-    - 'fix/**'
-    - 'feat/**'
+    - 'develop'
 ```
 
 To build optimized production artifacts locally you can run
