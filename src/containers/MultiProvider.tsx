@@ -4,6 +4,8 @@ import { useConfigureApolloClient } from '../hooks/apollo/useApollo';
 import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber';
 import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs';
 import { MathProvider } from '../hooks/math/useMath';
+import { GetActiveAccountQueryProvider } from '../hooks/accounts/queries/useGetActiveAccountQuery';
+import { GetExtensionQueryProvider } from '../hooks/extension/queries/useGetExtensionQuery';
 
 export const ConfiguredApolloProvider = ({
   children,
@@ -23,7 +25,11 @@ export const ConfiguredApolloProvider = ({
 };
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
+  <GetExtensionQueryProvider>
+    <GetActiveAccountQueryProvider>
+      <>{children}</>
+    </GetActiveAccountQueryProvider>
+  </GetExtensionQueryProvider>
 );
 
 // TODO: use react-multi-provider instead of ugly nesting

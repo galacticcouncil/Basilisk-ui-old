@@ -1,9 +1,9 @@
 import { Wallet as WalletComponent } from '../../components/Wallet/Wallet';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useGetAccountsQuery } from '../../hooks/accounts/queries/useGetAccountsQuery';
-import { useGetExtensionQuery } from '../../hooks/extension/queries/useGetExtensionQuery';
+import { useGetExtensionQuery, useGetExtensionQueryContext } from '../../hooks/extension/queries/useGetExtensionQuery';
 import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation';
-import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
+import { useGetActiveAccountQuery, useGetActiveAccountQueryContext } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 import { Account } from '../../generated/graphql';
 import { NetworkStatus } from '@apollo/client';
 import { useLoading } from '../../hooks/misc/useLoading';
@@ -12,12 +12,12 @@ import { useAccountSelectorModal } from './hooks/useAccountSelectorModal';
 
 export const Wallet = () => {
   const { data: extensionData, loading: extensionLoading } =
-    useGetExtensionQuery();
+    useGetExtensionQueryContext();
   const [setActiveAccount] = useSetActiveAccountMutation();
   const depsLoading = useLoading();
-  const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } = useGetActiveAccountQuery({
-    skip: depsLoading || extensionLoading
-  });
+  const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } = useGetActiveAccountQueryContext();
+
+  console.log('wallet', depsLoading, extensionLoading, activeAccountNetworkStatus, activeAccountData);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 

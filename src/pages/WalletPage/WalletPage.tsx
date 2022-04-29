@@ -3,10 +3,10 @@ import { Account, Account as AccountModel, Balance, Maybe, Vesting, VestingSched
 import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../../hooks/accounts/queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../../hooks/accounts/lib/usePersistActiveAccount';
-import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
+import { useGetActiveAccountQuery, useGetActiveAccountQueryContext } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 import { NetworkStatus } from '@apollo/client';
 import { useLoading } from '../../hooks/misc/useLoading';
-import { useGetExtensionQuery } from '../../hooks/extension/queries/useGetExtensionQuery';
+import { useGetExtensionQuery, useGetExtensionQueryContext } from '../../hooks/extension/queries/useGetExtensionQuery';
 import { useModalPortalElement } from '../../components/Wallet/AccountSelector/hooks/useModalPortalElement';
 import { useAccountSelectorModal } from '../../containers/Wallet/hooks/useAccountSelectorModal';
 import { FormattedBalance } from '../../components/Balance/FormattedBalance/FormattedBalance';
@@ -24,14 +24,12 @@ export const WalletPage = () => {
   const [notification, setNotification] = useState<Notification>('standby');
 
   const { data: extensionData, loading: extensionLoading } =
-    useGetExtensionQuery();
+    useGetExtensionQueryContext();
 
   const depsLoading = useLoading();
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } =
-    useGetActiveAccountQuery({
-      skip: depsLoading || extensionLoading,
-      fetchPolicy: 'cache-only'
-    });
+    useGetActiveAccountQueryContext();
+    
   const activeAccount = useMemo(
     () => activeAccountData?.activeAccount,
     [activeAccountData]

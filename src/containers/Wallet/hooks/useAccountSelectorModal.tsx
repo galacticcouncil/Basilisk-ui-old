@@ -5,8 +5,8 @@ import { useModalPortalElement } from "../../../components/Wallet/AccountSelecto
 import { Account } from "../../../generated/graphql";
 import { useSetActiveAccountMutation } from "../../../hooks/accounts/mutations/useSetActiveAccountMutation";
 import { useGetAccountsLazyQuery, useGetAccountsQuery } from "../../../hooks/accounts/queries/useGetAccountsQuery";
-import { useGetActiveAccountQuery } from "../../../hooks/accounts/queries/useGetActiveAccountQuery";
-import { useGetExtensionQuery } from "../../../hooks/extension/queries/useGetExtensionQuery";
+import { useGetActiveAccountQuery, useGetActiveAccountQueryContext } from "../../../hooks/accounts/queries/useGetActiveAccountQuery";
+import { useGetExtensionQuery, useGetExtensionQueryContext } from "../../../hooks/extension/queries/useGetExtensionQuery";
 import { useLoading } from "../../../hooks/misc/useLoading";
 
 export const useAccountSelectorModal = ({
@@ -15,21 +15,17 @@ export const useAccountSelectorModal = ({
     modalContainerRef: MutableRefObject<HTMLDivElement | null>,
 }) => {
   const { data: extensionData, loading: extensionLoading } =
-    useGetExtensionQuery();
+    useGetExtensionQueryContext();
   const [setActiveAccount] = useSetActiveAccountMutation();
   const depsLoading = useLoading();
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } =
-    useGetActiveAccountQuery({
-      skip: depsLoading || extensionLoading,
-    });
-  const [isAccountSelectorOpen, setAccountSelectorOpen] = useState(false);
+    useGetActiveAccountQueryContext()
   const [getAccounts, {
     data: accountsData,
     networkStatus: accountsNetworkStatus,
-  }] = useGetAccountsLazyQuery(
-    !(extensionData?.extension.isAvailable && isAccountSelectorOpen) ||
-      depsLoading
-  );
+  }] = useGetAccountsLazyQuery();
+
+  console.log('account selector modal', depsLoading);
 
   const onAccountSelected = useCallback(
     (account: Account) => {
@@ -60,8 +56,8 @@ export const useAccountSelectorModal = ({
   );
 
   useEffect(() => {
-    modal.isModalOpen && getAccounts();
-  }, [modal.isModalOpen])
+    extensionData?.extension.isAvailable && !depsLoading && modal.isModalOpen && getAccounts();
+  }, [modal.isModalOpen, extensionData, depsLoading, getAccounts])
 
   return modal;
 };
