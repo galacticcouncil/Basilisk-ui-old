@@ -82,9 +82,9 @@ jobs:
         env:
           # CI=false is a workaround for this issue - https://github.com/facebook/create-react-app/issues/3657
           CI: false
-          REACT_APP_GIT_BRANCH: ${{ steps.extract-branch-name.outputs.name }}
-          REACT_APP_GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}
-          REACT_APP_VERSION_NAME: ${{ steps.get-app-version-name.outputs.result }}
+          GIT_BRANCH: ${{ steps.extract-branch-name.outputs.name }}
+          GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}
+          VERSION_NAME: ${{ steps.get-app-version-name.outputs.result }}
           NODE_OPTIONS: --openssl-legacy-provider
 
       - name: "Upload production-ready App build files"

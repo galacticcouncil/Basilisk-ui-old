@@ -94,7 +94,7 @@
   "scripts": {
     "start": "export NODE_OPTIONS=--openssl-legacy-provider && craco start --openssl-legacy-provider",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && craco build",
-    "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
+    "build:deployment": "export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
     "test": "craco test",
     "test:ci": "CI=true craco test",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache",
