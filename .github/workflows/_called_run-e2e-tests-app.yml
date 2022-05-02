@@ -46,7 +46,7 @@ jobs:
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
-      # | Restore cached Node modules for Basilisk-api.
+      # Restore cached Node modules for Basilisk-api.
       - name: 'Restore cached Node modules'
         id: cache-node-modules-basilisk-api
         uses: actions/cache@v2
@@ -60,7 +60,7 @@ jobs:
           cd Basilisk-api
           yarn install --frozen-lockfile
 
-      # | Restore cached Node modules for ui-app.
+      # Restore cached Node modules for ui-app.
       - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -74,7 +74,7 @@ jobs:
           cd ui-app
           yarn install --frozen-lockfile
 
-      # | Change CI scripts files permissions to prevent "Permission denied" error.
+      # Change CI scripts files permissions to prevent "Permission denied" error.
       - name: 'Change folders permissions'
         run: chmod -R 777 ui-app/scripts/ci
 
@@ -85,8 +85,8 @@ jobs:
           cd Basilisk-api
           yarn fullruntime:clean-setup-start
 
-      # | Double check of testnet status
-      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
+      # Double check of testnet status
+      # We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: 'Wait for Basilisk Node port :9988'
         timeout-minutes: 2
         shell: bash
@@ -98,8 +98,8 @@ jobs:
           cd ui-app/build
           http-server -s -p 3030 -a 127.0.0.1 &
 
-      # | Check of UI app status
-      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
+      # Check of UI app status
+      # We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: 'Wait for UI app port :3030'
         timeout-minutes: 2
         shell: bash
