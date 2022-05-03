@@ -894,7 +894,7 @@ export const TradeForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.inBalance.balance
-                  ).gt(assetInAmount);
+                  ).gte(assetInAmount);
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
