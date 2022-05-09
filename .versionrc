@@ -1,6 +1,6 @@
 {
   "types": [
-      {"type": "chore", "section":"Build process changes", "hidden":false},
+      {"type": "chore", "section":"Build process changes", "hidden":true},
       {"type": "revert", "section":"Reverts", "hidden":false},
       {"type": "feat", "section":"Feat", "hidden":false},
       {"type": "fix", "section":"Fix", "hidden":false},

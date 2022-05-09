@@ -1,9 +1,10 @@
 # Basilisk UI releases convention
 
 Basilisk-UI releases comply with [Semantic Versioning](https://semver.org/) and implies existence of `develop` as 
-working branch and `main` branch as production source. 
+working branch and `main` branch as production source (accordingly Gitflow strategy). 
 Each release has it's own tag and release notes, which are extracted from CHANGELOG.md. 
-Changelog is based on [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/).
+Changelog is based on [conventional commit messages](https://www.conventionalcommits.org/en/v1.0.0/). Use [these 
+rules](https://semver.org/#spec-item-4) for proper commit messages and versions bumping. 
 
 ---
 
