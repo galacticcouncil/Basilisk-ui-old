@@ -1,20 +1,53 @@
 # Create release regarding application version which is mentioned in package.json file.
 # Release notes will be extracted from CHANGELOG.md file for this particular release.
+# Merge commit will be tagged by new release tag.
+
+# IMPORTANT: Pull request `main <- release/vX.X.X` and back-merge "develop <- main" must be merged with simple merge
+# strategy with creation Merge commit. It's necessary for keeping available release tag in both "main" and "develop"
+# branches. In "main" for references into releases. In "develop" for correct generation of CHANGELOG by "standard-version"
+# (because changelog contains all commits since last release tag). If we use commit squash during PR merge process,
+# tagged commit will be lost.
 
 name: 'Release :: Create'
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types: [ closed ]
+
 
 jobs:
   create:
     name: 'Create release'
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
     steps:
       - name: 'Check out code'
         uses: actions/checkout@v2
+
+      # Check pull request head branch to avoid accidental running Release workflow in pull request merge into "main"
+      # branch. Release must be created only on merge event "main <- release/vX.X.X"
+      - name: 'Run github-script to check pull request head branch'
+        id: check-pr-head-branch-name
+        uses: actions/github-script@v6
+        env:
+          # Env variables
+          MATCH_BRANCH_NAME: 'release'
+        with:
+          # "github-token" parameter is required for work with GitHub API
+          github-token: ${{ secrets.GH_TOKEN }}
+          result-encoding: string
+          script: |
+            const script = require('./scripts/ci/github-script-src/check-pr-head-branch-name.js')
+            return await script({github, context, core})
+
+      # Cancel Release workflow if pull request head branch is not `release`.
+      - name: "Cancel workflow"
+        if: steps.check-pr-head-branch-name.outputs.result == false
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ secrets.GH_TOKEN }}
 
       # Set default git config with credentials of default GitHub Actions account.
       # More options are explained here - https://github.com/actions/checkout/issues/13#issuecomment-724415212
@@ -27,6 +60,11 @@ jobs:
         id: package-version
         uses: Saionaro/extract-package-version@v1.0.6
 
+      - name: 'Create release tag'
+        run: |
+          git tag -a "v${{ steps.package-version.outputs.version }}" -m "Release v${{ steps.package-version.outputs.version }}" main
+          git push origin "v${{ steps.package-version.outputs.version }}"
+
       # Extract release notes from CHANGELOG.md for specific version with mckrava/standard-version-release-notes@v1.1.0
       # (https://github.com/marketplace/actions/get-release-notes-from-standard-version-changelog)
       - name: 'Get release notes'
@@ -37,7 +75,6 @@ jobs:
           changelog: CHANGELOG.md
 
       - name: 'Create Release'
-        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -47,3 +84,20 @@ jobs:
           body: ${{join(fromJson(steps.generate_release_notes.outputs.notes).notes, '')}}
           draft: false
           prerelease: false
+
+
+      - name: "Create back-merge pull request into develop"
+        id: back-merge-main-develop-pr
+        uses: thomaseizinger/create-pull-request@1.0.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          head: main
+          base: develop
+          title: Back-merge main into develop after Release v${{ steps.package-version.outputs.version }}
+          reviewers: ${{ github.event.issue.user.login }}
+          body: |
+            This PR was created in response Release workflow running.
+            :warning: Current PR must be merged without commits squash :warning:
+            Please, use simple `Merge pull request` strategy with creating merge commit in current case.
+            It's required for correct work of automated Release workflows.
+

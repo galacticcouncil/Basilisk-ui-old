@@ -19,9 +19,7 @@
 #
 # - creates branch for new release with new app version (e.g. "release/vX.X.X")
 #
-# - tags commit with updated CHANGELOG and package.json files by new version value (e.g. "vX.X.X")
-#
-# - creates pull requests from new release branch into "main" and "develop" branches. Merge of pull request into "main"
+# - creates pull requests from new release branch into "main" branch. Merge of pull request into "main"
 #   branch triggers workflow (create-release.yml) which creates new release with release notes based on CHANGELOG.md.
 #
 # Matrix of available inputs combinations mentioned below:
@@ -126,9 +124,8 @@ jobs:
           git add package.json
           git add CHANGELOG.md
           git commit --message "Prepare release ${{ steps.package-version.outputs.version }}"
-          git tag v${{ steps.package-version.outputs.version }} HEAD
           echo "::set-output name=commit::$(git rev-parse HEAD)"
-          git push origin release/v${{ steps.package-version.outputs.version }} --tags
+          git push origin release/v${{ steps.package-version.outputs.version }}
 
       - name: "Create pull request into main"
         uses: thomaseizinger/create-pull-request@1.0.0
@@ -140,16 +137,6 @@ jobs:
           reviewers: ${{ github.event.issue.user.login }}
           body: |
             This PR was created in response Release workflow running.
-            I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
-
-      - name: "Create pull request to develop"
-        uses: thomaseizinger/create-pull-request@1.0.0
-        with:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-          head: release/v${{ steps.package-version.outputs.version }}
-          base: develop
-          title: v${{ steps.package-version.outputs.version }} into develop
-          reviewers: ${{ github.event.issue.user.login }}
-          body: |
-            This PR was created in response Release workflow running.
-            I've updated the version name and code commit: ${{ steps.make-commit.outputs.commit }}.
+            :warning: Current PR must be merged without commits squash :warning:
+            Please, use simple `Merge pull request` strategy with creating merge commit in current case.
+            It's required for correct work of automated Release workflows.

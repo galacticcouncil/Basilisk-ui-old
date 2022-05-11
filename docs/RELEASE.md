@@ -13,18 +13,21 @@ Creation of new release flow contains manual and automated by GitHub Actions ste
 1) Manually run workflow [Release :: Prepare (dispatch)](/.github/workflows/_dispatch_prepare-release.yml).
 This workflow:
    - updates application version in `package.json` regarding provided parameters (look to the comments inside workflow file);
-   - generates changelog accordingly of conventional commit messages;
-   - create tag for a new release;
+   - generates changelog accordingly of conventional commit messages (includes commits since the last tagged release);
    - creates branch for a new release (`release/vX.X.X`);
-   - creates pull requests `develop <- release/vX.X.X` and `main <- release/vX.X.X`.
-2) Review and merge pull requests. If you need decline current release flow on review step, you can manually run workflow 
-[Release :: Clean up (dispatch)](/.github/workflows/_dispatch_cleanup-release-evnironment.yml) which will remove previously
-created `release/vX.X.X` branch, tag and related pull requests. 
+   - creates pull requests `main <- release/vX.X.X`.
+2) Review and merge pull request `main <- release/vX.X.X`. **Don't use commits squash merge strategy in this case.** It's required for keeping 
+available release tags in both `main` and `develop` branches. If you need decline current release flow on review step, 
+you can manually run workflow [Release :: Clean up (dispatch)](/.github/workflows/_dispatch_cleanup-release-evnironment.yml) which will remove previously
+created `release/vX.X.X` branch and related pull requests. 
 3) Push action into `main` branch triggers workflow run [Release :: Create](/.github/workflows/create-release.yml). This 
 workflow:
    - extracts release notes from `CHANGELOG.md` for current release;
+   - create new release tag for merge commit `main <- release/vX.X.X`
    - creates new release;
-4) Manually remove redundant `release/vX.X.X` branch if it's necessary.
+   - create back-merge pull request `develop <- main`;
+4) Manually merge pull request `develop <- main`. **Don't use commits squash merge strategy in this case.**
+5) Manually remove redundant `release/vX.X.X` branch if it's necessary.
 
 **IMPORTANT**: Workflows `.github/workflows/_dispatch_prepare-release.yml` and `.github/workflows/_dispatch_cleanup-release-evnironment.yml`
 have `workflow_dispatch` trigger event. It means that any changes to these files requires to push changes to default
