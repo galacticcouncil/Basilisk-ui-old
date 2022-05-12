@@ -14,10 +14,11 @@ test.describe('tradePage', async () => {
         browserContext = launch.browserContext;
         extensionURL = launch.extensionURL;
 
+        // More details - https://playwright.dev/docs/api/class-tracing#tracing-start
         await browserContext.tracing.start({ screenshots: true, snapshots: true });
-        await browserContext.tracing.startChunk({
-            title: 'Init Browser with Polkadot.js extension',
-        });
+        // await browserContext.tracing.startChunk({
+        //     title: 'Init Browser with Polkadot.js extension',
+        // });
 
         // import Alice to the polkadot extension
         await importPolkadotDappAccount({
@@ -30,17 +31,20 @@ test.describe('tradePage', async () => {
             },
         });
 
-        await browserContext.tracing.stopChunk({
-            path: './traces/wallet-page/initPolkadotJsExt.zip',
-        });
+        // await browserContext.tracing.stopChunk({
+        //     path: './traces/wallet-page/initPolkadotJsExt.zip',
+        // });
+        await browserContext.tracing.stop({path: './e2e-tests/app-e2e-traces/trade-page/init-polkadot-dapp'});
+
     });
 
     test('testing', async () => {
+        // await browserContext.tracing.start({ screenshots: true, name: 'testing-1' });
         console.log('testing');
         // browserContext.newPage
         // browserContext.waitForEvent
         const page = await browserContext.newPage();
-        await page.goto('http://localhost:3000/#/')
+        await page.goto('https://localhost:3000/#/trade')
         await page.locator('text=Connect wallet').click();
 
         await new Promise((res) => {
@@ -78,6 +82,7 @@ test.describe('tradePage', async () => {
         });
         await expect(notification).toContainText('transaction success',{timeout:30000})
 
+        // await browserContext.tracing.stop();
         await page.pause();
     });
 })

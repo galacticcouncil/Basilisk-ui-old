@@ -18,6 +18,7 @@ const config: PlaywrightTestConfig = {
     // screenshot: 'only-on-failure',
     channel: 'chromium',
     screenshot: 'on',
+    trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
   },
   reporter: [
