@@ -7,13 +7,13 @@ on:
     branches:
       - 'fix/**'
       - 'feat/**'
-      - develop
       - 'release/**'
+      - 'develop'
   pull_request:
     types:
-      - opened
+      - 'opened'
     branches:
-      - develop
+      - 'develop'
 
 jobs:
   # Build Application and Storybook

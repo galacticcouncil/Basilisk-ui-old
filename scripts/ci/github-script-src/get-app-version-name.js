@@ -28,11 +28,12 @@ module.exports = async ({ github, context }) => {
 
   if (commitTag) return commitTag.name || commitShaDecorated;
 
-  const sourcePr = await apiUtils.getMergedPullRequest(
+  const sourcePr = await apiUtils.getPullRequest(
     github,
     owner,
     repo,
-    GITHUB_SHA
+    GITHUB_SHA,
+    'open'
   );
 
   if (!sourcePr) return commitShaDecorated;

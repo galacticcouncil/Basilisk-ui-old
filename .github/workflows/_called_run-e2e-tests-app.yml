@@ -134,6 +134,7 @@ jobs:
           DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
 
       - name: 'Sleep for 30 seconds (for compiling html reports)'
+        if: always()
         shell: bash
         run: sleep 30s
 

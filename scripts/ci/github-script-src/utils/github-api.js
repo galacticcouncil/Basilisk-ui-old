@@ -87,17 +87,21 @@ async function findIssueComment({
   return null;
 }
 
-async function getMergedPullRequest(github, owner, repo, sha) {
+async function getPullRequest(github, owner, repo, sha, state) {
   const resp = await github.rest.pulls.list({
     owner,
     repo,
     sort: 'updated',
     direction: 'desc',
-    state: 'closed',
+    state,
     per_page: 100,
   });
 
-  const pull = resp.data.find((prItem) => prItem.merge_commit_sha === sha);
+  const pull = resp.data.find(
+    (prItem) =>
+      (state === 'closed' && prItem.merge_commit_sha === sha) ||
+      (state === 'open' && prItem.head.sha === sha)
+  );
   if (!pull) {
     return null;
   }
@@ -115,5 +119,5 @@ async function getMergedPullRequest(github, owner, repo, sha) {
 module.exports = {
   publishIssueComment,
   findIssueComment,
-  getMergedPullRequest,
+  getPullRequest,
 };

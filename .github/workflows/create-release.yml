@@ -34,6 +34,7 @@ jobs:
         env:
           # Env variables
           MATCH_BRANCH_NAME: 'release'
+          MERGED_PR: 'true'
         with:
           # "github-token" parameter is required for work with GitHub API
           github-token: ${{ secrets.GH_TOKEN }}
