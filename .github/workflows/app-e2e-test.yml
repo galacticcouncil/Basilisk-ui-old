@@ -34,6 +34,10 @@ jobs:
     uses: ./.github/workflows/_called_run-e2e-tests-app.yml
     with:
       app-build-artifact-name: app-build-files
+    secrets:
+      e2e_test_account_name_alice: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
+      e2e_test_account_password_alice: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
+      e2e_test_account_seed_alice: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
 
   # Publish status of testing in PR comment, if PR is available.
   report-statuses-in-pr:

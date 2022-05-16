@@ -69,7 +69,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           # "github-token" parameter is required for work with GitHub API
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.gh_token }}
           result-encoding: string
           script: |
             const script = require('./scripts/ci/github-script-src/get-app-version-name.js')

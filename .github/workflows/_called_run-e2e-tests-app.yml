@@ -11,6 +11,13 @@ on:
       app-build-artifact-name:
         required: true
         type: string
+    secrets:
+      e2e_test_account_name_alice:
+        required: true
+      e2e_test_account_password_alice:
+        required: true
+      e2e_test_account_seed_alice:
+        required: true
 
 jobs:
   # Run E2E tests
@@ -108,27 +115,17 @@ jobs:
       - name: 'Install OS dependencies for Playwright'
         run: npx playwright install-deps
 
-      - name: 'Make e2e testing env vars file visible (required for falnyr/replace-env-vars-action@master)'
-        shell: bash
-        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
-
-      - name: 'Prepare E2E Tests Env Variables'
-        uses: falnyr/replace-env-vars-action@master
-        env:
-          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
-          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
-          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
-        with:
-          filename: ui-app/e2e-tests-vars.txt
-
-      - name: 'Make e2e testing env vars file hidden'
-        shell: bash
-        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
-
       - name: 'Run e2e tests'
         shell: bash
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          # These secrets must be added as GitHub Actions secrets and passed to the current called action as secrets from
+          # caller workflow file.
+          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.e2e_test_account_name_alice }}
+          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.e2e_test_account_password_alice }}
+          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.e2e_test_account_seed_alice }}
+          NODE_ENV: CI
+          EXTENSION_SRC: ../extensions/polkadot-dapp/extension/master-build
+          WS_URL: ws://127.0.0.1:9988
         run: |
           cd ui-app
           DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
