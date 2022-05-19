@@ -46,13 +46,13 @@ Build application and storybook. Results are saved as artifacts with passed name
 :inbox_tray: ***Inputs***:
 - `app-build-artifact-name`: _String, required_
 - `storybook-build-artifact-name`: _String, required_
-- `app-node-modules-cache-key`: _String, required_
 
 :outbox_tray: ***Outputs***: `null`
 
 :bricks: ***Artifacts***: Application and Storybook builds with names `app-build-artifact-name` and `storybook-build-artifact-name` 
 
-:lock: ***Secrets***: `null`
+:lock: ***Secrets***: 
+- `gh_token`: _required_
 
 <hr />
 
@@ -96,7 +96,9 @@ Reports can be used in `Publish reports in PR and Discord` workflow for generati
 - `working-branch-codecov-artifact-name`: _String, required_
 - `app-node-modules-cache-key`: _String, required_
 
-:outbox_tray: ***Outputs***: `null`
+:outbox_tray: ***Outputs***: 
+- `codecov_app_unit_percentage`: _String, Total Percentage coverage
+- `codecov_app_unit_diff`: _String, Percentage difference between base branch, if PR is available
 
 :bricks: ***Artifacts***: Tests code coverage reports (`lcov.info`)with names  
 `base-branch-codecov-artifact-name` and `working-branch-codecov-artifact-name`
@@ -120,7 +122,7 @@ workflow inputs.
 :bricks: ***Artifacts***: `null`
 
 :lock: ***Secrets***:
-- `barecheck_github_app_token`: _required_
+- `barecheck_github_app_token`: _required_ Token for Barecheck app.
 
 <hr />
 
