@@ -21,7 +21,7 @@ const Icons = {
   RightArrow: () => <RightArrowIcon />,
 } as const;
 
-type IconNames = keyof typeof Icons;
+export type IconNames = keyof typeof Icons;
 
 const Icon: React.FC<{ name: IconNames }> = ({ name }) => Icons[name]();
 export default Icon;
