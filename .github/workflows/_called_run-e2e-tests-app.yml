@@ -85,6 +85,8 @@ jobs:
       - name: 'Change folders permissions'
         run: chmod -R 777 ui-app/scripts/ci
 
+      # Testnet Sandbox is running with using of Basilisk-node docker container. Image can be built with this action -
+      # https://github.com/mckrava/basilisk-testnet-docker-builder-publisher/blob/master/.github/workflows/build-publish-testnet-sandbox-image.yml
       - name: 'Run sandbox testnet'
         timeout-minutes: 10
         shell: bash
