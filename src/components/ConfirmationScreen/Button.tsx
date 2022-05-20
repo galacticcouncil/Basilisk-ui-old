@@ -1,6 +1,7 @@
 import Icon, { IconNames } from '../Icon/Icon';
 import styled from '@emotion/styled';
 import { variant } from 'styled-system';
+import { keyframes } from '@emotion/react';
 
 export enum ButtonVariant {
   Primary = 'primary',
@@ -22,7 +23,7 @@ const TextContainerSC = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 16px 16px;
+  padding: 16px 36px;
 `;
 
 const IconContainerSC = styled('div')(
@@ -46,6 +47,67 @@ const IconContainerSC = styled('div')(
   })
 );
 
+const LoadingIndicatorContainerSC = styled.div`
+  width: 24px;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding-right: 16px;
+`;
+
+const LoadingIndicatorWrapperSC = styled.div``;
+
+const rotate = keyframes`
+  {
+      0%
+    {
+      transform: rotate(0deg);
+      filter: hue-rotate(0deg);
+    }
+    100%
+    {
+      transform: rotate(360deg);
+      filter: hue-rotate(360deg);
+    }
+  }
+`;
+
+const LoadingIndicatorSC = styled.div`
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, transparent 40%, #e5f403);
+  animation: ${rotate} 2s linear infinite;
+
+  &:before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    background: rgba(73, 228, 159, 0.05);
+    border-radius: 50%;
+    z-index: 1000;
+  }
+  
+  &:after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: linear-gradient(45deg, transparent, transparent 40%, #e5f403);
+    border-radius: 50%;
+    z-index: 1;
+    filter: blur(30px);
+  }
+`;
+
 const ButtonSC = styled('button')(
   {
     border: 'none',
@@ -54,7 +116,7 @@ const ButtonSC = styled('button')(
     background: 'none',
     userSelect: 'none',
     textTransform: 'uppercase',
-
+    transition: 'background-color 1s ease-out',
     borderRadius: '9999px',
     fontWeight: 'bold',
     width: '100%',
@@ -72,6 +134,7 @@ const ButtonSC = styled('button')(
           background: '#49E49F',
         },
         '&:disabled': {
+          cursor: 'not-allowed',
           background: 'linear-gradient(0deg, #44444A, #44444A), #3E3E4B',
           color: 'white',
           opacity: '0.6',
@@ -89,12 +152,14 @@ const ButtonSC = styled('button')(
           color: '#B8FFDF',
         },
         '&:disabled': {
+          cursor: 'not-allowed',
           background: 'linear-gradient(0deg, #44444A, #44444A), #3E3E4B',
           color: 'white',
           opacity: '0.6',
         },
       },
       loading: {
+        cursor: 'wait',
         background: 'rgba(73, 228, 159, 0.05)',
         color: '#4FFFB0',
       },
@@ -114,13 +179,24 @@ export const Button = ({
     <>
       <ButtonSC variant={variant} onClick={onClick} disabled={disabled}>
         <TextContainerSC>
-          <IconContainerSC variant="left">
-            {iconLeft && <Icon name={iconLeft} />}
-          </IconContainerSC>
+          {variant === ButtonVariant.Loading && (
+            <LoadingIndicatorContainerSC>
+              <LoadingIndicatorWrapperSC>
+                <LoadingIndicatorSC />
+              </LoadingIndicatorWrapperSC>
+            </LoadingIndicatorContainerSC>
+          )}
+          {iconLeft && (
+            <IconContainerSC variant="left">
+              <Icon name={iconLeft} />
+            </IconContainerSC>
+          )}
           {text}
-          <IconContainerSC variant="right">
-            {iconRight && <Icon name={iconRight} />}
-          </IconContainerSC>
+          {iconRight && (
+            <IconContainerSC variant="right">
+              <Icon name={iconRight} />
+            </IconContainerSC>
+          )}
         </TextContainerSC>
       </ButtonSC>
     </>
