@@ -1,4 +1,4 @@
-import Icon, { IconNames } from '../Icon/Icon';
+import { Icon, IconNames } from '../Icon/Icon';
 import styled from '@emotion/styled';
 import { variant } from 'styled-system';
 import { keyframes } from '@emotion/react';
@@ -14,11 +14,10 @@ export interface ButtonProps {
   text: string;
   disabled?: boolean;
   variant?: ButtonVariant;
-  iconLeft?: IconNames;
-  iconRight?: IconNames;
+  icon?: IconNames;
 }
 
-const TextContainerSC = styled.div`
+const ContentSC = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -26,38 +25,29 @@ const TextContainerSC = styled.div`
   padding: 16px 36px;
 `;
 
-const IconContainerSC = styled('div')(
-  {
-    width: '24px',
-    height: '24px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  variant({
-    variants: {
-      left: {
-        paddingRight: '8px',
-      },
-      right: {
-        paddingLeft: '8px',
-      },
-    },
-  })
-);
+const TextContainerSC = styled.div`
+  font-family: 'Satoshi';
+  font-style: bold;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 18px;
+`;
+
+const IconContainerSC = styled.div`
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+`;
 
 const LoadingIndicatorContainerSC = styled.div`
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
-  padding-right: 16px;
+  margin-right: 8px;
 `;
-
-const LoadingIndicatorWrapperSC = styled.div``;
 
 const rotate = keyframes`
   {
@@ -75,37 +65,7 @@ const rotate = keyframes`
 `;
 
 const LoadingIndicatorSC = styled.div`
-  position: relative;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: linear-gradient(45deg, transparent, transparent 40%, #e5f403);
   animation: ${rotate} 2s linear infinite;
-
-  &:before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    right: 2px;
-    bottom: 2px;
-    background: rgba(73, 228, 159, 0.05);
-    border-radius: 50%;
-    z-index: 1000;
-  }
-
-  &:after {
-    content: '';
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-    background: linear-gradient(45deg, transparent, transparent 40%, #e5f403);
-    border-radius: 50%;
-    z-index: 1;
-    filter: blur(30px);
-  }
 `;
 
 const ButtonSC = styled('button')(
@@ -172,32 +132,30 @@ export const Button = ({
   text,
   disabled = false,
   variant = ButtonVariant.Primary,
-  iconLeft,
-  iconRight,
+  icon,
 }: ButtonProps) => {
   return (
     <>
-      <ButtonSC variant={variant} onClick={onClick} disabled={disabled || variant === ButtonVariant.Loading}>
-        <TextContainerSC>
+      <ButtonSC
+        variant={variant}
+        onClick={onClick}
+        disabled={disabled || variant === ButtonVariant.Loading}
+      >
+        <ContentSC>
           {variant === ButtonVariant.Loading && (
             <LoadingIndicatorContainerSC>
-              <LoadingIndicatorWrapperSC>
-                <LoadingIndicatorSC />
-              </LoadingIndicatorWrapperSC>
+              <LoadingIndicatorSC>
+                <Icon name="Loading" size={16} />
+              </LoadingIndicatorSC>
             </LoadingIndicatorContainerSC>
           )}
-          {iconLeft && (
-            <IconContainerSC variant="left">
-              <Icon name={iconLeft} />
+          <TextContainerSC>{text}</TextContainerSC>
+          {icon && (
+            <IconContainerSC>
+              <Icon name={icon} size={16} />
             </IconContainerSC>
           )}
-          {text}
-          {iconRight && (
-            <IconContainerSC variant="right">
-              <Icon name={iconRight} />
-            </IconContainerSC>
-          )}
-        </TextContainerSC>
+        </ContentSC>
       </ButtonSC>
     </>
   );

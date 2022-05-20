@@ -8,10 +8,8 @@ import { ReactComponent as BasiliskLogoFull } from './assets/BasiliskLogoFull.sv
 import { ReactComponent as AssetSwitchIcon } from './assets/AssetSwitchIcon.svg';
 import { ReactComponent as SettingsIcon } from './assets/Settings.svg';
 import { ReactComponent as RightArrowIcon } from './assets/RightArrowIcon.svg';
-import { ReactComponent as WalletIcon } from './assets/WalletIcon.svg';
-import { ReactComponent as LoadingIcon } from './assets/LoadingIcon.svg';
 
-export const Icons = {
+const Icons = {
   Help: () => <HelpIcon />,
   NotificationActive: () => <NotificationActiveIcon />,
   NotificationInactive: () => <NotificationInactiveIcon />,
@@ -21,11 +19,9 @@ export const Icons = {
   AssetSwitch: () => <AssetSwitchIcon />,
   Settings: () => <SettingsIcon />,
   RightArrow: () => <RightArrowIcon />,
-  Wallet: () => <WalletIcon />,
-  Loading: () => <LoadingIcon />,
 } as const;
 
-export type IconNames = keyof typeof Icons;
+type IconNames = keyof typeof Icons;
 
 const Icon: React.FC<{ name: IconNames }> = ({ name }) => Icons[name]();
 export default Icon;

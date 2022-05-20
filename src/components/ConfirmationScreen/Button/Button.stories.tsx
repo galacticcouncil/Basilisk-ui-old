@@ -2,7 +2,7 @@ import { Button, ButtonVariant } from './Button';
 import { Icons } from '../Icon/Icon';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
-import { StorybookWrapper } from '../../misc/StorybookWrapper';
+import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
   title: 'components/ConfirmationScreen/Button',
@@ -21,13 +21,7 @@ export default {
         type: 'inline-radio',
       },
     },
-    iconLeft: {
-      options: ['',...Object.keys(Icons)],
-      control: {
-        type: 'select',
-      },
-    },
-    iconRight: {
+    icon: {
       options: ['',...Object.keys(Icons)],
       control: {
         type: 'select',
@@ -80,15 +74,7 @@ Loading.args = {
   text: 'Click here',
 };
 
-export const iconLeft = Template.bind({});
-iconLeft.args = { iconLeft: 'Cancel', text: 'Click here' };
+export const WithIcon = Template.bind({});
+WithIcon.args = { icon: 'Wallet', text: 'Click here' };
 
-export const iconRight = Template.bind({});
-iconRight.args = { iconRight: 'Wallet', text: 'Click here' };
 
-export const bothIcons = Template.bind({});
-bothIcons.args = {
-  iconLeft: 'Cancel',
-  iconRight: 'Cancel',
-  text: 'Click here',
-};
