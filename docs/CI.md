@@ -107,6 +107,31 @@ Reports can be used in `Publish reports in PR and Discord` workflow for generati
 
 <hr />
 
+#### :repeat:  Reusable :: E2E tests :: App ([.github/workflows/_called_run-e2e-tests-app.yml](/.github/workflows/_called_run-e2e-tests-app.yml))
+Run E2E Playwright tests in UI application. 
+Application is connecting to testnet sandbox node, which is running from [Basilisk-api](https://github.com/galacticcouncil/Basilisk-api/tree/feature/dockerize-testnet)
+(right now you should use branch `feature/dockerize-testnet`) with using Docker [image](https://hub.docker.com/r/mckrava/polkadot-basilisk-testnet-sandbox-multiarch). 
+Currently, image is building by [GitHub Action](https://github.com/mckrava/basilisk-testnet-docker-builder-publisher/blob/master/.github/workflows/build-publish-testnet-sandbox-image.yml).
+If you need change version of used image, it should be done [here](https://github.com/galacticcouncil/Basilisk-api/blob/feature/dockerize-testnet/testnet-sandbox/testnet-sandbox-compose.yml).
+
+
+:inbox_tray: ***Inputs***:
+- `app-build-artifact-name`: _String, required_
+
+:outbox_tray: ***Outputs***: `null`
+
+:bricks: ***Artifacts***: 
+- `app-e2e-tests-report-html`: tests report
+- `app-e2e-tests-testnet-sandbox-logs`: logs of testnet sandbox node
+- `app-e2e-tests-traces-screenshots`: traces and screenshots from Playwright tests. Traces can be open with [these](https://playwright.dev/docs/trace-viewer) instructions
+
+:lock: ***Secrets***: 
+- `e2e_test_account_name_alice`: _required_
+- `e2e_test_account_password_alice`: _required_
+- `e2e_test_account_seed_alice`: _required_
+
+<hr />
+
 #### :repeat:  Reusable :: Generate unit tests code coverage overall report ([.github/workflows/_called_generate-unit-tests-code-cov-report.yml](/.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
 Generate unit tests code coverage report from report files, which must be provided as artifacts and names of artifacts as 
 workflow inputs.
