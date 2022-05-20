@@ -7,13 +7,13 @@ on:
     branches:
       - 'fix/**'
       - 'feat/**'
-      - develop
       - 'release/**'
+      - 'develop'
   pull_request:
     types:
-      - opened
+      - 'opened'
     branches:
-      - develop
+      - 'develop'
 
 jobs:
   # Build Application and Storybook
@@ -23,6 +23,8 @@ jobs:
     with:
       app-build-artifact-name: app-build-files
       storybook-build-artifact-name: sb-build-files
+    secrets:
+      gh_token: ${{ secrets.GH_TOKEN }}
 
   # Run End-To-End tests for Application
   app-e2e-tests:
@@ -32,6 +34,10 @@ jobs:
     uses: ./.github/workflows/_called_run-e2e-tests-app.yml
     with:
       app-build-artifact-name: app-build-files
+    secrets:
+      e2e_test_account_name_alice: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
+      e2e_test_account_password_alice: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
+      e2e_test_account_seed_alice: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
 
   # Publish status of testing in PR comment, if PR is available.
   report-statuses-in-pr:

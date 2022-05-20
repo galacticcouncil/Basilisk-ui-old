@@ -11,10 +11,12 @@
 /storybook-testing/results
 /traces
 /test-results
+/e2e-tests/app-e2e-traces
 /e2e-tests/extensions
 
 # production
 /build
+/build-test
 /storybook-static
 
 # misc

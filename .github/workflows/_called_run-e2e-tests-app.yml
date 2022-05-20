@@ -11,6 +11,13 @@ on:
       app-build-artifact-name:
         required: true
         type: string
+    secrets:
+      e2e_test_account_name_alice:
+        required: true
+      e2e_test_account_password_alice:
+        required: true
+      e2e_test_account_seed_alice:
+        required: true
 
 jobs:
   # Run E2E tests
@@ -46,7 +53,7 @@ jobs:
       - name: 'Clone Basilisk-api'
         run: git clone -b feature/dockerize-testnet https://github.com/galacticcouncil/Basilisk-api.git
 
-      # | Restore cached Node modules for Basilisk-api.
+      # Restore cached Node modules for Basilisk-api.
       - name: 'Restore cached Node modules'
         id: cache-node-modules-basilisk-api
         uses: actions/cache@v2
@@ -60,7 +67,7 @@ jobs:
           cd Basilisk-api
           yarn install --frozen-lockfile
 
-      # | Restore cached Node modules for ui-app.
+      # Restore cached Node modules for ui-app.
       - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
@@ -74,10 +81,12 @@ jobs:
           cd ui-app
           yarn install --frozen-lockfile
 
-      # | Change CI scripts files permissions to prevent "Permission denied" error.
+      # Change CI scripts files permissions to prevent "Permission denied" error.
       - name: 'Change folders permissions'
         run: chmod -R 777 ui-app/scripts/ci
 
+      # Testnet Sandbox is running with using of Basilisk-node docker container. Image can be built with this action -
+      # https://github.com/mckrava/basilisk-testnet-docker-builder-publisher/blob/master/.github/workflows/build-publish-testnet-sandbox-image.yml
       - name: 'Run sandbox testnet'
         timeout-minutes: 10
         shell: bash
@@ -85,8 +94,8 @@ jobs:
           cd Basilisk-api
           yarn fullruntime:clean-setup-start
 
-      # | Double check of testnet status
-      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
+      # Double check of testnet status
+      # We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: 'Wait for Basilisk Node port :9988'
         timeout-minutes: 2
         shell: bash
@@ -98,8 +107,8 @@ jobs:
           cd ui-app/build
           http-server -s -p 3030 -a 127.0.0.1 &
 
-      # | Check of UI app status
-      # | We need to use custom script for waiting port because existing tools work unstable with Node.js 17
+      # Check of UI app status
+      # We need to use custom script for waiting port because existing tools work unstable with Node.js 17
       - name: 'Wait for UI app port :3030'
         timeout-minutes: 2
         shell: bash
@@ -108,32 +117,23 @@ jobs:
       - name: 'Install OS dependencies for Playwright'
         run: npx playwright install-deps
 
-      - name: 'Make e2e testing env vars file visible (required for falnyr/replace-env-vars-action@master)'
-        shell: bash
-        run: mv ui-app/.env.test.e2e.ci ui-app/e2e-tests-vars.txt
-
-      - name: 'Prepare E2E Tests Env Variables'
-        uses: falnyr/replace-env-vars-action@master
-        env:
-          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_NAME_ALICE }}
-          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_PASSWORD_ALICE }}
-          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.E2E_TEST_ACCOUNT_SEED_ALICE }}
-        with:
-          filename: ui-app/e2e-tests-vars.txt
-
-      - name: 'Make e2e testing env vars file hidden'
-        shell: bash
-        run: mv ui-app/e2e-tests-vars.txt ui-app/.env.test.e2e.ci
-
       - name: 'Run e2e tests'
         shell: bash
         env:
-          PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
+          # These secrets must be added as GitHub Actions secrets and passed to the current called action as secrets from
+          # caller workflow file.
+          E2E_TEST_ACCOUNT_NAME_ALICE: ${{ secrets.e2e_test_account_name_alice }}
+          E2E_TEST_ACCOUNT_PASSWORD_ALICE: ${{ secrets.e2e_test_account_password_alice }}
+          E2E_TEST_ACCOUNT_SEED_ALICE: ${{ secrets.e2e_test_account_seed_alice }}
+          NODE_ENV: CI
+          EXTENSION_SRC: ../extensions/polkadot-dapp/extension/master-build
+          WS_URL: ws://127.0.0.1:9988
         run: |
           cd ui-app
           DEBUG=pw:browser* HEADFUL=true xvfb-run --auto-servernum -- yarn test:e2e-ci
 
       - name: 'Sleep for 30 seconds (for compiling html reports)'
+        if: always()
         shell: bash
         run: sleep 30s
 
@@ -142,7 +142,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: app-e2e-tests-traces-screenshots
-          path: ./ui-app/traces
+          path: ./ui-app/e2e-tests/app-e2e-traces
 
       - name: 'Upload e2e tests report file'
         if: always()

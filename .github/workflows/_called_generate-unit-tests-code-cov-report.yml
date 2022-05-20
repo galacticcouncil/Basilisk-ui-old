@@ -56,7 +56,7 @@ jobs:
       - name: "Generate code coverage report"
         id: code-coverage
         continue-on-error: true
-        uses: barecheck/code-coverage-action@v0.5.1
+        uses: barecheck/code-coverage-action@v1.0.0
         with:
           barecheck-github-app-token: ${{ secrets.barecheck_github_app_token }}
           lcov-file: './working-report/lcov.info'

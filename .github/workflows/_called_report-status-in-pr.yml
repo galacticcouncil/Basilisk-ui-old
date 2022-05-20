@@ -71,7 +71,7 @@ on:
       gh_pages_full_branch:
         required: true
       # Custom domain for configured GitHub Pages, where App and Storybook builds are deployed. Must be passed
-      # | as a secret because API doesn't receive this value.
+      # as a secret because API doesn't receive this value.
       gh_pages_custom_domain:
         required: true
 
@@ -88,7 +88,7 @@ jobs:
         with:
           format: 'YYYYMMDDHHmmssSSS'
 
-      # | Restore cached PR comment data from previous/parallel runs.
+      # Restore cached PR comment data from previous/parallel runs.
       - name: 'Restore PR comment cache'
         id: cache-reporter-content
         uses: actions/cache@v2
@@ -100,14 +100,14 @@ jobs:
           restore-keys: |
             reporter-artifacts-branch-${{ github.ref_name }}-commit-${{ github.sha }}-
 
-      # | Check existence of restored comment data.
-      # | We cannot use output from "actions/cache" - "cache-hit" because it has value "true" only in exact match of
-      # | cache key (https://github.com/actions/cache#outputs). In current case we need search cached data by
-      # | "restore-keys" value. It's necessary though previous workflow run must save cache with unique key
-      # | ("steps.timestamp.outputs.time" is unique part for each workflow run even if it's triggered by the same commit).
-      # | As result current workflow will fetch the latest cache for triggered commit from previous/parallel runs.
-      # | More details about matching cache keys here -
-      # | https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
+      # Check existence of restored comment data.
+      # We cannot use output from "actions/cache" - "cache-hit" because it has value "true" only in exact match of
+      # cache key (https://github.com/actions/cache#outputs). In current case we need search cached data by
+      # "restore-keys" value. It's necessary though previous workflow run must save cache with unique key
+      # ("steps.timestamp.outputs.time" is unique part for each workflow run even if it's triggered by the same commit).
+      # As result current workflow will fetch the latest cache for triggered commit from previous/parallel runs.
+      # More details about matching cache keys here -
+      # https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key
       - name: 'Check folder existence'
         id: check-cache-dir-existence
         shell: bash
@@ -123,8 +123,8 @@ jobs:
           echo $ISSUE_COMMENT_DATA
           echo "::set-output name=data::$ISSUE_COMMENT_DATA"
 
-      # | Create folder for reporter artifacts if folder is not existing. It can be necessary if comment data is not
-      # | available in cache from previous workflow.
+      # Create folder for reporter artifacts if folder is not existing. It can be necessary if comment data is not
+      # available in cache from previous workflow.
       - name: 'Create reporter artifacts dir'
         run: mkdir -p reporter-artifacts
 
@@ -132,55 +132,55 @@ jobs:
         id: pr-comment-data
         uses: actions/github-script@v6
         env:
-          # | Title for matching already existing comments in PR for update particular comment.
+          # Title for matching already existing comments in PR for update particular comment.
           REPORT_MSG_TITLE: 'Basilisk UI reporter'
 
-          # | Workflow file which will be dispatched from github-script via API for fetching and publication
-          # | artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
+          # Workflow file which will be dispatched from github-script via API for fetching and publication
+          # artifacts list from current workflow run if "PUBLISH_ARTIFACTS_LIST === true"
           PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE: _dispatch_publish-pr-comment-with-artifacts.yml
 
-          # | Cached comment data from previous run which has been triggerred for the same PR as for current run.
+          # Cached comment data from previous run which has been triggerred for the same PR as for current run.
           COMMENT_CACHED_CONTENT: ${{steps.parse-pr-comment-data.outputs.data || false}}
 
-          # | Artifacts
+          # Artifacts
           PUBLISH_ARTIFACTS_LIST: ${{inputs.publish-artifacts-list}}
 
-          # | App Storybook build
+          # App Storybook build
           IS_APP_STORYBOOK_BUILD_REPORT: ${{ inputs.app-storybook-build-pub-report }}
           APP_STORYBOOK_BUILD_STATUS: ${{ inputs.app-storybook-build-status }}
 
-          # | App Storybook deployment to GitHub Pages
+          # App Storybook deployment to GitHub Pages
           IS_APP_STORYBOOK_DEPLOYMENT_REPORT: ${{ inputs.app-storybook-deploy-pub-report }}
           APP_STORYBOOK_DEPLOYMENT_STATUS: ${{ inputs.app-storybook-deploy-status }}
 
-          # | App E2E Tests
+          # App E2E Tests
           IS_APP_E2E_TEST_REPORT: ${{ inputs.app-e2e-test-pub-report }}
           APP_E2E_TEST_STATUS: ${{ inputs.app-e2e-test-status }}
 
-          # | Storybook E2E Tests
-          IS_STORYBOOK_E2E_TEST_REPORT: false # | Functionality must be implemented
+          # Storybook E2E Tests
+          IS_STORYBOOK_E2E_TEST_REPORT: false # Functionality must be implemented
 
-          # | Storybook unit Tests
-          IS_STORYBOOK_UNIT_TEST_REPORT: false # | Functionality must be implemented
+          # Storybook unit Tests
+          IS_STORYBOOK_UNIT_TEST_REPORT: false # Functionality must be implemented
 
-          # | App unit Tests
+          # App unit Tests
           IS_APP_UNIT_TEST_REPORT: ${{ inputs.app-unit-test-pub-report }}
           APP_UNIT_TEST_PERCENTAGE: ${{ inputs.app-unit-test-codecov-percentage }}
           APP_UNIT_TEST_DIFF: ${{ inputs.app-unit-test-codecov-diff }}
           APP_UNIT_TEST_STATUS: ${{ inputs.app-unit-test-status }}
 
-          # | Env variables
+          # Env variables
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_PAGES_CUSTOM_DOMAIN: ${{ secrets.gh_pages_custom_domain }}
 
         with:
-          # | "github-token" parameter is required for work with GitHub API
+          # "github-token" parameter is required for work with GitHub API
           github-token: ${{ secrets.GH_TOKEN }}
           script: |
             const script = require('./scripts/ci/github-script-src/publish-pr-comment.js')
             return await script({github, context, core})
 
-      # | Save PR comment data into file which will be cached for further workflows
+      # Save PR comment data into file which will be cached for further workflows
       - name: 'Save PR comment data'
         run: echo ${{ steps.pr-comment-data.outputs.result }} > ./reporter-artifacts/pr-comment-data.txt

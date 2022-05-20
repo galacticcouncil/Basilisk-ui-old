@@ -420,9 +420,13 @@ yarn storybook:test:watch-headed
 ```
 
 
-### Github Actions workflows
+## Github Actions workflows
 
-More details [here](./ci-docs/README.md)
+More details [here](./docs/CI.md)
+
+## Application release flow
+
+More details [here](./docs/RELEASE.md)
 
 
 ## VSCode extensions

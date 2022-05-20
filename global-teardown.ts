@@ -18,6 +18,9 @@ async function globalSetup() {
       await exec(
         'npx xunit-viewer -r ui-app-e2e-results.xml -o ui-app-e2e-results.html'
       );
+      await exec(
+        'mv -f ./test-results ./e2e-tests/app-e2e-traces/test-results-screenshots'
+      );
     }
   } catch(err) {
     console.error(err)

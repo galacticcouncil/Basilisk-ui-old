@@ -7,7 +7,7 @@ export type PolkadotDappAccCredentials = {
   password: string;
 };
 
-export const EXTENSION_PATH = join(__dirname, process.env.EXTENSSION_SRC || '');
+export const EXTENSION_PATH = join(__dirname, process.env.EXTENSION_SRC || '');
 
 export const isExtensionURL = (url: string) =>
   url.startsWith('chrome-extension://');

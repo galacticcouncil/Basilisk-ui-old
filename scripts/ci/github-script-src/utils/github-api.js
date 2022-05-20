@@ -87,7 +87,37 @@ async function findIssueComment({
   return null;
 }
 
+async function getPullRequest(github, owner, repo, sha, state) {
+  const resp = await github.rest.pulls.list({
+    owner,
+    repo,
+    sort: 'updated',
+    direction: 'desc',
+    state,
+    per_page: 100,
+  });
+
+  const pull = resp.data.find(
+    (prItem) =>
+      (state === 'closed' && prItem.merge_commit_sha === sha) ||
+      (state === 'open' && prItem.head.sha === sha)
+  );
+  if (!pull) {
+    return null;
+  }
+
+  return {
+    title: pull.title,
+    head_ref: pull.head.ref,
+    body: pull.body,
+    number: pull.number,
+    labels: pull.labels.map((l) => l.name),
+    assignees: pull.assignees.map((a) => a.login),
+  };
+}
+
 module.exports = {
   publishIssueComment,
   findIssueComment,
+  getPullRequest,
 };

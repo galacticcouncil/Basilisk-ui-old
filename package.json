@@ -94,7 +94,7 @@
   "scripts": {
     "start": "export NODE_OPTIONS=--openssl-legacy-provider && craco start --openssl-legacy-provider",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && craco build",
-    "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
+    "build:deployment": "export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
     "test": "craco test",
     "test:ci": "CI=true craco test",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache",
@@ -116,13 +116,20 @@
     "codegen": "graphql-codegen --config codegen.yml",
     "codegen:watch": "graphql-codegen --config codegen.yml --watch src/**/*.graphql",
     "prepare": "husky install",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "release": "standard-version"
   },
   "engines": {
     "node": ">=17"
   },
   "prettier": {
     "singleQuote": true
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -225,6 +232,7 @@
     "react-test-renderer": "^17.0.2",
     "sass": "^1.42.1",
     "sass-loader": "10.1.1",
+    "standard-version": "^9.3.2",
     "storybook-react-router-dom": "^6.1.21",
     "style-loader": "2.0.0",
     "wait-for-expect": "^3.0.2",
