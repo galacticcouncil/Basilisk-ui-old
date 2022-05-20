@@ -11,7 +11,7 @@ import { ReactComponent as RightArrowIcon } from './assets/RightArrowIcon.svg';
 import { ReactComponent as WalletIcon } from './assets/WalletIcon.svg';
 import { ReactComponent as LoadingIcon } from './assets/LoadingIcon.svg';
 
-const Icons = {
+export const Icons = {
   Help: () => <HelpIcon />,
   NotificationActive: () => <NotificationActiveIcon />,
   NotificationInactive: () => <NotificationInactiveIcon />,

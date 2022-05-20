@@ -93,7 +93,7 @@ const LoadingIndicatorSC = styled.div`
     border-radius: 50%;
     z-index: 1000;
   }
-  
+
   &:after {
     content: '';
     position: absolute;
@@ -159,7 +159,7 @@ const ButtonSC = styled('button')(
         },
       },
       loading: {
-        cursor: 'wait',
+        cursor: 'progress',
         background: 'rgba(73, 228, 159, 0.05)',
         color: '#4FFFB0',
       },
@@ -177,7 +177,7 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <>
-      <ButtonSC variant={variant} onClick={onClick} disabled={disabled}>
+      <ButtonSC variant={variant} onClick={onClick} disabled={disabled || variant === ButtonVariant.Loading}>
         <TextContainerSC>
           {variant === ButtonVariant.Loading && (
             <LoadingIndicatorContainerSC>

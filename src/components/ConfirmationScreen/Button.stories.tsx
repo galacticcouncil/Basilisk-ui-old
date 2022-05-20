@@ -1,4 +1,5 @@
 import { Button, ButtonVariant } from './Button';
+import { Icons } from '../Icon/Icon';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../misc/StorybookWrapper';
@@ -15,10 +16,19 @@ export default {
       defaultValue: false,
     },
     variant: {
-      options: Object.values(ButtonVariant).filter(
-        (x) => typeof x === 'string'
-      ),
-      mapping: ButtonVariant,
+      options: ButtonVariant,
+      control: {
+        type: 'inline-radio',
+      },
+    },
+    iconLeft: {
+      options: ['',...Object.keys(Icons)],
+      control: {
+        type: 'select',
+      },
+    },
+    iconRight: {
+      options: ['',...Object.keys(Icons)],
       control: {
         type: 'select',
       },
