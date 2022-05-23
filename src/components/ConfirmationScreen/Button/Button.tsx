@@ -1,4 +1,5 @@
 import { Icon, IconNames } from '../Icon/Icon';
+import { Text, TextVariant } from '../Text/Text';
 import styled from '@emotion/styled';
 import { variant } from 'styled-system';
 import { keyframes } from '@emotion/react';
@@ -23,14 +24,6 @@ const ContentSC = styled.div`
   justify-content: center;
   align-items: center;
   padding: 16px 36px;
-`;
-
-const TextContainerSC = styled.div`
-  font-family: 'Satoshi';
-  font-style: bold;
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 18px;
 `;
 
 const IconContainerSC = styled.div`
@@ -75,10 +68,8 @@ const ButtonSC = styled('button')(
     padding: 0,
     background: 'none',
     userSelect: 'none',
-    textTransform: 'uppercase',
     transition: 'background-color 1s ease-out',
     borderRadius: '9999px',
-    fontWeight: 'bold',
     width: '100%',
   },
   variant({
@@ -149,7 +140,7 @@ export const Button = ({
               </LoadingIndicatorSC>
             </LoadingIndicatorContainerSC>
           )}
-          <TextContainerSC>{text}</TextContainerSC>
+          <Text id={text} variant={TextVariant.Button} />
           {icon && (
             <IconContainerSC>
               <Icon name={icon} size={16} />

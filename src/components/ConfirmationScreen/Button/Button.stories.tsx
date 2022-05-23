@@ -22,7 +22,7 @@ export default {
       },
     },
     icon: {
-      options: ['',...Object.keys(Icons)],
+      options: ['', ...Object.keys(Icons)],
       control: {
         type: 'select',
       },
@@ -76,5 +76,3 @@ Loading.args = {
 
 export const WithIcon = Template.bind({});
 WithIcon.args = { icon: 'Wallet', text: 'Click here' };
-
-
