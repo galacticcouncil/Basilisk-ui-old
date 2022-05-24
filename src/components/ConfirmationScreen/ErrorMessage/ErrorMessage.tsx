@@ -6,7 +6,7 @@ export interface ErrorMessageProps {
   text: string;
 }
 
-const ContentSC = styled.div`
+const Content = styled.div`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -17,7 +17,7 @@ const ContentSC = styled.div`
   border-radius: 8px;
 `;
 
-const IconSC = styled.div`
+const IconContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -31,12 +31,12 @@ const IconSC = styled.div`
 export const ErrorMessage = ({ text }: ErrorMessageProps) => {
   return (
     <>
-      <ContentSC>
-        <IconSC>
+      <Content>
+        <IconContainer>
           <Icon name={'Error'} />
-        </IconSC>
+        </IconContainer>
         <Text id={text} variant={TextVariant.TextError} />
-      </ContentSC>
+      </Content>
     </>
   );
 };

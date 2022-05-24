@@ -24,7 +24,7 @@ export interface IconProps {
   size?: number;
 }
 
-const IconWrapperSC = styled.div<{ size: number }>`
+const IconWrapper = styled.div<{ size: number }>`
   width: ${(props) => props.size}px;
   height: ${(props) => props.size}px;
   display: flex;
@@ -34,5 +34,5 @@ const IconWrapperSC = styled.div<{ size: number }>`
 `;
 
 export const Icon = ({ name, size = 24 }: IconProps) => {
-  return <IconWrapperSC size={size}>{Icons[name]()}</IconWrapperSC>;
+  return <IconWrapper size={size}>{Icons[name]()}</IconWrapper>;
 };

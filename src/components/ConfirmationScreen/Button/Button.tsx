@@ -18,7 +18,7 @@ export interface ButtonProps {
   icon?: IconNames;
 }
 
-const ContentSC = styled.div`
+const Content = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -26,13 +26,13 @@ const ContentSC = styled.div`
   padding: 16px 36px;
 `;
 
-const IconContainerSC = styled.div`
+const IconContainer = styled.div`
   width: 16px;
   height: 16px;
   margin-left: 8px;
 `;
 
-const LoadingIndicatorContainerSC = styled.div`
+const LoadingIndicatorContainer = styled.div`
   width: 16px;
   height: 16px;
   display: flex;
@@ -57,11 +57,11 @@ const rotate = keyframes`
   }
 `;
 
-const LoadingIndicatorSC = styled.div`
+const LoadingIndicator = styled.div`
   animation: ${rotate} 2s linear infinite;
 `;
 
-const ButtonSC = styled('button')(
+const ButtonComponent = styled('button')(
   {
     border: 'none',
     outline: 'none',
@@ -127,27 +127,27 @@ export const Button = ({
 }: ButtonProps) => {
   return (
     <>
-      <ButtonSC
+      <ButtonComponent
         variant={variant}
         onClick={onClick}
         disabled={disabled || variant === ButtonVariant.Loading}
       >
-        <ContentSC>
+        <Content>
           {variant === ButtonVariant.Loading && (
-            <LoadingIndicatorContainerSC>
-              <LoadingIndicatorSC>
+            <LoadingIndicatorContainer>
+              <LoadingIndicator>
                 <Icon name="Loading" size={16} />
-              </LoadingIndicatorSC>
-            </LoadingIndicatorContainerSC>
+              </LoadingIndicator>
+            </LoadingIndicatorContainer>
           )}
           <Text id={text} variant={TextVariant.Button} />
           {icon && (
-            <IconContainerSC>
+            <IconContainer>
               <Icon name={icon} size={16} />
-            </IconContainerSC>
+            </IconContainer>
           )}
-        </ContentSC>
-      </ButtonSC>
+        </Content>
+      </ButtonComponent>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import styled from '@emotion/styled';
+import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { variant } from 'styled-system';
 
@@ -13,19 +14,23 @@ export enum TextVariant {
   TitleError = 'titleError',
   RowLabel = 'rowLabel',
   RowValue = 'rowValue',
+  RowSecondValue = 'rowSecondValue',
+  Timer = 'timer',
 }
 
 export interface TextProps {
   id: string;
   variant?: TextVariant;
   defaultMessage?: string;
+  description?: string;
+  values?: Record<string, ReactNode>;
 }
 
-const TextContainerSC = styled.div`
+const TextContainer = styled.div`
   width: fit-content;
 `;
 
-const TextSC = styled('div')(
+const TextComponent = styled('div')(
   {
     fontFamily: 'Satoshi',
   },
@@ -123,6 +128,23 @@ const TextSC = styled('div')(
 
         color: '#FFFFFF',
       },
+      rowSecondValue: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '16px',
+
+        color: '#4FFFB0',
+      },
+      timer: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '13px',
+        lineHeight: '18px',
+
+        color: '#FFFFFF',
+        opacity: '0.5',
+      }
     },
   })
 );
@@ -131,10 +153,17 @@ export const Text = ({
   id,
   variant = TextVariant.Text,
   defaultMessage,
+  description,
+  values,
 }: TextProps) => (
-  <TextContainerSC>
-    <TextSC variant={variant}>
-      <FormattedMessage id={id} defaultMessage={defaultMessage || id} />
-    </TextSC>
-  </TextContainerSC>
+  <TextContainer>
+    <TextComponent variant={variant}>
+      <FormattedMessage
+        id={id}
+        defaultMessage={defaultMessage || id}
+        description={description}
+        values={values}
+      />
+    </TextComponent>
+  </TextContainer>
 );
