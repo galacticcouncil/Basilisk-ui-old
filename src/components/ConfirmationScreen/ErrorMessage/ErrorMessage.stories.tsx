@@ -23,7 +23,7 @@ export default {
 const Template: ComponentStory<typeof ErrorMessage> = (args) => {
   return (
     <StorybookWrapper>
-      <div style={{ width: '480px' }}>
+      <div style={{ width: '460px' }}>
         <ErrorMessage {...args} />
       </div>
     </StorybookWrapper>
@@ -31,9 +31,11 @@ const Template: ComponentStory<typeof ErrorMessage> = (args) => {
 };
 
 export const ShortText = Template.bind({});
-ShortText.args = { text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' };
+ShortText.args = {
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+};
 
 export const LongText = Template.bind({});
-LongText.args = { text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet sem magna. Praesent lectus leo, mattis vitae dolor quis, volutpat feugiat augue. Etiam ut convallis leo, vel gravida velit. Nunc congue bibendum tortor, vitae placerat dui consectetur nec. Nullam gravida risus vel turpis tempus posuere. Aenean vitae eros pretium, tincidunt nulla vitae, viverra risus.' };
-
-
+LongText.args = {
+  text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin sit amet sem magna. Praesent lectus leo, mattis vitae dolor quis, volutpat feugiat augue. Etiam ut convallis leo, vel gravida velit. Nunc congue bibendum tortor, vitae placerat dui consectetur nec. Nullam gravida risus vel turpis tempus posuere. Aenean vitae eros pretium, tincidunt nulla vitae, viverra risus.',
+};

@@ -6,6 +6,7 @@ import { ReactComponent as ErrorIcon } from './assets/ErrorIcon.svg';
 import { ReactComponent as ArrowDownIcon } from './assets/ArrowDownIcon.svg';
 import { ReactComponent as ArrowUpIcon } from './assets/ArrowUpIcon.svg';
 import { ReactComponent as ArrowAssetPickerIcon } from './assets/ArrowAssetPickerIcon.svg';
+import { ReactComponent as MissingAssetIcon } from './assets/MissingAssetIcon.svg';
 
 export const Icons = {
   Wallet: () => <WalletIcon />,
@@ -15,6 +16,7 @@ export const Icons = {
   ArrowDown: () => <ArrowDownIcon />,
   ArrowUp: () => <ArrowUpIcon />,
   ArrowAssetPicker: () => <ArrowAssetPickerIcon />,
+  MissingAsset: () => <MissingAssetIcon />,
 } as const;
 
 export type IconNames = keyof typeof Icons;

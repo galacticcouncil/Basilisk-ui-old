@@ -1,5 +1,5 @@
 import { Icon } from '../Icon/Icon';
-import { Text, TextVariant } from '../Text/Text';
+import { Text, TextKind } from '../Text/Text';
 import styled from '@emotion/styled';
 
 export interface ErrorMessageProps {
@@ -35,7 +35,7 @@ export const ErrorMessage = ({ text }: ErrorMessageProps) => {
         <IconContainer>
           <Icon name={'Error'} />
         </IconContainer>
-        <Text id={text} variant={TextVariant.TextError} />
+        <Text id={text} kind={TextKind.TextError} />
       </Content>
     </>
   );

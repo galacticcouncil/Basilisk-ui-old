@@ -1,6 +1,6 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Text, TextVariant } from '../Text/Text';
+import { Text, TextKind } from '../Text/Text';
 
 export interface RefreshTimerProps {
   time: number;
@@ -66,7 +66,7 @@ export const RefreshTimer = ({ time }: RefreshTimerProps) => {
     <Timer>
       <TextContainer>
         <Text
-          variant={TextVariant.Timer}
+          kind={TextKind.Timer}
           id={'timer'}
           defaultMessage="Refresh in {time}s"
           values={{ time: time }}

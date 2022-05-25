@@ -1,18 +1,18 @@
-import { RefreshTimer } from './RefreshTImer';
+import { LoadingIndicator } from './LoadingIndicator';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/RefreshTimer',
-  component: RefreshTimer,
+  title: 'components/ConfirmationScreen/LoadingIndicator',
+  component: LoadingIndicator,
   argTypes: {
-    time: {
-      defaultValue: 10,
+    size: {
+      defaultValue: 16,
       control: {
         type: 'range',
-        min: -10,
-        max: 20,
+        min: 10,
+        max: 200,
         step: 1,
       },
     },
@@ -24,17 +24,17 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof RefreshTimer>;
+} as ComponentMeta<typeof LoadingIndicator>;
 
-const Template: ComponentStory<typeof RefreshTimer> = (args) => {
+const Template: ComponentStory<typeof LoadingIndicator> = (args) => {
   return (
     <StorybookWrapper>
       <div style={{ width: '460px' }}>
-        <RefreshTimer {...args} />
+        <LoadingIndicator {...args} />
       </div>
     </StorybookWrapper>
   );
 };
 
 export const Default = Template.bind({});
-Default.args = { time: 10 };
+Default.args = { size: 16 };

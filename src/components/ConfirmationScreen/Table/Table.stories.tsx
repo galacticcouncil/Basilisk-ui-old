@@ -16,7 +16,6 @@ export default {
       <MemoryRouter>
         <Story />
       </MemoryRouter>
-      
     ),
   ],
 } as ComponentMeta<typeof Table>;
@@ -24,8 +23,9 @@ export default {
 const Template: ComponentStory<typeof Table> = (args) => {
   return (
     <StorybookWrapper>
-      <div style={{ width: '480px' }}>
+      <div style={{ width: '460px' }}>
         <Table {...args} />
+        460
       </div>
     </StorybookWrapper>
   );
@@ -34,10 +34,19 @@ const Template: ComponentStory<typeof Table> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   mainData: [
-    { label: { id: 'lorem' }, value: { id: 'ipsum' }, secondValue: { id: 'ipsum' }, editable: true },
+    {
+      label: { id: 'lorem' },
+      value: { id: 'ipsum' },
+      secondValue: { id: 'ipsum' },
+      editable: true,
+    },
     { label: { id: 'lorem' }, value: { id: 'ipsum' }, editable: true },
-    { label: { id: 'lorem' }, value: { id: 'ipsum' }, secondValue: { id: 'ipsum' } },
-    { label: { id: 'lorem' }, value: { id: 'ipsum' } }
+    {
+      label: { id: 'lorem' },
+      value: { id: 'ipsum' },
+      secondValue: { id: 'ipsum' },
+    },
+    { label: { id: 'lorem' }, value: { id: 'ipsum' } },
   ],
   hiddenData: [
     { label: { id: 'lorem' }, value: { id: 'ipsum' }, editable: true },

@@ -1,4 +1,4 @@
-import { Button, ButtonVariant } from './Button';
+import { Button, ButtonKind } from './Button';
 import { Icons } from '../Icon/Icon';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -15,8 +15,8 @@ export default {
       type: 'boolean',
       defaultValue: false,
     },
-    variant: {
-      options: ButtonVariant,
+    kind: {
+      options: ButtonKind,
       control: {
         type: 'inline-radio',
       },
@@ -43,7 +43,7 @@ export default {
 const Template: ComponentStory<typeof Button> = (args) => {
   return (
     <StorybookWrapper>
-      <div style={{ width: '480px' }}>
+      <div style={{ width: '460px' }}>
         <Button {...args} />
       </div>
     </StorybookWrapper>
@@ -55,13 +55,13 @@ Default.args = { text: 'Click here' };
 
 export const Primary = Template.bind({});
 Primary.args = {
-  variant: ButtonVariant.Primary,
+  kind: ButtonKind.Primary,
   text: 'Primary',
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
-  variant: ButtonVariant.Secondary,
+  kind: ButtonKind.Secondary,
   text: 'Secondary',
 };
 
@@ -70,7 +70,7 @@ Disabled.args = { disabled: true, text: 'Disabled' };
 
 export const Loading = Template.bind({});
 Loading.args = {
-  variant: ButtonVariant.Loading,
+  kind: ButtonKind.Loading,
   text: 'Click here',
 };
 

@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { variant } from 'styled-system';
 
-export enum TextVariant {
+export enum TextKind {
   Button = 'button',
   ButtonLoading = 'buttonLoading',
   TableButton = 'tableButton',
@@ -16,11 +16,15 @@ export enum TextVariant {
   RowValue = 'rowValue',
   RowSecondValue = 'rowSecondValue',
   Timer = 'timer',
+  AssetInputTitle = 'assetInputTitle',
+  AssetInputSymbol = 'assetInputSymbol',
+  AssetInputAsset = 'assetInputAsset',
+  AssetInputAmount = 'assetInputAmount',
 }
 
 export interface TextProps {
   id: string;
-  variant?: TextVariant;
+  kind?: TextKind;
   defaultMessage?: string;
   description?: string;
   values?: Record<string, ReactNode>;
@@ -144,20 +148,54 @@ const TextComponent = styled('div')(
 
         color: '#FFFFFF',
         opacity: '0.5',
-      }
+      },
+      assetInputTitle: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+
+        color: '#FFFFFF',
+        opacity: '0.7',
+      },
+      assetInputAmount: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '20px',
+        lineHeight: '26px',
+
+        color: '#FFFFFF',
+      },
+      assetInputSymbol: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '18px',
+        lineHeight: '24px',
+
+        color: '#FFFFFF',
+        textTransform: 'uppercase',
+      },
+      assetInputAsset: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '14px',
+
+        color: '#D1DEE8',
+      },
     },
   })
 );
 
 export const Text = ({
   id,
-  variant = TextVariant.Text,
+  kind = TextKind.Text,
   defaultMessage,
   description,
   values,
 }: TextProps) => (
   <TextContainer>
-    <TextComponent variant={variant}>
+    <TextComponent variant={kind}>
       <FormattedMessage
         id={id}
         defaultMessage={defaultMessage || id}

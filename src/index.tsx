@@ -2,6 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import './fonts/Satoshi-Variable.woff2';
+import './fonts/Satoshi-Variable.woff';
+import './fonts/Satoshi-Variable.ttf';
 import './index.scss';
 
 ReactDOM.render(

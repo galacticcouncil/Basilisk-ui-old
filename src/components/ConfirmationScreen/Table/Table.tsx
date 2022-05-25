@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { Text, TextProps, TextVariant } from '../Text/Text';
+import { Text, TextProps, TextKind } from '../Text/Text';
 import { useState } from 'react';
 import { Icon } from '../Icon/Icon';
 
@@ -37,7 +37,7 @@ const RowContainer = styled.div`
   align-items: center;
   padding: 0px 0px 8px 0px;
   &:not(:last-child) {
-    border-bottom: 1px solid #29292D;
+    border-bottom: 1px solid #29292d;
   }
 `;
 
@@ -82,18 +82,18 @@ const Row = ({ data, handleEdit }: RowProps) => {
   return (
     <RowContainer>
       <Label>
-        <Text {...data.label} variant={TextVariant.RowLabel} />
+        <Text {...data.label} kind={TextKind.RowLabel} />
       </Label>
       <Value>
-        <Text {...data.value} variant={TextVariant.RowValue} />
+        <Text {...data.value} kind={TextKind.RowValue} />
         {data.secondValue && (
-          <Text {...data.secondValue} variant={TextVariant.RowSecondValue} />
+          <Text {...data.secondValue} kind={TextKind.RowSecondValue} />
         )}
       </Value>
       {data.editable && (
         <Edit>
           <Button onClick={handleEdit && handleEdit}>
-            <Text id="Edit" variant={TextVariant.TableButton} />
+            <Text id="Edit" kind={TextKind.TableButton} />
           </Button>
         </Edit>
       )}
@@ -115,10 +115,7 @@ export const Table = ({ mainData, hiddenData, handleEdit }: TableProps) => {
       <div>
         <ButtonContainer>
           <Button onClick={() => setShowHidden(!showHidden)}>
-            <Text
-              id={'Advanced settings'}
-              variant={TextVariant.TableButton}
-            ></Text>
+            <Text id={'Advanced settings'} kind={TextKind.TableButton}></Text>
             <Icon name={showHidden ? 'ArrowUp' : 'ArrowDown'} size={14} />
           </Button>
         </ButtonContainer>

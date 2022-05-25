@@ -1,10 +1,10 @@
 import { Icon, IconNames } from '../Icon/Icon';
-import { Text, TextVariant } from '../Text/Text';
+import { Text, TextKind } from '../Text/Text';
 import styled from '@emotion/styled';
 import { variant } from 'styled-system';
-import { keyframes } from '@emotion/react';
+import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
 
-export enum ButtonVariant {
+export enum ButtonKind {
   Primary = 'primary',
   Secondary = 'secondary',
   Loading = 'loading',
@@ -14,7 +14,7 @@ export interface ButtonProps {
   onClick: () => void;
   text: string;
   disabled?: boolean;
-  variant?: ButtonVariant;
+  kind?: ButtonKind;
   icon?: IconNames;
 }
 
@@ -33,32 +33,7 @@ const IconContainer = styled.div`
 `;
 
 const LoadingIndicatorContainer = styled.div`
-  width: 16px;
-  height: 16px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
   margin-right: 8px;
-`;
-
-const rotate = keyframes`
-  {
-      0%
-    {
-      transform: rotate(0deg);
-      filter: hue-rotate(0deg);
-    }
-    100%
-    {
-      transform: rotate(360deg);
-      filter: hue-rotate(360deg);
-    }
-  }
-`;
-
-const LoadingIndicator = styled.div`
-  animation: ${rotate} 2s linear infinite;
 `;
 
 const ButtonComponent = styled('button')(
@@ -122,25 +97,23 @@ export const Button = ({
   onClick,
   text,
   disabled = false,
-  variant = ButtonVariant.Primary,
+  kind = ButtonKind.Primary,
   icon,
 }: ButtonProps) => {
   return (
     <>
       <ButtonComponent
-        variant={variant}
+        variant={kind}
         onClick={onClick}
-        disabled={disabled || variant === ButtonVariant.Loading}
+        disabled={disabled || kind === ButtonKind.Loading}
       >
         <Content>
-          {variant === ButtonVariant.Loading && (
+          {kind === ButtonKind.Loading && (
             <LoadingIndicatorContainer>
-              <LoadingIndicator>
-                <Icon name="Loading" size={16} />
-              </LoadingIndicator>
+              <LoadingIndicator />
             </LoadingIndicatorContainer>
           )}
-          <Text id={text} variant={TextVariant.Button} />
+          <Text id={text} kind={TextKind.Button} />
           {icon && (
             <IconContainer>
               <Icon name={icon} size={16} />
