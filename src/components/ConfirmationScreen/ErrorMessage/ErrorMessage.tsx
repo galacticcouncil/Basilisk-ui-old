@@ -1,6 +1,6 @@
 import { Icon } from '../Icon/Icon';
 import { Text, TextKind } from '../Text/Text';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 
 export interface ErrorMessageProps {
   text: string;

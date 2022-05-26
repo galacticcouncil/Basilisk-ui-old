@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { AssetIcon } from '../AssetIcon/AssetIcon';
 import { Text, TextKind, TextProps } from '../Text/Text';
 
@@ -40,6 +40,8 @@ const Input = styled.div`
   align-items: flex-start;
   padding: 22px 27px;
   gap: 1px;
+
+  background: #1C1A1F;
 `;
 
 const Wrapper = styled.div`

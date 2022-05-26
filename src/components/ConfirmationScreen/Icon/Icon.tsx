@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { ReactComponent as WalletIcon } from './assets/WalletIcon.svg';
 import { ReactComponent as LoadingIcon } from './assets/LoadingIcon.svg';
 import { ReactComponent as UpdateMetadataIcon } from './assets/UpdateMetadataIcon.svg';
@@ -7,6 +7,8 @@ import { ReactComponent as ArrowDownIcon } from './assets/ArrowDownIcon.svg';
 import { ReactComponent as ArrowUpIcon } from './assets/ArrowUpIcon.svg';
 import { ReactComponent as ArrowAssetPickerIcon } from './assets/ArrowAssetPickerIcon.svg';
 import { ReactComponent as MissingAssetIcon } from './assets/MissingAssetIcon.svg';
+import { ReactComponent as PolygonUpIcon } from './assets/PolygonUpIcon.svg';
+import { ReactComponent as TooltipIcon } from './assets/TooltipIcon.svg';
 
 export const Icons = {
   Wallet: () => <WalletIcon />,
@@ -17,6 +19,8 @@ export const Icons = {
   ArrowUp: () => <ArrowUpIcon />,
   ArrowAssetPicker: () => <ArrowAssetPickerIcon />,
   MissingAsset: () => <MissingAssetIcon />,
+  PolygonUp: () => <PolygonUpIcon />,
+  Tooltip: () => <TooltipIcon />,
 } as const;
 
 export type IconNames = keyof typeof Icons;

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { Text, TextProps, TextKind } from '../Text/Text';
 import { useState } from 'react';
 import { Icon } from '../Icon/Icon';
@@ -28,6 +28,8 @@ const TableContainer = styled.div`
   align-items: center;
   padding: 10px;
   gap: 6px;
+
+  background: #211F24;
 `;
 
 const RowContainer = styled.div`

@@ -1,6 +1,6 @@
 import { Icon, IconNames } from '../Icon/Icon';
 import { Text, TextKind } from '../Text/Text';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { variant } from 'styled-system';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
 

@@ -10,6 +10,9 @@ export default {
     id: {
       type: 'string',
     },
+    defaultMessage: {
+      type: 'string',
+    },
     kind: {
       options: TextKind,
       control: {

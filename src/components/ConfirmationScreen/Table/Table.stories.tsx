@@ -25,7 +25,6 @@ const Template: ComponentStory<typeof Table> = (args) => {
     <StorybookWrapper>
       <div style={{ width: '460px' }}>
         <Table {...args} />
-        460
       </div>
     </StorybookWrapper>
   );
@@ -35,21 +34,27 @@ export const Default = Template.bind({});
 Default.args = {
   mainData: [
     {
-      label: { id: 'lorem' },
-      value: { id: 'ipsum' },
-      secondValue: { id: 'ipsum' },
-      editable: true,
+      label: { id: 'Minimal amount received:' },
+      value: { id: '33 456.46' },
     },
-    { label: { id: 'lorem' }, value: { id: 'ipsum' }, editable: true },
+    { label: { id: 'Slippage:' }, value: { id: '5%' }, editable: true },
     {
-      label: { id: 'lorem' },
-      value: { id: 'ipsum' },
-      secondValue: { id: 'ipsum' },
+      label: { id: 'Transaction cost:' },
+      value: { id: '~12 BSX' },
+      secondValue: { id: '2%' },
     },
-    { label: { id: 'lorem' }, value: { id: 'ipsum' } },
   ],
   hiddenData: [
-    { label: { id: 'lorem' }, value: { id: 'ipsum' }, editable: true },
-    { label: { id: 'lorem' }, value: { id: 'ipsum' } },
+    {
+      label: { id: 'Transaction lifetime:' },
+      value: { id: '12/10/2022, 10:00:00' },
+      editable: true,
+    },
+    {
+      label: { id: 'Tip for block author:' },
+      value: { id: '0.0066 BSX' },
+      editable: true,
+    },
+    { label: { id: 'Nonce' }, value: { id: '0' }, editable: true },
   ],
 };

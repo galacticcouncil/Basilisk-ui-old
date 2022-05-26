@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { variant } from 'styled-system';
@@ -20,6 +20,8 @@ export enum TextKind {
   AssetInputSymbol = 'assetInputSymbol',
   AssetInputAsset = 'assetInputAsset',
   AssetInputAmount = 'assetInputAmount',
+  MethodCallTitle = 'methodCallTitle',
+  Tooltip = 'tooltip',
 }
 
 export interface TextProps {
@@ -182,6 +184,22 @@ const TextComponent = styled('div')(
         lineHeight: '14px',
 
         color: '#D1DEE8',
+      },
+      methodCallTitle: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '12px',
+        lineHeight: '16px',
+
+        color: '#f0da73',
+      },
+      tooltip: {
+        fontStyle: 'normal',
+        fontWeight: '400',
+        fontSize: '12px',
+        lineHeight: '16px',
+
+        color: '#ffffff',
       },
     },
   })

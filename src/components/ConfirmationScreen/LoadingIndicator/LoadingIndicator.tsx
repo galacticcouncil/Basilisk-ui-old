@@ -1,5 +1,5 @@
 import { Icon } from '../Icon/Icon';
-import styled from '@emotion/styled';
+import styled from '@emotion/styled/macro';
 import { keyframes } from '@emotion/react';
 
 export interface LoadingIndicatorProps {
