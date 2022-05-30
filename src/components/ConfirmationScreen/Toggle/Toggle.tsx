@@ -1,8 +1,8 @@
 import styled from '@emotion/styled/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface ToggleProps {
-  toogled?: boolean;
+  toggled?: boolean;
   disabled?: boolean;
 }
 
@@ -24,6 +24,10 @@ const Button = styled.button<{ checked: boolean }>`
   width: 70px;
   border-radius: 9999px;
   border-width: 0px;
+
+  &:disabled {
+    background: rgba(0, 0, 0, 0.25);
+  }
 `;
 
 const Span = styled.div<{ checked: boolean }>`
@@ -38,10 +42,24 @@ const Span = styled.div<{ checked: boolean }>`
   ${Button}:hover & {
     border: 2px solid #8affcb;
   }
+
+  ${Button}:disabled & {
+    border-width: 0px;
+    background: linear-gradient(0deg, #29292d, #29292d), #26282f;
+  }
+
+  ${Button}:disabled:hover & {
+    border-width: 0px;
+    background: linear-gradient(0deg, #29292d, #29292d), #26282f;
+  }
 `;
 
-export const Toggle = ({ toogled = false, disabled = false }: ToggleProps) => {
-  const [checked, setChecked] = useState(toogled);
+export const Toggle = ({ toggled = false, disabled = false }: ToggleProps) => {
+  const [checked, setChecked] = useState(toggled);
+
+  useEffect(() => {
+    setChecked(toggled);
+  }, [toggled]);
 
   return (
     <ToggleContainer>

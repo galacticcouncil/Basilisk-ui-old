@@ -60,7 +60,7 @@ export const MethodText = ({ method, call }: MethodTextProps) => {
   const [show, setShow] = useState(false);
 
   return (
-    <Container>
+    <Container onClick={() => setShow(!show)}>
       <Title>
         <IconWrapper show={show}>
           <Icon name={'PolygonUp'} size={9}></Icon>
@@ -72,7 +72,7 @@ export const MethodText = ({ method, call }: MethodTextProps) => {
         ></Text>
       </Title>
       <Call>
-        <Method onClick={() => setShow(!show)}>{method}</Method>
+        <Method>{method}</Method>
         {show && (
           <JSONPretty id="json-pretty" data={JSON.parse(call)} theme={theme} />
         )}

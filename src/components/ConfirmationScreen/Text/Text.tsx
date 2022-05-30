@@ -22,6 +22,11 @@ export enum TextKind {
   AssetInputAmount = 'assetInputAmount',
   MethodCallTitle = 'methodCallTitle',
   Tooltip = 'tooltip',
+  StepperText = 'stepperText',
+  StepperCurrentText = 'stepperCurrentText',
+  InputLabel = 'inputLabel',
+  InputError = 'inputError',
+  InputSymbol = 'inputSymbol',
 }
 
 export interface TextProps {
@@ -200,6 +205,50 @@ const TextComponent = styled('div')(
         lineHeight: '16px',
 
         color: '#ffffff',
+      },
+      stepperText: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '13px',
+
+        color: '#ffffff',
+        opacity: '0.5',
+      },
+      stepperCurrentText: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '13px',
+
+        color: '#4CF3A8',
+      },
+      inputLabel: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+
+        color: '#ffffff',
+        opacity: '0.7',
+      },
+      inputError: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '16px',
+
+        color: '#FF8A8A',
+      },
+      inputSymbol: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '16px',
+        lineHeight: '26px',
+
+        color: '#ffffff',
+        textAlign: 'right',
+        textTransform: 'uppercase',
       },
     },
   })

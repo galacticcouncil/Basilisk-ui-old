@@ -23,20 +23,10 @@ const TextContainer = styled.div`
   height: 29px;
 `;
 
-const slide = keyframes`
+const gradient = keyframes`
   {
-    0%
-    {
-      filter: hue-rotate(0deg);
-    }
-    50%
-    {
-      filter: hue-rotate(360deg);
-    }
-    100%
-    {
-      filter: hue-rotate(0deg);
-    }
+    0%   { background-position: 0 0; }
+    100% { background-position: -750% 0; }
   }
 `;
 
@@ -44,21 +34,24 @@ const Loader = styled.div`
   width: 112px;
   height: 3px;
   position: relative;
+  overflow: hidden;
   bottom: 3px;
   border-radius: 0px 0px 6px 6px;
-  background-size: 200% 200%;
-  background-position: 0% 100%;
 
-  background: linear-gradient(
-      89.92deg,
-      #686876 10.87%,
-      #686876 38.53%,
-      #54ef9f 58.94%,
-      #fcae33 84.56%
-    ),
-    #d9d9d9;
-
-  animation: ${slide} 2s linear infinite;
+  background: repeating-linear-gradient(
+    to right,
+    #7702ff,
+    #02ff70,
+    #ff00d4,
+    #ffa000,
+    #00fdff,
+    #7702ff
+  );
+  background-size: 750% auto;
+  background-position: 0 100%;
+  animation: ${gradient} 17s infinite;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
 `;
 
 export const RefreshTimer = ({ time }: RefreshTimerProps) => {

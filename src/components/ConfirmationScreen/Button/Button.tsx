@@ -23,17 +23,8 @@ const Content = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  padding: 16px 36px;
-`;
-
-const IconContainer = styled.div`
-  width: 16px;
-  height: 16px;
-  margin-left: 8px;
-`;
-
-const LoadingIndicatorContainer = styled.div`
-  margin-right: 8px;
+  gap: 8px;
+  padding: 13px 36px;
 `;
 
 const ButtonComponent = styled('button')(
@@ -43,7 +34,7 @@ const ButtonComponent = styled('button')(
     padding: 0,
     background: 'none',
     userSelect: 'none',
-    transition: 'background-color 1s ease-out',
+    transition: 'background-color 300ms ease-out',
     borderRadius: '9999px',
     width: '100%',
   },
@@ -108,17 +99,9 @@ export const Button = ({
         disabled={disabled || kind === ButtonKind.Loading}
       >
         <Content>
-          {kind === ButtonKind.Loading && (
-            <LoadingIndicatorContainer>
-              <LoadingIndicator />
-            </LoadingIndicatorContainer>
-          )}
+          {kind === ButtonKind.Loading && <LoadingIndicator />}
           <Text id={text} kind={TextKind.Button} />
-          {icon && (
-            <IconContainer>
-              <Icon name={icon} size={16} />
-            </IconContainer>
-          )}
+          {icon && <Icon name={icon} size={18} />}
         </Content>
       </ButtonComponent>
     </>

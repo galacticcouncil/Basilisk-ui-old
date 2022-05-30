@@ -7,7 +7,7 @@ export default {
   title: 'components/ConfirmationScreen/Toggle',
   component: Toggle,
   argTypes: {
-    toogled: {
+    toggled: {
       type: 'boolean',
     },
     disabled: {
@@ -26,7 +26,7 @@ export default {
 const Template: ComponentStory<typeof Toggle> = (args) => {
   return (
     <StorybookWrapper>
-      <div style={{ width: '460px' }}>
+      <div style={{ width: '460px', background: '#211F24' }}>
         <Toggle {...args} />
       </div>
     </StorybookWrapper>
@@ -34,4 +34,4 @@ const Template: ComponentStory<typeof Toggle> = (args) => {
 };
 
 export const Default = Template.bind({});
-Default.args = { toogled: false, disabled: false };
+Default.args = { toggled: false, disabled: false };
