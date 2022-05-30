@@ -7,18 +7,21 @@ export interface InputProps {
   label?: TextProps;
   value?: string;
   unit?: string;
+  placeholder?: string;
+  step?: string;
   error?: TextProps;
   tooltip?: TextProps;
 }
 
-const Content = styled.div`
+const Content = styled.div<{ disabled: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0px;
   gap: 5px;
   isolation: isolate;
-  height: 82px;
+  /* height: 82px; */
+  opacity: ${(props) => (props.disabled ? '0.5' : '1')};
 `;
 
 const LabelContainer = styled.div`
@@ -43,7 +46,7 @@ const InputContainer = styled.div`
   flex-direction: row;
   justify-content: left;
   align-items: flex-start;
-  width: 460px;
+  width: 100%;
   position: relative;
 `;
 
@@ -57,7 +60,7 @@ const InputComponent = styled.input`
     margin: 0;
   }
 
-  width: 460px;
+  width: 100%;
   background: linear-gradient(0deg, #29292d, #29292d), #26282f;
   border-radius: 9px;
   border: 1px solid rgba(255, 255, 255, 0.4);
@@ -90,6 +93,11 @@ const InputComponent = styled.input`
     background: linear-gradient(0deg, #29292d, #29292d), #26282f;
     border: 1px solid #ff8a8a;
   }
+
+  &:hover:disabled {
+    background: linear-gradient(0deg, #29292d, #29292d), #26282f;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
 `;
 
 const TextContainer = styled.div`
@@ -105,36 +113,42 @@ export const Input = ({
   label,
   value,
   unit,
+  placeholder = '00.00',
+  step = 'any',
   error,
   tooltip,
 }: InputProps) => {
   return (
-    <Content>
-      <LabelContainer>
-        {label && (
-          <TextContainer>
-            <Text {...label} kind={TextKind.InputLabel} />
-          </TextContainer>
-        )}
-        {tooltip && (
-          <TooltipContainer>
-            <Tooltip {...tooltip} />
-          </TooltipContainer>
-        )}
-      </LabelContainer>
+    <Content disabled={disabled}>
+      {label && tooltip && (
+        <LabelContainer>
+          {label && (
+            <TextContainer>
+              <Text {...label} kind={TextKind.InputLabel} />
+            </TextContainer>
+          )}
+          {tooltip && (
+            <TooltipContainer>
+              <Tooltip {...tooltip} />
+            </TooltipContainer>
+          )}
+        </LabelContainer>
+      )}
       <InputContainer>
         <InputComponent
           disabled={disabled}
           type="number"
-          placeholder="00.00"
-          step="any"
+          placeholder={placeholder}
+          step={step}
           defaultValue={value}
         />
         <Unit>{unit && <Text id={unit} kind={TextKind.InputSymbol} />}</Unit>
       </InputContainer>
-      <LabelContainer>
-        {error && <Text {...error} kind={TextKind.InputError} />}
-      </LabelContainer>
+      {error && (
+        <LabelContainer>
+          <Text {...error} kind={TextKind.InputError} />
+        </LabelContainer>
+      )}
     </Content>
   );
 };

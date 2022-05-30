@@ -27,6 +27,7 @@ export enum TextKind {
   InputLabel = 'inputLabel',
   InputError = 'inputError',
   InputSymbol = 'inputSymbol',
+  RadioButton = 'radioButton',
 }
 
 export interface TextProps {
@@ -249,6 +250,14 @@ const TextComponent = styled('div')(
         color: '#ffffff',
         textAlign: 'right',
         textTransform: 'uppercase',
+      },
+      radioButton: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '17px',
+        lineHeight: '26px',
+
+        textAlign: 'center',
       },
     },
   })
