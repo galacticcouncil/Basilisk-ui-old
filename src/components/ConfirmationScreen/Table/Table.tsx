@@ -11,8 +11,8 @@ type TableValue = {
 };
 
 export interface TableProps {
-  mainData: TableValue[];
-  hiddenData?: TableValue[];
+  settings: TableValue[];
+  advancedSettings?: TableValue[];
   handleEdit?: () => void;
 }
 
@@ -103,17 +103,17 @@ const Row = ({ data, handleEdit }: RowProps) => {
   );
 };
 
-export const Table = ({ mainData, hiddenData, handleEdit }: TableProps) => {
+export const Table = ({ settings, advancedSettings, handleEdit }: TableProps) => {
   const [showHidden, setShowHidden] = useState(false);
 
   return (
     <TableContainer>
-      {mainData.map((item) => (
+      {settings.map((item) => (
         <Row data={item} handleEdit={handleEdit} />
       ))}
       {showHidden &&
-        hiddenData &&
-        hiddenData.map((item) => <Row data={item} handleEdit={handleEdit} />)}
+        advancedSettings &&
+        advancedSettings.map((item) => <Row data={item} handleEdit={handleEdit} />)}
       <div>
         <ButtonContainer>
           <Button onClick={() => setShowHidden(!showHidden)}>

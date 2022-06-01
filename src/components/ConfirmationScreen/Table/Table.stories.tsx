@@ -32,7 +32,7 @@ const Template: ComponentStory<typeof Table> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  mainData: [
+  settings: [
     {
       label: { id: 'Minimal amount received:' },
       value: { id: '33 456.46' },
@@ -44,7 +44,7 @@ Default.args = {
       secondValue: { id: '2%' },
     },
   ],
-  hiddenData: [
+  advancedSettings: [
     {
       label: { id: 'Transaction lifetime:' },
       value: { id: '12/10/2022, 10:00:00' },

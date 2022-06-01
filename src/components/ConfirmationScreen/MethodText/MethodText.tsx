@@ -1,5 +1,5 @@
 import styled from '@emotion/styled/macro';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { Icon } from '../Icon/Icon';
 import { Text, TextKind } from '../Text/Text';
@@ -21,6 +21,7 @@ const Container = styled.div`
   overflow-y: scroll;
 
   background: rgba(0, 0, 0, 0.15);
+  cursor: pointer;
 `;
 
 const Title = styled.div`
@@ -29,10 +30,6 @@ const Title = styled.div`
   align-items: center;
   justify-content: center;
   gap: 5px;
-`;
-
-const Method = styled.div`
-  cursor: pointer;
 `;
 
 const IconWrapper = styled.div<{ show: boolean }>`
@@ -59,8 +56,12 @@ const theme = {
 export const MethodText = ({ method, call }: MethodTextProps) => {
   const [show, setShow] = useState(false);
 
+  const showMethodCall = useCallback(() => {
+    setShow(!show);
+  }, [show]);
+
   return (
-    <Container onClick={() => setShow(!show)}>
+    <Container onClick={showMethodCall}>
       <Title>
         <IconWrapper show={show}>
           <Icon name={'PolygonUp'} size={9}></Icon>
@@ -72,7 +73,7 @@ export const MethodText = ({ method, call }: MethodTextProps) => {
         ></Text>
       </Title>
       <Call>
-        <Method>{method}</Method>
+        {method}
         {show && (
           <JSONPretty id="json-pretty" data={JSON.parse(call)} theme={theme} />
         )}
