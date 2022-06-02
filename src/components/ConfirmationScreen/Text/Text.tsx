@@ -2,6 +2,7 @@ import styled from '@emotion/styled/macro';
 import { ReactNode } from 'react';
 import { FormattedMessage } from 'react-intl';
 import { variant } from 'styled-system';
+import { Icon } from '../Icon/Icon';
 
 export enum TextKind {
   Button = 'button',
@@ -28,6 +29,8 @@ export enum TextKind {
   InputError = 'inputError',
   InputSymbol = 'inputSymbol',
   RadioButton = 'radioButton',
+  MetadataUpdateLabel = 'metadataUpdateLabel',
+  MetadataUpdateValue = 'metadataUpdateValue',
 }
 
 export interface TextProps {
@@ -45,6 +48,9 @@ const TextContainer = styled.div`
 const TextComponent = styled('div')(
   {
     fontFamily: 'Satoshi',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   variant({
     variants: {
@@ -259,6 +265,18 @@ const TextComponent = styled('div')(
 
         textAlign: 'center',
       },
+      metadataUpdateLabel: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+      },
+      metadataUpdateValue: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '20px',
+        lineHeight: '26px',
+      },
     },
   })
 );
@@ -278,6 +296,7 @@ export const Text = ({
         description={description}
         values={values}
       />
+      {kind === TextKind.TextUrl && <Icon name={'Url'} size={12} />}
     </TextComponent>
   </TextContainer>
 );

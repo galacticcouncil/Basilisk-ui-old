@@ -54,7 +54,7 @@ export const ModalComponent = ({ children, isOpen }: ModalProps) => {
             boxShadow: '0px 38px 46px rgba(0, 0, 0, 0.03)',
             borderRadius: '16px',
             border: 'none',
-            padding: '10px',
+            padding: '0px',
           },
         }}
         contentLabel="Example Modal"

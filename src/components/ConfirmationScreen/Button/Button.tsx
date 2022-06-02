@@ -11,7 +11,7 @@ export enum ButtonKind {
 }
 
 export interface ButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   text: string;
   disabled?: boolean;
   kind?: ButtonKind;

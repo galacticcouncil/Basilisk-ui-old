@@ -10,6 +10,7 @@ import { ReactComponent as MissingAssetIcon } from './assets/MissingAssetIcon.sv
 import { ReactComponent as PolygonUpIcon } from './assets/PolygonUpIcon.svg';
 import { ReactComponent as TooltipIcon } from './assets/TooltipIcon.svg';
 import { ReactComponent as StepperDoneIcon } from './assets/StepperDoneIcon.svg';
+import { ReactComponent as UrlIcon } from './assets/UrlIcon.svg';
 
 export const Icons = {
   Wallet: () => <WalletIcon />,
@@ -23,6 +24,7 @@ export const Icons = {
   PolygonUp: () => <PolygonUpIcon />,
   Tooltip: () => <TooltipIcon />,
   StepperDone: () => <StepperDoneIcon />,
+  Url: () => <UrlIcon />,
 } as const;
 
 export type IconNames = keyof typeof Icons;
