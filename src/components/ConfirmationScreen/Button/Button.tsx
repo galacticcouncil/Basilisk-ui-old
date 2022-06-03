@@ -18,13 +18,13 @@ export interface ButtonProps {
   icon?: IconNames;
 }
 
-const Content = styled.div`
+const Content = styled.div<{ primary: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: 13px 36px;
+  padding: ${(props) => (props.primary ? '13px 72px' : '13px 36px')};
 `;
 
 const ButtonComponent = styled('button')(
@@ -98,7 +98,7 @@ export const Button = ({
         onClick={onClick}
         disabled={disabled || kind === ButtonKind.Loading}
       >
-        <Content>
+        <Content primary={kind === ButtonKind.Primary}>
           {kind === ButtonKind.Loading && <LoadingIndicator />}
           <Text id={text} kind={TextKind.Button} />
           {icon && <Icon name={icon} size={18} />}
