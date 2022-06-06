@@ -43,7 +43,7 @@ Default.args = {
     steps: Stepper.Default.args?.steps || [],
     currentStep: 2,
   },
-  table: Table.NoAdvancedSettings.args as TableProps,
+  table: Table.NoEdit.args as TableProps,
   onCancel: linkTo('components/ConfirmationScreen/ConfirmSwap'),
   onSign: linkTo('components/ConfirmationScreen/SentTransaction', 'Sent'),
 };

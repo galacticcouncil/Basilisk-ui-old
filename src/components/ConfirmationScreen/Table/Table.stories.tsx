@@ -87,3 +87,28 @@ NoAdvancedSettings.args = {
     { label: { id: 'Nonce' }, value: { id: '0' }, editable: true },
   ],
 };
+
+export const NoEdit = Template.bind({});
+NoEdit.args = {
+  settings: [
+    {
+      label: { id: 'Minimal amount received:' },
+      value: { id: '33 456.46' },
+    },
+    { label: { id: 'Slippage:' }, value: { id: '5%' } },
+    {
+      label: { id: 'Transaction cost:' },
+      value: { id: '~12 BSX' },
+      secondValue: { id: '2%' },
+    },
+    {
+      label: { id: 'Transaction lifetime:' },
+      value: { id: '12/10/2022, 10:00:00' },
+    },
+    {
+      label: { id: 'Tip for block author:' },
+      value: { id: '0.0066 BSX' },
+    },
+    { label: { id: 'Nonce' }, value: { id: '0' } },
+  ],
+};
