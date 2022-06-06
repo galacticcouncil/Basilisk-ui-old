@@ -2,6 +2,7 @@ import { UpdateMetadata } from './UpdateMetadata';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/UpdateMetadata',
@@ -68,4 +69,6 @@ Default.args = {
     ],
     currentStep: 0,
   },
+  onCancel: linkTo('components/ConfirmationScreen/CancelConfirmation'),
+  onUpdateMetadata: linkTo('components/ConfirmationScreen/ConfirmSwap'),
 };

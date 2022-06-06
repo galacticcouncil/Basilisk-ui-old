@@ -13,6 +13,9 @@ export default {
     disabled: {
       type: 'boolean',
     },
+    onClick: {
+      action: 'Click',
+    },
   },
   decorators: [
     (Story) => (

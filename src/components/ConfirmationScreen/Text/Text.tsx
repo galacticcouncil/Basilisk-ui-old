@@ -31,6 +31,9 @@ export enum TextKind {
   RadioButton = 'radioButton',
   MetadataUpdateLabel = 'metadataUpdateLabel',
   MetadataUpdateValue = 'metadataUpdateValue',
+  SettingsTitle = 'settingsTitle',
+  SettingsSubtitle = 'settingsSubtitle',
+  ToggleLabel = 'toggleLabel',
 }
 
 export interface TextProps {
@@ -276,6 +279,31 @@ const TextComponent = styled('div')(
         fontWeight: '700',
         fontSize: '20px',
         lineHeight: '26px',
+      },
+      settingsTitle: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+
+        color: '#E5ECF1',
+      },
+      settingsSubtitle: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+
+        color: '#FFFFFF',
+        opacity: '0.5',
+      },
+      toggleLabel: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '22px',
+
+        color: '#FFFFFF',
       },
     },
   })

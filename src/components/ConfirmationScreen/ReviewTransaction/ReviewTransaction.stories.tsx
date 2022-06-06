@@ -7,6 +7,7 @@ import * as MethodText from '../MethodText/MethodText.stories';
 import { MethodTextProps } from '../MethodText/MethodText';
 import * as Table from '../Table/Table.stories';
 import { TableProps } from '../Table/Table';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/ReviewTransaction',
@@ -42,5 +43,7 @@ Default.args = {
     steps: Stepper.Default.args?.steps || [],
     currentStep: 2,
   },
-  table: Table.NoAdvancedSettings.args as TableProps
+  table: Table.NoAdvancedSettings.args as TableProps,
+  onCancel: linkTo('components/ConfirmationScreen/ConfirmSwap'),
+  onSign: linkTo('components/ConfirmationScreen/SentTransaction', 'Sent'),
 };

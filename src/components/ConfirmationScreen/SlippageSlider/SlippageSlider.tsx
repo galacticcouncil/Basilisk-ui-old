@@ -10,19 +10,19 @@ export type Slippage = {
 };
 
 export interface SlippageSliderProps {
-  slippage: Slippage;
+  slippage?: Slippage;
   onChange?: (slippage: number) => void;
 }
 
 const SlippageSliderContainer = styled.div`
+  width: 100%;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 11px;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  padding: 8px 0px;
-  margin: 0px 30px;
+  padding: 8px;
   gap: 10px;
 `;
 

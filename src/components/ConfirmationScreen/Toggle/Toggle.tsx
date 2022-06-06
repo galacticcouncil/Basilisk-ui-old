@@ -1,9 +1,9 @@
 import styled from '@emotion/styled/macro';
-import { useEffect, useState } from 'react';
 
 export interface ToggleProps {
   toggled?: boolean;
   disabled?: boolean;
+  onClick: () => void;
 }
 
 const ToggleContainer = styled.div`
@@ -54,24 +54,23 @@ const Span = styled.div<{ checked: boolean }>`
   }
 `;
 
-export const Toggle = ({ toggled = false, disabled = false }: ToggleProps) => {
-  const [checked, setChecked] = useState(toggled);
-
-  useEffect(() => {
-    setChecked(toggled);
-  }, [toggled]);
+export const Toggle = ({
+  toggled = false,
+  disabled = false,
+  onClick,
+}: ToggleProps) => {
 
   return (
     <ToggleContainer>
       <Input type="hidden" />
       <Button
-        onClick={() => setChecked(!checked)}
+        onClick={() => onClick()}
         disabled={disabled}
-        checked={checked}
+        checked={toggled}
         type="button"
         role="switch"
       >
-        <Span checked={checked} aria-hidden="true" />
+        <Span checked={toggled} aria-hidden="true" />
       </Button>
     </ToggleContainer>
   );

@@ -1,6 +1,8 @@
 import styled from '@emotion/styled/macro';
 import { AssetIcon } from '../AssetIcon/AssetIcon';
 import { Text, TextKind, TextProps } from '../Text/Text';
+import MaskedInput, { MaskedInputProps } from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 export enum AssetInputType {
   Sell = 'sell',
@@ -91,6 +93,21 @@ const TextContent = (type: AssetInputType): TextProps => {
   }
 };
 
+export const thousandsSeparatorSymbol = ' ';
+export const maskOptions = {
+  prefix: '',
+  suffix: '',
+  includeThousandsSeparator: true,
+  thousandsSeparatorSymbol,
+  allowDecimal: true,
+  decimalSymbol: '.',
+  // TODO: adjust decimal limit depending on the selected MetricUnit
+  decimalLimit: 12,
+  // integerLimit: 7,
+  allowNegative: false,
+  allowLeadingZeroes: false,
+};
+
 export const AssetInput = ({
   name,
   icon,
@@ -99,6 +116,8 @@ export const AssetInput = ({
   amount,
   type,
 }: AssetInputProps) => {
+  const mask = createNumberMask(maskOptions);
+
   return (
     <Input>
       <Text {...TextContent(type)} kind={TextKind.AssetInputTitle} />

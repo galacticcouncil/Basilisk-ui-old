@@ -8,6 +8,8 @@ import KSM from '../AssetIcon/assets/KSM.svg';
 import { AssetInputType } from '../AssetInput/AssetInput';
 import * as Table from '../Table/Table.stories';
 import { TableProps } from '../Table/Table';
+import * as Stepper from '../Stepper/Stepper.stories';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/ConfirmSwap',
@@ -40,20 +42,7 @@ Default.args = {
   error: '',
   nextBlockTime: 10,
   steps: {
-    steps: [
-      {
-        id: 'metadata',
-        defaultMessage: 'Metadata',
-      },
-      {
-        id: 'confirmation',
-        defaultMessage: 'Confirmation',
-      },
-      {
-        id: 'reviewAndSign ',
-        defaultMessage: 'Review & Sign',
-      },
-    ],
+    steps: Stepper.Default.args?.steps || [],
     currentStep: 1,
   },
   assetIn: {
@@ -78,31 +67,7 @@ Default.args = {
     amount: '10 000.000000000',
     type: AssetInputType.Receive,
   },
-  table: {
-    settings: [
-      {
-        label: { id: 'Minimal amount received:' },
-        value: { id: '33 456.46' },
-      },
-      { label: { id: 'Slippage:' }, value: { id: '5%' }, editable: true },
-      {
-        label: { id: 'Transaction cost:' },
-        value: { id: '~12 BSX' },
-        secondValue: { id: '2%' },
-      },
-    ],
-    advancedSettings: [
-      {
-        label: { id: 'Transaction lifetime:' },
-        value: { id: '12/10/2022, 10:00:00' },
-        editable: true,
-      },
-      {
-        label: { id: 'Tip for block author:' },
-        value: { id: '0.0066 BSX' },
-        editable: true,
-      },
-      { label: { id: 'Nonce' }, value: { id: '0' }, editable: true },
-    ],
-  },
+  table: Table.Default.args as TableProps,
+  onCancel: linkTo('components/ConfirmationScreen/CancelConfirmation'),
+  onReview: linkTo('components/ConfirmationScreen/ReviewTransaction'),
 };
