@@ -29,7 +29,7 @@ const TableContainer = styled.div`
   padding: 10px;
   gap: 6px;
 
-  background: #211F24;
+  background: #211f24;
 `;
 
 const RowContainer = styled.div`
@@ -103,7 +103,11 @@ const Row = ({ data, handleEdit }: RowProps) => {
   );
 };
 
-export const Table = ({ settings, advancedSettings, handleEdit }: TableProps) => {
+export const Table = ({
+  settings,
+  advancedSettings,
+  handleEdit,
+}: TableProps) => {
   const [showHidden, setShowHidden] = useState(false);
 
   return (
@@ -113,15 +117,19 @@ export const Table = ({ settings, advancedSettings, handleEdit }: TableProps) =>
       ))}
       {showHidden &&
         advancedSettings &&
-        advancedSettings.map((item) => <Row data={item} handleEdit={handleEdit} />)}
-      <div>
-        <ButtonContainer>
-          <Button onClick={() => setShowHidden(!showHidden)}>
-            <Text id={'Advanced settings'} kind={TextKind.TableButton}></Text>
-            <Icon name={showHidden ? 'ArrowUp' : 'ArrowDown'} size={14} />
-          </Button>
-        </ButtonContainer>
-      </div>
+        advancedSettings.map((item) => (
+          <Row data={item} handleEdit={handleEdit} />
+        ))}
+      {advancedSettings && (
+        <div>
+          <ButtonContainer>
+            <Button onClick={() => setShowHidden(!showHidden)}>
+              <Text id={'Advanced settings'} kind={TextKind.TableButton}></Text>
+              <Icon name={showHidden ? 'ArrowUp' : 'ArrowDown'} size={14} />
+            </Button>
+          </ButtonContainer>
+        </div>
+      )}
     </TableContainer>
   );
 };

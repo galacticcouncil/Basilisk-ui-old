@@ -38,3 +38,6 @@ const Template: ComponentStory<typeof LoadingIndicator> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = { size: 16 };
+
+export const Big = Template.bind({});
+Big.args = { big: true, size: 117 };

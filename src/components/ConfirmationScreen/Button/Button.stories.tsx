@@ -51,28 +51,28 @@ const Template: ComponentStory<typeof Button> = (args) => {
 };
 
 export const Default = Template.bind({});
-Default.args = { text: 'Click here' };
+Default.args = { text: { id: 'Click here' } };
 
 export const Primary = Template.bind({});
 Primary.args = {
   kind: ButtonKind.Primary,
-  text: 'Primary',
+  text: { id: 'Primary' },
 };
 
 export const Secondary = Template.bind({});
 Secondary.args = {
   kind: ButtonKind.Secondary,
-  text: 'Secondary',
+  text: { id: 'Secondary' },
 };
 
 export const Disabled = Template.bind({});
-Disabled.args = { disabled: true, text: 'Disabled' };
+Disabled.args = { disabled: true, text: { id: 'Disabled' } };
 
 export const Loading = Template.bind({});
 Loading.args = {
   kind: ButtonKind.Loading,
-  text: 'Click here',
+  text: { id: 'Click here' },
 };
 
 export const WithIcon = Template.bind({});
-WithIcon.args = { icon: 'Wallet', text: 'Click here' };
+WithIcon.args = { icon: 'Wallet', text: { id: 'Click here' } };

@@ -1,32 +1,17 @@
-import { UpdateMetadata } from './UpdateMetadata';
+import { CancelConfirmation } from './CancelConfirmation';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/UpdateMetadata',
-  component: UpdateMetadata,
+  title: 'components/ConfirmationScreen/CancelConfirmation',
+  component: CancelConfirmation,
   argTypes: {
-    oldVersion: {
-      type: 'string',
-    },
-    newVersion: {
-      type: 'string',
-    },
-    isOpened: {
-      type: 'boolean',
-    },
-    loading: {
-      type: 'boolean',
-    },
-    onUpdateMetadata: {
-      action: 'Update Metadata',
-    },
     onCancel: {
       action: 'Cancel',
     },
-    error: {
-      type: 'string',
+    onBack: {
+      action: 'Cancel',
     },
   },
   decorators: [
@@ -36,21 +21,16 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof UpdateMetadata>;
+} as ComponentMeta<typeof CancelConfirmation>;
 
-const Template: ComponentStory<typeof UpdateMetadata> = (args) => (
+const Template: ComponentStory<typeof CancelConfirmation> = (args) => (
   <StorybookWrapper>
-    <UpdateMetadata {...args} />
+    <CancelConfirmation {...args} />
   </StorybookWrapper>
 );
 
 export const Default = Template.bind({});
 Default.args = {
-  oldVersion: '0.09',
-  newVersion: '0.12',
-  isOpened: true,
-  loading: false,
-  error: '',
   steps: {
     steps: [
       {
@@ -66,6 +46,6 @@ Default.args = {
         defaultMessage: 'Review & Sign',
       },
     ],
-    currentStep: 0,
+    currentStep: 1,
   },
 };

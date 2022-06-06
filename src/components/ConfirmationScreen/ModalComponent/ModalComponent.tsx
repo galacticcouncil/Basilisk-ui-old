@@ -21,7 +21,7 @@ const ModalWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 30px;
+  padding: 10px;
 `;
 
 Modal.setAppElement('#root');
@@ -43,7 +43,7 @@ export const ModalComponent = ({ children, isOpen }: ModalProps) => {
           },
           content: {
             width: '460px',
-            maxHeight: '880px',
+            height: '880px',
             top: '50%',
             left: '50%',
             right: 'auto',

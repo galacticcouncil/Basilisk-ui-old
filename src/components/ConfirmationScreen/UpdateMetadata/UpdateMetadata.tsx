@@ -1,9 +1,10 @@
 import styled from '@emotion/styled/macro';
 import { Button, ButtonKind } from '../Button/Button';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Icon } from '../Icon/Icon';
 import { ModalComponent } from '../ModalComponent/ModalComponent';
-import { Stepper } from '../Stepper/Stepper';
-import { Text, TextKind, TextProps } from '../Text/Text';
+import { Stepper, StepperProps } from '../Stepper/Stepper';
+import { Text, TextKind } from '../Text/Text';
 
 export interface UpdateVersionsProps {
   oldVersion?: string;
@@ -15,6 +16,8 @@ export interface UpdateMetadataProps extends UpdateVersionsProps {
   onCancel: () => void;
   loading?: boolean;
   isOpened?: boolean;
+  error?: string;
+  steps?: StepperProps;
 }
 
 const ModalContainer = styled.div`
@@ -31,7 +34,7 @@ const ModalContainer = styled.div`
 
 const StepperContainer = styled.div`
   width: 460px;
-  padding-bottom: 52px;
+  padding-bottom: 32px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -42,12 +45,8 @@ const ButtonGroup = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  align-items: flex-start;
-`;
-
-const UpdateButton = styled.div`
-  margin-left: auto;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 const TextWrapper = styled.div`
@@ -89,21 +88,6 @@ const Version = styled.div<{ new?: boolean }>`
   overflow: hidden;
 `;
 
-const steps: TextProps[] = [
-  {
-    id: 'metadata',
-    defaultMessage: 'Metadata',
-  },
-  {
-    id: 'confirmation',
-    defaultMessage: 'Confirmation',
-  },
-  {
-    id: 'reviewAndSign ',
-    defaultMessage: 'Review & Sign',
-  },
-];
-
 const UpdateVersions = ({ oldVersion, newVersion }: UpdateVersionsProps) => {
   return (
     <UpdateVersionsContainer>
@@ -142,12 +126,16 @@ export const UpdateMetadata = ({
   onCancel,
   isOpened = false,
   loading = false,
+  error,
+  steps,
 }: UpdateMetadataProps) => {
   return (
     <ModalComponent isOpen={isOpened}>
-      <StepperContainer>
-        <Stepper steps={steps} currentStep={0} />
-      </StepperContainer>
+      {steps && (
+        <StepperContainer>
+          <Stepper {...steps} />
+        </StepperContainer>
+      )}
       <ModalContainer>
         <Spacer>
           <Icon name={'UpdateMetadata'} size={135} />
@@ -175,10 +163,21 @@ export const UpdateMetadata = ({
         </Spacer>
         <Spacer>
           <UpdateVersions oldVersion={oldVersion} newVersion={newVersion} />
+          {error && (
+            <Spacer padding={'12px 0px 0px 0px'}>
+              <ErrorMessage text={error} />
+            </Spacer>
+          )}
         </Spacer>
         {loading ? (
           <>
-            <Button text={'Waiting for signature'} kind={ButtonKind.Loading} />
+            <Button
+              text={{
+                id: 'signatureWaitingMessage',
+                defaultMessage: 'Waiting for signature',
+              }}
+              kind={ButtonKind.Loading}
+            />
             <Spacer padding="10px 0px 0px 0px">
               <Text
                 id={'updatingMetadataTooltip'}
@@ -192,17 +191,22 @@ export const UpdateMetadata = ({
         ) : (
           <ButtonGroup>
             <Button
-              text={'Cancel'}
+              text={{
+                id: 'cancel',
+                defaultMessage: 'Cancel',
+              }}
               onClick={() => onCancel()}
               kind={ButtonKind.Secondary}
             />
-            <UpdateButton>
-              <Button
-                text={'Update'}
-                onClick={() => onUpdateMetadata()}
-                kind={ButtonKind.Primary}
-              />
-            </UpdateButton>
+            <Button
+              text={{
+                id: 'update',
+                defaultMessage: 'Update',
+              }}
+              onClick={() => onUpdateMetadata()}
+              kind={ButtonKind.Primary}
+              big={true}
+            />
           </ButtonGroup>
         )}
       </ModalContainer>

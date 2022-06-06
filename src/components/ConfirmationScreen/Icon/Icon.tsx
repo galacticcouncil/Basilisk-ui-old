@@ -11,6 +11,9 @@ import { ReactComponent as PolygonUpIcon } from './assets/PolygonUpIcon.svg';
 import { ReactComponent as TooltipIcon } from './assets/TooltipIcon.svg';
 import { ReactComponent as StepperDoneIcon } from './assets/StepperDoneIcon.svg';
 import { ReactComponent as UrlIcon } from './assets/UrlIcon.svg';
+import { ReactComponent as LoadingBigIcon } from './assets/LoadingBigIcon.svg';
+import { ReactComponent as TransactionDoneIcon } from './assets/TransactionDoneIcon.svg';
+import { ReactComponent as TransactionErrorIcon } from './assets/TransactionErrorIcon.svg';
 
 export const Icons = {
   Wallet: () => <WalletIcon />,
@@ -25,6 +28,9 @@ export const Icons = {
   Tooltip: () => <TooltipIcon />,
   StepperDone: () => <StepperDoneIcon />,
   Url: () => <UrlIcon />,
+  LoadingBig: () => <LoadingBigIcon />,
+  TransactionDone: () => <TransactionDoneIcon />,
+  TransactionError: () => <TransactionErrorIcon />,
 } as const;
 
 export type IconNames = keyof typeof Icons;

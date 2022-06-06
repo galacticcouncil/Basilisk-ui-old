@@ -25,8 +25,8 @@ const Template: ComponentStory<typeof Stepper> = (args) => {
   );
 };
 
-export const Default = Template.bind({});
-Default.args = {
+export const MoreSteps = Template.bind({});
+MoreSteps.args = {
   steps: [
     {
       id: 'Lorem',
@@ -45,4 +45,23 @@ Default.args = {
     },
   ],
   currentStep: 2,
+};
+
+export const Default = Template.bind({});
+Default.args = {
+  steps: [
+    {
+      id: 'metadata',
+      defaultMessage: 'Metadata',
+    },
+    {
+      id: 'confirmation',
+      defaultMessage: 'Confirmation',
+    },
+    {
+      id: 'reviewAndSign ',
+      defaultMessage: 'Review & Sign',
+    },
+  ],
+  currentStep: 1,
 };

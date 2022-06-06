@@ -4,6 +4,7 @@ import { keyframes } from '@emotion/react';
 
 export interface LoadingIndicatorProps {
   size?: number;
+  big?: boolean;
 }
 
 const rotate = keyframes`
@@ -34,11 +35,14 @@ const LoadingIndicatorWrapper = styled.div`
   animation: ${rotate} 2s linear infinite;
 `;
 
-export const LoadingIndicator = ({ size = 16 }: LoadingIndicatorProps) => {
+export const LoadingIndicator = ({
+  size = 16,
+  big = false,
+}: LoadingIndicatorProps) => {
   return (
     <LoadingIndicatorContainer size={size}>
       <LoadingIndicatorWrapper>
-        <Icon name="Loading" size={size} />
+        <Icon name={big ? 'LoadingBig' : 'Loading'} size={size} />
       </LoadingIndicatorWrapper>
     </LoadingIndicatorContainer>
   );

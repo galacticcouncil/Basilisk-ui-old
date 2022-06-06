@@ -1,5 +1,5 @@
 import { Icon, IconNames } from '../Icon/Icon';
-import { Text, TextKind } from '../Text/Text';
+import { Text, TextKind, TextProps } from '../Text/Text';
 import styled from '@emotion/styled/macro';
 import { variant } from 'styled-system';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
@@ -12,19 +12,20 @@ export enum ButtonKind {
 
 export interface ButtonProps {
   onClick?: () => void;
-  text: string;
+  text: TextProps;
   disabled?: boolean;
   kind?: ButtonKind;
   icon?: IconNames;
+  big?: boolean;
 }
 
-const Content = styled.div<{ primary: boolean }>`
+const Content = styled.div<{ big: boolean }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: ${(props) => (props.primary ? '13px 72px' : '13px 36px')};
+  padding: ${(props) => (props.big ? '13px 72px' : '13px 36px')};
 `;
 
 const ButtonComponent = styled('button')(
@@ -90,6 +91,7 @@ export const Button = ({
   disabled = false,
   kind = ButtonKind.Primary,
   icon,
+  big = false,
 }: ButtonProps) => {
   return (
     <>
@@ -98,9 +100,9 @@ export const Button = ({
         onClick={onClick}
         disabled={disabled || kind === ButtonKind.Loading}
       >
-        <Content primary={kind === ButtonKind.Primary}>
+        <Content big={big}>
           {kind === ButtonKind.Loading && <LoadingIndicator />}
-          <Text id={text} kind={TextKind.Button} />
+          <Text {...text} kind={TextKind.Button} />
           {icon && <Icon name={icon} size={18} />}
         </Content>
       </ButtonComponent>

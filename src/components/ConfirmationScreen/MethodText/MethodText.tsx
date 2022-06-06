@@ -1,5 +1,4 @@
 import styled from '@emotion/styled/macro';
-import { useCallback, useState } from 'react';
 import JSONPretty from 'react-json-pretty';
 import { Icon } from '../Icon/Icon';
 import { Text, TextKind } from '../Text/Text';
@@ -20,7 +19,6 @@ const Container = styled.div`
   max-height: 235px;
   overflow-y: scroll;
 
-  background: rgba(0, 0, 0, 0.15);
   cursor: pointer;
 `;
 
@@ -30,10 +28,6 @@ const Title = styled.div`
   align-items: center;
   justify-content: center;
   gap: 5px;
-`;
-
-const IconWrapper = styled.div<{ show: boolean }>`
-  transform: rotate(${(props) => (props.show ? 0 : 90)}deg);
 `;
 
 const Call = styled.div`
@@ -54,18 +48,10 @@ const theme = {
 };
 
 export const MethodText = ({ method, call }: MethodTextProps) => {
-  const [show, setShow] = useState(false);
-
-  const showMethodCall = useCallback(() => {
-    setShow(!show);
-  }, [show]);
-
   return (
-    <Container onClick={showMethodCall}>
+    <Container>
       <Title>
-        <IconWrapper show={show}>
-          <Icon name={'PolygonUp'} size={9}></Icon>
-        </IconWrapper>
+        <Icon name={'PolygonUp'} size={9}></Icon>
         <Text
           id={'MethodCall.Title'}
           defaultMessage={'Method'}
@@ -74,9 +60,7 @@ export const MethodText = ({ method, call }: MethodTextProps) => {
       </Title>
       <Call>
         {method}
-        {show && (
-          <JSONPretty id="json-pretty" data={JSON.parse(call)} theme={theme} />
-        )}
+        <JSONPretty id="json-pretty" data={JSON.parse(call)} theme={theme} />
       </Call>
     </Container>
   );

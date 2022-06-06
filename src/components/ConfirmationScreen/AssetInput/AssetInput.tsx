@@ -2,18 +2,6 @@ import styled from '@emotion/styled/macro';
 import { AssetIcon } from '../AssetIcon/AssetIcon';
 import { Text, TextKind, TextProps } from '../Text/Text';
 
-export interface Asset {
-  id: string;
-  name: string;
-  icon?: string;
-  symbol: string;
-  chain?: {
-    id: string;
-    name: string;
-    icon?: string;
-  };
-}
-
 export enum AssetInputType {
   Sell = 'sell',
   Buy = 'buy',
@@ -41,7 +29,7 @@ const Input = styled.div`
   padding: 22px 27px;
   gap: 1px;
 
-  background: #1C1A1F;
+  background: #1c1a1f;
 `;
 
 const Wrapper = styled.div`
@@ -58,16 +46,20 @@ const Names = styled.div`
   justify-content: center;
   align-items: flex-start;
   padding: 5px 8px;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const Amount = styled.div`
+  min-width: 250px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
   width: auto;
-  padding: 0px;
   margin-left: auto;
+  overflow: hidden;
+  white-space: nowrap;
 `;
 
 const IconContainer = styled.div`

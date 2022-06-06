@@ -10,6 +10,9 @@ export default {
     method: {
       type: 'string',
     },
+    call: {
+      type: 'string',
+    },
   },
   decorators: [
     (Story) => (
