@@ -2,6 +2,7 @@ import { CancelConfirmation } from './CancelConfirmation';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/CancelConfirmation',
@@ -46,6 +47,8 @@ Default.args = {
         defaultMessage: 'Review & Sign',
       },
     ],
-    currentStep: 1,
+    currentStep: 0,
   },
+  onBack: linkTo('components/ConfirmationScreen/UpdateMetadata'),
+  onCancel: linkTo('components/ConfirmationScreen/UpdateMetadata'),
 };

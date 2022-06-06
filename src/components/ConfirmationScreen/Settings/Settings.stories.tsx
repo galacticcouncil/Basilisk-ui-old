@@ -2,6 +2,7 @@ import { Settings } from './Settings';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/Settings',
@@ -35,6 +36,8 @@ Default.args = {
   lifetime: 'infinite',
   error: '',
   unit: 'BSX',
+  onBack: linkTo('components/ConfirmationScreen/ConfirmSwap'),
+  onSave: linkTo('components/ConfirmationScreen/ConfirmSwap'),
 };
 
 export const AllSettings = Template.bind({});
@@ -43,4 +46,6 @@ AllSettings.args = {
   lifetime: 200000,
   error: '',
   unit: 'BSX',
+  onBack: linkTo('components/ConfirmationScreen/ConfirmSwap'),
+  onSave: linkTo('components/ConfirmationScreen/ConfirmSwap'),
 };

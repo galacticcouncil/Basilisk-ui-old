@@ -2,6 +2,7 @@ import { Table } from './Table';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import { linkTo } from '@storybook/addon-links';
 
 export default {
   title: 'components/ConfirmationScreen/Table',
@@ -32,6 +33,7 @@ const Template: ComponentStory<typeof Table> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
+  handleEdit: linkTo('components/ConfirmationScreen/Settings'),
   settings: [
     {
       label: { id: 'Minimal amount received:' },
