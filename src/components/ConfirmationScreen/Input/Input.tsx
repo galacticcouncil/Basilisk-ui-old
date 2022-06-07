@@ -1,4 +1,7 @@
 import styled from '@emotion/styled/macro';
+import MaskedInput from 'react-text-mask';
+import { useForm } from 'react-hook-form';
+import { mask as defaultMask } from '../helpers/mask';
 import { Text, TextKind, TextProps } from '../Text/Text';
 import { Tooltip } from '../Tooltip/Tooltip';
 
@@ -11,6 +14,8 @@ export interface InputProps {
   step?: string;
   error?: TextProps;
   tooltip?: TextProps;
+  mask?: any;
+  onFocus?: () => void;
 }
 
 const Content = styled.div<{ disabled: boolean }>`
@@ -117,6 +122,8 @@ export const Input = ({
   step = 'any',
   error,
   tooltip,
+  mask = defaultMask,
+  onFocus,
 }: InputProps) => {
   return (
     <Content disabled={disabled}>
@@ -135,12 +142,16 @@ export const Input = ({
         </LabelContainer>
       )}
       <InputContainer>
-        <InputComponent
+        <MaskedInput
+          mask={mask}
           disabled={disabled}
-          type="number"
           placeholder={placeholder}
           step={step}
-          defaultValue={value}
+          value={value}
+          onFocus={() => onFocus && onFocus()}
+          render={(ref, props) => (
+            <InputComponent ref={ref ?? ref} {...props} />
+          )}
         />
         <Unit>{unit && <Text id={unit} kind={TextKind.InputSymbol} />}</Unit>
       </InputContainer>

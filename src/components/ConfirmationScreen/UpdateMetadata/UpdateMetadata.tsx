@@ -88,6 +88,10 @@ const Version = styled.div<{ new?: boolean }>`
   overflow: hidden;
 `;
 
+const Container = styled.div`
+  width: 100%;
+`;
+
 const UpdateVersions = ({ oldVersion, newVersion }: UpdateVersionsProps) => {
   return (
     <UpdateVersionsContainer>
@@ -165,7 +169,9 @@ export const UpdateMetadata = ({
           <UpdateVersions oldVersion={oldVersion} newVersion={newVersion} />
           {error && (
             <Spacer padding={'12px 0px 0px 0px'}>
-              <ErrorMessage text={error} />
+              <Container>
+                <ErrorMessage text={error} />
+              </Container>
             </Spacer>
           )}
         </Spacer>

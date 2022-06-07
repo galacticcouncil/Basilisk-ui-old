@@ -3,6 +3,7 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { linkTo } from '@storybook/addon-links';
+import { maskValue } from '../helpers/mask';
 
 export default {
   title: 'components/ConfirmationScreen/Table',
@@ -37,7 +38,7 @@ Default.args = {
   settings: [
     {
       label: { id: 'Minimal amount received:' },
-      value: { id: '33 456.46' },
+      value: { id: maskValue('32456.46') },
     },
     { label: { id: 'Slippage:' }, value: { id: '5%' }, editable: true },
     {
@@ -54,7 +55,7 @@ Default.args = {
     },
     {
       label: { id: 'Tip for block author:' },
-      value: { id: '0.0066 BSX' },
+      value: { id: maskValue('0.0066') + ' BSX' },
       editable: true,
     },
     { label: { id: 'Nonce' }, value: { id: '0' }, editable: true },
@@ -66,7 +67,7 @@ NoAdvancedSettings.args = {
   settings: [
     {
       label: { id: 'Minimal amount received:' },
-      value: { id: '33 456.46' },
+      value: { id: maskValue('32456.46') },
     },
     { label: { id: 'Slippage:' }, value: { id: '5%' }, editable: true },
     {
@@ -81,7 +82,7 @@ NoAdvancedSettings.args = {
     },
     {
       label: { id: 'Tip for block author:' },
-      value: { id: '0.0066 BSX' },
+      value: { id: maskValue('0.0066') + ' BSX' },
       editable: true,
     },
     { label: { id: 'Nonce' }, value: { id: '0' }, editable: true },
@@ -93,7 +94,7 @@ NoEdit.args = {
   settings: [
     {
       label: { id: 'Minimal amount received:' },
-      value: { id: '33 456.46' },
+      value: { id: maskValue('32456.46') },
     },
     { label: { id: 'Slippage:' }, value: { id: '5%' } },
     {
@@ -107,7 +108,7 @@ NoEdit.args = {
     },
     {
       label: { id: 'Tip for block author:' },
-      value: { id: '0.0066 BSX' },
+      value: { id: maskValue('0.0066') + ' BSX' },
     },
     { label: { id: 'Nonce' }, value: { id: '0' } },
   ],

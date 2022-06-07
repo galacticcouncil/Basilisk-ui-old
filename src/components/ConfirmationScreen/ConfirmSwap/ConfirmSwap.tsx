@@ -71,7 +71,7 @@ const AssetDivider = styled.div`
   opacity: 0.3;
 `;
 
-const TableContainer = styled.div`
+const Container = styled.div`
   width: 100%;
   padding: 0px 30px;
 `;
@@ -129,10 +129,12 @@ export const ConfirmSwap = ({
           </IconContainer>
           <AssetInput {...assetOut} />
         </AssetGroup>
-        <TableContainer>
+        <Container>
           <Table {...table} />
-        </TableContainer>
-        {error && <ErrorMessage text={error} />}
+        </Container>
+        <Container>
+          {error && <ErrorMessage text={error} />}
+        </Container>
         <ButtonGroup>
           <Button
             text={{

@@ -53,7 +53,7 @@ Buy.args = {
     name: 'Karura',
     icon: BSXChain,
   },
-  amount: '10 000 000.000000000',
+  amount: '10000000.000000000',
   type: AssetInputType.Buy,
 };
 
@@ -66,7 +66,7 @@ Sell.args = {
     name: 'Karura',
     icon: BSXChain,
   },
-  amount: '10 000 000.000000000',
+  amount: '10000000.000000000',
   type: AssetInputType.Sell,
 };
 
@@ -79,6 +79,6 @@ Receive.args = {
     name: 'Karura',
     icon: BSXChain,
   },
-  amount: '10 000 000.000000000',
+  amount: '10000000.000000000',
   type: AssetInputType.Receive,
 };
