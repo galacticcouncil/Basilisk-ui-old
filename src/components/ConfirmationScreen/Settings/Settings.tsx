@@ -1,21 +1,21 @@
 import styled from '@emotion/styled/macro';
-import { useState } from 'react';
 import { Button, ButtonKind } from '../Button/Button';
 import { ModalComponent } from '../ModalComponent/ModalComponent';
 import { Stepper, StepperProps } from '../Stepper/Stepper';
 import { Text, TextKind } from '../Text/Text';
 import { Input } from '../Input/Input';
-import { Slippage, SlippageSlider } from '../SlippageSlider/SlippageSlider';
+import { SlippageSlider } from '../SlippageSlider/SlippageSlider';
 import { Toggle } from '../Toggle/Toggle';
 import { Tooltip } from '../Tooltip/Tooltip';
+import { createNumberMask } from 'text-mask-addons';
+import { useFormContext } from 'react-hook-form';
 
 export interface SettingsProps {
+  isOpened?: boolean
   onBack: () => void;
   onSave: () => void;
-  slippage: 'autoSlippage' | Slippage;
   tipForAuthor?: number;
   nonce?: number;
-  lifetime?: 'infinite' | number;
   steps?: StepperProps;
   error?: string;
   unit?: string;
@@ -116,21 +116,19 @@ const InputWrapper = styled.div`
 `;
 
 export const Settings = ({
+  isOpened = true,
   onBack,
   onSave,
   steps,
-  slippage,
   tipForAuthor,
   nonce,
-  lifetime,
   error,
   unit,
 }: SettingsProps) => {
-  const [showLifetime, setShowLifetime] = useState(lifetime !== 'infinite');
-  const [showSlippage, setShowSlippage] = useState(slippage !== 'autoSlippage');
+  const methods = useFormContext();
 
   return (
-    <ModalComponent isOpen={true}>
+    <ModalComponent isOpen={isOpened ?? true}>
       {steps ? (
         <StepperContainer>
           <Stepper {...steps} />
@@ -163,15 +161,19 @@ export const Settings = ({
               />
             </ToggleLabel>
             <Toggle
-              toggled={!showSlippage}
-              onClick={() => setShowSlippage(!showSlippage)}
+              {...methods.register('slippage.auto')}
+              toggled={Boolean(methods.getValues('slippage.auto'))}
+              onClick={() =>
+                methods.setValue(
+                  'slippage.auto',
+                  !Boolean(methods.getValues('slippage.auto'))
+                )
+              }
             />
           </ToggleWrapper>
-          {showSlippage && (
+          {!Boolean(methods.getValues('slippage.auto')) && (
             <SlippageWrapper>
-              <SlippageSlider
-                slippage={slippage !== 'autoSlippage' ? slippage : undefined}
-              />
+              <SlippageSlider />
             </SlippageWrapper>
           )}
           <SubtitleWrapper>
@@ -183,6 +185,7 @@ export const Settings = ({
           </SubtitleWrapper>
           <InputWrapper>
             <Input
+              name={'tipForBlockAuthor'}
               label={{
                 id: 'tipForBlockAuthor',
                 defaultMessage: 'Tip for block author',
@@ -191,6 +194,9 @@ export const Settings = ({
                 id: 'tipForBlockAuthorTooltip',
                 defaultMessage: 'Tip for block author',
               }}
+              onChange={(e) => {
+                methods.setValue('tipForBlockAuthor', e.target.value);
+              }}
               unit={unit}
               placeholder={'00.00'}
               value={tipForAuthor?.toString()}
@@ -198,6 +204,7 @@ export const Settings = ({
           </InputWrapper>
           <InputWrapper>
             <Input
+              name={'nonce'}
               label={{
                 id: 'nonce',
                 defaultMessage: 'Nonce',
@@ -205,6 +212,9 @@ export const Settings = ({
               tooltip={{
                 id: 'nonceTooltip',
                 defaultMessage: 'Nonce',
+              }}
+              onChange={(e) => {
+                methods.setValue('nonce', e.target.value);
               }}
               unit={unit}
               placeholder={'00.00'}
@@ -224,13 +234,20 @@ export const Settings = ({
               />
             </ToggleLabel>
             <Toggle
-              toggled={!showLifetime}
-              onClick={() => setShowLifetime(!showLifetime)}
+              {...methods.register('lifetime.infinite')}
+              toggled={Boolean(methods.getValues('lifetime.infinite'))}
+              onClick={() =>
+                methods.setValue(
+                  'lifetime.infinite',
+                  !Boolean(methods.getValues('lifetime.infinite'))
+                )
+              }
             />
           </ToggleWrapper>
-          {showLifetime && (
+          {!Boolean(methods.getValues('lifetime.infinite')) && (
             <InputWrapper>
               <Input
+                name={'lifetime.value'}
                 label={{
                   id: 'lifetime',
                   defaultMessage: 'Set block time',
@@ -241,7 +258,19 @@ export const Settings = ({
                 }}
                 unit={'BLOCK NUMBER'}
                 placeholder={'00.00'}
-                value={lifetime?.toString()}
+                onChange={(e) => {
+                  methods.setValue('lifetime.value', e.target.value);
+                }}
+                value={methods.getValues('lifetime.value')}
+                mask={createNumberMask({
+                  prefix: '',
+                  suffix: '',
+                  includeThousandsSeparator: true,
+                  thousandsSeparatorSymbol: ' ',
+                  integerLimit: 12,
+                  allowNegative: false,
+                  allowLeadingZeroes: false,
+                })}
               ></Input>
             </InputWrapper>
           )}

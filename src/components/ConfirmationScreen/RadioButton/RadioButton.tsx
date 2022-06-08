@@ -1,10 +1,10 @@
 import styled from '@emotion/styled/macro';
 import { Text, TextKind } from '../Text/Text';
 export interface RadioButtonProps {
-  value?: number;
+  value: number;
   checked?: boolean;
   custom?: boolean;
-  onChange?: () => void;
+  onClick?: () => void;
 }
 
 const RadioButtonContainer = styled.label<{ checked: boolean }>`
@@ -38,11 +38,20 @@ const InputComponent = styled.input`
   width: 0;
 `;
 
-export const RadioButton = ({ value, checked = false }: RadioButtonProps) => {
+export const RadioButton = ({
+  value,
+  checked = false,
+  onClick,
+}: RadioButtonProps) => {
   return (
     <>
       <RadioButtonContainer checked={checked}>
-        <InputComponent checked={checked} value={value} type={'radio'} />
+        <InputComponent
+          checked={checked}
+          defaultValue={value}
+          type={'radio'}
+          onClick={() => onClick && onClick()}
+        />
         <Text id={`${value}%`} kind={TextKind.RadioButton} />
       </RadioButtonContainer>
     </>

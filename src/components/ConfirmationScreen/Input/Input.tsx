@@ -1,11 +1,13 @@
 import styled from '@emotion/styled/macro';
 import MaskedInput from 'react-text-mask';
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { mask as defaultMask } from '../helpers/mask';
 import { Text, TextKind, TextProps } from '../Text/Text';
 import { Tooltip } from '../Tooltip/Tooltip';
+import { ChangeEvent, useCallback } from 'react';
 
 export interface InputProps {
+  name: string;
   disabled?: boolean;
   label?: TextProps;
   value?: string;
@@ -16,6 +18,7 @@ export interface InputProps {
   tooltip?: TextProps;
   mask?: any;
   onFocus?: () => void;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Content = styled.div<{ disabled: boolean }>`
@@ -114,6 +117,7 @@ const TooltipContainer = styled.div`
 `;
 
 export const Input = ({
+  name,
   disabled = false,
   label,
   value,
@@ -124,7 +128,15 @@ export const Input = ({
   tooltip,
   mask = defaultMask,
   onFocus,
+  onChange,
 }: InputProps) => {
+  const methods = useFormContext();
+  const handleOnFocus = useCallback(() => onFocus && onFocus(), [onFocus]);
+  const handleOnChange = useCallback(
+    (e) => onChange && onChange(e),
+    [onChange]
+  );
+
   return (
     <Content disabled={disabled}>
       {label && tooltip && (
@@ -143,14 +155,17 @@ export const Input = ({
       )}
       <InputContainer>
         <MaskedInput
+          {...methods.register(name)}
           mask={mask}
           disabled={disabled}
           placeholder={placeholder}
           step={step}
           value={value}
-          onFocus={() => onFocus && onFocus()}
+          onFocus={handleOnFocus}
+          onChange={handleOnChange}
           render={(ref, props) => (
-            <InputComponent ref={ref ?? ref} {...props} />
+            // After discussing with math0rz we've decided to get a little cheeky here
+            <InputComponent ref={ref as any} {...props} />
           )}
         />
         <Unit>{unit && <Text id={unit} kind={TextKind.InputSymbol} />}</Unit>

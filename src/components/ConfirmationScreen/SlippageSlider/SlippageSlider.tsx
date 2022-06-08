@@ -2,17 +2,15 @@ import styled from '@emotion/styled/macro';
 import { RadioButton } from '../RadioButton/RadioButton';
 import { useIntl } from 'react-intl';
 import { Input } from '../Input/Input';
+import { createNumberMask } from 'text-mask-addons';
+import { useFormContext } from 'react-hook-form';
+import { useEffect } from 'react';
 
 type SlippageKey = 'radio' | 'custom';
 
 export type Slippage = {
-  [K in SlippageKey]?: number;
+  [K in SlippageKey]?: string;
 };
-
-export interface SlippageSliderProps {
-  slippage?: Slippage;
-  onChange?: (slippage: number) => void;
-}
 
 const SlippageSliderContainer = styled.div`
   width: 100%;
@@ -26,41 +24,64 @@ const SlippageSliderContainer = styled.div`
   gap: 10px;
 `;
 
-const RadioButtonContainer = styled.div``;
-
 const InputContainer = styled.div`
   height: 55px;
   width: 100px;
 `;
 
-export const SlippageSlider = ({
-  slippage = { radio: 0.5 },
-  onChange,
-}: SlippageSliderProps) => {
+export const SlippageSlider = () => {
   const intl = useIntl();
   const radios: number[] = [0.1, 0.5, 1, 3];
+  const methods = useFormContext();
+
+  useEffect(() => {
+    methods.watch();
+  }, [methods]);
 
   return (
     <SlippageSliderContainer>
       {radios.map((radio) => {
         return (
-          <RadioButtonContainer onClick={() => onChange && onChange(radio)}>
-            <RadioButton
-              value={radio}
-              checked={!slippage.custom && Number(slippage.radio) === radio}
-            />
-          </RadioButtonContainer>
+          <RadioButton
+          key={radio}
+            value={radio}
+            onClick={() => {
+              methods.setValue('slippage.radio', `${radio}`);
+              methods.setValue('slippage.custom', undefined);
+            }}
+            checked={
+              !methods.getValues('slippage.custom') &&
+              `${methods.getValues('slippage.radio')}` === String(radio)
+            }
+            {...methods.register('slippage.radio')}
+          />
         );
       })}
       <InputContainer>
         <Input
+          {...methods.register('slippage.custom', {
+            pattern: /^\d{1,2}[.]{0,1}\d{0,2}/i,
+          })}
+          onChange={(e) => {
+            methods.setValue('slippage.custom', e.target.value);
+          }}
           placeholder={intl.formatMessage({
             id: 'Custom',
             defaultMessage: 'Custom',
           })}
           step={'0.1'}
-          value={`${slippage.custom ? String(slippage.custom) : undefined}`}
-          unit={slippage.custom ? '%' : ''}
+          value={`${methods.getValues('slippage.custom')}`}
+          unit={methods.getValues('slippage.custom') ? '%' : ''}
+          mask={createNumberMask({
+            prefix: '',
+            suffix: '',
+            allowDecimal: true,
+            decimalSymbol: '.',
+            decimalLimit: 2,
+            integerLimit: 2,
+            allowNegative: false,
+            allowLeadingZeroes: false,
+          })}
         />
       </InputContainer>
     </SlippageSliderContainer>
