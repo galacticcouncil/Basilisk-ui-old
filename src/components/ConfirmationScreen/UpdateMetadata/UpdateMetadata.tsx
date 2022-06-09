@@ -2,8 +2,6 @@ import styled from '@emotion/styled/macro';
 import { Button, ButtonKind } from '../Button/Button';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Icon } from '../Icon/Icon';
-import { ModalComponent } from '../ModalComponent/ModalComponent';
-import { Stepper, StepperProps } from '../Stepper/Stepper';
 import { Text, TextKind } from '../Text/Text';
 
 export interface UpdateVersionsProps {
@@ -17,7 +15,6 @@ export interface UpdateMetadataProps extends UpdateVersionsProps {
   loading?: boolean;
   isOpened?: boolean;
   error?: string;
-  steps?: StepperProps;
 }
 
 const ModalContainer = styled.div`
@@ -30,15 +27,6 @@ const ModalContainer = styled.div`
   box-shadow: 0px 38px 46px rgba(0, 0, 0, 0.03);
   border-radius: 16px;
   padding: 30px;
-`;
-
-const StepperContainer = styled.div`
-  width: 460px;
-  padding-bottom: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `;
 
 const ButtonGroup = styled.div`
@@ -128,94 +116,85 @@ export const UpdateMetadata = ({
   newVersion,
   onUpdateMetadata,
   onCancel,
-  isOpened = false,
   loading = false,
   error,
-  steps,
 }: UpdateMetadataProps) => {
   return (
-    <ModalComponent isOpen={isOpened}>
-      {steps && (
-        <StepperContainer>
-          <Stepper {...steps} />
-        </StepperContainer>
-      )}
-      <ModalContainer>
-        <Spacer>
-          <Icon name={'UpdateMetadata'} size={135} />
-          <Spacer padding="11px 0px 0px 0px">
-            <Text
-              id={'updateMetadata'}
-              defaultMessage={'Update Metadata'}
-              kind={TextKind.Title}
-            />
-          </Spacer>
-          <TextWrapper>
-            <Text
-              id={'updateMetadataText'}
-              defaultMessage={
-                'Before reviewing your transaction, please update the metadata in your wallet.'
-              }
-              kind={TextKind.Text}
-            />
-          </TextWrapper>
+    <ModalContainer>
+      <Spacer>
+        <Icon name={'UpdateMetadata'} size={135} />
+        <Spacer padding="11px 0px 0px 0px">
           <Text
-            id={'updateMetadataMoreInfo'}
-            defaultMessage={'More Info'}
-            kind={TextKind.TextUrl}
+            id={'updateMetadata'}
+            defaultMessage={'Update Metadata'}
+            kind={TextKind.Title}
           />
         </Spacer>
-        <Spacer>
-          <UpdateVersions oldVersion={oldVersion} newVersion={newVersion} />
-          {error && (
-            <Spacer padding={'12px 0px 0px 0px'}>
-              <Container>
-                <ErrorMessage text={error} />
-              </Container>
-            </Spacer>
-          )}
-        </Spacer>
-        {loading ? (
-          <>
-            <Button
-              text={{
-                id: 'signatureWaitingMessage',
-                defaultMessage: 'Waiting for signature',
-              }}
-              kind={ButtonKind.Loading}
-            />
-            <Spacer padding="10px 0px 0px 0px">
-              <Text
-                id={'updatingMetadataTooltip'}
-                defaultMessage={
-                  'Please accept update through your wallet extension.'
-                }
-                kind={TextKind.ButtonLoading}
-              />
-            </Spacer>
-          </>
-        ) : (
-          <ButtonGroup>
-            <Button
-              text={{
-                id: 'cancel',
-                defaultMessage: 'Cancel',
-              }}
-              onClick={() => onCancel()}
-              kind={ButtonKind.Secondary}
-            />
-            <Button
-              text={{
-                id: 'update',
-                defaultMessage: 'Update',
-              }}
-              onClick={() => onUpdateMetadata()}
-              kind={ButtonKind.Primary}
-              big={true}
-            />
-          </ButtonGroup>
+        <TextWrapper>
+          <Text
+            id={'updateMetadataText'}
+            defaultMessage={
+              'Before reviewing your transaction, please update the metadata in your wallet.'
+            }
+            kind={TextKind.Text}
+          />
+        </TextWrapper>
+        <Text
+          id={'updateMetadataMoreInfo'}
+          defaultMessage={'More Info'}
+          kind={TextKind.TextUrl}
+        />
+      </Spacer>
+      <Spacer>
+        <UpdateVersions oldVersion={oldVersion} newVersion={newVersion} />
+        {error && (
+          <Spacer padding={'12px 0px 0px 0px'}>
+            <Container>
+              <ErrorMessage text={error} />
+            </Container>
+          </Spacer>
         )}
-      </ModalContainer>
-    </ModalComponent>
+      </Spacer>
+      {loading ? (
+        <>
+          <Button
+            text={{
+              id: 'signatureWaitingMessage',
+              defaultMessage: 'Waiting for signature',
+            }}
+            kind={ButtonKind.Loading}
+          />
+          <Spacer padding="10px 0px 0px 0px">
+            <Text
+              id={'updatingMetadataTooltip'}
+              defaultMessage={
+                'Please accept update through your wallet extension.'
+              }
+              kind={TextKind.ButtonLoading}
+            />
+          </Spacer>
+        </>
+      ) : (
+        <ButtonGroup>
+          <Button
+            text={{
+              id: 'cancel',
+              defaultMessage: 'Cancel',
+            }}
+            onClick={() => onCancel()}
+            kind={ButtonKind.Secondary}
+          />
+          <Button
+            text={{
+              id: 'update',
+              defaultMessage: 'Update',
+            }}
+            onClick={() => onUpdateMetadata()}
+            kind={ButtonKind.Primary}
+            big={true}
+          />
+        </ButtonGroup>
+      )}
+    </ModalContainer>
   );
 };

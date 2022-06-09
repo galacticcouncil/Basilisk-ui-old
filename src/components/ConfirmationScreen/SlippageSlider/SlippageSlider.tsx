@@ -43,11 +43,12 @@ export const SlippageSlider = () => {
       {radios.map((radio) => {
         return (
           <RadioButton
-          key={radio}
+            key={radio}
             value={radio}
             onClick={() => {
               methods.setValue('slippage.radio', `${radio}`);
               methods.setValue('slippage.custom', undefined);
+              methods.setValue('slippage.value', `${radio}`);
             }}
             checked={
               !methods.getValues('slippage.custom') &&
@@ -64,6 +65,7 @@ export const SlippageSlider = () => {
           })}
           onChange={(e) => {
             methods.setValue('slippage.custom', e.target.value);
+            methods.setValue('slippage.value', `${e.target.value}`);
           }}
           placeholder={intl.formatMessage({
             id: 'Custom',

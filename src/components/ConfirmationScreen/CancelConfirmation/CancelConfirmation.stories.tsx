@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { linkTo } from '@storybook/addon-links';
 
 export default {
-  title: 'components/ConfirmationScreen/CancelConfirmation',
+  title: 'components/ConfirmationScreen/Steps/CancelConfirmation',
   component: CancelConfirmation,
   argTypes: {
     onCancel: {
@@ -32,23 +32,6 @@ const Template: ComponentStory<typeof CancelConfirmation> = (args) => (
 
 export const Default = Template.bind({});
 Default.args = {
-  steps: {
-    steps: [
-      {
-        id: 'metadata',
-        defaultMessage: 'Metadata',
-      },
-      {
-        id: 'confirmation',
-        defaultMessage: 'Confirmation',
-      },
-      {
-        id: 'reviewAndSign ',
-        defaultMessage: 'Review & Sign',
-      },
-    ],
-    currentStep: 0,
-  },
-  onBack: linkTo('components/ConfirmationScreen/UpdateMetadata'),
-  onCancel: linkTo('components/ConfirmationScreen/UpdateMetadata'),
+  onBack: linkTo('components/ConfirmationScreen/Steps/UpdateMetadata'),
+  onCancel: linkTo('components/ConfirmationScreen/Steps/UpdateMetadata'),
 };

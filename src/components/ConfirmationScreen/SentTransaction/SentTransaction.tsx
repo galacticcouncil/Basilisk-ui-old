@@ -2,8 +2,6 @@ import styled from '@emotion/styled/macro';
 import { Button, ButtonKind } from '../Button/Button';
 import { Icon, IconNames } from '../Icon/Icon';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
-import { ModalComponent } from '../ModalComponent/ModalComponent';
-import { Stepper, StepperProps } from '../Stepper/Stepper';
 import { Text, TextKind, TextProps } from '../Text/Text';
 
 export type SentTransactionStatus = 'sent' | 'error' | 'submitted';
@@ -24,7 +22,6 @@ type SentTransactionVariants = {
 export interface SentTransactionProps {
   onAction: () => void;
   status: SentTransactionStatus;
-  steps?: StepperProps;
 }
 
 const ModalContainer = styled.div<{ closeIn?: number }>`
@@ -38,15 +35,6 @@ const ModalContainer = styled.div<{ closeIn?: number }>`
   box-shadow: 0px 38px 46px rgba(0, 0, 0, 0.03);
   border-radius: 16px;
   padding: 30px;
-`;
-
-const StepperContainer = styled.div`
-  width: 460px;
-  padding-bottom: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `;
 
 const ButtonGroup = styled.div`
@@ -65,10 +53,6 @@ const TextWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`;
-
-const Spacer = styled.div`
-  height: 77px;
 `;
 
 const IconContainer = styled.div`
@@ -144,53 +128,40 @@ const allStates: SentTransactionVariants = {
   },
 };
 
-export const SentTransaction = ({
-  onAction,
-  status,
-  steps,
-}: SentTransactionProps) => {
+export const SentTransaction = ({ onAction, status }: SentTransactionProps) => {
   const { title, subtitle, actionLabel, actionKind, icon, url } =
     allStates[status];
 
   const hideFrom = 5;
 
   return (
-    <ModalComponent isOpen={true}>
-      {steps ? (
-        <StepperContainer>
-          <Stepper {...steps} />
-        </StepperContainer>
-      ) : (
-        <Spacer />
+    <ModalContainer closeIn={hideFrom}>
+      {icon && (
+        <IconContainer>
+          {icon === 'LoadingBig' ? (
+            <LoadingIndicator big={true} size={117} />
+          ) : (
+            <Icon name={icon} size={117} />
+          )}
+        </IconContainer>
       )}
-      <ModalContainer closeIn={hideFrom}>
-        {icon && (
-          <IconContainer>
-            {icon === 'LoadingBig' ? (
-              <LoadingIndicator big={true} size={117} />
-            ) : (
-              <Icon name={icon} size={117} />
-            )}
-          </IconContainer>
-        )}
-        <Text {...title} />
-        <TextWrapper>
-          <Text {...subtitle} kind={TextKind.Text} />
-        </TextWrapper>
-        <ButtonGroup>
-          <Button
-            text={actionLabel}
-            onClick={() => onAction()}
-            kind={actionKind}
-            big={true}
-          />
-        </ButtonGroup>
-        {url && (
-          <UrlContainer>
-            <Text {...url} kind={TextKind.TextUrl} />
-          </UrlContainer>
-        )}
-      </ModalContainer>
-    </ModalComponent>
+      <Text {...title} />
+      <TextWrapper>
+        <Text {...subtitle} kind={TextKind.Text} />
+      </TextWrapper>
+      <ButtonGroup>
+        <Button
+          text={actionLabel}
+          onClick={() => onAction()}
+          kind={actionKind}
+          big={true}
+        />
+      </ButtonGroup>
+      {url && (
+        <UrlContainer>
+          <Text {...url} kind={TextKind.TextUrl} />
+        </UrlContainer>
+      )}
+    </ModalContainer>
   );
 };

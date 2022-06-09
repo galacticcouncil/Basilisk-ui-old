@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { linkTo } from '@storybook/addon-links';
 
 export default {
-  title: 'components/ConfirmationScreen/SentTransaction',
+  title: 'components/ConfirmationScreen/Steps/SentTransaction',
   component: SentTransaction,
   argTypes: {
     onAction: {
@@ -30,7 +30,7 @@ const Template: ComponentStory<typeof SentTransaction> = (args) => (
 export const Sent = Template.bind({});
 Sent.args = {
   status: 'sent',
-  onAction: linkTo('components/ConfirmationScreen/SentTransaction', 'submitted'),
+  onAction: linkTo('components/ConfirmationScreen/Steps/SentTransaction', 'submitted'),
 };
 
 export const Error = Template.bind({});
@@ -41,5 +41,5 @@ Error.args = {
 export const submitted = Template.bind({});
 submitted.args = {
   status: 'submitted',
-  onAction: linkTo('components/ConfirmationScreen/UpdateMetadata'),
+  onAction: linkTo('components/ConfirmationScreen/Steps/UpdateMetadata'),
 };

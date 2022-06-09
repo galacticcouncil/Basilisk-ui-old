@@ -2,15 +2,16 @@ import { ReviewTransaction } from './ReviewTransaction';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
-import * as Stepper from '../Stepper/Stepper.stories';
 import * as MethodText from '../MethodText/MethodText.stories';
 import { MethodTextProps } from '../MethodText/MethodText';
 import * as Table from '../Table/Table.stories';
 import { TableProps } from '../Table/Table';
 import { linkTo } from '@storybook/addon-links';
+import { FormProvider, useForm } from 'react-hook-form';
+import { maskValue } from '../helpers/mask';
 
 export default {
-  title: 'components/ConfirmationScreen/ReviewTransaction',
+  title: 'components/ConfirmationScreen/Steps/ReviewTransaction',
   component: ReviewTransaction,
   argTypes: {
     onCancel: {
@@ -29,21 +30,35 @@ export default {
   ],
 } as ComponentMeta<typeof ReviewTransaction>;
 
-const Template: ComponentStory<typeof ReviewTransaction> = (args) => (
-  <StorybookWrapper>
-    <ReviewTransaction {...args} />
-  </StorybookWrapper>
-);
+const Template: ComponentStory<typeof ReviewTransaction> = (args) => {
+  const defaults = {
+    minimalAmountReceived: { value: maskValue('32456.46') },
+    slippage: { custom: '5', value: '5' },
+    transactionCost: { value: '12', secondValue: '2' },
+    lifetime: {
+      blockNumber: '0',
+      infinite: true,
+      value: '12/10/2022, 10:00:00',
+    },
+    nonce: { value: '0' },
+    tipForBlockAuthor: { value: maskValue('0.0066') },
+  };
+  const methods = useForm({ defaultValues: defaults });
+
+  return (
+    <StorybookWrapper>
+      <FormProvider {...methods}>
+        <ReviewTransaction {...args} />
+      </FormProvider>
+    </StorybookWrapper>
+  );
+};
 
 export const Default = Template.bind({});
 Default.args = {
   loading: false,
   methodCall: MethodText.Default.args as MethodTextProps,
-  steps: {
-    steps: Stepper.Default.args?.steps || [],
-    currentStep: 2,
-  },
   table: Table.NoEdit.args as TableProps,
-  onCancel: linkTo('components/ConfirmationScreen/ConfirmSwap'),
-  onSign: linkTo('components/ConfirmationScreen/SentTransaction', 'Sent'),
+  onCancel: linkTo('components/ConfirmationScreen/Steps/ConfirmSwap'),
+  onSign: linkTo('components/ConfirmationScreen/Steps/SentTransaction', 'Sent'),
 };

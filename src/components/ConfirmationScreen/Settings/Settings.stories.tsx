@@ -29,11 +29,13 @@ export default {
 } as ComponentMeta<typeof Settings>;
 
 const Template: ComponentStory<typeof Settings> = (args) => {
-  const defaultSettings = {
+  const defaults = {
     slippage: { radio: '0.5', auto: true },
     lifetime: { blockNumber: '0', infinite: true },
+    nonce: '',
+    tipForBlockAuthor: '',
   };
-  const methods = useForm({ defaultValues: defaultSettings });
+  const methods = useForm({ defaultValues: defaults });
   console.log('watch(): ', JSON.stringify(methods.watch()));
 
   return (
@@ -49,7 +51,6 @@ const Template: ComponentStory<typeof Settings> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  isOpened: true,
   error: '',
   unit: 'BSX',
   onBack: linkTo('components/ConfirmationScreen/ConfirmSwap'),

@@ -8,11 +8,12 @@ import KSM from '../AssetIcon/assets/KSM.svg';
 import { AssetInputType } from '../AssetInput/AssetInput';
 import * as Table from '../Table/Table.stories';
 import { TableProps } from '../Table/Table';
-import * as Stepper from '../Stepper/Stepper.stories';
 import { linkTo } from '@storybook/addon-links';
+import { FormProvider, useForm } from 'react-hook-form';
+import { maskValue } from '../helpers/mask';
 
 export default {
-  title: 'components/ConfirmationScreen/ConfirmSwap',
+  title: 'components/ConfirmationScreen/Steps/ConfirmSwap',
   component: ConfirmSwap,
   argTypes: {
     onCancel: {
@@ -31,20 +32,34 @@ export default {
   ],
 } as ComponentMeta<typeof ConfirmSwap>;
 
-const Template: ComponentStory<typeof ConfirmSwap> = (args) => (
-  <StorybookWrapper>
-    <ConfirmSwap {...args} />
-  </StorybookWrapper>
-);
+const Template: ComponentStory<typeof ConfirmSwap> = (args) => {
+  const defaults = {
+    minimalAmountReceived: { value: maskValue('32456.46') },
+    slippage: { custom: '5', value: '5' },
+    transactionCost: { value: '12', secondValue: '2' },
+    lifetime: {
+      blockNumber: '0',
+      infinite: true,
+      value: '12/10/2022, 10:00:00',
+    },
+    nonce: { value: '0' },
+    tipForBlockAuthor: { value: maskValue('0.0066') },
+  };
+  const methods = useForm({ defaultValues: defaults });
+
+  return (
+    <StorybookWrapper>
+      <FormProvider {...methods}>
+        <ConfirmSwap {...args} />
+      </FormProvider>
+    </StorybookWrapper>
+  );
+};
 
 export const Default = Template.bind({});
 Default.args = {
   error: '',
   nextBlockTime: 10,
-  steps: {
-    steps: Stepper.Default.args?.steps || [],
-    currentStep: 1,
-  },
   assetIn: {
     name: 'Basilisk',
     icon: BSX,
@@ -68,6 +83,6 @@ Default.args = {
     type: AssetInputType.Receive,
   },
   table: Table.Default.args as TableProps,
-  onCancel: linkTo('components/ConfirmationScreen/CancelConfirmation'),
-  onReview: linkTo('components/ConfirmationScreen/ReviewTransaction'),
+  onCancel: linkTo('components/ConfirmationScreen/Steps/CancelConfirmation'),
+  onReview: linkTo('components/ConfirmationScreen/Steps/ReviewTransaction'),
 };

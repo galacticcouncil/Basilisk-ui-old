@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { linkTo } from '@storybook/addon-links';
 
 export default {
-  title: 'components/ConfirmationScreen/UpdateMetadata',
+  title: 'components/ConfirmationScreen/Steps/UpdateMetadata',
   component: UpdateMetadata,
   argTypes: {
     oldVersion: {
@@ -52,23 +52,6 @@ Default.args = {
   isOpened: true,
   loading: false,
   error: '',
-  steps: {
-    steps: [
-      {
-        id: 'metadata',
-        defaultMessage: 'Metadata',
-      },
-      {
-        id: 'confirmation',
-        defaultMessage: 'Confirmation',
-      },
-      {
-        id: 'reviewAndSign ',
-        defaultMessage: 'Review & Sign',
-      },
-    ],
-    currentStep: 0,
-  },
-  onCancel: linkTo('components/ConfirmationScreen/CancelConfirmation'),
-  onUpdateMetadata: linkTo('components/ConfirmationScreen/ConfirmSwap'),
+  onCancel: linkTo('components/ConfirmationScreen/Steps/CancelConfirmation'),
+  onUpdateMetadata: linkTo('components/ConfirmationScreen/Steps/ConfirmSwap'),
 };

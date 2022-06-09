@@ -2,23 +2,28 @@ import styled from '@emotion/styled/macro';
 import { Text, TextProps, TextKind } from '../Text/Text';
 import { useState } from 'react';
 import { Icon } from '../Icon/Icon';
+import { useFormContext } from 'react-hook-form';
 
 type TableValue = {
   label: TextProps;
-  value: TextProps;
-  secondValue?: TextProps;
+  valueSuffix?: string;
+  valuePrefix?: string;
+  secondValueSuffix?: string;
+  secondValuePrefix?: string;
   editable?: boolean;
 };
 
 export interface TableProps {
   settings: TableValue[];
   advancedSettings?: TableValue[];
+  noEdit?: boolean;
   handleEdit?: () => void;
 }
 
 interface RowProps {
   data: TableValue;
   handleEdit?: () => void;
+  noEdit?: boolean;
 }
 
 const TableContainer = styled.div`
@@ -80,22 +85,40 @@ const Value = styled.div`
   align-items: flex-end;
 `;
 
-const Row = ({ data, handleEdit }: RowProps) => {
+const Row = ({ data, handleEdit, noEdit }: RowProps) => {
+  const methods = useFormContext();
+
   return (
     <RowContainer>
       <Label>
         <Text {...data.label} kind={TextKind.RowLabel} />
       </Label>
       <Value>
-        <Text {...data.value} kind={TextKind.RowValue} />
-        {data.secondValue && (
-          <Text {...data.secondValue} kind={TextKind.RowSecondValue} />
+        {methods.getValues(`${data.label.id}.value`) && (
+          <Text
+            id={`${data.valuePrefix || ''}${methods.getValues(
+              `${data.label.id}.value`
+            )}${data.valueSuffix || ''}`}
+            kind={TextKind.RowValue}
+          />
+        )}
+        {methods.getValues(`${data.label.id}.secondValue`) && (
+          <Text
+            id={`${data.secondValuePrefix || ''}${methods.getValues(
+              `${data.label.id}.secondValue`
+            )}${data.secondValueSuffix || ''}`}
+            kind={TextKind.RowSecondValue}
+          />
         )}
       </Value>
-      {data.editable && (
+      {!noEdit && data.editable && (
         <Edit>
           <Button onClick={handleEdit && handleEdit}>
-            <Text id="Edit" kind={TextKind.TableButton} />
+            <Text
+              id="edit"
+              defaultMessage={'Edit'}
+              kind={TextKind.TableButton}
+            />
           </Button>
         </Edit>
       )}
@@ -107,18 +130,27 @@ export const Table = ({
   settings,
   advancedSettings,
   handleEdit,
+  noEdit = false,
 }: TableProps) => {
   const [showHidden, setShowHidden] = useState(false);
 
   return (
     <TableContainer>
       {settings.map((item) => (
-        <Row data={item} handleEdit={handleEdit} />
+        <Row
+          data={item}
+          handleEdit={handleEdit}
+          noEdit={noEdit}
+        />
       ))}
       {showHidden &&
         advancedSettings &&
         advancedSettings.map((item) => (
-          <Row data={item} handleEdit={handleEdit} />
+          <Row
+            data={item}
+            handleEdit={handleEdit}
+            noEdit={noEdit}
+          />
         ))}
       {advancedSettings && (
         <div>

@@ -4,7 +4,7 @@ import { Icon } from '../Icon/Icon';
 
 export interface StepperProps {
   steps: TextProps[];
-  currentStep: number;
+  currentStep?: number;
 }
 
 // TODO: Refactor to useRef or props
@@ -106,7 +106,7 @@ const calculateSeparatorWidth = (stepsCount: number): number => {
   return (stepperWidth - stepsCount * 32) / stepsCount;
 };
 
-export const Stepper = ({ steps, currentStep }: StepperProps) => {
+export const Stepper = ({ steps, currentStep = 0 }: StepperProps) => {
   return (
     <Container>
       <StepContainer margin={calculateSeparatorWidth(steps.length) / 2}>
