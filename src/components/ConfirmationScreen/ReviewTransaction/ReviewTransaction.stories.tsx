@@ -61,4 +61,6 @@ Default.args = {
   table: Table.NoEdit.args as TableProps,
   onCancel: linkTo('components/ConfirmationScreen/Steps/ConfirmSwap'),
   onSign: linkTo('components/ConfirmationScreen/Steps/SentTransaction', 'Sent'),
+  nextBlockTime: 10,
+  error: '',
 };

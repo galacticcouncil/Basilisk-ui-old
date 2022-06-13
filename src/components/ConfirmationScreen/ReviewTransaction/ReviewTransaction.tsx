@@ -3,6 +3,8 @@ import { Button, ButtonKind } from '../Button/Button';
 import { Table, TableProps } from '../Table/Table';
 import { Text, TextKind } from '../Text/Text';
 import { MethodText, MethodTextProps } from '../MethodText/MethodText';
+import { RefreshTimer } from '../RefreshTimer/RefreshTImer';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export interface ReviewTransactionProps {
   onCancel: () => void;
@@ -10,6 +12,8 @@ export interface ReviewTransactionProps {
   methodCall: MethodTextProps;
   table: TableProps;
   loading?: boolean;
+  nextBlockTime?: number;
+  error?: string;
 }
 
 const ModalContainer = styled.div`
@@ -43,7 +47,7 @@ const TextWrapper = styled.div`
   gap: 6px;
 `;
 
-const TableContainer = styled.div`
+const Container = styled.div`
   width: 100%;
   padding: 0px 30px;
 `;
@@ -61,6 +65,13 @@ const MethodCallContainer = styled.div`
   width: 100%;
   padding: 19px 0px 0px 30px;
   background: rgba(0, 0, 0, 0.15);
+  position: relative;
+`;
+
+const RefreshTimerContainer = styled.div`
+  position: absolute;
+  right: 38px;
+  top: -15px;
 `;
 
 export const ReviewTransaction = ({
@@ -69,6 +80,8 @@ export const ReviewTransaction = ({
   table,
   methodCall,
   loading,
+  nextBlockTime,
+  error,
 }: ReviewTransactionProps) => {
   return (
     <ModalContainer>
@@ -85,11 +98,15 @@ export const ReviewTransaction = ({
         />
       </TextWrapper>
       <MethodCallContainer>
+        <RefreshTimerContainer>
+          <RefreshTimer time={nextBlockTime || 0} />
+        </RefreshTimerContainer>
         <MethodText {...methodCall} />
       </MethodCallContainer>
-      <TableContainer>
+      <Container>
         <Table {...table} />
-      </TableContainer>
+      </Container>
+      <Container>{error && <ErrorMessage text={error} />}</Container>
       {loading ? (
         <Spacer padding="0px 30px 30px 30px">
           <Button

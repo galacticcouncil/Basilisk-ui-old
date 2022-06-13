@@ -131,6 +131,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
     table: TableNoEdit.args as TableProps,
     onSign: () => handleSign(),
     onCancel: () => handleBack(),
+    nextBlockTime: 10,
   };
 
   const SettingsProps: SettingsProps = {
