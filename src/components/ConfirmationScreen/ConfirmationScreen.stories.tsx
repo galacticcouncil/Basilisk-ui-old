@@ -60,6 +60,14 @@ type Stage =
 
 const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
   const [history, setHistory] = useState<Stage[]>(['UpdateMetadata']);
+  const [timer, setTimer] = useState(12);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTimer(timer <= 0 ? 12 : timer - 1);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [timer]);
   const lastHistory = last(history);
   const [currentStep, setCurrentStep] = useState(0);
   const defaults = {
@@ -124,6 +132,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
       settings: TableDefault.args?.settings || [],
       advancedSettings: TableDefault.args?.advancedSettings || [],
     },
+    nextBlockTime: timer,
   };
 
   const ReviewTransactionProps: ReviewTransactionProps = {
@@ -131,7 +140,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
     table: TableNoEdit.args as TableProps,
     onSign: () => handleSign(),
     onCancel: () => handleBack(),
-    nextBlockTime: 10,
+    nextBlockTime: timer,
   };
 
   const SettingsProps: SettingsProps = {
@@ -142,7 +151,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
 
   const SentTransactionPropsEmit: SentTransactionProps = {
     onAction: () => handleEmit(),
-    status: 'sent'
+    status: 'sent',
   };
 
   const SentTransactionPropsSubmitted: SentTransactionProps = {
@@ -222,13 +231,13 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
               <UpdateMetadata {...UpdateMetadataProps} />
             )}
             {lastHistory === 'ConfirmSwap' && (
-              <ConfirmSwap {...ConfirmSwapProps} nextBlockTime={10} />
+              <ConfirmSwap {...ConfirmSwapProps} />
             )}
             {lastHistory === 'ReviewTransaction' && (
               <ReviewTransaction {...ReviewTransactionProps} />
             )}
             {lastHistory === 'SentTransactionEmit' && (
-              <SentTransaction {...SentTransactionPropsEmit}/>
+              <SentTransaction {...SentTransactionPropsEmit} />
             )}
             {lastHistory === 'SentTransactionDone' && (
               <SentTransaction {...SentTransactionPropsSubmitted} />
