@@ -53,7 +53,8 @@ type Stage =
   | 'CancelConfirmation'
   | 'UpdateMetadata'
   | 'ReviewTransaction'
-  | 'SentTransaction'
+  | 'SentTransactionEmit'
+  | 'SentTransactionDone'
   | 'ConfirmSwap'
   | 'Settings';
 
@@ -73,6 +74,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
     nonce: { value: '0' },
     tipForBlockAuthor: { value: maskValue('0.0066') },
   };
+
   const methods = useForm({ defaultValues: defaults });
   console.log('watch(): ', methods.watch());
 
@@ -136,9 +138,14 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
     onSave: () => handleSettings(),
   };
 
-  const SentTransactionProps: SentTransactionProps = {
+  const SentTransactionPropsEmit: SentTransactionProps = {
+    onAction: () => handleEmit(),
+    status: 'sent'
+  };
+
+  const SentTransactionPropsSubmitted: SentTransactionProps = {
     onAction: () => handleReset(),
-    status: 'sent',
+    status: 'submitted',
   };
 
   useEffect(() => {
@@ -155,7 +162,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
         setCurrentStep(2);
         break;
       }
-      case 'SentTransaction': {
+      case 'SentTransactionEmit': {
         setCurrentStep(2);
         break;
       }
@@ -190,7 +197,11 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
   };
 
   const handleSign = () => {
-    setHistory([...history, 'SentTransaction']);
+    setHistory([...history, 'SentTransactionEmit']);
+  };
+
+  const handleEmit = () => {
+    setHistory([...history, 'SentTransactionDone']);
   };
 
   const handleSettings = () => {
@@ -214,8 +225,11 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
             {lastHistory === 'ReviewTransaction' && (
               <ReviewTransaction {...ReviewTransactionProps} />
             )}
-            {lastHistory === 'SentTransaction' && (
-              <SentTransaction {...SentTransactionProps} />
+            {lastHistory === 'SentTransactionEmit' && (
+              <SentTransaction {...SentTransactionPropsEmit}/>
+            )}
+            {lastHistory === 'SentTransactionDone' && (
+              <SentTransaction {...SentTransactionPropsSubmitted} />
             )}
             {lastHistory === 'Settings' && <Settings {...SettingsProps} />}
           </ConfirmationScreen>

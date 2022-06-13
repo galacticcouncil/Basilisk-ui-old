@@ -40,7 +40,7 @@ const Span = styled.div<{ checked: boolean }>`
   transform: translate(${(props) => (props.checked ? '36px' : '4px')});
 
   ${Button}:hover & {
-    border: 2px solid #8affcb;
+    outline: 2px solid #8affcb;
   }
 
   ${Button}:disabled & {
@@ -49,6 +49,7 @@ const Span = styled.div<{ checked: boolean }>`
   }
 
   ${Button}:disabled:hover & {
+    outline: 0px;
     border-width: 0px;
     background: linear-gradient(0deg, #29292d, #29292d), #26282f;
   }
@@ -59,7 +60,6 @@ export const Toggle = ({
   disabled = false,
   onClick,
 }: ToggleProps) => {
-
   return (
     <ToggleContainer>
       <Input type="hidden" />

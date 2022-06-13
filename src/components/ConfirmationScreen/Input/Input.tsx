@@ -160,7 +160,7 @@ export const Input = ({
           disabled={disabled}
           placeholder={placeholder}
           step={step}
-          value={value}
+          value={value && value}
           onFocus={handleOnFocus}
           onChange={handleOnChange}
           render={(ref, props) => (

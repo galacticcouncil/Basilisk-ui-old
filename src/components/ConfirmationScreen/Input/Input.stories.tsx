@@ -2,6 +2,7 @@ import { Input } from './Input';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import { FormProvider, useForm } from 'react-hook-form';
 
 export default {
   title: 'components/ConfirmationScreen/Input',
@@ -28,10 +29,18 @@ export default {
 } as ComponentMeta<typeof Input>;
 
 const Template: ComponentStory<typeof Input> = (args) => {
+  const defaults = { test: '112312.21323' };
+  const methods = useForm({ defaultValues: defaults });
+  console.log('watch(): ', methods.watch());
+
   return (
     <StorybookWrapper>
       <div style={{ width: '460px' }}>
-        <Input {...args} />
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(() => {})}>
+            <Input {...args} value={methods.getValues('test')} />
+          </form>
+        </FormProvider>
       </div>
     </StorybookWrapper>
   );
@@ -39,10 +48,10 @@ const Template: ComponentStory<typeof Input> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
+  name: 'test',
   label: {
     id: 'Tip for block author',
   },
-  value: '1231.23123124',
   error: {
     id: 'Not enough funds',
   },
