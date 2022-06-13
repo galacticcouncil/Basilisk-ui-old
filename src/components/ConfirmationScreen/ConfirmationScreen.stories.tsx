@@ -136,6 +136,7 @@ const Template: ComponentStory<typeof ConfirmationScreen> = (args) => {
   const SettingsProps: SettingsProps = {
     onBack: () => handleBack(),
     onSave: () => handleSettings(),
+    unit: 'BSX',
   };
 
   const SentTransactionPropsEmit: SentTransactionProps = {
