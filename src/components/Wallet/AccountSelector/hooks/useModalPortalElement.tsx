@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Account } from '../../../../generated/graphql';
+import { Account, Maybe } from '../../../../generated/graphql';
 import { AccountSelector } from './../AccountSelector';
 import {
   ModalPortalElementFactory,
@@ -14,16 +14,15 @@ export type ModalPortalElement = ({
   onAccountCleared,
   account,
   isExtensionAvailable,
-}: Pick<
-  WalletProps,
-  | 'accounts'
-  | 'accountsLoading'
-  | 'onAccountSelected'
-  | 'onAccountCleared'
-  | 'account'
-  | 'isExtensionAvailable'
->) => ModalPortalElementFactory;
-export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
+}: {
+  accounts?: Account[],
+  accountsLoading: boolean,
+  account?: Maybe<Account>,
+  isExtensionAvailable: boolean,
+  onAccountSelected: (account: Account) => void,
+  onAccountCleared: () => void
+}) => ModalPortalElementFactory;
+export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal'];
 
 export const useModalPortalElement: ModalPortalElement = ({
   accounts,

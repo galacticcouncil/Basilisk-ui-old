@@ -24,7 +24,7 @@ export const useWithConfirmation = <
   const bodyContainerRef = useBodyContainerRefContext();
 
   const { openModal, closeModal, modalPortal, status } = useModalPortal(
-    useCallback((args: ModalPortalElementFactoryArgs) => {
+    useCallback((args: ModalPortalElementFactoryArgs<any>) => {
       console.log('options', options);
       return <Confirmation 
         confirmationType={confirmationType}

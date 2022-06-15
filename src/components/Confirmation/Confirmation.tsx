@@ -9,7 +9,7 @@ export const Confirmation = ({
   resolve,
   reject,
   confirmationType,
-}: ModalPortalElementFactoryArgs & {
+}: ModalPortalElementFactoryArgs<any> & {
   options?: SubmitTradeMutationVariables; // or any other type that might be handled through confirmations
   confirmationType: ConfirmationType;
 }) => {

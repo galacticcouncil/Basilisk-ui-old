@@ -43,6 +43,7 @@ import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -88,7 +89,12 @@ export const idToAsset = (id: string | null) => {
     },
   };
 
-  return assetMetadata[id!] as any;
+  return assetMetadata[id!] as any || id && {
+    id,
+    symbol: horizontalBar,
+    fullName: `Unknown asset ${id}`,
+    icon: Unknown
+  };
 };
 
 export const TradeChart = ({
@@ -275,8 +281,6 @@ export const TradeChart = ({
     isPoolLoading,
     historicalBalancesLoading,
   ]);
-
-  console.log('graph loading status _isPoolLoading', _isPoolLoading);
 
   return (
     <TradeChartComponent

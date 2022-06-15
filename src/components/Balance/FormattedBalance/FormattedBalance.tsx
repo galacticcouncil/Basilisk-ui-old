@@ -7,6 +7,7 @@ import { useFormatSI } from './hooks/useFormatSI';
 import { idToAsset } from '../../../pages/TradePage/TradePage';
 import ReactTooltip from 'react-tooltip';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 
 export interface FormattedBalanceProps {
   balance: Balance;
@@ -53,7 +54,7 @@ export const FormattedBalance = ({
       <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
       </div>
-      <div className="formatted-balance__symbol">{assetSymbol}</div>
+      <div className="formatted-balance__symbol">{assetSymbol || horizontalBar}</div>
     </div>
   );
 };

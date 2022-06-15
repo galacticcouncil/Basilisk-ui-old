@@ -2,7 +2,7 @@ import { MutableRefObject, ReactNode, ReactPortal, useCallback, useEffect, useMe
 import { createPortal } from 'react-dom';
 import { useOnClickOutside } from 'use-hooks';
 import { v4 as uuidv4 } from 'uuid';
-export interface ModalPortalElementFactoryArgs {
+export interface ModalPortalElementFactoryArgs<T> {
     openModal: () => void,
     closeModal: () => void,
     toggleModal: () => void,
@@ -11,12 +11,13 @@ export interface ModalPortalElementFactoryArgs {
     cancel: (value?: any) => void,
     elementRef: MutableRefObject<HTMLDivElement | null>,
     isModalOpen: boolean,
+    state?: T
 }
 
-export type ModalPortalElementFactory = (args: ModalPortalElementFactoryArgs) => ReactNode;
+export type ModalPortalElementFactory<T = undefined> = (args: ModalPortalElementFactoryArgs<T>) => ReactNode;
 
-export const useModalPortal = (
-    elementFactory: ModalPortalElementFactory,
+export const useModalPortal = <T, >(
+    elementFactory: ModalPortalElementFactory<T>,
     container: MutableRefObject<HTMLDivElement | null>,
     closeOnClickOutside: boolean = true,
 ) => {
@@ -39,31 +40,42 @@ export const useModalPortal = (
 
     // old components might still use toggle/open/close API
     const toggleModal = useCallback(() => setIsModalOpen(isModalOpen => !isModalOpen), [setIsModalOpen]);
-    const openModal = useCallback(() => {
-        setIsModalOpen(true);
-        setStatus('pending');
-    }, []);
+
     const closeModal = useCallback(() => {
         setIsModalOpen(false);
         setStatus('cancelled');
     }, []);
+
+    const [state, setState] = useState<T>();
+
+    const openModal = useCallback((state?: any) => {
+        state && setState(state);
+        setStatus('pending');
+
+        setIsModalOpen(true)
+    }, [setIsModalOpen, setState]);
 
     const elementRef = useRef<HTMLDivElement | null>(null);
 
     const toggleId = useMemo(() => uuidv4(), []);
 
     const element = useMemo(() => {
-        return elementFactory({ 
-            toggleModal, 
-            openModal, 
-            closeModal, 
-            elementRef, 
-            isModalOpen,
-            resolve,
-            reject,
-            cancel
-        })
-    }, [elementFactory, toggleModal, openModal, closeModal, isModalOpen, elementRef, resolve, reject, cancel]);
+// <<<<<<< HEAD
+//         return elementFactory({ 
+//             toggleModal, 
+//             openModal, 
+//             closeModal, 
+//             elementRef, 
+//             isModalOpen,
+//             resolve,
+//             reject,
+//             cancel
+//         })
+//     }, [elementFactory, toggleModal, openModal, closeModal, isModalOpen, elementRef, resolve, reject, cancel]);
+// =======
+        return elementFactory({ toggleModal, openModal, closeModal, elementRef, isModalOpen, state, resolve, reject, cancel })
+    }, [elementFactory, toggleModal, openModal, closeModal, isModalOpen, elementRef, state]);
+// >>>>>>> 28bc535d48f7808dcf3e723f0952d438799a3209
 
     useEffect(() => {
         if (!container.current || !element) return;
