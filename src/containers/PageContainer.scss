@@ -63,6 +63,28 @@
         }
       }
     }
+    
+    &__menu-wrapper {
+      display: flex;
+      flex-grow: 1;
+      gap: 20px;
+      padding-left: 24px;
+      &__menu-item {
+        a {
+          cursor: pointer;
+          font-weight: 700;
+          color: $l-gray2;
+          text-decoration: none;
+          &:visited {
+            color: $l-gray2;
+          }
+          &:hover {
+
+            color: $green1;
+          }
+        }
+      }
+    }
   }
 
   .footer {

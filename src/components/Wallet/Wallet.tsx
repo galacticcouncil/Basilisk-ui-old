@@ -1,6 +1,6 @@
-import { MutableRefObject, useCallback, useEffect } from 'react';
+import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
 import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
-import { Account } from '../../generated/graphql';
+import { Account, Maybe } from '../../generated/graphql';
 import Icon from '../Icon/Icon';
 import Identicon from '@polkadot/react-identicon';
 import './Wallet.scss';
@@ -21,14 +21,10 @@ export const trimAddress = (address: string, length: number) => {
 
 export interface WalletProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>;
-  accounts?: Account[];
-  accountsLoading: boolean;
-  account?: Account;
-  onAccountSelected: (account: Account) => void;
-  onAccountCleared: () => void;
+  account?: Maybe<Account>;
   extensionLoading: boolean;
   isExtensionAvailable: boolean;
-  setAccountSelectorOpen: (isModalOpen: boolean) => void;
+  onToggleAccountSelector: () => void,
   activeAccountLoading: boolean;
   faucetMint: () => void;
   faucetMintLoading?: boolean;
@@ -36,43 +32,20 @@ export interface WalletProps {
 
 export const Wallet = ({
   modalContainerRef,
-  accounts,
-  accountsLoading,
   account,
-  onAccountSelected,
-  onAccountCleared,
   extensionLoading,
   isExtensionAvailable,
-  setAccountSelectorOpen,
+  onToggleAccountSelector,
   activeAccountLoading,
   faucetMint,
   faucetMintLoading,
 }: WalletProps) => {
-  const modalPortalElement = useModalPortalElement({
-    accounts,
-    accountsLoading,
-    onAccountSelected,
-    onAccountCleared,
-    account,
-    isExtensionAvailable,
-  });
-  const { isModalOpen, toggleModal, modalPortal, toggleId } = useModalPortal(
-    modalPortalElement,
-    modalContainerRef,
-    false // don't auto close when clicking outside the modalPortalElement
-  );
-  const handleAccountSelectorClick = useCallback(() => toggleModal(), [
-    toggleModal,
-  ]);
-
-  useEffect(() => {
-    setAccountSelectorOpen(isModalOpen);
-  }, [isModalOpen, setAccountSelectorOpen]);
+  const handleAccountSelectorClick = useMemo(() => (
+    onToggleAccountSelector
+  ),[onToggleAccountSelector]);
 
   return (
     <div className="wallet">
-      {/* This portal will be rendered at it's container ref as defined above */}
-      {modalPortal}
 
       {/* <div className="wallet__icons-wrapper">
         {account ? (
@@ -91,7 +64,7 @@ export const Wallet = ({
           <></>
         )}
       </div> */}
-      <div className="wallet__info" data-modal-portal-toggle={toggleId}>
+      <div className="wallet__info">
         {extensionLoading || activeAccountLoading ? (
           <div
             className="wallet__info__account wallet__account-btn"
