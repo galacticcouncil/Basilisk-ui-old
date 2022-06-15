@@ -1,1 +1,0 @@
-import"./detectPackage.js";import{Identicon}from"./bundle.js";export*from"./bundle.js";export default Identicon;
