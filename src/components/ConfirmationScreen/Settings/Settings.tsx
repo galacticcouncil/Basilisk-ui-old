@@ -1,5 +1,5 @@
 import styled from '@emotion/styled/macro';
-import { Button, ButtonKind } from '../Button/Button';
+import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { Text, TextKind } from '../Text/Text';
 import { Input } from '../Input/Input';
 import { SlippageSlider } from '../SlippageSlider/SlippageSlider';
@@ -258,7 +258,7 @@ export const Settings = ({ onBack, onSave, error, unit }: SettingsProps) => {
           onClick={() => onSave()}
           kind={ButtonKind.Primary}
           disabled={error ? true : false}
-          big={true}
+          padding={ButtonPadding.Big}
         />
       </ButtonGroup>
     </ModalContainer>

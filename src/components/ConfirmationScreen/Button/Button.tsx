@@ -10,22 +10,44 @@ export enum ButtonKind {
   Loading = 'loading',
 }
 
+export enum ButtonPadding {
+  Normal = 'normal',
+  Big = 'Big',
+  Small = 'small',
+}
+
 export interface ButtonProps {
-  onClick?: () => void;
+  // TODO: fix this, any only to fix build
+  onClick?: (e: any) => void;
   text: TextProps;
   disabled?: boolean;
   kind?: ButtonKind;
   icon?: IconNames;
-  big?: boolean;
+  padding?: ButtonPadding;
 }
 
-const Content = styled.div<{ big: boolean }>`
+const Content = styled.div<{ padding: ButtonPadding }>`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   gap: 8px;
-  padding: ${(props) => (props.big ? '13px 72px' : '13px 36px')};
+  padding: ${(props) => {
+    switch (props.padding) {
+      case ButtonPadding.Normal: {
+        return '13px 72px';
+      }
+      case ButtonPadding.Big: {
+        return '13px 72px';
+      }
+      case ButtonPadding.Small: {
+        return '8px 15px';
+      }
+      default: {
+        return '13px 72px';
+      }
+    }
+  }};
 `;
 
 const ButtonComponent = styled('button')(
@@ -91,7 +113,7 @@ export const Button = ({
   disabled = false,
   kind = ButtonKind.Primary,
   icon,
-  big = false,
+  padding = ButtonPadding.Normal,
 }: ButtonProps) => {
   return (
     <>
@@ -100,7 +122,7 @@ export const Button = ({
         onClick={onClick}
         disabled={disabled || kind === ButtonKind.Loading}
       >
-        <Content big={big}>
+        <Content padding={padding}>
           {kind === ButtonKind.Loading && <LoadingIndicator />}
           <Text {...text} kind={TextKind.Button} />
           {icon && <Icon name={icon} size={18} />}

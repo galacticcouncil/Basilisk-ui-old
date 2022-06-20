@@ -1,5 +1,5 @@
 import styled from '@emotion/styled/macro';
-import { Button, ButtonKind } from '../Button/Button';
+import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Icon } from '../Icon/Icon';
 import { Text, TextKind } from '../Text/Text';
@@ -191,8 +191,8 @@ export const UpdateMetadata = ({
             }}
             onClick={() => onUpdateMetadata()}
             kind={ButtonKind.Primary}
-            big={true}
-          />
+            padding={ButtonPadding.Big}
+            />
         </ButtonGroup>
       )}
     </ModalContainer>

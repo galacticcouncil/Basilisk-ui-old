@@ -112,10 +112,7 @@ export const AssetInput = ({
           <Text id={name} kind={TextKind.AssetInputAsset} />
         </Names>
         <Amount>
-          <Text
-            id={maskValue(amount)}
-            kind={TextKind.AssetInputAmount}
-          />
+          <Text id={maskValue(amount)} kind={TextKind.AssetInputAmount} />
         </Amount>
       </Wrapper>
     </Input>

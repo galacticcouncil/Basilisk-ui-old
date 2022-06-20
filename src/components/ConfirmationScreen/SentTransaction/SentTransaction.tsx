@@ -1,8 +1,12 @@
 import styled from '@emotion/styled/macro';
-import { Button, ButtonKind } from '../Button/Button';
+import { useEffect } from 'react';
+import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { Icon, IconNames } from '../Icon/Icon';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
 import { Text, TextKind, TextProps } from '../Text/Text';
+import { useCountdown } from 'usehooks-ts';
+
+const AUTOHIDE_SECONDS = 5;
 
 export type SentTransactionStatus = 'sent' | 'error' | 'submitted';
 
@@ -132,10 +136,18 @@ export const SentTransaction = ({ onAction, status }: SentTransactionProps) => {
   const { title, subtitle, actionLabel, actionKind, icon, url } =
     allStates[status];
 
-  const hideFrom = 5;
+  const [hideIn, { start }] = useCountdown({
+    seconds: AUTOHIDE_SECONDS,
+    interval: 1000,
+    isIncrement: false,
+  });
+
+  useEffect(() => {
+    start();
+  }, [start]);
 
   return (
-    <ModalContainer closeIn={hideFrom}>
+    <ModalContainer closeIn={AUTOHIDE_SECONDS}>
       {icon && (
         <IconContainer>
           {icon === 'LoadingBig' ? (
@@ -154,7 +166,7 @@ export const SentTransaction = ({ onAction, status }: SentTransactionProps) => {
           text={actionLabel}
           onClick={() => onAction()}
           kind={actionKind}
-          big={true}
+          padding={ButtonPadding.Big}
         />
       </ButtonGroup>
       {url && (
@@ -162,6 +174,7 @@ export const SentTransaction = ({ onAction, status }: SentTransactionProps) => {
           <Text {...url} kind={TextKind.TextUrl} />
         </UrlContainer>
       )}
+      {status === 'submitted' && hideIn}
     </ModalContainer>
   );
 };

@@ -2,7 +2,7 @@ import styled from '@emotion/styled/macro';
 import { Icon } from '../Icon/Icon';
 
 export interface AssetIconProps {
-  chainIcon?: string;
+  chainIcon?: string | null;
   assetIcon?: string;
 }
 
@@ -21,7 +21,7 @@ const AssetIconWrapper = styled.div`
   padding: 3px;
 `;
 
-const ChainIconWrapper = styled.div<{ icon?: string }>`
+const ChainIconWrapper = styled.div`
   width: 13px;
   height: 13px;
   position: relative;
@@ -42,6 +42,11 @@ const Chain = styled.div<{ icon?: string }>`
   background-image: url('${(props) => props.icon}');
 `;
 
+const Spacer = styled.div`
+  width: 13px;
+  height: 13px;
+`;
+
 export const AssetIcon = ({ assetIcon, chainIcon }: AssetIconProps) => {
   return (
     <AssetIconContainer>
@@ -52,11 +57,15 @@ export const AssetIcon = ({ assetIcon, chainIcon }: AssetIconProps) => {
           <Icon name={'MissingAsset'} size={34} />
         )}
       </AssetIconWrapper>
-      <ChainIconWrapper icon={chainIcon}>
-        {chainIcon ? (
-          <Chain icon={chainIcon} />
+      <ChainIconWrapper>
+        {!(chainIcon === null) ? (
+          chainIcon ? (
+            <Chain icon={chainIcon} />
+          ) : (
+            <Icon name={'MissingAsset'} size={13} />
+          )
         ) : (
-          <Icon name={'MissingAsset'} size={13} />
+          <Spacer />
         )}
       </ChainIconWrapper>
     </AssetIconContainer>

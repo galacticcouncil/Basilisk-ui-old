@@ -35,6 +35,9 @@ const Template: ComponentStory<typeof AssetIcon> = (args) => {
 export const WithAssetIcon = Template.bind({});
 WithAssetIcon.args = { assetIcon: BSX };
 
+export const NativeAsset = Template.bind({});
+NativeAsset.args = { assetIcon: BSX, chainIcon: null };
+
 export const WithChainIcon = Template.bind({});
 WithChainIcon.args = { chainIcon: BSXChain };
 

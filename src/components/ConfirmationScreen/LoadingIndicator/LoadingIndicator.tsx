@@ -12,6 +12,19 @@ const rotate = keyframes`
     0%
     {
       transform: rotate(0deg);
+    }
+    100%
+    {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const rotateWithHue = keyframes`
+  {
+    0%
+    {
+      transform: rotate(0deg);
       filter: hue-rotate(0deg);
     }
     100%
@@ -31,8 +44,8 @@ const LoadingIndicatorContainer = styled.div<{ size: number }>`
   box-sizing: border-box;
 `;
 
-const LoadingIndicatorWrapper = styled.div`
-  animation: ${rotate} 2s linear infinite;
+const LoadingIndicatorWrapper = styled.div<{ hue: boolean }>`
+  animation: ${(props) => (props.hue ? rotateWithHue : rotate)} 2s linear infinite;
 `;
 
 export const LoadingIndicator = ({
@@ -41,7 +54,7 @@ export const LoadingIndicator = ({
 }: LoadingIndicatorProps) => {
   return (
     <LoadingIndicatorContainer size={size}>
-      <LoadingIndicatorWrapper>
+      <LoadingIndicatorWrapper hue={!big}>
         <Icon name={big ? 'LoadingBig' : 'Loading'} size={size} />
       </LoadingIndicatorWrapper>
     </LoadingIndicatorContainer>

@@ -71,7 +71,7 @@ const OuterCircle = styled.div`
   width: 25px;
   height: 25px;
   border-radius: 100%;
-  outline: 1px solid #787e82;
+  box-shadow: 0 0 0 1px #787e82;
 
   &:hover {
     outline: 2px solid rgba(79, 255, 176, 0.6);

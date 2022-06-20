@@ -1,6 +1,6 @@
 import styled from '@emotion/styled/macro';
 import { AssetInput, AssetInputProps } from '../AssetInput/AssetInput';
-import { Button, ButtonKind } from '../Button/Button';
+import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { Table, TableProps } from '../Table/Table';
 import { Text, TextKind } from '../Text/Text';
 import { RefreshTimer } from '../RefreshTimer/RefreshTImer';
@@ -131,7 +131,7 @@ export const ConfirmSwap = ({
           onClick={() => onReview()}
           kind={ButtonKind.Primary}
           disabled={error ? true : false}
-          big={true}
+          padding={ButtonPadding.Big}
         />
       </ButtonGroup>
     </ModalContainer>

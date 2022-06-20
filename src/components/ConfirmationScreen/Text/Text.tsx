@@ -20,6 +20,19 @@ export enum TextKind {
   AssetInputTitle = 'assetInputTitle',
   AssetInputSymbol = 'assetInputSymbol',
   AssetInputAsset = 'assetInputAsset',
+  AssetPrimaryUpperCase = 'AssetPrimaryUpperCase',
+  AssetPrimary = 'AssetPrimary',
+  AssetSecondary = 'AssetSecondary',
+  AssetTablePrimary = 'AssetTablePrimary',
+  AssetTableSecondary = 'AssetTableSecondary',
+  AssetTableHeader = 'AssetTableHeader',
+  AssetTableName = 'AssetTableName',
+  AssetTableHideLabel = 'AssetTableHideLabel',
+  AssetListValueLabel = 'AssetListValueLabel',
+  AssetListTotalValue = 'AssetListTotalValue',
+  AssetListSecondaryValue = 'AssetListSecondaryValue',
+  AssetListTotalDecimalValue = 'AssetListTotalDecimalValue',
+  AssetListSecondaryDecimalValue = 'AssetListSecondaryDecimalValue',
   AssetInputAmount = 'assetInputAmount',
   MethodCallTitle = 'methodCallTitle',
   Tooltip = 'tooltip',
@@ -34,6 +47,7 @@ export enum TextKind {
   SettingsTitle = 'settingsTitle',
   SettingsSubtitle = 'settingsSubtitle',
   ToggleLabel = 'toggleLabel',
+  AssetDropdown = 'assetDropdown',
 }
 
 export interface TextProps {
@@ -200,6 +214,112 @@ const TextComponent = styled('div')(
 
         color: '#D1DEE8',
       },
+      AssetPrimaryUpperCase: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: '#FFFFFF',
+        textTransform: 'uppercase',
+      },
+      AssetPrimary: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: '#FFFFFF',
+      },
+      AssetSecondary: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: '#D1DEE8',
+      },
+      AssetTablePrimary: {
+        fontStyle: 'normal',
+        fontWeight: '700',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: '#FFFFFF',
+      },
+      AssetTableSecondary: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: 'rgba(115, 133, 143, 1)',
+      },
+      AssetTableHeader: {
+        fontStyle: 'normal',
+        fontWeight: '600',
+        fontSize: '11px',
+        lineHeight: '14px',
+
+        color: 'rgba(115, 133, 143, 1)',
+        textTransform: 'uppercase',
+      },
+      AssetTableName: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '20px',
+        lineHeight: '26px',
+
+        color: '#FFFFFF',
+      },
+      AssetTableHideLabel: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '12px',
+        lineHeight: '14px',
+
+        color: '#FFFFFF',
+      },
+      AssetListValueLabel: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '16px',
+        lineHeight: '16px',
+
+        color: 'rgba(189, 204, 212, 1)',
+      },
+      AssetListTotalValue: {
+        fontStyle: 'normal',
+        fontWeight: '900',
+        fontSize: '58px',
+        lineHeight: '52px',
+
+        color: '#FFFFFF',      
+      },
+      AssetListTotalDecimalValue: {
+        fontStyle: 'normal',
+        fontWeight: '900',
+        fontSize: '28px',
+        lineHeight: '30px',
+
+        color: 'rgba(189, 204, 212, 1)',
+      },
+      AssetListSecondaryValue: {
+        fontStyle: 'normal',
+        fontWeight: '900',
+        fontSize: '34px',
+        lineHeight: '42px',
+
+        color: '#FFFFFF',      
+      },
+      AssetListSecondaryDecimalValue: {
+        fontStyle: 'normal',
+        fontWeight: '900',
+        fontSize: '21px',
+        lineHeight: '32px',
+
+        color: 'rgba(189, 204, 212, 1)',
+      },
       methodCallTitle: {
         fontStyle: 'normal',
         fontWeight: '700',
@@ -304,6 +424,14 @@ const TextComponent = styled('div')(
         lineHeight: '22px',
 
         color: '#FFFFFF',
+      },
+      assetDropdown: {
+        fontStyle: 'normal',
+        fontWeight: '500',
+        fontSize: '14px',
+        lineHeight: '18px',
+
+        color: '#B8FFDF',
       },
     },
   })
