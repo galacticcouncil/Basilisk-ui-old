@@ -48,14 +48,17 @@ const Tr = styled.tr`
 `;
 
 const Th = styled.th`
-  width: 28%;
+  width: 25%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
   &:first-child {
-    width: 16%;
+    width: 15%;
     justify-content: flex-start;
+  }
+  &:last-child {
+    width: 35%;
   }
   gap: 10px;
 `;

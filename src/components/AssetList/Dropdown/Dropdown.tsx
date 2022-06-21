@@ -84,6 +84,7 @@ const Button = styled.button<{ pressed: boolean }>`
 const IconContainer = styled.div`
   width: 25px;
   height: 25px;
+  padding-top: 1px;
 `;
 
 const DropdownButton = ({ handleClick, show }: DropdownButtonProps) => {

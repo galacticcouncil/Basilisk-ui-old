@@ -94,14 +94,17 @@ const IconContainer = styled.div`
 `;
 
 const Td = styled.td<{ left?: boolean }>`
-  width: 28%;
+  width: 25%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: ${(props) => (props.left ? 'flex-start' : 'flex-end')};
   &:first-child {
-    width: 16%;
+    width: 15%;
     justify-content: flex-start;
+  }
+  &:last-child {
+    width: 35%;
   }
   gap: 10px;
 `;

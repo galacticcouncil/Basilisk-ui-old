@@ -23,6 +23,8 @@ const AssetListStatsContainer = styled.div`
   flex-direction: row;
   align-items: center;
   gap: 123px;
+
+  white-space: nowrap;
 `;
 
 const TotalContainer = styled.div`
