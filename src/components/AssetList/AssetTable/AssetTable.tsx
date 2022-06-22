@@ -12,7 +12,7 @@ export interface AssetTableProps {
 }
 
 const TableContainer = styled.div`
-  min-width: 1100px;
+  min-width: 850px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,7 +37,7 @@ const RowContainer = styled.div`
   }
 `;
 
-const Tr = styled.tr`
+const Tr = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -47,7 +47,7 @@ const Tr = styled.tr`
   border-bottom: 1px solid #29292d;
 `;
 
-const Th = styled.th`
+const Th = styled.div`
   width: 25%;
   display: flex;
   flex-direction: row;
@@ -150,7 +150,7 @@ export const AssetTable = ({
         <Th></Th>
       </Tr>
       {data.map((item) => (
-        <RowContainer>
+        <RowContainer key={item.asset.id}>
           <Row {...item} />
         </RowContainer>
       ))}

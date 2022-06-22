@@ -10,12 +10,30 @@ import {
 } from '../../ConfirmationScreen/Button/Button';
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
 import { Icon } from '../../ConfirmationScreen/Icon/Icon';
+import { maskValue } from '../../ConfirmationScreen/helpers/mask';
 
-type Asset = {
+export enum AssetType {
+  Native = 'native',
+  Shared = 'shared',
+  Bridged = 'bridged',
+}
+
+export type Asset = {
   id: string;
+  type: AssetType;
   name: string;
   icon?: string;
   symbol: string;
+  totalBalance: string;
+  spendableBalance: string;
+  inPoolBalance: string;
+  freeBalance: string;
+  reservedBalance: string;
+  frozenBalance: string;
+  lockedBalance: {
+    balance: string;
+    reason: string;
+  };
   chain?: {
     id: string;
     name: string;
@@ -25,16 +43,8 @@ type Asset = {
 
 export interface RowProps {
   asset: Asset;
-  totalBalanceCoins: string;
-  totalBalance: string;
-  spendableBalanceCoins: string;
-  spendableBalance: string;
-  lockedBalanceCoins: string;
-  lockedBalance: string;
   totalLockedCoins: string;
-  inPoolBalanceCoins: string;
-  inPoolBalance: string;
-  exchangeRate: string;
+  exchangeRate: number;
   onTrade?: () => void;
   onTransfer?: () => void;
   actions: DropdownProps;
@@ -93,7 +103,7 @@ const IconContainer = styled.div`
   padding-bottom: 5px;
 `;
 
-const Td = styled.td<{ left?: boolean }>`
+const Td = styled.div<{ left?: boolean }>`
   width: 25%;
   display: flex;
   flex-direction: row;
@@ -115,7 +125,7 @@ const AssetIconContainer = styled.div`
   align-items: center;
 `;
 
-const Tr = styled.tr`
+const Tr = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -161,16 +171,12 @@ const IconWrapper = styled.div<{ show: boolean }>`
   transform: rotate(${(props) => (props.show ? 180 : 0)}deg);
 `;
 
+const dollarValue = (coins: number, rate: number): string => {
+  return `$${maskValue((coins / rate).toFixed(2))}`;
+};
+
 export const Row = ({
   asset,
-  totalBalanceCoins,
-  totalBalance,
-  spendableBalanceCoins,
-  spendableBalance,
-  inPoolBalanceCoins,
-  inPoolBalance,
-  lockedBalanceCoins,
-  lockedBalance,
   totalLockedCoins,
   onTrade,
   onTransfer,
@@ -221,24 +227,18 @@ export const Row = ({
         </Td>
         <Td>
           <TextRight>
+            <Text id={asset.totalBalance} kind={TextKind.AssetPrimary} />
             <Text
-              id={totalBalanceCoins.toString()}
-              kind={TextKind.AssetPrimary}
-            />
-            <Text
-              id={totalBalance.toString()}
+              id={dollarValue(Number(asset.totalBalance), exchangeRate)}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
         </Td>
         <Td>
           <TextRight>
+            <Text id={asset.spendableBalance} kind={TextKind.AssetPrimary} />
             <Text
-              id={spendableBalanceCoins.toString()}
-              kind={TextKind.AssetPrimary}
-            />
-            <Text
-              id={spendableBalance.toString()}
+              id={dollarValue(Number(asset.spendableBalance), exchangeRate)}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
@@ -284,7 +284,12 @@ export const Row = ({
                 defaultMessage={'Current rate: '}
                 kind={TextKind.AssetTableSecondary}
               />
-              <Text id={exchangeRate} kind={TextKind.AssetPrimary} />
+              <Text
+                id={`1$ = ${maskValue(exchangeRate.toString())} ${
+                  asset.symbol
+                }`}
+                kind={TextKind.AssetPrimary}
+              />
             </TextRight>
           </Td>
           <Td>
@@ -294,8 +299,11 @@ export const Row = ({
                 defaultMessage={'In Pool: '}
                 kind={TextKind.AssetTableSecondary}
               />
-              <Text id={inPoolBalanceCoins} kind={TextKind.AssetPrimary} />
-              <Text id={inPoolBalance} kind={TextKind.AssetTableSecondary} />
+              <Text id={asset.inPoolBalance} kind={TextKind.AssetPrimary} />
+              <Text
+                id={dollarValue(Number(asset.inPoolBalance), exchangeRate)}
+                kind={TextKind.AssetTableSecondary}
+              />
             </TextRight>
           </Td>
           <Td>
@@ -306,10 +314,19 @@ export const Row = ({
                   defaultMessage={'Locked: '}
                   kind={TextKind.AssetTableSecondary}
                 />
-                <Tooltip id={`${totalLockedCoins}`} />
+                <Tooltip id={`${totalLockedCoins} ${asset.symbol}`} />
               </TooltipContainer>
-              <Text id={lockedBalanceCoins} kind={TextKind.AssetPrimary} />
-              <Text id={lockedBalance} kind={TextKind.AssetTableSecondary} />
+              <Text
+                id={asset.lockedBalance.balance}
+                kind={TextKind.AssetPrimary}
+              />
+              <Text
+                id={dollarValue(
+                  Number(asset.lockedBalance.balance),
+                  exchangeRate
+                )}
+                kind={TextKind.AssetTableSecondary}
+              />
             </TextRight>
             <Spacer />
           </Td>

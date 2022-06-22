@@ -1,4 +1,4 @@
-import { Row } from './Row';
+import { AssetType, Row } from './Row';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
@@ -37,25 +37,28 @@ export const Default = Template.bind({});
 Default.args = {
   asset: {
     id: '1',
+    type: AssetType.Native,
     name: 'Basilisk',
     icon: AssetIconStory.args?.assetIcon,
     symbol: 'BSX',
+    totalBalance: '2855.245664263456',
+    spendableBalance: '2855.245664263456',
+    lockedBalance: {
+      balance: '2855.245664263456',
+      reason: 'vesting',
+    },
+    inPoolBalance: '2855.245664263456',
+    freeBalance: '2855.245664263456',
+    reservedBalance: '2855.245664263456',
+    frozenBalance: '2855.245664263456',
     chain: {
       id: '1',
       icon: null,
       name: 'Basilisk',
     },
   },
-  totalBalanceCoins: '2855.245664263456',
-  totalBalance: '$2855.24',
-  spendableBalanceCoins: '2855.245664263456',
-  spendableBalance: '$2855.24',
-  lockedBalanceCoins: '2855.245664263456',
-  lockedBalance: '$2855.24',
-  totalLockedCoins: '1 223 566 356 BSX',
-  inPoolBalanceCoins: '2855.245664263456',
-  inPoolBalance: '$2855.24',
-  exchangeRate: '$1 = 10 000 BSX',
+  totalLockedCoins: '1 223 566 356',
+  exchangeRate: 0.123,
   actions: DropdownStory.args as DropdownProps,
 };
 
@@ -63,25 +66,28 @@ export const Centered = Template.bind({});
 Centered.args = {
   asset: {
     id: '1',
+    type: AssetType.Native,
     name: 'Basilisk',
     icon: AssetIconStory.args?.assetIcon,
     symbol: 'BSX',
+    totalBalance: '285.245664263456',
+    spendableBalance: '285.245664263456',
+    lockedBalance: {
+      balance: '285.245664263456',
+      reason: 'vesting',
+    },
+    inPoolBalance: '285.245664263456',
+    freeBalance: '285.245664263456',
+    reservedBalance: '285.245664263456',
+    frozenBalance: '285.245664263456',
     chain: {
       id: '1',
       icon: null,
       name: 'Basilisk',
     },
   },
-  totalBalanceCoins: '2855.24',
-  totalBalance: '$2855.24',
-  spendableBalanceCoins: '2855.245664263456',
-  spendableBalance: '$2855.24',
-  lockedBalanceCoins: '2855.245664263456',
-  lockedBalance: '$2855.24',
-  totalLockedCoins: '1 223 566 356 BSX',
-  inPoolBalanceCoins: '2855.245664263456',
-  inPoolBalance: '$2855.24',
-  exchangeRate: '$1 = 10 000 BSX',
+  totalLockedCoins: '1 223 566 356',
+  exchangeRate: 100,
   actions: DropdownStory.args as DropdownProps,
   feeAssetId: '1',
 };

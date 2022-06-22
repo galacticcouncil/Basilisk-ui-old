@@ -35,3 +35,13 @@ Default.args = {
   totalValue: '13 100',
   totalDecimalValue: '52',
 };
+
+export const AssetList = Template.bind({});
+AssetList.args = {
+  spendableAssetsValue: '1 564',
+  spendableAssetsDecimalValue: '56',
+  lockedValue: '2 300',
+  lockedDecimalValue: '52',
+  totalValue: '13 100',
+  totalDecimalValue: '52',
+};

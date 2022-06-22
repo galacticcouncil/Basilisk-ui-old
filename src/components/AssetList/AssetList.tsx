@@ -11,9 +11,11 @@ export interface AssetListProps {
 }
 
 const AssetListContainer = styled.div`
+  max-width: 1110px;
   width: 100%;
   height: 100%;
-  padding: 83px 165px;
+  padding: 83px 0px;
+  margin: 0px auto;
   display: flex;
   flex-direction: column;
   gap: 90px;
