@@ -2,7 +2,8 @@ import styled from '@emotion/styled/macro';
 import { useState } from 'react';
 import ReactTooltip from 'react-tooltip';
 import { Icon, IconNames } from '../Icon/Icon';
-import { Text, TextProps, TextKind } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 
 export interface TooltipProps extends TextProps {
   icon?: IconNames;

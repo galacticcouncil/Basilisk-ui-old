@@ -1,5 +1,6 @@
 import styled from '@emotion/styled/macro';
-import { Text, TextProps, TextKind } from '../../ConfirmationScreen/Text/Text';
+import { Text, TextProps } from '../../ConfirmationScreen/Text/Text';
+import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { useState } from 'react';
 import { Icon, IconNames } from '../../ConfirmationScreen/Icon/Icon';
 

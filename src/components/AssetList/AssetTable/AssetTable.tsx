@@ -1,7 +1,8 @@
 import styled from '@emotion/styled/macro';
 import { useEffect } from 'react';
 import { useLocalStorage } from 'use-hooks';
-import { Text, TextKind } from '../../ConfirmationScreen/Text/Text';
+import { Text } from '../../ConfirmationScreen/Text/Text';
+import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { Toggle } from '../../ConfirmationScreen/Toggle/Toggle';
 import { Row, RowProps } from '../Row/Row';
 

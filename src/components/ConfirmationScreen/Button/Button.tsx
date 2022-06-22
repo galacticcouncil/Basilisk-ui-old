@@ -1,5 +1,6 @@
 import { Icon, IconNames } from '../Icon/Icon';
-import { Text, TextKind, TextProps } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import styled from '@emotion/styled/macro';
 import { variant } from 'styled-system';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
@@ -35,7 +36,7 @@ const Content = styled.div<{ padding: ButtonPadding }>`
   padding: ${(props) => {
     switch (props.padding) {
       case ButtonPadding.Normal: {
-        return '13px 72px';
+        return '13px 36px';
       }
       case ButtonPadding.Big: {
         return '13px 72px';
@@ -44,7 +45,7 @@ const Content = styled.div<{ padding: ButtonPadding }>`
         return '8px 15px';
       }
       default: {
-        return '13px 72px';
+        return '13px 36px';
       }
     }
   }};

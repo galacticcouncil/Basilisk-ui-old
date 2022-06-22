@@ -1,6 +1,7 @@
 import styled from '@emotion/styled/macro';
 import { useEffect, useState } from 'react';
-import { Text, TextKind } from '../../ConfirmationScreen/Text/Text';
+import { Text } from '../../ConfirmationScreen/Text/Text';
+import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
 
 const DEFAULT_CURRENCY = '$';

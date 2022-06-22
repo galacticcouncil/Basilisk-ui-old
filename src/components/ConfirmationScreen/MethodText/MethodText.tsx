@@ -1,7 +1,8 @@
 import styled from '@emotion/styled/macro';
 import JSONPretty from 'react-json-pretty';
 import { Icon } from '../Icon/Icon';
-import { Text, TextKind } from '../Text/Text';
+import { Text } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 
 export interface MethodTextProps {
   method: string;

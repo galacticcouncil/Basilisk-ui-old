@@ -1,6 +1,7 @@
 import styled from '@emotion/styled/macro';
 import { AssetIcon } from '../AssetIcon/AssetIcon';
-import { Text, TextKind, TextProps } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { maskValue } from '../helpers/mask';
 
 export enum AssetInputType {

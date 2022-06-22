@@ -1,5 +1,6 @@
 import styled from '@emotion/styled/macro';
-import { Text, TextProps, TextKind } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { Icon } from '../Icon/Icon';
 
 export interface StepperProps {

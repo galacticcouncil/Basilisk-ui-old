@@ -1,4 +1,5 @@
-import { Text, TextKind } from './Text';
+import { Text } from './Text';
+import { TextKind } from './TextTheme';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';

@@ -2,7 +2,8 @@ import styled from '@emotion/styled/macro';
 import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { Icon } from '../Icon/Icon';
-import { Text, TextKind } from '../Text/Text';
+import { Text } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 
 export interface UpdateVersionsProps {
   oldVersion?: string;

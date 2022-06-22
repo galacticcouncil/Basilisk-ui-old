@@ -1,6 +1,7 @@
 import styled from '@emotion/styled/macro';
 import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
-import { Text, TextKind } from '../Text/Text';
+import { Text } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { Input } from '../Input/Input';
 import { SlippageSlider } from '../SlippageSlider/SlippageSlider';
 import { Toggle } from '../Toggle/Toggle';

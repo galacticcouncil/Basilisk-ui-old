@@ -1,5 +1,7 @@
 import styled from '@emotion/styled/macro';
-import { Text, TextKind } from '../Text/Text';
+import { Text } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
+
 export interface RadioButtonProps {
   value: number;
   checked?: boolean;

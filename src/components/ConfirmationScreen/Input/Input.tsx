@@ -2,7 +2,8 @@ import styled from '@emotion/styled/macro';
 import MaskedInput from 'react-text-mask';
 import { useFormContext } from 'react-hook-form';
 import { mask as defaultMask } from '../helpers/mask';
-import { Text, TextKind, TextProps } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { Tooltip } from '../Tooltip/Tooltip';
 import { ChangeEvent, useCallback } from 'react';
 

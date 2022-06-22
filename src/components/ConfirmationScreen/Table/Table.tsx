@@ -1,5 +1,6 @@
 import styled from '@emotion/styled/macro';
-import { Text, TextProps, TextKind } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { useState } from 'react';
 import { Icon } from '../Icon/Icon';
 import { useFormContext } from 'react-hook-form';

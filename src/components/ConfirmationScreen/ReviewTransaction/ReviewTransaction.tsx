@@ -1,7 +1,8 @@
 import styled from '@emotion/styled/macro';
 import { Button, ButtonKind } from '../Button/Button';
 import { Table, TableProps } from '../Table/Table';
-import { Text, TextKind } from '../Text/Text';
+import { Text } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { MethodText, MethodTextProps } from '../MethodText/MethodText';
 import { RefreshTimer } from '../RefreshTimer/RefreshTImer';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';

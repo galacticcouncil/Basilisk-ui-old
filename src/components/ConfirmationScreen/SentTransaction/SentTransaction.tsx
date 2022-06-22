@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { Button, ButtonKind, ButtonPadding } from '../Button/Button';
 import { Icon, IconNames } from '../Icon/Icon';
 import { LoadingIndicator } from '../LoadingIndicator/LoadingIndicator';
-import { Text, TextKind, TextProps } from '../Text/Text';
+import { Text, TextProps } from '../Text/Text';
+import { TextKind } from '../Text/TextTheme';
 import { useCountdown } from 'usehooks-ts';
 
 const AUTOHIDE_SECONDS = 5;
