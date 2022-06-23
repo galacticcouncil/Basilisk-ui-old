@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import styled from '@emotion/styled/macro';
 
 export default {
-  title: 'components/ConfirmationScreen/ModalComponent',
+  title: 'components/ConfirmationScreen/Components/ModalComponent',
   component: ModalComponent,
   argTypes: {
     isOpen: {

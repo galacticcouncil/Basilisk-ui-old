@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/AssetList/Dropdown',
+  title: 'components/AssetList/Components/Dropdown',
   component: Dropdown,
   argTypes: {
     handleClick: {

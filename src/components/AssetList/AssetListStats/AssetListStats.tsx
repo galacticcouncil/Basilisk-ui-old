@@ -1,20 +1,12 @@
 import styled from '@emotion/styled/macro';
-import { useEffect, useState } from 'react';
 import { Text } from '../../ConfirmationScreen/Text/Text';
 import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
-
-const DEFAULT_CURRENCY = '$';
-
+import { DisplayBalanceSplit } from '../FormattedDisplayBalance/FormattedDisplayBalance';
 export interface AssetListStatsProps {
-  currencyLeft?: string;
-  currencyRight?: string;
-  spendableAssetsValue: string;
-  spendableAssetsDecimalValue: string;
-  lockedValue: string;
-  lockedDecimalValue: string;
-  totalValue: string;
-  totalDecimalValue: string;
+  spendableAssets: string;
+  locked: string;
+  total: string;
 }
 
 const AssetListStatsContainer = styled.div`
@@ -49,37 +41,19 @@ const ValueWrapper = styled.div`
 `;
 
 export const AssetListStats = ({
-  currencyLeft,
-  currencyRight,
-  spendableAssetsValue,
-  spendableAssetsDecimalValue,
-  lockedValue,
-  lockedDecimalValue,
-  totalValue,
-  totalDecimalValue,
+  spendableAssets,
+  locked,
+  total,
 }: AssetListStatsProps) => {
-  const defaultCurrency =
-    !currencyLeft && !currencyRight ? DEFAULT_CURRENCY : undefined;
-  const [leftCurrency, setLeftCurrency] = useState(currencyLeft);
-  const [rightCurrency, setRightCurrency] = useState(currencyRight);
-
-  useEffect(() => {
-    if (currencyRight) {
-      setLeftCurrency('');
-    } else if (defaultCurrency) {
-      setLeftCurrency(defaultCurrency);
-    } else {
-      setLeftCurrency(currencyLeft);
-    }
-  }, [currencyLeft, currencyRight, defaultCurrency]);
-
-  useEffect(() => {
-    if (currencyRight) {
-      setRightCurrency(currencyRight);
-    } else {
-      setRightCurrency('');
-    }
-  }, [currencyRight]);
+  const [spendableAssetsValue, spendableAssetsDecimal] = DisplayBalanceSplit({
+    assetBalance: { value: spendableAssets },
+  });
+  const [lockedValue, lockedDecimal] = DisplayBalanceSplit({
+    assetBalance: { value: locked },
+  });
+  const [totalValue, totalDecimal] = DisplayBalanceSplit({
+    assetBalance: { value: total },
+  });
 
   return (
     <AssetListStatsContainer>
@@ -90,13 +64,10 @@ export const AssetListStats = ({
           kind={TextKind.AssetListValueLabel}
         />
         <ValueWrapper>
+          <Text id={spendableAssetsValue} kind={TextKind.AssetListTotal} />
           <Text
-            id={`${leftCurrency}${spendableAssetsValue}.`}
-            kind={TextKind.AssetListTotalValue}
-          />
-          <Text
-            id={`${spendableAssetsDecimalValue}${rightCurrency}`}
-            kind={TextKind.AssetListTotalDecimalValue}
+            id={spendableAssetsDecimal}
+            kind={TextKind.AssetListTotalDecimal}
           />
         </ValueWrapper>
       </TotalContainer>
@@ -113,14 +84,8 @@ export const AssetListStats = ({
           />
         </LabelWrapper>
         <ValueWrapper>
-          <Text
-            id={`${leftCurrency}${lockedValue}.`}
-            kind={TextKind.AssetListSecondaryValue}
-          />
-          <Text
-            id={`${lockedDecimalValue}${rightCurrency}`}
-            kind={TextKind.AssetListSecondaryDecimalValue}
-          />
+          <Text id={lockedValue} kind={TextKind.AssetListSecondary} />
+          <Text id={lockedDecimal} kind={TextKind.AssetListSecondaryDecimal} />
         </ValueWrapper>
       </TotalContainer>
       <TotalContainer>
@@ -136,14 +101,8 @@ export const AssetListStats = ({
           />
         </LabelWrapper>
         <ValueWrapper>
-          <Text
-            id={`${leftCurrency}${totalValue}.`}
-            kind={TextKind.AssetListSecondaryValue}
-          />
-          <Text
-            id={`${totalDecimalValue}${rightCurrency}`}
-            kind={TextKind.AssetListSecondaryDecimalValue}
-          />
+          <Text id={totalValue} kind={TextKind.AssetListSecondary} />
+          <Text id={totalDecimal} kind={TextKind.AssetListSecondaryDecimal} />
         </ValueWrapper>
       </TotalContainer>
     </AssetListStatsContainer>

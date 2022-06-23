@@ -6,7 +6,7 @@ import { linkTo } from '@storybook/addon-links';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default {
-  title: 'components/ConfirmationScreen/Settings',
+  title: 'components/ConfirmationScreen/Components/Settings',
   component: Settings,
   argTypes: {
     isOpened: {
@@ -53,6 +53,6 @@ export const Default = Template.bind({});
 Default.args = {
   error: '',
   unit: 'BSX',
-  onBack: linkTo('components/ConfirmationScreen/ConfirmSwap'),
-  onSave: linkTo('components/ConfirmationScreen/ConfirmSwap'),
+  onBack: linkTo('components/ConfirmationScreen/Components/ConfirmSwap'),
+  onSave: linkTo('components/ConfirmationScreen/Components/ConfirmSwap'),
 };

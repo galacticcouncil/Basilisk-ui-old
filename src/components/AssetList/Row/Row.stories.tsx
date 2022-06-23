@@ -7,7 +7,7 @@ import { DropdownProps } from '../Dropdown/Dropdown';
 import { Default as DropdownStory } from '../Dropdown/Dropdown.stories';
 
 export default {
-  title: 'components/AssetList/Row',
+  title: 'components/AssetList/Components/Row',
   component: Row,
   argTypes: {
     handleClick: {
@@ -36,7 +36,7 @@ const Template: ComponentStory<typeof Row> = (args) => {
 export const Default = Template.bind({});
 Default.args = {
   asset: {
-    id: '1',
+    id: '0',
     type: AssetType.Native,
     name: 'Basilisk',
     icon: AssetIconStory.args?.assetIcon,
@@ -51,14 +51,14 @@ Default.args = {
     freeBalance: '2855.245664263456',
     reservedBalance: '2855.245664263456',
     frozenBalance: '2855.245664263456',
+    exchangeRate: '0.123',
     chain: {
-      id: '1',
+      id: '0',
       icon: null,
       name: 'Basilisk',
     },
   },
   totalLockedCoins: '1 223 566 356',
-  exchangeRate: 0.123,
   actions: DropdownStory.args as DropdownProps,
 };
 
@@ -67,9 +67,9 @@ Centered.args = {
   asset: {
     id: '1',
     type: AssetType.Native,
-    name: 'Basilisk',
+    name: 'Kusama',
     icon: AssetIconStory.args?.assetIcon,
-    symbol: 'BSX',
+    symbol: 'KSM',
     totalBalance: '285.245664263456',
     spendableBalance: '285.245664263456',
     lockedBalance: {
@@ -80,14 +80,14 @@ Centered.args = {
     freeBalance: '285.245664263456',
     reservedBalance: '285.245664263456',
     frozenBalance: '285.245664263456',
+    exchangeRate: '100',
     chain: {
       id: '1',
       icon: null,
-      name: 'Basilisk',
+      name: 'Kusama',
     },
   },
   totalLockedCoins: '1 223 566 356',
-  exchangeRate: 100,
   actions: DropdownStory.args as DropdownProps,
   feeAssetId: '1',
 };

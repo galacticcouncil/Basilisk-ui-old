@@ -12,6 +12,13 @@ import {
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
 import { Icon } from '../../ConfirmationScreen/Icon/Icon';
 import { maskValue } from '../../ConfirmationScreen/helpers/mask';
+import { FormattedBalance } from '../FormattedBalance/FormattedBalance';
+import { FormattedDisplayBalance } from '../FormattedDisplayBalance/FormattedDisplayBalance';
+
+export interface AssetBalance {
+  value: string;
+  id?: string;
+}
 
 export enum AssetType {
   Native = 'native',
@@ -31,6 +38,7 @@ export type Asset = {
   freeBalance: string;
   reservedBalance: string;
   frozenBalance: string;
+  exchangeRate: string;
   lockedBalance: {
     balance: string;
     reason: string;
@@ -45,7 +53,6 @@ export type Asset = {
 export interface RowProps {
   asset: Asset;
   totalLockedCoins: string;
-  exchangeRate: number;
   onTrade?: () => void;
   onTransfer?: () => void;
   actions: DropdownProps;
@@ -172,17 +179,12 @@ const IconWrapper = styled.div<{ show: boolean }>`
   transform: rotate(${(props) => (props.show ? 180 : 0)}deg);
 `;
 
-const dollarValue = (coins: number, rate: number): string => {
-  return `$${maskValue((coins / rate).toFixed(2))}`;
-};
-
 export const Row = ({
   asset,
   totalLockedCoins,
   onTrade,
   onTransfer,
   actions,
-  exchangeRate,
   feeAssetId,
 }: RowProps) => {
   const [show, setShow] = useState(false);
@@ -228,18 +230,28 @@ export const Row = ({
         </Td>
         <Td>
           <TextRight>
-            <Text id={asset.totalBalance} kind={TextKind.AssetPrimary} />
-            <Text
-              id={dollarValue(Number(asset.totalBalance), exchangeRate)}
+            <FormattedBalance
+              assetBalance={{ value: asset.totalBalance, id: asset.id }}
+              assets={[asset]}
+              kind={TextKind.AssetPrimary}
+            />
+            <FormattedDisplayBalance
+              assetBalance={{ value: asset.totalBalance, id: asset.id }}
+              assets={[asset]}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
         </Td>
         <Td>
           <TextRight>
-            <Text id={asset.spendableBalance} kind={TextKind.AssetPrimary} />
-            <Text
-              id={dollarValue(Number(asset.spendableBalance), exchangeRate)}
+            <FormattedBalance
+              assetBalance={{ value: asset.spendableBalance, id: asset.id }}
+              assets={[asset]}
+              kind={TextKind.AssetPrimary}
+            />
+            <FormattedDisplayBalance
+              assetBalance={{ value: asset.spendableBalance, id: asset.id }}
+              assets={[asset]}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
@@ -286,9 +298,7 @@ export const Row = ({
                 kind={TextKind.AssetTableSecondary}
               />
               <Text
-                id={`1$ = ${maskValue(exchangeRate.toString())} ${
-                  asset.symbol
-                }`}
+                id={`1$ = ${maskValue(asset.exchangeRate)} ${asset.symbol}`}
                 kind={TextKind.AssetPrimary}
               />
             </TextRight>
@@ -300,9 +310,14 @@ export const Row = ({
                 defaultMessage={'In Pool: '}
                 kind={TextKind.AssetTableSecondary}
               />
-              <Text id={asset.inPoolBalance} kind={TextKind.AssetPrimary} />
-              <Text
-                id={dollarValue(Number(asset.inPoolBalance), exchangeRate)}
+              <FormattedBalance
+                assetBalance={{ value: asset.inPoolBalance, id: asset.id }}
+                assets={[asset]}
+                kind={TextKind.AssetPrimary}
+              />
+              <FormattedDisplayBalance
+                assetBalance={{ value: asset.inPoolBalance, id: asset.id }}
+                assets={[asset]}
                 kind={TextKind.AssetTableSecondary}
               />
             </TextRight>
@@ -317,15 +332,20 @@ export const Row = ({
                 />
                 <Tooltip id={`${totalLockedCoins} ${asset.symbol}`} />
               </TooltipContainer>
-              <Text
-                id={asset.lockedBalance.balance}
+              <FormattedBalance
+                assetBalance={{
+                  value: asset.lockedBalance.balance,
+                  id: asset.id,
+                }}
+                assets={[asset]}
                 kind={TextKind.AssetPrimary}
               />
-              <Text
-                id={dollarValue(
-                  Number(asset.lockedBalance.balance),
-                  exchangeRate
-                )}
+              <FormattedDisplayBalance
+                assetBalance={{
+                  value: asset.lockedBalance.balance,
+                  id: asset.id,
+                }}
+                assets={[asset]}
                 kind={TextKind.AssetTableSecondary}
               />
             </TextRight>

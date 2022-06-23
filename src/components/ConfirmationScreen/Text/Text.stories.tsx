@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/Text',
+  title: 'components/ConfirmationScreen/Components/Text',
   component: Text,
   argTypes: {
     id: {

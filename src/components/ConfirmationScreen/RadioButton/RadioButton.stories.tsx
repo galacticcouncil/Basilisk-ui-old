@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/RadioButton',
+  title: 'components/ConfirmationScreen/Components/RadioButton',
   component: RadioButton,
   argTypes: {
     value: {

@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/Tooltip',
+  title: 'components/ConfirmationScreen/Components/Tooltip',
   component: Tooltip,
   argTypes: {
     id: {

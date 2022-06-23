@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default {
-  title: 'components/ConfirmationScreen/SlippageSlider',
+  title: 'components/ConfirmationScreen/Components/SlippageSlider',
   component: SlippageSlider,
   decorators: [
     (Story) => (

@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default {
-  title: 'components/ConfirmationScreen/Input',
+  title: 'components/ConfirmationScreen/Components/Input',
   component: Input,
   argTypes: {
     disabled: {

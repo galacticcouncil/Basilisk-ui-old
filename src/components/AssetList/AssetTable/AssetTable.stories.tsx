@@ -9,7 +9,7 @@ import {
 import { RowProps } from '../Row/Row';
 
 export default {
-  title: 'components/AssetList/AssetTable',
+  title: 'components/AssetList/Components/AssetTable',
   component: AssetTable,
   argTypes: {
     handleEdit: {

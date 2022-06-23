@@ -6,7 +6,7 @@ import BSX from '../AssetIcon/assets/BSX.svg';
 import BSXChain from '../AssetIcon/assets/BSXChain.svg';
 
 export default {
-  title: 'components/ConfirmationScreen/AssetInput',
+  title: 'components/ConfirmationScreen/Components/AssetInput',
   component: AssetInput,
   argTypes: {
     type: {

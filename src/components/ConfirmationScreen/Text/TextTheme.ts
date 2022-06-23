@@ -23,10 +23,10 @@ export enum TextKind {
   AssetTableName = 'AssetTableName',
   AssetTableHideLabel = 'AssetTableHideLabel',
   AssetListValueLabel = 'AssetListValueLabel',
-  AssetListTotalValue = 'AssetListTotalValue',
-  AssetListSecondaryValue = 'AssetListSecondaryValue',
-  AssetListTotalDecimalValue = 'AssetListTotalDecimalValue',
-  AssetListSecondaryDecimalValue = 'AssetListSecondaryDecimalValue',
+  AssetListTotal = 'AssetListTotal',
+  AssetListSecondary = 'AssetListSecondary',
+  AssetListTotalDecimal = 'AssetListTotalDecimal',
+  AssetListSecondaryDecimal = 'AssetListSecondaryDecimal',
   AssetInputAmount = 'assetInputAmount',
   MethodCallTitle = 'methodCallTitle',
   Tooltip = 'tooltip',
@@ -275,7 +275,7 @@ export const TextTheme: TextThemeType = {
 
     color: 'rgba(189, 204, 212, 1)',
   },
-  AssetListTotalValue: {
+  AssetListTotal: {
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: '58px',
@@ -283,7 +283,7 @@ export const TextTheme: TextThemeType = {
 
     color: '#FFFFFF',
   },
-  AssetListTotalDecimalValue: {
+  AssetListTotalDecimal: {
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: '28px',
@@ -291,7 +291,7 @@ export const TextTheme: TextThemeType = {
 
     color: 'rgba(189, 204, 212, 1)',
   },
-  AssetListSecondaryValue: {
+  AssetListSecondary: {
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: '34px',
@@ -299,7 +299,7 @@ export const TextTheme: TextThemeType = {
 
     color: '#FFFFFF',
   },
-  AssetListSecondaryDecimalValue: {
+  AssetListSecondaryDecimal: {
     fontStyle: 'normal',
     fontWeight: '900',
     fontSize: '21px',

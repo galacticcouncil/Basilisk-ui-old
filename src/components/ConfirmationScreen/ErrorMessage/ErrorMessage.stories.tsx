@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/ErrorMessage',
+  title: 'components/ConfirmationScreen/Components/ErrorMessage',
   component: ErrorMessage,
   argTypes: {
     text: {

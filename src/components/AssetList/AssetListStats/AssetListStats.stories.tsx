@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/AssetList/AssetListStats',
+  title: 'components/AssetList/Components/AssetListStats',
   component: AssetListStats,
   argTypes: {},
   decorators: [
@@ -28,20 +28,14 @@ const Template: ComponentStory<typeof AssetListStats> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  spendableAssetsValue: '1 564',
-  spendableAssetsDecimalValue: '56',
-  lockedValue: '2 300',
-  lockedDecimalValue: '52',
-  totalValue: '13 100',
-  totalDecimalValue: '52',
+  spendableAssets: '1 564.56',
+  locked: '2 300.52',
+  total: '13 100.52',
 };
 
 export const AssetList = Template.bind({});
 AssetList.args = {
-  spendableAssetsValue: '1 564',
-  spendableAssetsDecimalValue: '56',
-  lockedValue: '2 300',
-  lockedDecimalValue: '52',
-  totalValue: '13 100',
-  totalDecimalValue: '52',
+  spendableAssets: '1 564.56',
+  locked: '2 300.52',
+  total: '13 100.52',
 };

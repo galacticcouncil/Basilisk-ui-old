@@ -6,7 +6,7 @@ import BSX from './assets/BSX.svg';
 import BSXChain from './assets/BSXChain.svg';
 
 export default {
-  title: 'components/ConfirmationScreen/AssetIcon',
+  title: 'components/ConfirmationScreen/Components/AssetIcon',
   component: AssetIcon,
   argTypes: {
     text: {

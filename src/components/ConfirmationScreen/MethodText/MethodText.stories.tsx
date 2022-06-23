@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/MethodText',
+  title: 'components/ConfirmationScreen/Components/MethodText',
   component: MethodText,
   argTypes: {
     method: {

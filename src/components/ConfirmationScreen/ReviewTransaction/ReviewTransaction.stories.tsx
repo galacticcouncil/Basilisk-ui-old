@@ -11,7 +11,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { maskValue } from '../helpers/mask';
 
 export default {
-  title: 'components/ConfirmationScreen/Steps/ReviewTransaction',
+  title: 'components/ConfirmationScreen/Components/Steps/ReviewTransaction',
   component: ReviewTransaction,
   argTypes: {
     onCancel: {
@@ -59,8 +59,13 @@ Default.args = {
   loading: false,
   methodCall: MethodText.Default.args as MethodTextProps,
   table: Table.NoEdit.args as TableProps,
-  onCancel: linkTo('components/ConfirmationScreen/Steps/ConfirmSwap'),
-  onSign: linkTo('components/ConfirmationScreen/Steps/SentTransaction', 'Sent'),
+  onCancel: linkTo(
+    'components/ConfirmationScreen/Components/Steps/ConfirmSwap'
+  ),
+  onSign: linkTo(
+    'components/ConfirmationScreen/Components/Steps/SentTransaction',
+    'Sent'
+  ),
   nextBlockTime: 10,
   error: '',
 };

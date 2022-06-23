@@ -13,7 +13,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { maskValue } from '../helpers/mask';
 
 export default {
-  title: 'components/ConfirmationScreen/Steps/ConfirmSwap',
+  title: 'components/ConfirmationScreen/Components/Steps/ConfirmSwap',
   component: ConfirmSwap,
   argTypes: {
     onCancel: {
@@ -83,6 +83,10 @@ Default.args = {
     type: AssetInputType.Receive,
   },
   table: Table.Default.args as TableProps,
-  onCancel: linkTo('components/ConfirmationScreen/Steps/CancelConfirmation'),
-  onReview: linkTo('components/ConfirmationScreen/Steps/ReviewTransaction'),
+  onCancel: linkTo(
+    'components/ConfirmationScreen/Components/Steps/CancelConfirmation'
+  ),
+  onReview: linkTo(
+    'components/ConfirmationScreen/Components/Steps/ReviewTransaction'
+  ),
 };

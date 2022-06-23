@@ -7,7 +7,7 @@ import { maskValue } from '../helpers/mask';
 import { FormProvider, useForm } from 'react-hook-form';
 
 export default {
-  title: 'components/ConfirmationScreen/Table',
+  title: 'components/ConfirmationScreen/Components/Table',
   component: Table,
   argTypes: {
     handleEdit: {
@@ -52,7 +52,7 @@ const Template: ComponentStory<typeof Table> = (args) => {
 
 export const Default = Template.bind({});
 Default.args = {
-  handleEdit: linkTo('components/ConfirmationScreen/Settings'),
+  handleEdit: linkTo('components/ConfirmationScreen/Components/Settings'),
   settings: [
     {
       label: {

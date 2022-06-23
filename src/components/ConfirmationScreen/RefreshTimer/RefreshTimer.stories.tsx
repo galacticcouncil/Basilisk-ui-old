@@ -5,7 +5,7 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { useEffect, useState } from 'react';
 
 export default {
-  title: 'components/ConfirmationScreen/RefreshTimer',
+  title: 'components/ConfirmationScreen/Components/RefreshTimer',
   component: RefreshTimer,
   argTypes: {
     time: {
@@ -28,7 +28,6 @@ export default {
 } as ComponentMeta<typeof RefreshTimer>;
 
 const Template: ComponentStory<typeof RefreshTimer> = (args) => {
-
   return (
     <StorybookWrapper>
       <div style={{ width: '460px' }}>

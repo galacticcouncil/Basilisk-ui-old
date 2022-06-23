@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/LoadingIndicator',
+  title: 'components/ConfirmationScreen/Components/LoadingIndicator',
   component: LoadingIndicator,
   argTypes: {
     size: {

@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 
 export default {
-  title: 'components/ConfirmationScreen/Toggle',
+  title: 'components/ConfirmationScreen/Components/Toggle',
   component: Toggle,
   argTypes: {
     toggled: {
