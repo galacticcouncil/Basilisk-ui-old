@@ -1,8 +1,8 @@
 import { Asset, Pool } from '../../generated/graphql';
-import { computeAllPaths, filterPoolsOfInterest, flipSwap, orderSwapsInPath } from './paths';
+import { computeAllPaths, flipSwap, orderSwapsInPath } from './paths';
 import { Path } from './types';
 
-describe('poolsFilter', () => {
+describe('router/paths', () => {
   const pool1: Pool = {
     id: 'address-1',
     assetInId: '0',
@@ -18,48 +18,6 @@ describe('poolsFilter', () => {
     assetInId: '2',
     assetOutId: '3',
   };
-
-  describe('filterPoolsOfInterest()', () => {
-    const directPool: Pool = {
-      id: 'address-3',
-      assetInId: '0',
-      assetOutId: '2',
-    };
-
-    // this case is not for multi-hop
-    const tokenIn: Asset = { id: '0' };
-    const tokenOut: Asset = { id: '2' };
-
-    it('can find filter for direct pool', () => {
-      const xykPools: Pool[] = [pool1, pool2, directPool];
-
-      const tokenIn: Asset = { id: '0' };
-      const tokenOut: Asset = { id: '2' };
-      const reducedPools = filterPoolsOfInterest(
-        xykPools,
-        tokenIn,
-        tokenOut,
-        5
-      );
-
-      expect(reducedPools[0]).toEqual([directPool]);
-    });
-
-    it('can filter for relevant hopIn and hopOut pools', () => {
-      const xykPools: Pool[] = [pool1, pool2];
-
-      const [directPools, hopInPools, hopOutPools] = filterPoolsOfInterest(
-        xykPools,
-        tokenIn,
-        tokenOut,
-        5
-      );
-
-      expect(directPools).toStrictEqual([]);
-      expect(hopInPools).toEqual([pool1]);
-      expect(hopOutPools).toEqual([pool2]);
-    });
-  });
 
   describe('computeAllPaths()', () => {
     /**
