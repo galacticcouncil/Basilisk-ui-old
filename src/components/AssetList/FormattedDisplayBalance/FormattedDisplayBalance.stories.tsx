@@ -2,11 +2,6 @@ import { FormattedDisplayBalance } from './FormattedDisplayBalance';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
-import {
-  Centered as RowStory,
-  Default as RowDefaultStory,
-} from '../Row/Row.stories';
-import { Asset } from '../Row/Row';
 
 export default {
   title: 'components/AssetList/Components/FormattedDisplayBalance',
@@ -38,20 +33,14 @@ Default.args = {
 export const NativeAsset = Template.bind({});
 NativeAsset.args = {
   assetBalance: { value: '2131.13', id: '0' },
-  assets: [RowDefaultStory.args?.asset as Asset],
 };
 
 export const NonNativeAsset = Template.bind({});
 NonNativeAsset.args = {
   assetBalance: { value: '2131.13', id: '1' },
-  assets: [RowStory.args?.asset as Asset],
 };
 
 export const Euros = Template.bind({});
 Euros.args = {
   assetBalance: { value: '2131.13', id: '0' },
-  assets: [RowDefaultStory.args?.asset as Asset],
-  currency: {
-    suffix: '€',
-  },
 };

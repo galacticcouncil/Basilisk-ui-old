@@ -1,29 +1,24 @@
+import { useMemo } from 'react';
 import { maskValue } from '../../ConfirmationScreen/helpers/mask';
 import { Text } from '../../ConfirmationScreen/Text/Text';
 import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
-import { Asset, AssetBalance } from '../Row/Row';
+import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
+import { useDisplayValueContext } from '../hooks/UseDisplayValueContext';
+import { AssetBalance } from '../Row/Row';
 
+export interface Currency {
+  suffix?: string;
+  prefix?: string;
+}
 export interface FormattedDisplayBalanceProps {
   assetBalance: AssetBalance;
   kind?: TextKind;
-  // TODO: Get from context
-  assets?: Asset[];
-  currency?: {
-    suffix?: string;
-    prefix?: string;
-  };
 }
 
-export const calculateDisplayBalance = ({
-  assetBalance,
-  assets,
-}: FormattedDisplayBalanceProps): string => {
-  const exchangeRate =
-    assetBalance.id === undefined
-      ? '1'
-      : assets?.filter((asset) => asset.id === assetBalance.id)[0]
-          ?.exchangeRate ?? '0';
-
+export const calculateDisplayBalance = (
+  assetBalance: AssetBalance,
+  exchangeRate: string
+): string => {
   return maskValue(
     (
       Number(assetBalance.value.replace(/ /g, '')) / Number(exchangeRate)
@@ -31,41 +26,44 @@ export const calculateDisplayBalance = ({
   );
 };
 
-export const DisplayBalance = ({
-  assetBalance,
-  currency = {
-    prefix: '$',
-  },
-  assets,
-}: FormattedDisplayBalanceProps): string => {
+export const DisplayBalance = (
+  assetBalance: AssetBalance,
+  exchangeRate: string,
+  currency: Currency
+): string => {
   const formattedValue = `
   ${currency?.prefix ?? ''} 
-  ${calculateDisplayBalance({ assetBalance: assetBalance, assets: assets })} 
+  ${calculateDisplayBalance(assetBalance, exchangeRate)} 
   ${currency?.suffix ?? ''}`;
 
   return formattedValue;
 };
 
-export const DisplayBalanceSplit = ({
-  assetBalance,
-  currency = {
-    prefix: '$',
-  },
-  assets,
-}: FormattedDisplayBalanceProps): [string, string] => {
-  const balance = calculateDisplayBalance({
-    assetBalance: assetBalance,
-    assets: assets,
-  });
+export const DisplayBalanceSplit = (
+  assetBalance: AssetBalance,
+  exchangeRate: string,
+  currency: Currency
+): [string, string] => {
+  const balance = calculateDisplayBalance(assetBalance, exchangeRate);
+
   const splitValues = balance.split(/[,.]/);
+
   return [
     `${currency?.prefix ?? ''} ${splitValues[0]}.`,
     `${splitValues[1]} ${currency?.suffix ?? ''}`,
   ];
 };
 
-export const FormattedDisplayBalance = (
-  props: FormattedDisplayBalanceProps
-) => {
-  return <Text id={DisplayBalance(props)} kind={props.kind} />;
+export const FormattedDisplayBalance = ({
+  assetBalance,
+  kind,
+}: FormattedDisplayBalanceProps) => {
+  const exchangeRate = useDisplayValueContext(assetBalance.id);
+  const currency = useDisplayCurrencyContext();
+  const value = useMemo(
+    () => DisplayBalance(assetBalance, exchangeRate, currency),
+    [assetBalance, exchangeRate, currency]
+  );
+
+  return <Text id={value} kind={kind} />;
 };

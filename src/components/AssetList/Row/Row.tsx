@@ -14,6 +14,7 @@ import { Icon } from '../../ConfirmationScreen/Icon/Icon';
 import { maskValue } from '../../ConfirmationScreen/helpers/mask';
 import { FormattedBalance } from '../FormattedBalance/FormattedBalance';
 import { FormattedDisplayBalance } from '../FormattedDisplayBalance/FormattedDisplayBalance';
+import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
 
 export interface AssetBalance {
   value: string;
@@ -187,6 +188,7 @@ export const Row = ({
   actions,
   feeAssetId,
 }: RowProps) => {
+  const currency = useDisplayCurrencyContext();
   const [show, setShow] = useState(false);
   const handleTrade = useCallback(
     (e) => {
@@ -232,12 +234,10 @@ export const Row = ({
           <TextRight>
             <FormattedBalance
               assetBalance={{ value: asset.totalBalance, id: asset.id }}
-              assets={[asset]}
               kind={TextKind.AssetPrimary}
             />
             <FormattedDisplayBalance
               assetBalance={{ value: asset.totalBalance, id: asset.id }}
-              assets={[asset]}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
@@ -246,12 +246,10 @@ export const Row = ({
           <TextRight>
             <FormattedBalance
               assetBalance={{ value: asset.spendableBalance, id: asset.id }}
-              assets={[asset]}
               kind={TextKind.AssetPrimary}
             />
             <FormattedDisplayBalance
               assetBalance={{ value: asset.spendableBalance, id: asset.id }}
-              assets={[asset]}
               kind={TextKind.AssetTableSecondary}
             />
           </TextRight>
@@ -298,7 +296,9 @@ export const Row = ({
                 kind={TextKind.AssetTableSecondary}
               />
               <Text
-                id={`1$ = ${maskValue(asset.exchangeRate)} ${asset.symbol}`}
+                id={`${currency.prefix ?? ''} 1 ${
+                  currency.suffix ?? ''
+                } = ${maskValue(asset.exchangeRate)} ${asset.symbol}`}
                 kind={TextKind.AssetPrimary}
               />
             </TextRight>
@@ -312,12 +312,10 @@ export const Row = ({
               />
               <FormattedBalance
                 assetBalance={{ value: asset.inPoolBalance, id: asset.id }}
-                assets={[asset]}
                 kind={TextKind.AssetPrimary}
               />
               <FormattedDisplayBalance
                 assetBalance={{ value: asset.inPoolBalance, id: asset.id }}
-                assets={[asset]}
                 kind={TextKind.AssetTableSecondary}
               />
             </TextRight>
@@ -337,7 +335,6 @@ export const Row = ({
                   value: asset.lockedBalance.balance,
                   id: asset.id,
                 }}
-                assets={[asset]}
                 kind={TextKind.AssetPrimary}
               />
               <FormattedDisplayBalance
@@ -345,7 +342,6 @@ export const Row = ({
                   value: asset.lockedBalance.balance,
                   id: asset.id,
                 }}
-                assets={[asset]}
                 kind={TextKind.AssetTableSecondary}
               />
             </TextRight>

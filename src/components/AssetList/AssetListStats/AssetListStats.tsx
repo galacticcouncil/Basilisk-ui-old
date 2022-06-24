@@ -3,6 +3,8 @@ import { Text } from '../../ConfirmationScreen/Text/Text';
 import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
 import { DisplayBalanceSplit } from '../FormattedDisplayBalance/FormattedDisplayBalance';
+import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
+import { useDisplayValueContext } from '../hooks/UseDisplayValueContext';
 export interface AssetListStatsProps {
   spendableAssets: string;
   locked: string;
@@ -45,15 +47,23 @@ export const AssetListStats = ({
   locked,
   total,
 }: AssetListStatsProps) => {
-  const [spendableAssetsValue, spendableAssetsDecimal] = DisplayBalanceSplit({
-    assetBalance: { value: spendableAssets },
-  });
-  const [lockedValue, lockedDecimal] = DisplayBalanceSplit({
-    assetBalance: { value: locked },
-  });
-  const [totalValue, totalDecimal] = DisplayBalanceSplit({
-    assetBalance: { value: total },
-  });
+  const exchangeRate = useDisplayValueContext();
+  const currency = useDisplayCurrencyContext();
+  const [spendableAssetsValue, spendableAssetsDecimal] = DisplayBalanceSplit(
+    { value: spendableAssets },
+    exchangeRate,
+    currency
+  );
+  const [lockedValue, lockedDecimal] = DisplayBalanceSplit(
+    { value: locked },
+    exchangeRate,
+    currency
+  );
+  const [totalValue, totalDecimal] = DisplayBalanceSplit(
+    { value: total },
+    exchangeRate,
+    currency
+  );
 
   return (
     <AssetListStatsContainer>
