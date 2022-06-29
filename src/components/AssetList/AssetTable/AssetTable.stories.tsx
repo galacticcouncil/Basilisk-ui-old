@@ -12,8 +12,11 @@ export default {
   title: 'components/AssetList/Components/AssetTable',
   component: AssetTable,
   argTypes: {
-    handleEdit: {
+    onShowInPoolBalances: {
       action: 'clicked',
+    },
+    showInPoolBalances: {
+      type: 'boolean',
     },
   },
   decorators: [
@@ -40,6 +43,8 @@ Default.args = {
   data: [
     RowStory.args as RowProps,
     RowStory.args as RowProps,
+    RowStory.args as RowProps,
+    RowStoryCentered.args as RowProps,
     RowStoryCentered.args as RowProps,
     RowStory.args as RowProps,
     RowStory.args as RowProps,

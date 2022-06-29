@@ -1,7 +1,7 @@
 import BSX from '../../ConfirmationScreen/AssetIcon/assets/BSX.svg';
-import { AssetType } from '../Row/Row';
+import { Asset, AssetType } from '../Row/Row';
 
-export const dummyData = [
+export const dummyData: Asset[] = [
   {
     id: '0',
     type: AssetType.Native,
@@ -24,10 +24,21 @@ export const dummyData = [
       icon: null,
       name: 'Basilisk',
     },
+    actions: {
+      onTransfer: () => console.log('onTransfer'),
+      onCrossTransfer: () => console.log('onCrossTransfer'),
+      onBuy: () => console.log('onBuy'),
+      onSell: () => console.log('onSell'),
+      onPositionManagement: () => console.log('onPositionManagement'),
+      onRemoveLiquidity: () => console.log('onRemoveLiquidity'),
+      onSetFeeAsset: () => console.log('onSetFeeAsset'),
+      onClaim: () => console.log('onClaim'),
+      onAddLiquidity: () => console.log('onAddLiquidity'),
+    },
   },
   {
     id: '1',
-    type: AssetType.Native,
+    type: AssetType.Bridged,
     name: 'Kusama',
     icon: BSX,
     symbol: 'KSM',
@@ -46,6 +57,16 @@ export const dummyData = [
       id: '1',
       icon: null,
       name: 'Kusama',
+    },
+    actions: {
+      onTransfer: () => console.log('onTransfer'),
+      onCrossTransfer: () => console.log('onCrossTransfer'),
+      onBuy: () => console.log('onBuy'),
+      onSell: () => console.log('onSell'),
+      onPositionManagement: () => console.log('onPositionManagement'),
+      onRemoveLiquidity: () => console.log('onRemoveLiquidity'),
+      onSetFeeAsset: () => console.log('onSetFeeAsset'),
+      onAddLiquidity: () => console.log('onAddLiquidity'),
     },
   },
 ];

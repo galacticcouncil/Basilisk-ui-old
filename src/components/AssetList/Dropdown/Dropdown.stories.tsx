@@ -40,7 +40,7 @@ export const Default = Template.bind({});
 Default.args = {
   items: [
     {
-      icon: 'DropdownPlus',
+      icon: 'DropdownAddLiquidity',
       label: {
         id: 'addLiquidity',
         defaultMessage: 'Add Liquidity',
@@ -50,7 +50,7 @@ Default.args = {
       },
     },
     {
-      icon: 'DropdownDollar',
+      icon: 'DropdownSetFeeAsset',
       label: {
         id: 'setAsFeePaymentAsset',
         defaultMessage: 'Set as Fee Payment Asset',
@@ -60,7 +60,7 @@ Default.args = {
       },
     },
     {
-      icon: 'DropdownFlag',
+      icon: 'DropdownClaim',
       label: {
         id: 'claim ',
         defaultMessage: 'Claim',

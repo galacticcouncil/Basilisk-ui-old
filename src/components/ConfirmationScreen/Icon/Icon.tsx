@@ -16,9 +16,15 @@ import { ReactComponent as LoadingBigIcon } from './assets/LoadingBigIcon.svg';
 import { ReactComponent as TransactionDoneIcon } from './assets/TransactionDoneIcon.svg';
 import { ReactComponent as TransactionErrorIcon } from './assets/TransactionErrorIcon.svg';
 import { ReactComponent as ThreeDotsIcon } from './assets/ThreeDotsIcon.svg';
-import { ReactComponent as DropdownFlagIcon } from './assets/DropdownFlagIcon.svg';
-import { ReactComponent as DropdownDollarIcon } from './assets/DropdownDollarIcon.svg';
-import { ReactComponent as DropdownPlusIcon } from './assets/DropdownPlusIcon.svg';
+import { ReactComponent as DropdownClaimIcon } from './assets/DropdownClaimIcon.svg';
+import { ReactComponent as DropdownSetFeeAssetIcon } from './assets/DropdownSetFeeAssetIcon.svg';
+import { ReactComponent as DropdownAddLiquidityIcon } from './assets/DropdownAddLiquidityIcon.svg';
+import { ReactComponent as DropdownRemoveLiquidityIcon } from './assets/DropdownRemoveLiquidityIcon.svg';
+import { ReactComponent as DropdownBuyIcon } from './assets/DropdownBuyIcon.svg';
+import { ReactComponent as DropdownSellIcon } from './assets/DropdownSellIcon.svg';
+import { ReactComponent as DropdownTransferIcon } from './assets/DropdownTransferIcon.svg';
+import { ReactComponent as DropdownCrossTransferIcon } from './assets/DropdownCrossTransferIcon.svg';
+import { ReactComponent as DropdownPositionManagementIcon } from './assets/DropdownPositionManagementIcon.svg';
 import { ReactComponent as DollarIcon } from './assets/DollarIcon.svg';
 import { ReactComponent as ChevronDownIcon } from './assets/ChevronDownIcon.svg';
 
@@ -40,9 +46,15 @@ export const Icons = {
   TransactionDone: () => <TransactionDoneIcon />,
   TransactionError: () => <TransactionErrorIcon />,
   ThreeDots: () => <ThreeDotsIcon />,
-  DropdownFlag: () => <DropdownFlagIcon />,
-  DropdownDollar: () => <DropdownDollarIcon />,
-  DropdownPlus: () => <DropdownPlusIcon />,
+  DropdownClaim: () => <DropdownClaimIcon />,
+  DropdownSetFeeAsset: () => <DropdownSetFeeAssetIcon />,
+  DropdownAddLiquidity: () => <DropdownAddLiquidityIcon />,
+  DropdownRemoveLiquidity: () => <DropdownRemoveLiquidityIcon />,
+  DropdownBuy: () => <DropdownBuyIcon />,
+  DropdownSell: () => <DropdownSellIcon />,
+  DropdownTransfer: () => <DropdownTransferIcon />,
+  DropdownCrossTransfer: () => <DropdownCrossTransferIcon />,
+  DropdownPositionManagement: () => <DropdownPositionManagementIcon />,
   Dollar: () => <DollarIcon />,
   ChevronDown: () => <ChevronDownIcon />,
 } as const;

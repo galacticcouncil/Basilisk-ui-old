@@ -1,8 +1,8 @@
 import styled from '@emotion/styled/macro';
-import { Text } from '../../ConfirmationScreen/Text/Text';
+import { Text, TextProps } from '../../ConfirmationScreen/Text/Text';
 import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
-import { useCallback, useState } from 'react';
-import { Dropdown, DropdownProps } from '../Dropdown/Dropdown';
+import { useCallback, useEffect, useState } from 'react';
+import { Dropdown, DropdownItem } from '../Dropdown/Dropdown';
 import { AssetIcon } from '../../ConfirmationScreen/AssetIcon/AssetIcon';
 import {
   Button,
@@ -10,16 +10,12 @@ import {
   ButtonPadding,
 } from '../../ConfirmationScreen/Button/Button';
 import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
-import { Icon } from '../../ConfirmationScreen/Icon/Icon';
+import { Icon, IconNames } from '../../ConfirmationScreen/Icon/Icon';
 import { maskValue } from '../../ConfirmationScreen/helpers/mask';
 import { FormattedBalance } from '../FormattedBalance/FormattedBalance';
 import { FormattedDisplayBalance } from '../FormattedDisplayBalance/FormattedDisplayBalance';
 import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
-
-export interface AssetBalance {
-  value: string;
-  id?: string;
-}
+import { orderBy } from 'lodash';
 
 export enum AssetType {
   Native = 'native',
@@ -27,9 +23,13 @@ export enum AssetType {
   Bridged = 'bridged',
 }
 
-export type Asset = {
+export interface AssetBalance {
+  value: string;
+  id?: string;
+}
+
+export type AssetBase = {
   id: string;
-  type: AssetType;
   name: string;
   icon?: string;
   symbol: string;
@@ -51,12 +51,61 @@ export type Asset = {
   };
 };
 
+type AssetActionsBase = {
+  onTransfer: () => void;
+  onCrossTransfer: () => void;
+  onBuy: () => void;
+  onSell: () => void;
+  onPositionManagement: () => void;
+  onRemoveLiquidity: () => void;
+};
+
+type AssetNativeActions = AssetActionsBase & {
+  onSetFeeAsset: () => void;
+  onClaim: () => void;
+  onAddLiquidity: () => void;
+};
+
+type AssetBridgedActions = AssetActionsBase & {
+  onSetFeeAsset: () => void;
+  onAddLiquidity: () => void;
+};
+
+type AssetSharedActions = AssetActionsBase;
+
+type AssetNative = AssetBase & {
+  type: AssetType.Native;
+  actions: AssetNativeActions;
+};
+
+type AssetBridged = AssetBase & {
+  type: AssetType.Bridged;
+  actions: AssetBridgedActions;
+};
+
+type AssetShared = AssetBase & {
+  type: AssetType.Shared;
+  actions: AssetSharedActions;
+};
+
+type AssetNativeActionsData = {
+  [key in keyof AssetNativeActions]: {
+    icon: IconNames;
+    label: TextProps;
+    position: number;
+  };
+};
+
+type AssetActionsKey =
+  | keyof AssetNativeActions
+  | keyof AssetSharedActions
+  | keyof AssetBridgedActions;
+
+export type Asset = AssetNative | AssetBridged | AssetShared;
+
 export interface RowProps {
   asset: Asset;
   totalLockedCoins: string;
-  onTrade?: () => void;
-  onTransfer?: () => void;
-  actions: DropdownProps;
   feeAssetId?: string;
 }
 
@@ -165,10 +214,7 @@ const FeeWrapper = styled.div`
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  border: 1px solid;
-
-  border-image-source: linear-gradient(0deg, #44444a, #44444a),
-    linear-gradient(0deg, #3e3e4b, #3e3e4b);
+  border: 1px solid #44444a;
 `;
 
 const ArrowContainer = styled.div`
@@ -180,30 +226,91 @@ const IconWrapper = styled.div<{ show: boolean }>`
   transform: rotate(${(props) => (props.show ? 180 : 0)}deg);
 `;
 
-export const Row = ({
-  asset,
-  totalLockedCoins,
-  onTrade,
-  onTransfer,
-  actions,
-  feeAssetId,
-}: RowProps) => {
+
+// TODO: Refactor with icons from designer
+const dropdownItemsData: AssetNativeActionsData = {
+  onTransfer: {
+    icon: 'DropdownTransfer',
+    label: { id: 'transfer', defaultMessage: 'Transfer' },
+    position: 0,
+  },
+  onCrossTransfer: {
+    icon: 'DropdownCrossTransfer',
+    label: { id: 'crossTransfer', defaultMessage: 'Cross Transfer' },
+    position: 1,
+  },
+  onBuy: {
+    icon: 'DropdownBuy',
+    label: { id: 'buy', defaultMessage: 'Buy' },
+    position: 2,
+  },
+  onSell: {
+    icon: 'DropdownSell',
+    label: { id: 'sell', defaultMessage: 'Sell' },
+    position: 3,
+  },
+  onPositionManagement: {
+    icon: 'DropdownPositionManagement',
+    label: { id: 'positionManagement', defaultMessage: 'Position Management' },
+    position: 4,
+  },
+  onSetFeeAsset: {
+    icon: 'DropdownSetFeeAsset',
+    label: { id: 'setFeeAsset', defaultMessage: 'Set As Fee Asset' },
+    position: 5,
+  },
+  onClaim: {
+    icon: 'DropdownClaim',
+    label: { id: 'claim', defaultMessage: 'Claim' },
+    position: 11,
+  },
+  onAddLiquidity: {
+    icon: 'DropdownAddLiquidity',
+    label: { id: 'addLiquidity', defaultMessage: 'Add Liquidity' },
+    position: 7,
+  },
+  onRemoveLiquidity: {
+    icon: 'DropdownRemoveLiquidity',
+    label: { id: 'removeLiquidity', defaultMessage: 'Remove Liquidity' },
+    position: 8,
+  },
+};
+
+export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
+  const [dropdownItems, setDropdownItems] = useState<DropdownItem[]>([]);
   const currency = useDisplayCurrencyContext();
   const [show, setShow] = useState(false);
   const handleTrade = useCallback(
     (e) => {
       e.stopPropagation();
-      onTrade && onTrade();
+      asset.actions.onBuy && asset.actions.onBuy();
     },
-    [onTrade]
+    [asset.actions]
   );
   const handleTransfer = useCallback(
     (e) => {
       e.stopPropagation();
-      onTransfer && onTransfer();
+      asset.actions.onTransfer && asset.actions.onTransfer();
     },
-    [onTransfer]
+    [asset.actions]
   );
+
+  useEffect(() => {
+    setDropdownItems(
+      orderBy(
+        Object.keys(asset.actions)
+          .filter((key) => key !== 'onBuy' && key !== 'onTransfer')
+          .map((key) => {
+            return {
+              ...dropdownItemsData[key as AssetActionsKey],
+              onClick: asset.actions[key as keyof typeof asset.actions],
+            };
+          }),
+        'position',
+        'asc'
+      )
+    );
+  }, [asset]);
 
   return (
     <RowContainer onClick={() => setShow(!show)}>
@@ -267,7 +374,7 @@ export const Row = ({
             kind={ButtonKind.Secondary}
             padding={ButtonPadding.Small}
           />
-          <Dropdown {...actions} />
+          <Dropdown items={dropdownItems} />
           <ArrowContainer>
             <IconWrapper show={show}>
               <Icon name={'ChevronDown'} size={34} />

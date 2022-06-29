@@ -8,8 +8,8 @@ import { Row, RowProps } from '../Row/Row';
 
 export interface AssetTableProps {
   data: RowProps[];
-  hideSmallBalances?: boolean;
-  onHideSmallBalances?: () => void;
+  showInPoolBalances?: boolean;
+  onShowInPoolBalances?: () => void;
 }
 
 const TableContainer = styled.div`
@@ -74,7 +74,15 @@ const HeaderContainer = styled.div`
   border-bottom: 1px solid #29292d;
 `;
 
-const HideSmallBalances = styled.div`
+const TogglesContainer = styled.div`
+  width: fit-content;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 30px;
+`;
+
+const TogglesWrapper = styled.div`
   width: fit-content;
   display: flex;
   flex-direction: row;
@@ -92,17 +100,17 @@ const AssetLabelContainer = styled.div`
 
 export const AssetTable = ({
   data,
-  hideSmallBalances = false,
-  onHideSmallBalances,
+  showInPoolBalances = false,
+  onShowInPoolBalances,
 }: AssetTableProps) => {
-  const [hideSmallBalance, setHideSmallBalance] = useLocalStorage(
-    'hideSmallBalances',
-    hideSmallBalances
+  const [showInPoolBalance, setShowInPoolBalance] = useLocalStorage(
+    'showInPoolBalances',
+    showInPoolBalances
   );
 
   useEffect(() => {
-    onHideSmallBalances && onHideSmallBalances();
-  }, [onHideSmallBalances, hideSmallBalance]);
+    onShowInPoolBalances && onShowInPoolBalances();
+  }, [onShowInPoolBalances, showInPoolBalance]);
 
   return (
     <TableContainer>
@@ -112,17 +120,19 @@ export const AssetTable = ({
           defaultMessage={'Available Assets'}
           kind={TextKind.AssetTableName}
         />
-        <HideSmallBalances>
-          <Text
-            id={'hideSmallBalances'}
-            defaultMessage={'Hide Small Balances'}
-            kind={TextKind.AssetTableHideLabel}
-          />
-          <Toggle
-            toggled={hideSmallBalance}
-            onClick={() => setHideSmallBalance(!hideSmallBalance)}
-          />
-        </HideSmallBalances>
+        <TogglesContainer>
+          <TogglesWrapper>
+            <Text
+              id={'inPoolBalances'}
+              defaultMessage={'In Pool Balances'}
+              kind={TextKind.AssetTableHideLabel}
+            />
+            <Toggle
+              toggled={showInPoolBalance}
+              onClick={() => setShowInPoolBalance(!showInPoolBalance)}
+            />
+          </TogglesWrapper>
+        </TogglesContainer>
       </HeaderContainer>
       <Tr>
         <Th>

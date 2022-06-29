@@ -57,16 +57,26 @@ Default.args = {
       icon: null,
       name: 'Basilisk',
     },
+    actions: {
+      onTransfer: () => console.log('onTransfer'),
+      onCrossTransfer: () => console.log('onCrossTransfer'),
+      onBuy: () => console.log('onBuy'),
+      onSell: () => console.log('onSell'),
+      onPositionManagement: () => console.log('onPositionManagement'),
+      onRemoveLiquidity: () => console.log('onRemoveLiquidity'),
+      onSetFeeAsset: () => console.log('onSetFeeAsset'),
+      onClaim: () => console.log('onClaim'),
+      onAddLiquidity: () => console.log('onAddLiquidity'),
+    },
   },
   totalLockedCoins: '1 223 566 356',
-  actions: DropdownStory.args as DropdownProps,
 };
 
 export const Centered = Template.bind({});
 Centered.args = {
   asset: {
     id: '1',
-    type: AssetType.Native,
+    type: AssetType.Bridged,
     name: 'Kusama',
     icon: AssetIconStory.args?.assetIcon,
     symbol: 'KSM',
@@ -86,8 +96,17 @@ Centered.args = {
       icon: null,
       name: 'Kusama',
     },
+    actions: {
+      onTransfer: () => console.log('onTransfer'),
+      onCrossTransfer: () => console.log('onCrossTransfer'),
+      onBuy: () => console.log('onBuy'),
+      onSell: () => console.log('onSell'),
+      onPositionManagement: () => console.log('onPositionManagement'),
+      onRemoveLiquidity: () => console.log('onRemoveLiquidity'),
+      onSetFeeAsset: () => console.log('onSetFeeAsset'),
+      onAddLiquidity: () => console.log('onAddLiquidity'),
+    },
   },
   totalLockedCoins: '1 223 566 356',
-  actions: DropdownStory.args as DropdownProps,
   feeAssetId: '1',
 };
