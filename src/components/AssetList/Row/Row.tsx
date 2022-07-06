@@ -16,6 +16,8 @@ import { FormattedBalance } from '../FormattedBalance/FormattedBalance';
 import { FormattedDisplayBalance } from '../FormattedDisplayBalance/FormattedDisplayBalance';
 import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
 import { orderBy } from 'lodash';
+import { LoadingPlaceholder } from '../LoadingPlaceholder/LoadingPlaceholder';
+import { LPAssetIcon } from '../LPAseetIcon/LPAssetIcon';
 
 export enum AssetType {
   Native = 'native',
@@ -33,21 +35,24 @@ export type AssetBase = {
   name: string;
   icon?: string;
   symbol: string;
+  exchangeRate: string;
+  chain?: {
+    id: string;
+    name: string;
+    icon?: string | null;
+  };
+};
+
+export type NativeAssetBase = AssetBase & {
   totalBalance: string;
   spendableBalance: string;
   inPoolBalance: string;
   freeBalance: string;
   reservedBalance: string;
   frozenBalance: string;
-  exchangeRate: string;
   lockedBalance: {
     balance: string;
     reason: string;
-  };
-  chain?: {
-    id: string;
-    name: string;
-    icon?: string | null;
   };
 };
 
@@ -57,35 +62,42 @@ type AssetActionsBase = {
   onBuy: () => void;
   onSell: () => void;
   onPositionManagement: () => void;
+  onAddLiquidity: () => void;
   onRemoveLiquidity: () => void;
 };
 
 type AssetNativeActions = AssetActionsBase & {
   onSetFeeAsset: () => void;
   onClaim: () => void;
-  onAddLiquidity: () => void;
 };
 
 type AssetBridgedActions = AssetActionsBase & {
   onSetFeeAsset: () => void;
-  onAddLiquidity: () => void;
 };
 
 type AssetSharedActions = AssetActionsBase;
 
-type AssetNative = AssetBase & {
+type AssetNative = NativeAssetBase & {
   type: AssetType.Native;
   actions: AssetNativeActions;
 };
 
-type AssetBridged = AssetBase & {
+type AssetBridged = NativeAssetBase & {
   type: AssetType.Bridged;
   actions: AssetBridgedActions;
 };
 
-type AssetShared = AssetBase & {
+export type AssetShare = {
+  id: number;
   type: AssetType.Shared;
+  assetA: AssetBase;
+  assetB: AssetBase;
+  totalBalance: string;
+  spendableBalance: string;
   actions: AssetSharedActions;
+  totalIssuance?: string;
+  pool?: string;
+  totalShare?: number;
 };
 
 type AssetNativeActionsData = {
@@ -101,9 +113,9 @@ type AssetActionsKey =
   | keyof AssetSharedActions
   | keyof AssetBridgedActions;
 
-export type Asset = AssetNative | AssetBridged | AssetShared;
+export type Asset = AssetNative | AssetBridged;
 
-export interface RowProps {
+export interface AssetRowProps {
   asset: Asset;
   totalLockedCoins: string;
   feeAssetId?: string;
@@ -119,6 +131,15 @@ const RowContainer = styled.div`
   &:not(:last-child) {
     border-bottom: 1px solid #29292d;
   }
+`;
+
+const LoadingRowContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5.5px 0px;
 `;
 
 const TextRight = styled.div`
@@ -161,19 +182,12 @@ const IconContainer = styled.div`
   padding-bottom: 5px;
 `;
 
-const Td = styled.div<{ left?: boolean }>`
+const Td = styled.div`
   width: 25%;
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: ${(props) => (props.left ? 'flex-start' : 'flex-end')};
-  &:first-child {
-    width: 15%;
-    justify-content: flex-start;
-  }
-  &:last-child {
-    width: 35%;
-  }
+  justify-content: flex-start;
   gap: 10px;
 `;
 
@@ -189,10 +203,11 @@ const Tr = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 10px 22px 8px;
+  padding: 22px 10px 22px 25px;
   &:not(:last-child) {
     border-bottom: 1px solid #29292d;
   }
+  position: relative;
 `;
 
 const Spacer = styled.div`
@@ -201,20 +216,8 @@ const Spacer = styled.div`
 `;
 
 const FeeContainer = styled.div`
-  width: 17px;
-  height: 17px;
-  border-radius: 5px;
-`;
-
-const FeeWrapper = styled.div`
-  width: 17px;
-  height: 17px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  border-radius: 5px;
-  border: 1px solid #44444a;
+  position: absolute;
+  bottom: 13px;
 `;
 
 const ArrowContainer = styled.div`
@@ -225,7 +228,6 @@ const ArrowContainer = styled.div`
 const IconWrapper = styled.div<{ show: boolean }>`
   transform: rotate(${(props) => (props.show ? 180 : 0)}deg);
 `;
-
 
 // TODO: Refactor with icons from designer
 const dropdownItemsData: AssetNativeActionsData = {
@@ -276,7 +278,178 @@ const dropdownItemsData: AssetNativeActionsData = {
   },
 };
 
-export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
+export const LoadingRow = () => (
+  <LoadingRowContainer>
+    <Tr>
+      <Td>
+        <LoadingPlaceholder width={30} height={30} />
+        <LoadingPlaceholder width={90} height={30} />
+      </Td>
+      <Td>
+        <TextLeft>
+          <LoadingPlaceholder width={134} height={30} />
+        </TextLeft>
+      </Td>
+      <Td>
+        <TextLeft>
+          <LoadingPlaceholder width={149} height={30} />
+        </TextLeft>
+      </Td>
+      <Td>
+        <LoadingPlaceholder width={71} height={30} />
+        <LoadingPlaceholder width={71} height={30} />
+        <LoadingPlaceholder width={30} height={30} />
+        <ArrowContainer></ArrowContainer>
+      </Td>
+    </Tr>
+  </LoadingRowContainer>
+);
+
+// TODO: WIP ShareAsset
+export const ShareAssetRow = ({
+  id,
+  type,
+  assetA,
+  assetB,
+  totalBalance,
+  spendableBalance,
+  actions,
+}: AssetShare) => {
+  const [dropdownItems, setDropdownItems] = useState<DropdownItem[]>([]);
+  const currency = useDisplayCurrencyContext();
+  const [show, setShow] = useState(false);
+  const handleTrade = useCallback(
+    (e) => {
+      e.stopPropagation();
+      actions.onAddLiquidity && actions.onAddLiquidity();
+    },
+    [actions]
+  );
+  const handleTransfer = useCallback(
+    (e) => {
+      e.stopPropagation();
+      actions.onRemoveLiquidity && actions.onRemoveLiquidity();
+    },
+    [actions]
+  );
+
+  useEffect(() => {
+    setDropdownItems(
+      orderBy(
+        Object.keys(actions)
+          .filter(
+            (key) => key !== 'onAddLiquidity' && key !== 'onRemoveLiquidity'
+          )
+          .map((key) => {
+            return {
+              ...dropdownItemsData[key as AssetActionsKey],
+              onClick: actions[key as keyof typeof actions],
+            };
+          }),
+        'position',
+        'asc'
+      )
+    );
+  }, [actions]);
+
+  return (
+    <RowContainer onClick={() => setShow(!show)}>
+      <Tr>
+        <Td>
+          <AssetIconContainer>
+            <LPAssetIcon assets={[assetA, assetB]} />
+          </AssetIconContainer>
+        </Td>
+        <Td>
+          <TextLeft>
+            <FormattedBalance
+              assetBalance={{ value: spendableBalance }}
+              kind={TextKind.AssetPrimary}
+            />
+            <FormattedDisplayBalance
+              assetBalance={{ value: spendableBalance }}
+              kind={TextKind.AssetTableSecondary}
+            />
+          </TextLeft>
+        </Td>
+        <Td>
+          <TextLeft>
+            <FormattedBalance
+              assetBalance={{ value: totalBalance }}
+              kind={TextKind.AssetPrimary}
+            />
+            <FormattedDisplayBalance
+              assetBalance={{ value: totalBalance }}
+              kind={TextKind.AssetTableSecondary}
+            />
+          </TextLeft>
+        </Td>
+        <Td>
+          <Button
+            text={{ id: 'trade', defaultMessage: 'Trade' }}
+            onClick={(e) => handleTrade(e)}
+            kind={ButtonKind.Secondary}
+            padding={ButtonPadding.Small}
+          />
+          <Button
+            text={{ id: 'transfer', defaultMessage: 'Transfer' }}
+            onClick={(e) => handleTransfer(e)}
+            kind={ButtonKind.Secondary}
+            padding={ButtonPadding.Small}
+          />
+          <Dropdown items={dropdownItems} />
+          <ArrowContainer>
+            <IconWrapper show={show}>
+              <Icon name={'ChevronDown'} size={34} />
+            </IconWrapper>
+          </ArrowContainer>
+        </Td>
+      </Tr>
+      {show && (
+        <Tr>
+          <Td>
+            <TextLeft>
+              <Text
+                id={'originChain'}
+                defaultMessage={'Origin chain: '}
+                kind={TextKind.AssetTableSecondary}
+              />
+              <Text
+                id={assetA.chain?.name || ''}
+                kind={TextKind.AssetPrimary}
+              />
+            </TextLeft>
+          </Td>
+          <Td>
+            <TextRight>
+              <Text
+                id={'currentRate'}
+                defaultMessage={'Current rate: '}
+                kind={TextKind.AssetTableSecondary}
+              />
+              <Text
+                id={`${currency.prefix ?? ''} 1 ${
+                  currency.suffix ?? ''
+                } = ${maskValue(assetA.exchangeRate)} ${assetA.symbol}`}
+                kind={TextKind.AssetPrimary}
+              />
+            </TextRight>
+          </Td>
+          <Td></Td>
+          <Td>
+            <Spacer />
+          </Td>
+        </Tr>
+      )}
+    </RowContainer>
+  );
+};
+
+export const AssetRow = ({
+  asset,
+  totalLockedCoins,
+  feeAssetId,
+}: AssetRowProps) => {
   const [dropdownItems, setDropdownItems] = useState<DropdownItem[]>([]);
   const currency = useDisplayCurrencyContext();
   const [show, setShow] = useState(false);
@@ -316,17 +489,6 @@ export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
     <RowContainer onClick={() => setShow(!show)}>
       <Tr>
         <Td>
-          <FeeContainer>
-            {feeAssetId && asset.id === feeAssetId && (
-              <FeeWrapper>
-                <Tooltip
-                  icon={'Dollar'}
-                  id={'feeTooltip'}
-                  defaultMessage={'Your current payment asset'}
-                />
-              </FeeWrapper>
-            )}
-          </FeeContainer>
           <AssetIconContainer>
             <IconContainer>
               <AssetIcon assetIcon={asset.icon} chainIcon={asset.chain?.icon} />
@@ -334,11 +496,20 @@ export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
             <AssetNames>
               <Text id={asset.symbol} kind={TextKind.AssetPrimaryUpperCase} />
               <Text id={asset.name} kind={TextKind.AssetSecondary} />
+              {feeAssetId && asset.id === feeAssetId && (
+                <FeeContainer>
+                  <Text
+                    id={'feeLabel'}
+                    defaultMessage={'$ Fee payment asset'}
+                    kind={TextKind.AssetListFeeLabel}
+                  />
+                </FeeContainer>
+              )}
             </AssetNames>
           </AssetIconContainer>
         </Td>
         <Td>
-          <TextRight>
+          <TextLeft>
             <FormattedBalance
               assetBalance={{ value: asset.totalBalance, id: asset.id }}
               kind={TextKind.AssetPrimary}
@@ -347,19 +518,19 @@ export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
               assetBalance={{ value: asset.totalBalance, id: asset.id }}
               kind={TextKind.AssetTableSecondary}
             />
-          </TextRight>
+          </TextLeft>
         </Td>
         <Td>
-          <TextRight>
+          <TextLeft>
             <FormattedBalance
-              assetBalance={{ value: asset.spendableBalance, id: asset.id }}
+              assetBalance={{ value: asset.totalBalance, id: asset.id }}
               kind={TextKind.AssetPrimary}
             />
             <FormattedDisplayBalance
-              assetBalance={{ value: asset.spendableBalance, id: asset.id }}
+              assetBalance={{ value: asset.totalBalance, id: asset.id }}
               kind={TextKind.AssetTableSecondary}
             />
-          </TextRight>
+          </TextLeft>
         </Td>
         <Td>
           <Button
@@ -385,7 +556,6 @@ export const Row = ({ asset, totalLockedCoins, feeAssetId }: RowProps) => {
       {show && (
         <Tr>
           <Td>
-            <FeeContainer />
             <TextLeft>
               <Text
                 id={'originChain'}

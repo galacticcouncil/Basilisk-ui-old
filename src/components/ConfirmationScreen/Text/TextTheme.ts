@@ -42,6 +42,7 @@ export enum TextKind {
   SettingsSubtitle = 'settingsSubtitle',
   ToggleLabel = 'toggleLabel',
   AssetDropdown = 'assetDropdown',
+  AssetListFeeLabel = 'assetListFeeLabel',
 }
 
 export interface TextStyle {
@@ -419,5 +420,14 @@ export const TextTheme: TextThemeType = {
     lineHeight: '18px',
 
     color: '#B8FFDF',
+  },
+  assetListFeeLabel: {
+    fontStyle: 'normal',
+    fontWeight: '700',
+    fontSize: '9px',
+    lineHeight: '9px',
+  
+    textTransform: 'uppercase',
+    color: '#8AFFCB',
   },
 };

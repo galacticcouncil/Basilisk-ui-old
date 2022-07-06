@@ -6,7 +6,11 @@ import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 export default {
   title: 'components/AssetList/Components/AssetListStats',
   component: AssetListStats,
-  argTypes: {},
+  argTypes: {
+    loading: {
+      type: 'boolean',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -31,6 +35,7 @@ Default.args = {
   spendableAssets: '1 564.56',
   locked: '2 300.52',
   total: '13 100.52',
+  loading: false,
 };
 
 export const AssetList = Template.bind({});
@@ -38,4 +43,12 @@ AssetList.args = {
   spendableAssets: '1 564.56',
   locked: '2 300.52',
   total: '13 100.52',
+};
+
+export const Loading = Template.bind({});
+Loading.args = {
+  spendableAssets: '1 564.56',
+  locked: '2 300.52',
+  total: '13 100.52',
+  loading: true,
 };

@@ -10,6 +10,11 @@ import { AssetTableProps } from './AssetTable/AssetTable';
 export default {
   title: 'components/AssetList/AssetList',
   component: AssetList,
+  argTypes: {
+    loading: {
+      type: 'boolean',
+    },
+  },
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -38,4 +43,10 @@ export const Default = Template.bind({});
 Default.args = {
   stats: AssetListStatsStory.args as AssetListStatsProps,
   table: AssetTableStory.args as AssetTableProps,
+  loading: false,
+};
+
+export const Loading = Template.bind({});
+Loading.args = {
+  loading: true,
 };

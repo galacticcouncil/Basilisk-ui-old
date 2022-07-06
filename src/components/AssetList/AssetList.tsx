@@ -6,8 +6,9 @@ import {
 import { AssetTable, AssetTableProps } from './AssetTable/AssetTable';
 
 export interface AssetListProps {
-  stats: AssetListStatsProps;
-  table: AssetTableProps;
+  stats?: AssetListStatsProps;
+  table?: AssetTableProps;
+  loading?: boolean;
 }
 
 const AssetListContainer = styled.div`
@@ -21,11 +22,11 @@ const AssetListContainer = styled.div`
   gap: 90px;
 `;
 
-export const AssetList = ({ stats, table }: AssetListProps) => {
+export const AssetList = ({ stats, table, loading = false }: AssetListProps) => {
   return (
     <AssetListContainer>
-      <AssetListStats {...stats} />
-      <AssetTable {...table} />
+      <AssetListStats {...stats} loading={loading} />
+      <AssetTable {...table} loading={loading}/>
     </AssetListContainer>
   );
 };

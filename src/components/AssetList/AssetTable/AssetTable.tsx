@@ -4,12 +4,20 @@ import { useLocalStorage } from 'use-hooks';
 import { Text } from '../../ConfirmationScreen/Text/Text';
 import { TextKind } from '../../ConfirmationScreen/Text/TextTheme';
 import { Toggle } from '../../ConfirmationScreen/Toggle/Toggle';
-import { Row, RowProps } from '../Row/Row';
+import {
+  AssetRow,
+  ShareAssetRow,
+  LoadingRow,
+  AssetRowProps,
+  AssetShare,
+} from '../Row/Row';
 
 export interface AssetTableProps {
-  data: RowProps[];
+  assetsRows?: AssetRowProps[];
+  shareAssetsRows?: AssetShare[];
   showInPoolBalances?: boolean;
   onShowInPoolBalances?: () => void;
+  loading?: boolean;
 }
 
 const TableContainer = styled.div`
@@ -18,7 +26,6 @@ const TableContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
   background: linear-gradient(
       180deg,
       rgba(35, 56, 55, 0.3) 0%,
@@ -26,6 +33,7 @@ const TableContainer = styled.div`
     ),
     #16171c;
   border-radius: 20px;
+  margin-bottom: 30px;
 `;
 
 const RowContainer = styled.div`
@@ -44,7 +52,7 @@ const Tr = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 8px;
+  padding: 22px 10px 22px 25px;
   border-bottom: 1px solid #29292d;
 `;
 
@@ -53,14 +61,7 @@ const Th = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end;
-  &:first-child {
-    width: 15%;
-    justify-content: flex-start;
-  }
-  &:last-child {
-    width: 35%;
-  }
+  justify-content: flex-start;
   gap: 10px;
 `;
 
@@ -90,18 +91,12 @@ const TogglesWrapper = styled.div`
   gap: 10px;
 `;
 
-const AssetLabelContainer = styled.div`
-  width: fit-content;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding-left: 29px;
-`;
-
 export const AssetTable = ({
-  data,
+  assetsRows,
+  shareAssetsRows,
   showInPoolBalances = false,
   onShowInPoolBalances,
+  loading = false,
 }: AssetTableProps) => {
   const [showInPoolBalance, setShowInPoolBalance] = useLocalStorage(
     'showInPoolBalances',
@@ -113,58 +108,111 @@ export const AssetTable = ({
   }, [onShowInPoolBalances, showInPoolBalance]);
 
   return (
-    <TableContainer>
-      <HeaderContainer>
-        <Text
-          id={'availableAssets'}
-          defaultMessage={'Available Assets'}
-          kind={TextKind.AssetTableName}
-        />
-        <TogglesContainer>
-          <TogglesWrapper>
-            <Text
-              id={'inPoolBalances'}
-              defaultMessage={'In Pool Balances'}
-              kind={TextKind.AssetTableHideLabel}
-            />
-            <Toggle
-              toggled={showInPoolBalance}
-              onClick={() => setShowInPoolBalance(!showInPoolBalance)}
-            />
-          </TogglesWrapper>
-        </TogglesContainer>
-      </HeaderContainer>
-      <Tr>
-        <Th>
-          <AssetLabelContainer>
+    <>
+      <TableContainer>
+        <HeaderContainer>
+          <Text
+            id={'availableAssets'}
+            defaultMessage={'Available Assets'}
+            kind={TextKind.AssetTableName}
+          />
+          <TogglesContainer>
+            <TogglesWrapper>
+              <Text
+                id={'inPoolBalances'}
+                defaultMessage={'In Pool Balances'}
+                kind={TextKind.AssetTableHideLabel}
+              />
+              <Toggle
+                toggled={showInPoolBalance}
+                onClick={() => setShowInPoolBalance(!showInPoolBalance)}
+              />
+            </TogglesWrapper>
+          </TogglesContainer>
+        </HeaderContainer>
+        <Tr>
+          <Th>
             <Text
               id={'assetName'}
               defaultMessage={'Asset Name'}
               kind={TextKind.AssetTableHeader}
             />
-          </AssetLabelContainer>
-        </Th>
-        <Th>
+          </Th>
+          <Th>
+            <Text
+              id={'spendableBalance'}
+              defaultMessage={'Spendable Balance'}
+              kind={TextKind.AssetTableHeader}
+            />
+          </Th>
+          <Th>
+            <Text
+              id={'totalBalance'}
+              defaultMessage={'Total Balance'}
+              kind={TextKind.AssetTableHeader}
+            />
+          </Th>
+          <Th></Th>
+        </Tr>
+        {assetsRows &&
+          assetsRows.map((item) => (
+            <RowContainer key={item.asset.id}>
+              <AssetRow {...item} />
+            </RowContainer>
+          ))}
+        {loading &&
+          [1, 2, 3].map((item) => (
+            <RowContainer key={item}>
+              <LoadingRow />
+            </RowContainer>
+          ))}
+      </TableContainer>
+
+      <TableContainer>
+        <HeaderContainer>
           <Text
-            id={'totalBalance'}
-            defaultMessage={'Total Balance'}
-            kind={TextKind.AssetTableHeader}
+            id={'shareTokens'}
+            defaultMessage={'Share Tokens'}
+            kind={TextKind.AssetTableName}
           />
-        </Th>
-        <Th>
-          <Text
-            id={'spendableBalance'}
-            defaultMessage={'Spendable Balance'}
-            kind={TextKind.AssetTableHeader}
-          />
-        </Th>
-        <Th></Th>
-      </Tr>
-      {data.map((item) => (
-        <RowContainer key={item.asset.id}>
-          <Row {...item} />
-        </RowContainer>
-      ))}
-    </TableContainer>
+        </HeaderContainer>
+        <Tr>
+          <Th>
+            <Text
+              id={'assetName'}
+              defaultMessage={'Asset Name'}
+              kind={TextKind.AssetTableHeader}
+            />
+          </Th>
+          <Th>
+            <Text
+              id={'spendableBalance'}
+              defaultMessage={'Spendable Balance'}
+              kind={TextKind.AssetTableHeader}
+            />
+          </Th>
+          <Th>
+            <Text
+              id={'totalBalance'}
+              defaultMessage={'Total Balance'}
+              kind={TextKind.AssetTableHeader}
+            />
+          </Th>
+          <Th></Th>
+        </Tr>
+        {shareAssetsRows &&
+          shareAssetsRows.map((item) => (
+            <RowContainer key={item.id}>
+              <ShareAssetRow {...item} />
+            </RowContainer>
+          ))}
+        {loading &&
+          [1, 2, 3].map((item) => (
+            <RowContainer key={item}>
+              <LoadingRow />
+            </RowContainer>
+          ))}
+      </TableContainer>
+    </>
   );
 };

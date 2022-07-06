@@ -5,10 +5,12 @@ import { Tooltip } from '../../ConfirmationScreen/Tooltip/Tooltip';
 import { DisplayBalanceSplit } from '../FormattedDisplayBalance/FormattedDisplayBalance';
 import { useDisplayCurrencyContext } from '../hooks/UseDisplayCurrencyContext';
 import { useDisplayValueContext } from '../hooks/UseDisplayValueContext';
+import { LoadingPlaceholder } from '../LoadingPlaceholder/LoadingPlaceholder';
 export interface AssetListStatsProps {
-  spendableAssets: string;
-  locked: string;
-  total: string;
+  spendableAssets?: string;
+  locked?: string;
+  total?: string;
+  loading?: boolean;
 }
 
 const AssetListStatsContainer = styled.div`
@@ -46,24 +48,19 @@ export const AssetListStats = ({
   spendableAssets,
   locked,
   total,
+  loading = false,
 }: AssetListStatsProps) => {
   const exchangeRate = useDisplayValueContext();
   const currency = useDisplayCurrencyContext();
-  const [spendableAssetsValue, spendableAssetsDecimal] = DisplayBalanceSplit(
-    { value: spendableAssets },
-    exchangeRate,
-    currency
-  );
-  const [lockedValue, lockedDecimal] = DisplayBalanceSplit(
-    { value: locked },
-    exchangeRate,
-    currency
-  );
-  const [totalValue, totalDecimal] = DisplayBalanceSplit(
-    { value: total },
-    exchangeRate,
-    currency
-  );
+  const [spendableAssetsValue, spendableAssetsDecimal] = spendableAssets
+    ? DisplayBalanceSplit({ value: spendableAssets }, exchangeRate, currency)
+    : [undefined, undefined];
+  const [lockedValue, lockedDecimal] = locked
+    ? DisplayBalanceSplit({ value: locked }, exchangeRate, currency)
+    : [undefined, undefined];
+  const [totalValue, totalDecimal] = total
+    ? DisplayBalanceSplit({ value: total }, exchangeRate, currency)
+    : [undefined, undefined];
 
   return (
     <AssetListStatsContainer>
@@ -73,30 +70,20 @@ export const AssetListStats = ({
           defaultMessage={'Spendable Assets'}
           kind={TextKind.AssetListValueLabel}
         />
-        <ValueWrapper>
-          <Text id={spendableAssetsValue} kind={TextKind.AssetListTotal} />
-          <Text
-            id={spendableAssetsDecimal}
-            kind={TextKind.AssetListTotalDecimal}
-          />
-        </ValueWrapper>
-      </TotalContainer>
-      <TotalContainer>
-        <LabelWrapper>
-          <Text
-            id={'lockedAssets'}
-            defaultMessage={'Locked Assets'}
-            kind={TextKind.AssetListValueLabel}
-          />
-          <Tooltip
-            id={'lockedAssetsTooltip'}
-            defaultMessage={'Locked Assets Tooltip'}
-          />
-        </LabelWrapper>
-        <ValueWrapper>
-          <Text id={lockedValue} kind={TextKind.AssetListSecondary} />
-          <Text id={lockedDecimal} kind={TextKind.AssetListSecondaryDecimal} />
-        </ValueWrapper>
+        {loading ? (
+          <LoadingPlaceholder width={208} height={52} />
+        ) : (
+          <ValueWrapper>
+            <Text
+              id={spendableAssetsValue || ''}
+              kind={TextKind.AssetListTotal}
+            />
+            <Text
+              id={spendableAssetsDecimal || ''}
+              kind={TextKind.AssetListTotalDecimal}
+            />
+          </ValueWrapper>
+        )}
       </TotalContainer>
       <TotalContainer>
         <LabelWrapper>
@@ -110,10 +97,41 @@ export const AssetListStats = ({
             defaultMessage={'Total Portfolio Tooltip'}
           />
         </LabelWrapper>
-        <ValueWrapper>
-          <Text id={totalValue} kind={TextKind.AssetListSecondary} />
-          <Text id={totalDecimal} kind={TextKind.AssetListSecondaryDecimal} />
-        </ValueWrapper>
+        {loading ? (
+          <LoadingPlaceholder width={168} height={42} />
+        ) : (
+          <ValueWrapper>
+            <Text id={totalValue || ''} kind={TextKind.AssetListSecondary} />
+            <Text
+              id={totalDecimal || ''}
+              kind={TextKind.AssetListSecondaryDecimal}
+            />
+          </ValueWrapper>
+        )}
+      </TotalContainer>
+      <TotalContainer>
+        <LabelWrapper>
+          <Text
+            id={'lockedAssets'}
+            defaultMessage={'Locked Assets'}
+            kind={TextKind.AssetListValueLabel}
+          />
+          <Tooltip
+            id={'lockedAssetsTooltip'}
+            defaultMessage={'Locked Assets Tooltip'}
+          />
+        </LabelWrapper>
+        {loading ? (
+          <LoadingPlaceholder width={168} height={42} />
+        ) : (
+          <ValueWrapper>
+            <Text id={lockedValue || ''} kind={TextKind.AssetListSecondary} />
+            <Text
+              id={lockedDecimal || ''}
+              kind={TextKind.AssetListSecondaryDecimal}
+            />
+          </ValueWrapper>
+        )}
       </TotalContainer>
     </AssetListStatsContainer>
   );

@@ -1,14 +1,12 @@
-import { AssetType, Row } from './Row';
+import { AssetType, AssetRow } from './Row';
 import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import { WithBothIcons as AssetIconStory } from '../../ConfirmationScreen/AssetIcon/AssetIcon.stories';
-import { DropdownProps } from '../Dropdown/Dropdown';
-import { Default as DropdownStory } from '../Dropdown/Dropdown.stories';
 
 export default {
   title: 'components/AssetList/Components/Row',
-  component: Row,
+  component: AssetRow,
   argTypes: {
     handleClick: {
       action: 'clicked',
@@ -21,13 +19,13 @@ export default {
       </MemoryRouter>
     ),
   ],
-} as ComponentMeta<typeof Row>;
+} as ComponentMeta<typeof AssetRow>;
 
-const Template: ComponentStory<typeof Row> = (args) => {
+const Template: ComponentStory<typeof AssetRow> = (args) => {
   return (
     <StorybookWrapper>
       <table style={{ padding: '0px 50px', width: '100%' }}>
-        <Row {...args} />
+        <AssetRow {...args} />
       </table>
     </StorybookWrapper>
   );
@@ -93,7 +91,7 @@ Centered.args = {
     exchangeRate: '100',
     chain: {
       id: '1',
-      icon: null,
+      icon: AssetIconStory.args?.chainIcon,
       name: 'Kusama',
     },
     actions: {
@@ -110,3 +108,5 @@ Centered.args = {
   totalLockedCoins: '1 223 566 356',
   feeAssetId: '1',
 };
+
+export const Loading = Template.bind({});
