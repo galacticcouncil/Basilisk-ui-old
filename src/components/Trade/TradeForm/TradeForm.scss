@@ -8,9 +8,12 @@
 
   padding: 14px;
   min-width: 350px;
+  max-width: 350px;
+  margin: 0 auto;
 
   background-color: $d-gray4;
   overflow: hidden;
+  border-radius: 8px;
 
   position: relative;
 

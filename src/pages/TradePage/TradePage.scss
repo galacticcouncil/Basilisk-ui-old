@@ -19,23 +19,25 @@
   display: flex;
   justify-content: center;
 
-  position: absolute;
-  right: 0;
-  top: 0;
   font-size: 14px;
   font-weight: 600;
   height: 50px;
-  padding: 0 16px;
+  padding: 2px 16px;
   width: 200px;
+
+  margin: 0 auto;
 
   background-color: $d-gray5;
   border-radius: $border-radius;
 
   transition: top 200ms ease, background-color, 200ms ease;
 
+  top: 24px;
+  position: relative;
+
   &.transaction-standby {
     top: 0;
-    background-color: $d-gray5;
+    background-color: transparent;
 
     .notification {
       visibility: hidden;
@@ -43,19 +45,16 @@
   }
 
   &.transaction-success {
-    top: -24px;
     background-color: $green2;
     color: $black;
   }
 
   &.transaction-failed {
-    top: -24px;
     background-color: $red1;
     color: $black;
   }
 
   &.transaction-pending {
-    top: -24px;
     background-color: $orange1;
     color: $black;
 

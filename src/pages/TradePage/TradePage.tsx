@@ -459,7 +459,7 @@ export const TradePage = () => {
         <div className="notification">transaction {notification}</div>
       </div>
       <div className="trade-page">
-        <TradeChart
+        {/* <TradeChart
           pool={pool}
           assetIds={assetIds}
           spotPrice={spotPrice}
@@ -468,7 +468,7 @@ export const TradePage = () => {
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
-        />
+        /> */}
         <TradeForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}

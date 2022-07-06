@@ -709,7 +709,7 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.inTradeChange &&
+                  {/* {tradeBalances.inTradeChange &&
                     !tradeBalances.inTradeChange.isZero() && (
                       <div className="red">
                         (
@@ -720,7 +720,7 @@ export const TradeForm = ({
                           : tradeBalances.inTradeChange.toFixed(2)}
                         %)
                       </div>
-                    )}
+                    )} */}
                 </>
               )}
             </div>
@@ -841,7 +841,7 @@ export const TradeForm = ({
                   ) : (
                     <></>
                   )}
-                  {tradeBalances.outTradeChange &&
+                  {/* {tradeBalances.outTradeChange &&
                     !tradeBalances.outTradeChange.isZero() && (
                       <div className="green">
                         (
@@ -852,7 +852,7 @@ export const TradeForm = ({
                           : tradeBalances.outTradeChange.toFixed(2)}
                         %)
                       </div>
-                    )}
+                    )} */}
                 </>
               )}
             </div>
