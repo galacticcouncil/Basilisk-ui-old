@@ -478,7 +478,7 @@ export const TradeForm = ({
       default:
         return;
     }
-  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount']), tradeLimit, tradeType]);
+  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount', 'assetIn']), tradeLimit, tradeType]);
 
   useEffect(() => {
     (async () => {
