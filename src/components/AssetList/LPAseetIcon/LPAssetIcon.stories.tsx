@@ -3,7 +3,6 @@ import { ComponentMeta, ComponentStory } from '@storybook/react';
 import { MemoryRouter } from 'react-router-dom';
 import { StorybookWrapper } from '../../../misc/StorybookWrapper';
 import {
-  Default as RowDefaultStory,
   Centered as RowCenteredStory,
 } from '../Row/Row.stories';
 import { Asset } from '../Row/Row';
@@ -33,6 +32,9 @@ const Template: ComponentStory<typeof LPAssetIcon> = (args) => {
 // TODO: WIP
 export const Default = Template.bind({});
 Default.args = {
-  asset: RowCenteredStory.args?.asset as Asset,
+  assets: [
+    RowCenteredStory.args?.asset as Asset,
+    RowCenteredStory.args?.asset as Asset,
+  ],
   outlineColor: '#363641',
 };
