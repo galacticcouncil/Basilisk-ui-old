@@ -3,6 +3,8 @@ import { FormattedBalance } from "../../../../../components/Balance/FormattedBal
 import { idToAsset } from "../../../../TradePage/TradePage"
 import { horizontalBar } from "../../../../../components/Chart/ChartHeader/ChartHeader"
 
+export const availableFeePaymentAssetIds = ['0', '1', '2'];
+
 export const BalanceList = ({
     balances,
     onOpenTransferForm,
@@ -25,8 +27,11 @@ export const BalanceList = ({
             {/* TODO: how to deal with unknown assets? (not knowing the metadata e.g. symbol/fullname) */}
             <FormattedBalance balance={balance} />
           </div>
-          <div onClick={() => onOpenTransferForm(balance.assetId)}>Transfer</div>
-          <div onClick={() => onSetAsFeePaymentAsset(balance.assetId)}>Set as fee payment asset</div>
+          <button onClick={() => onOpenTransferForm(balance.assetId)}>Transfer</button>
+          {availableFeePaymentAssetIds.includes(balance.assetId)
+            ? <button onClick={() => onSetAsFeePaymentAsset(balance.assetId)}>Set as fee payment asset</button>
+            : <></>
+          }
 
         </div>
       ))}

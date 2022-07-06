@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Account, Account as AccountModel, Balance, Maybe, Vesting, VestingSchedule } from '../../generated/graphql';
 import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../../hooks/accounts/queries/useGetAccountsQuery';
@@ -23,7 +23,9 @@ import { useGetConfigQuery } from '../../hooks/config/useGetConfigQuery';
 export type Notification = 'standby' | 'pending' | 'success' | 'failed';
 
 export const WalletPage = () => {
-  const [notification, setNotification] = useState<Notification>('standby');
+  const [notification, setNotification] = useState<
+    'standby' | 'pending' | 'success' | 'failed'
+  >('standby');
 
   const { data: extensionData, loading: extensionLoading } =
     useGetExtensionQueryContext();
@@ -71,11 +73,32 @@ export const WalletPage = () => {
     openTransferFormModalPortal({ assetId })
   }, [openTransferFormModalPortal])
 
-  const [setConfigMutation] = useSetConfigMutation()
+  const [setConfigMutation, { loading: setConfigLoading }] = useSetConfigMutation()
+  const clearNotificationIntervalRef = useRef<any>();
+
+  useEffect(() => {
+    if (setConfigLoading) setNotification('pending');
+  }, [setConfigLoading]);
 
   const onSetAsFeePaymentAsset = useCallback((feePaymentAsset: string) => {
+    clearNotificationIntervalRef.current &&
+      clearTimeout(clearNotificationIntervalRef.current);
+    clearNotificationIntervalRef.current = null;
+    
     console.log('setting fee payment asset', feePaymentAsset);
     setConfigMutation({
+      onCompleted: () => {
+        setNotification('success');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+      onError: () => {
+        setNotification('failed');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
       variables: {
         config: {
           feePaymentAsset

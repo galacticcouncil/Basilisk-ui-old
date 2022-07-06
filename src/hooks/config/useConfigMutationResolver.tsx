@@ -56,7 +56,8 @@ export const useConfigMutationResolvers = () => {
                 setCurrencyHandler(resolve, reject)
               );
           },
-          [gracefulExtensionCancelationErrorHandler]
+          // [gracefulExtensionCancelationErrorHandler]
+          []
         );
 
         const persistableConfig = args.config;
