@@ -17,6 +17,8 @@ import { BalanceList } from './containers/WalletPage/BalanceList/BalanceList';
 import { VestingClaim } from './containers/WalletPage/VestingClaim/VestingClaim';
 import { ActiveAccount } from './containers/WalletPage/ActiveAccount/ActiveAccount';
 import { useTransferFormModalPortal } from './containers/WalletPage/TransferForm/hooks/useTransferFormModalPortal';
+import { useSetConfigMutation } from '../../hooks/config/useSetConfigMutation';
+import { useGetConfigQuery } from '../../hooks/config/useGetConfigQuery';
 
 export type Notification = 'standby' | 'pending' | 'success' | 'failed';
 
@@ -38,11 +40,19 @@ export const WalletPage = () => {
     depsLoading || activeAccountNetworkStatus === NetworkStatus.loading
   ), [depsLoading, activeAccountNetworkStatus]);
 
+  const { data: configData, networkStatus: configNetworkStatus } = useGetConfigQuery({
+    skip: activeAccountLoading
+  });
+
+  const configLoading = useMemo(() => {
+    return depsLoading || configNetworkStatus == NetworkStatus.loading
+  }, [configNetworkStatus, depsLoading]);
+
   // couldnt really quickly figure out how to use just activeAccount + extension loading states
   // so depsLoading is reused here as well
   const loading = useMemo(
-    () => activeAccountLoading || extensionLoading || depsLoading,
-    [activeAccountLoading, extensionLoading, depsLoading]
+    () => activeAccountLoading || extensionLoading || depsLoading || configLoading,
+    [activeAccountLoading, extensionLoading, depsLoading, configLoading]
   );
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
@@ -60,6 +70,19 @@ export const WalletPage = () => {
     console.log('asset id', assetId);
     openTransferFormModalPortal({ assetId })
   }, [openTransferFormModalPortal])
+
+  const [setConfigMutation] = useSetConfigMutation()
+
+  const onSetAsFeePaymentAsset = useCallback((feePaymentAsset: string) => {
+    console.log('setting fee payment asset', feePaymentAsset);
+    setConfigMutation({
+      variables: {
+        config: {
+          feePaymentAsset
+        }
+      }
+    })
+  }, [setConfigMutation]);
 
   return (
     <>
@@ -79,6 +102,8 @@ export const WalletPage = () => {
                   loading={loading}
                   onOpenAccountSelector={openModal}
                   onOpenTransferForm={handleOpenTransformForm}
+                  feePaymentAssetId={configData?.config.feePaymentAsset || '0'}
+                  onSetAsFeePaymentAsset={onSetAsFeePaymentAsset}
                   setNotification={setNotification}
                 />
               </>

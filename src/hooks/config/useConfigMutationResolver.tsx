@@ -64,7 +64,7 @@ export const useConfigMutationResolvers = () => {
         // be refetched from the node anyways
         delete persistableConfig?.feePaymentAsset;
 
-        setPersistedConfig(persistableConfig || defaultConfigValue);
+        // setPersistedConfig(persistableConfig || defaultConfigValue);
       },
       [apiInstance, loading, setPersistedConfig]
     )

@@ -1,14 +1,18 @@
-import { Balance } from "../../../../../generated/graphql"
+import { Balance, Maybe } from "../../../../../generated/graphql"
 import { FormattedBalance } from "../../../../../components/Balance/FormattedBalance/FormattedBalance"
 import { idToAsset } from "../../../../TradePage/TradePage"
 import { horizontalBar } from "../../../../../components/Chart/ChartHeader/ChartHeader"
 
 export const BalanceList = ({
     balances,
-    onOpenTransferForm
+    onOpenTransferForm,
+    onSetAsFeePaymentAsset,
+    feePaymentAssetId
   }: {
     balances?: Array<Balance>,
+    feePaymentAssetId?: Maybe<string>,
     onOpenTransferForm: (assetId: string) => void,
+    onSetAsFeePaymentAsset: (assetId: string) => void
   }) => {
     return <>
       <h2>Balances</h2>
@@ -16,11 +20,14 @@ export const BalanceList = ({
       {balances?.map(balance => (
         <div>
           <h5>{idToAsset(balance.assetId || null)?.fullName || `Unknown asset (ID: ${balance.assetId})`}</h5>
+          <span>{feePaymentAssetId === balance.assetId ? 'current fee payment asset' : ''}</span>
           <div>
             {/* TODO: how to deal with unknown assets? (not knowing the metadata e.g. symbol/fullname) */}
             <FormattedBalance balance={balance} />
           </div>
           <div onClick={() => onOpenTransferForm(balance.assetId)}>Transfer</div>
+          <div onClick={() => onSetAsFeePaymentAsset(balance.assetId)}>Set as fee payment asset</div>
+
         </div>
       ))}
     </>

@@ -6,7 +6,7 @@ import { GET_CONFIG } from './useGetConfigQuery';
 export const SET_CONFIG = loader('./graphql/SetConfig.mutation.graphql');
 
 export interface SetConfigMutationVariables {
-    config: Config | undefined
+    config: Partial<Config> | undefined
 }
 
 export const useSetConfigMutation = (onCompleted?: () => void) => useMutation<unknown, SetConfigMutationVariables>(SET_CONFIG, {

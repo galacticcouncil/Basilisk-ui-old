@@ -10,12 +10,16 @@ export const ActiveAccount = ({
     loading,
     onOpenAccountSelector,
     onOpenTransferForm,
+    onSetAsFeePaymentAsset,
+    feePaymentAssetId,
     setNotification
   }: {
     account?: Maybe<Account>;
     loading: boolean;
+    feePaymentAssetId?: Maybe<string>,
     onOpenAccountSelector: () => void,
     onOpenTransferForm: (assetId: string) => void,
+    onSetAsFeePaymentAsset: (assetId: string) => void,
     setNotification: (notification: Notification) => void
   }) => {
     const [setActiveAccount] = useSetActiveAccountMutation();
@@ -40,7 +44,12 @@ export const ActiveAccount = ({
             <div onClick={() => handleClearAccount()}>Clear account</div>
   
             <VestingClaim vesting={account?.vesting} setNotification={setNotification}/>
-            <BalanceList balances={account.balances} onOpenTransferForm={onOpenTransferForm}/>
+            <BalanceList 
+              balances={account.balances} 
+              onOpenTransferForm={onOpenTransferForm}
+              feePaymentAssetId={feePaymentAssetId}
+              onSetAsFeePaymentAsset={onSetAsFeePaymentAsset}
+            />
           </>
         ) : (
           <div>Please connect a wallet first</div>
