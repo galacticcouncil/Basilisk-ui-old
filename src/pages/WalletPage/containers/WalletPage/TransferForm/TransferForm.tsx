@@ -5,6 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { AssetBalanceInput } from '../../../../../components/Balance/AssetBalanceInput/AssetBalanceInput';
 import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
 import Icon from '../../../../../components/Icon/Icon';
+import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider';
 import { Asset } from '../../../../../generated/graphql';
 import { estimateBalanceTransfer } from '../../../../../hooks/balances/resolvers/mutation/balanceTransfer';
 import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolvers/useTransferMutation';
@@ -72,6 +73,8 @@ export const TransferForm = ({
   const [txFee, setTxFee] = useState<string>();
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
   const client = useApolloClient();
+  const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
+
 
   useEffect(() => {
     if (!apiInstance || apiInstanceLoading) return;
@@ -88,7 +91,10 @@ export const TransferForm = ({
         currencyId: form.getValues('asset') || '0',
         amount: form.getValues('amount') || '0'
       })
-      setTxFee(estimate.partialFee.toString());
+      
+      setTxFee(
+        convertToFeePaymentAsset(estimate.partialFee.toString())
+      );
     })()
   }, [apiInstance, apiInstanceLoading, client, form.watch(['amount', 'asset', 'to'])]);
 
@@ -130,7 +136,7 @@ export const TransferForm = ({
             />
             Tx fee: {txFee
               ? <FormattedBalance balance={{
-                assetId:'0',
+                assetId: feePaymentAsset || '0',
                 balance: txFee
               }}/> 
               : <>-</>
