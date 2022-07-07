@@ -8,7 +8,7 @@ export interface GetConfigQueryResponse {
     config: Query['config']
 }
 
-export const useGetConfigQuery = (options: QueryHookOptions) => useQuery<GetConfigQueryResponse>(GET_CONFIG, {
+export const useGetConfigQuery = (options?: QueryHookOptions) => useQuery<GetConfigQueryResponse>(GET_CONFIG, {
     notifyOnNetworkStatusChange: true,
     ...options
 });

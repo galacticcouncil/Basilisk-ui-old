@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider';
 import { Balance, Fee } from '../../../../generated/graphql';
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
 import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader';
@@ -58,6 +59,8 @@ export const TradeInfo = ({
     return () => timeoutId && clearTimeout(timeoutId);
   }, [formError]);
 
+  const { feePaymentAsset } = useMultiFeePaymentConversionContext();
+
   return (
     <div className="trade-info">
       <div className="trade-info__data">
@@ -92,7 +95,7 @@ export const TradeInfo = ({
               <FormattedBalance
                 balance={{
                   balance: paymentInfo,
-                  assetId: '0',
+                  assetId: feePaymentAsset || '0',
                 }}
               />
             ) : (

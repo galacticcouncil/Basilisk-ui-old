@@ -32,6 +32,7 @@ import { useApolloClient } from '@apollo/client';
 import { estimateBuy } from '../../../hooks/pools/xyk/buy';
 import { estimateSell } from '../../../hooks/pools/xyk/sell';
 import { payment } from '@polkadot/types/interfaces/definitions';
+import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider';
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null;
@@ -458,6 +459,7 @@ export const TradeForm = ({
   const { apiInstance } = usePolkadotJsContext()
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
+  const { convertToFeePaymentAsset } = useMultiFeePaymentConversionContext();
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
     let [ assetIn, assetOut, assetInAmount, assetOutAmount ] = getValues(['assetIn', 'assetOut', 'assetInAmount', 'assetOutAmount']);
@@ -468,17 +470,17 @@ export const TradeForm = ({
       case TradeType.Buy: {
         const estimate = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
         const partialFee = estimate?.partialFee.toString();
-        return partialFee
+        return convertToFeePaymentAsset(partialFee)
       }
       case TradeType.Sell: {
         const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
         const partialFee = estimate?.partialFee.toString();
-        return partialFee
+        return convertToFeePaymentAsset(partialFee)
       }
       default:
         return;
     }
-  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount', 'assetIn']), tradeLimit, tradeType]);
+  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount', 'assetIn']), tradeLimit, tradeType, convertToFeePaymentAsset]);
 
   useEffect(() => {
     (async () => {
