@@ -6,19 +6,18 @@
   max-width: 1200px;
   border-radius: $border-radius;
   background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
-  padding: 32px;
+  padding: 32px 0px 0px 0px;
   color: white;
   margin: 50px 0px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
 
   &__title {
     width: fit-content;
-    padding-top: 4px;
     color: $l-gray3;
     font-size: 22px;
     font-weight: 500;
+    padding: 0px 32px 24px 32px;
     background: linear-gradient(
         90deg,
         #4fffb0 1.27%,
@@ -38,9 +37,19 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    padding: 20px 32px;
     font-size: 18px;
     font-weight: 500;
+
+    &:nth-child(even) {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    &:not(:last-child) {
+      border-bottom: 1px solid #29292d;
+    }
+    &:last-child {
+      border-radius: 0px 0px $border-radius $border-radius;
+    }
 
     .item {
       width: 30%;
@@ -66,6 +75,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    border: none;
 
     &__label {
       display: flex;
