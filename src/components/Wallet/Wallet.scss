@@ -3,17 +3,12 @@
 
 .wallet {
   width: auto;
-
   max-width: 550px;
   min-width: 350px;
-
-  // flex-basis: 350px;
-
   gap: 12px;
-
-  background-color: $d-gray4;
-  border-radius: $border-radius;
+  border-radius: 8px;
   padding: 16px;
+  color: white;
 
   &__info {
     display: flex;
