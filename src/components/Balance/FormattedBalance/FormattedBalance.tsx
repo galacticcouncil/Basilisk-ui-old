@@ -17,7 +17,7 @@ export interface FormattedBalanceProps {
 
 export const FormattedBalance = ({
   balance,
-  precision = 2,
+  precision = 3,
   unitStyle = UnitStyle.LONG,
 }: FormattedBalanceProps) => {
   const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
@@ -30,7 +30,7 @@ export const FormattedBalance = ({
     return ` 
       <span class='balance'>${fromPrecision12(balance.balance)}</span>
       <span class='symbol'>${assetSymbol}</span>
-    `
+    `;
   }, [balance, assetSymbol]);
 
   useEffect(() => {
@@ -49,12 +49,19 @@ export const FormattedBalance = ({
   // moves one notch up/down and keeps a fixed precision
   return (
     // WARNING POSSIBLY UNSAFE??
-    <div className="formatted-balance" data-tip={tooltipText} data-html={true} data-delay-show={20}>
+    <div
+      className="formatted-balance"
+      data-tip={tooltipText}
+      data-html={true}
+      data-delay-show={20}
+    >
       <div className="formatted-balance__value">{formattedBalance.value}</div>
       <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
       </div>
-      <div className="formatted-balance__symbol">{assetSymbol || horizontalBar}</div>
+      <div className="formatted-balance__symbol">
+        {assetSymbol || horizontalBar}
+      </div>
     </div>
   );
 };

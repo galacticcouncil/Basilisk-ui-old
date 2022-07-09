@@ -84,7 +84,7 @@ export const TradeFormSettings = ({
       onSubmit={handleSubmit(() => {})}
     >
       <div className="modal-component-heading">
-        Settings
+        <div className="modal-component-heading__main-text">Settings</div>
         <div className="close-modal-btn" onClick={closeModal}>
           <Icon name="Cancel" />
         </div>

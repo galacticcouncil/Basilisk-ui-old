@@ -15,18 +15,26 @@ export const Confirmation = ({
 }) => {
   return isModalOpen ? (
     <div className="confirmation-screen">
-      <div className='modal-component-wrapper'>
-        <div className="modal-component-heading">Confirm transaction</div>
+      <div className="modal-component-wrapper">
+        <div className="modal-component-heading">
+          <div className="modal-component-heading__main-text">
+            Confirm transaction
+          </div>
+        </div>
         <div className="modal-component-content">
           <p>Trade type: {options?.tradeType}</p>
-          <p>Assets: {options?.assetInId} / {options?.assetOutId}</p>
-          <p>Amounts: {options?.assetInAmount} / {options?.assetOutAmount}</p>
+          <p>
+            Assets: {options?.assetInId} / {options?.assetOutId}
+          </p>
+          <p>
+            Amounts: {options?.assetInAmount} / {options?.assetOutAmount}
+          </p>
           <p>Limit: {options?.amountWithSlippage}</p>
         </div>
         <div className="buttons">
-            <button onClick={() => reject()}>Cancel</button>
-            <button onClick={() => resolve()}>Sign and send</button>
-          </div>
+          <button onClick={() => reject()}>Cancel</button>
+          <button onClick={() => resolve()}>Sign and send</button>
+        </div>
       </div>
     </div>
   ) : (

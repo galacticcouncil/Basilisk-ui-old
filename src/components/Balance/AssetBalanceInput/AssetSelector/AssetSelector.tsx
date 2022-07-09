@@ -31,28 +31,25 @@ export const AssetSelector = ({
     <div className="asset-selector-wrapper" ref={innerRef}>
       <div className="asset-selector modal-component-wrapper">
         <div className="modal-component-heading">
-          <div>Select an asset</div>{' '}
+          <div className="modal-component-heading__main-text">Select asset</div>{' '}
           <div className="close-modal-btn" onClick={closeModal}>
             <Icon name="Cancel" />
           </div>
         </div>
 
         <div className="modal-component-content">
-          {assets?.length
-            ? (
-              assets?.map((asset, i) => (
-                <AssetItem
-                  key={i}
-                  onClick={() => onAssetSelected(asset)}
-                  active={asset.id === activeAsset?.id}
-                  asset={asset}
-                />
-              ))
-            )
-            : (
-              <p>No other assets available</p>
-            )
-          }
+          {assets?.length ? (
+            assets?.map((asset, i) => (
+              <AssetItem
+                key={i}
+                onClick={() => onAssetSelected(asset)}
+                active={asset.id === activeAsset?.id}
+                asset={asset}
+              />
+            ))
+          ) : (
+            <p>No other assets available</p>
+          )}
         </div>
       </div>
     </div>

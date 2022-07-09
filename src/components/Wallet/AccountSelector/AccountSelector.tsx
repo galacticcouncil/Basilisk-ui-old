@@ -36,7 +36,7 @@ export const AccountSelector = ({
     <div className="account-selector" ref={innerRef}>
       <div className="account-selector__content-wrapper modal-component-wrapper">
         <div className="modal-component-heading">
-          <div>
+          <div className="modal-component-heading__main-text">
             {isExtensionAvailable ? (
               <FormattedMessage
                 id="Wallet.SelectAccount"
