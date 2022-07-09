@@ -19,6 +19,7 @@ import { ActiveAccount } from './containers/WalletPage/ActiveAccount/ActiveAccou
 import { useTransferFormModalPortal } from './containers/WalletPage/TransferForm/hooks/useTransferFormModalPortal';
 import { useSetConfigMutation } from '../../hooks/config/useSetConfigMutation';
 import { useGetConfigQuery } from '../../hooks/config/useGetConfigQuery';
+import './WalletPage.scss';
 
 export type Notification = 'standby' | 'pending' | 'success' | 'failed';
 
@@ -108,7 +109,7 @@ export const WalletPage = () => {
   }, [setConfigMutation]);
 
   return (
-    <>
+    <div className='wallet-page'>
       <div ref={modalContainerRef}></div>
       {modalPortal}
       {transferFormModalPortal}
@@ -138,6 +139,6 @@ export const WalletPage = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };

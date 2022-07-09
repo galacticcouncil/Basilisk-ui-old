@@ -1,0 +1,81 @@
+@import '../../../../../misc/colors.module.scss';
+@import '../../../../../misc/misc.module.scss';
+
+.vesting-claim {
+  min-width: 800px;
+  max-width: 1200px;
+  border-radius: $border-radius;
+  background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
+  padding: 32px 0px 0px 0px;
+  color: white;
+  margin: 50px 0px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  &__title {
+    width: fit-content;
+    color: $l-gray3;
+    font-size: 22px;
+    font-weight: 500;
+    padding: 0px 32px 16px 32px;
+    background: linear-gradient(
+        90deg,
+        #4fffb0 1.27%,
+        #b3ff8f 48.96%,
+        #ff984e 104.14%
+      ),
+      linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
+      linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  &__fee {
+    width: 100px;
+    display: flex;
+    justify-content: left;
+  }
+
+  .vesting-claim-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 32px;
+    font-size: 18px;
+    font-weight: 500;
+
+    &:nth-child(even) {
+      background: rgba(255, 255, 255, 0.06);
+    }
+    &:last-child {
+      border-radius: 0px 0px $border-radius $border-radius;
+    }
+  }
+
+  .vesting-claim-button {
+    user-select: none;
+    border-radius: 9999px;
+    width: fit-content;
+    background-color: #4fffb0;
+    color: #26282f;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border: none;
+
+    &__label {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 8px 16px;
+      font-size: 18px;
+      line-height: 18px;
+    }
+  }
+}
