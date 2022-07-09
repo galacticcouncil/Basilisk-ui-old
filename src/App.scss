@@ -22,7 +22,7 @@
   flex-direction: column;
   align-content: space-between;
   padding-bottom: 8px;
-  gap: 16px;
+  gap: 24px;
 
   padding: 30px 16px 30px 30px;
 
@@ -56,6 +56,7 @@
     padding-top: 4px;
     color: $l-gray3;
     text-transform: capitalize;
+    align-items: flex-start;
 
     &__main-text {
       font-size: 22px;
@@ -72,6 +73,20 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       text-fill-color: transparent;
+      width: fit-content;
+
+      &__secondary {
+        font-size: 16px;
+        color: #d1dee8;
+        text-transform: none;
+        background: none;
+
+        padding: 8px 0;
+
+        -webkit-background-clip: none;
+        -webkit-text-fill-color: #d1dee8;
+        background-clip: none;
+      }
     }
   }
 
@@ -94,7 +109,7 @@
   .modal-component-content {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
     flex-grow: 1;
 
     overflow-y: scroll;

@@ -2,12 +2,7 @@
 @import '../../../../misc/misc.module.scss';
 
 .account-item {
-  display: flex;
-
-  flex-direction: column;
   position: relative;
-  gap: 4px;
-
   cursor: pointer;
 
   border-radius: 12px;
@@ -45,6 +40,10 @@
   }
 
   &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
     width: 100%;
     height: 100%;
     position: relative;
@@ -64,7 +63,7 @@
   }
 
   &__address-info {
-    gap: 4px;
+    gap: 16px;
     display: flex;
     flex-direction: column;
   }
@@ -110,7 +109,8 @@
   &:hover {
     .account-item__wrapper {
       &:before {
-        display: none;
+        background: #26282f;
+        z-index: -1;
       }
     }
     .account-item {
@@ -126,8 +126,8 @@
 
   .account-item &__identicon {
     display: flex;
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     line-height: 32px;
     flex-shrink: 0;
     justify-content: center;
