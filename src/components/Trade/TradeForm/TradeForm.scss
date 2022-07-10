@@ -178,7 +178,16 @@
 
 .settings-button {
   position: absolute;
-  right: 16px;
+  display: flex;
+  right: 24px;
+  top: 20px;
+  padding: 10px 8px;
+  border-radius: 50%;
+  background-color: rgba(162, 176, 187, 0.1);
+
+  svg {
+    width: 24px;
+  }
 
   &:hover {
     cursor: pointer;
