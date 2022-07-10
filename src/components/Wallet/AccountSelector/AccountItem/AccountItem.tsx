@@ -85,7 +85,7 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
             <Identicon
               className="account-item__identicon"
               value={account.id}
-              size={40}
+              size={32}
             />
             <div className="account-item__chain-info">
               <div className="account-item__chain-name">Basilisk</div>

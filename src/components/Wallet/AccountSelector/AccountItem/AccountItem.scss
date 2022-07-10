@@ -31,7 +31,11 @@
           rgba(76, 243, 168, 0.12);
 
         border-radius: 12px;
-        z-index: 0;
+        z-index: -1;
+
+        &__chain-name {
+          color: $green1;
+        }
       }
 
       background-color: #211f24;
@@ -88,7 +92,8 @@
       align-items: center;
 
       &__name {
-        flex-shrink: 100px;
+        font-size: 16px;
+        font-weight: 600;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -113,15 +118,6 @@
         z-index: -1;
       }
     }
-    .account-item {
-      &__heading {
-        &__left {
-          &__source {
-            opacity: 1;
-          }
-        }
-      }
-    }
   }
 
   .account-item &__identicon {
@@ -133,22 +129,28 @@
     justify-content: center;
     align-items: center;
 
+    background-color: black;
+    border-radius: 50%;
+
     svg {
+      circle:first-child {
+        fill: black;
+      }
+
       position: relative;
-      left: -2px;
     }
   }
 
   &__chain-name {
     font-size: 12px;
-    line-height: 1.1em;
-    font-weight: 500;
+    line-height: 1.2em;
+    font-weight: 400;
   }
 
   &__chain-address {
-    font-weight: normal;
-    font-size: 18px;
-    line-height: 1.1em;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.2em;
     overflow: hidden;
     text-overflow: ellipsis;
   }
