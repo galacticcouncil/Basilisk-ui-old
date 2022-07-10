@@ -783,7 +783,7 @@ export const TradeForm = ({
                 })}
                 onClick={() => handleMaxButtonOnClick()}
               >
-                MAX
+                Max
               </div>
             </div>
           </div>
@@ -794,66 +794,68 @@ export const TradeForm = ({
               <Icon name="AssetSwitch" />
             </div>
             <div className="asset-switch-price">
-              {(() => {
-                const assetOut = getValues('assetOut');
-                const assetIn = getValues('assetIn');
-                switch (tradeType) {
-                  case TradeType.Sell:
-                    // return `1 ${
-                    //   idToAsset(getValues('assetIn'))?.symbol ||
-                    //   getValues('assetIn')
-                    // } = ${fromPrecision12(spotPrice?.inOut)} ${
-                    //   idToAsset(getValues('assetOut'))?.symbol ||
-                    //   getValues('assetOut')
-                    // }`;
-                    return spotPrice?.inOut && assetOut ? (
-                      <>
-                        <FormattedBalance
-                          balance={{
-                            balance: toPrecision12('1')!,
-                            assetId: getValues('assetIn')!,
-                          }}
-                        />
-                        =
-                        <FormattedBalance
-                          balance={{
-                            balance: spotPrice.inOut,
-                            assetId: assetOut,
-                          }}
-                        />
-                      </>
-                    ) : (
-                      <>-</>
-                    );
-                  case TradeType.Buy:
-                    // return `1 ${
-                    //   idToAsset(getValues('assetOut'))?.symbol ||
-                    //   getValues('assetOut')
-                    // } = ${fromPrecision12(spotPrice?.outIn)} ${
-                    //   idToAsset(getValues('assetIn'))?.symbol ||
-                    //   getValues('assetIn')
-                    // }`;
-                    return spotPrice?.outIn && assetIn ? (
-                      <>
-                        <FormattedBalance
-                          balance={{
-                            balance: toPrecision12('1')!,
-                            assetId: getValues('assetOut')!,
-                          }}
-                        />
-                        =
-                        <FormattedBalance
-                          balance={{
-                            balance: spotPrice.outIn,
-                            assetId: assetIn,
-                          }}
-                        />
-                      </>
-                    ) : (
-                      <>-</>
-                    );
-                }
-              })()}
+              <div className="asset-switch-price__wrapper">
+                {(() => {
+                  const assetOut = getValues('assetOut');
+                  const assetIn = getValues('assetIn');
+                  switch (tradeType) {
+                    case TradeType.Sell:
+                      // return `1 ${
+                      //   idToAsset(getValues('assetIn'))?.symbol ||
+                      //   getValues('assetIn')
+                      // } = ${fromPrecision12(spotPrice?.inOut)} ${
+                      //   idToAsset(getValues('assetOut'))?.symbol ||
+                      //   getValues('assetOut')
+                      // }`;
+                      return spotPrice?.inOut && assetOut ? (
+                        <>
+                          <FormattedBalance
+                            balance={{
+                              balance: toPrecision12('1')!,
+                              assetId: getValues('assetIn')!,
+                            }}
+                          />
+                          =
+                          <FormattedBalance
+                            balance={{
+                              balance: spotPrice.inOut,
+                              assetId: assetOut,
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>-</>
+                      );
+                    case TradeType.Buy:
+                      // return `1 ${
+                      //   idToAsset(getValues('assetOut'))?.symbol ||
+                      //   getValues('assetOut')
+                      // } = ${fromPrecision12(spotPrice?.outIn)} ${
+                      //   idToAsset(getValues('assetIn'))?.symbol ||
+                      //   getValues('assetIn')
+                      // }`;
+                      return spotPrice?.outIn && assetIn ? (
+                        <>
+                          <FormattedBalance
+                            balance={{
+                              balance: toPrecision12('1')!,
+                              assetId: getValues('assetOut')!,
+                            }}
+                          />
+                          =
+                          <FormattedBalance
+                            balance={{
+                              balance: spotPrice.outIn,
+                              assetId: assetIn,
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>-</>
+                      );
+                  }
+                })()}
+              </div>
             </div>
           </div>
 
@@ -895,9 +897,6 @@ export const TradeForm = ({
             </div>
           </div>
 
-          <div className="divider-wrapper">
-            <hr className="divider"></hr>
-          </div>
           <TradeInfo
             tradeLimit={tradeLimit}
             expectedSlippage={slippage}
