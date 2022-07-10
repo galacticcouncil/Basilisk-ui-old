@@ -16,6 +16,52 @@
   color: $red1;
 }
 
+.trade-modal-component-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-content: space-between;
+  padding: 0;
+  background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
+
+  .modal-component-heading {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+
+    color: $l-gray3;
+    text-transform: capitalize;
+    align-items: flex-start;
+
+    padding: 24px 0;
+
+    &__main-text {
+      font-size: 16px;
+      font-weight: 500;
+      width: fit-content;
+    }
+  }
+
+  .close-modal-btn {
+    position: absolute;
+    left: 16px;
+    top: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .close-modal-btn:hover {
+    cursor: pointer;
+
+    svg {
+      path {
+        fill: $orange1;
+      }
+    }
+  }
+}
+
 .modal-component-wrapper {
   position: relative;
   display: flex;

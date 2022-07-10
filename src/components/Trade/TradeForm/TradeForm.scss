@@ -213,7 +213,13 @@
     height: 100%;
   }
 
+  .settings-section {
+    padding: 12px 24px;
+    background: linear-gradient(0deg, #171518, #171518), #1c1a1f;
+  }
+
   .settings-field {
+    padding: 12px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;

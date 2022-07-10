@@ -80,16 +80,17 @@ export const TradeFormSettings = ({
 
   return (
     <form
-      className="trade-settings modal-component-wrapper"
+      className="trade-settings trade-modal-component-wrapper"
       onSubmit={handleSubmit(() => {})}
     >
       <div className="modal-component-heading">
         <div className="modal-component-heading__main-text">Settings</div>
         <div className="close-modal-btn" onClick={closeModal}>
-          <Icon name="Cancel" />
+          <Icon name="Back" />
         </div>
       </div>
       <div className="modal-component-content">
+        <div className="settings-section">Slippage</div>
         <label className="settings-field">
           <div className="settings-field__label">Auto slippage</div>
           <input {...register('autoSlippage')} type="checkbox" />
