@@ -50,10 +50,12 @@ export const AccountSelector = ({
                 </div>
               </>
             ) : (
-              <FormattedMessage
-                id="Wallet.InstallExtension"
-                defaultMessage="Install extension"
-              />
+              <div className="modal-component-heading__main-text">
+                <FormattedMessage
+                  id="Wallet.InstallExtension"
+                  defaultMessage="Install extension"
+                />
+              </div>
             )}
           </div>
           <div className="close-modal-btn" onClick={() => closeModal()}>
