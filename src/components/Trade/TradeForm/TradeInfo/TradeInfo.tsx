@@ -48,6 +48,8 @@ export const TradeInfo = ({
         return 'Insufficient fee balance';
       case 'poolDoesNotExist':
         return 'Please select valid pool';
+      case 'activeAccount':
+        return 'Please connect a wallet to continue';
     }
     return;
   }, [errors?.submit]);
