@@ -41,7 +41,7 @@ export const BalanceList = ({
                 onClick={() => onSetAsFeePaymentAsset(balance.assetId)}
               >
                 <div className="balance-list-button__label">
-                  Set as fee payment asset
+                  Set as fee asset
                 </div>
               </button>
             ) : (

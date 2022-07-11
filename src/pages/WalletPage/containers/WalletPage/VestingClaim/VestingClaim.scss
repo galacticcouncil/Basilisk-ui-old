@@ -18,7 +18,7 @@
     color: $l-gray3;
     font-size: 22px;
     font-weight: 500;
-    padding: 0px 32px 16px 32px;
+    margin: 0px 32px 24px 32px;
     background: linear-gradient(
         90deg,
         #4fffb0 1.27%,
@@ -57,6 +57,7 @@
   }
 
   .vesting-claim-button {
+    height: 40px;
     user-select: none;
     border-radius: 9999px;
     width: fit-content;
@@ -68,14 +69,19 @@
     justify-content: center;
     border: none;
 
+    &:hover {
+      background-color: #41db96;
+    }
+
     &__label {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
       padding: 8px 16px;
-      font-size: 18px;
-      line-height: 18px;
+      font-size: 16px;
+      line-height: 16px;
+      font-weight: 600;
     }
   }
 }

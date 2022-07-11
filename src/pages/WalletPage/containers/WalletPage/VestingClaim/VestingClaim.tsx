@@ -109,7 +109,9 @@ export const VestingClaim = ({
           </button>
         </div>
       ) : (
-        <>No vesting available</>
+        <div className="vesting-claim-wrapper">
+          <>No vesting available</>
+        </div>
       )}
     </div>
   );

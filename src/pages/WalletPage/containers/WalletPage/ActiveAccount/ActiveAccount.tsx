@@ -36,9 +36,7 @@ export const ActiveAccount = ({
       ) : account ? (
         <>
           <div className="active-account">
-            <h2 className="active-account__title">
-              Active account
-            </h2>
+            <h2 className="active-account__title">Active account</h2>
             <div className="active-account-wrapper">
               <div>{account.name}</div>
               <div>{account.source}</div>
@@ -64,11 +62,13 @@ export const ActiveAccount = ({
             </div>
           </div>
 
-          <VestingClaim
-            vesting={account?.vesting}
-            setNotification={setNotification}
-          />
-          
+          {account?.vesting && (
+            <VestingClaim
+              vesting={account?.vesting}
+              setNotification={setNotification}
+            />
+          )}
+
           <BalanceList
             balances={account.balances}
             onOpenTransferForm={onOpenTransferForm}

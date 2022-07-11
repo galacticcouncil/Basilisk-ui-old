@@ -1,12 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Account, Account as AccountModel, Balance, Maybe, Vesting, VestingSchedule } from '../../generated/graphql';
+import {
+  Account,
+  Account as AccountModel,
+  Balance,
+  Maybe,
+  Vesting,
+  VestingSchedule,
+} from '../../generated/graphql';
 import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation';
 import { useGetAccountsQuery } from '../../hooks/accounts/queries/useGetAccountsQuery';
 import { usePersistActiveAccount } from '../../hooks/accounts/lib/usePersistActiveAccount';
-import { useGetActiveAccountQuery, useGetActiveAccountQueryContext } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
+import {
+  useGetActiveAccountQuery,
+  useGetActiveAccountQueryContext,
+} from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 import { NetworkStatus } from '@apollo/client';
 import { useLoading } from '../../hooks/misc/useLoading';
-import { useGetExtensionQuery, useGetExtensionQueryContext } from '../../hooks/extension/queries/useGetExtensionQuery';
+import {
+  useGetExtensionQuery,
+  useGetExtensionQueryContext,
+} from '../../hooks/extension/queries/useGetExtensionQuery';
 import { useModalPortalElement } from '../../components/Wallet/AccountSelector/hooks/useModalPortalElement';
 import { useAccountSelectorModal } from '../../containers/Wallet/hooks/useAccountSelectorModal';
 import { FormattedBalance } from '../../components/Balance/FormattedBalance/FormattedBalance';
@@ -34,27 +47,30 @@ export const WalletPage = () => {
   const depsLoading = useLoading();
   const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } =
     useGetActiveAccountQueryContext();
-    
+
   const activeAccount = useMemo(
     () => activeAccountData?.activeAccount,
     [activeAccountData]
   );
-  const activeAccountLoading = useMemo(() => (
-    depsLoading || activeAccountNetworkStatus === NetworkStatus.loading
-  ), [depsLoading, activeAccountNetworkStatus]);
+  const activeAccountLoading = useMemo(
+    () => depsLoading || activeAccountNetworkStatus === NetworkStatus.loading,
+    [depsLoading, activeAccountNetworkStatus]
+  );
 
-  const { data: configData, networkStatus: configNetworkStatus } = useGetConfigQuery({
-    skip: activeAccountLoading
-  });
+  const { data: configData, networkStatus: configNetworkStatus } =
+    useGetConfigQuery({
+      skip: activeAccountLoading,
+    });
 
   const configLoading = useMemo(() => {
-    return depsLoading || configNetworkStatus == NetworkStatus.loading
+    return depsLoading || configNetworkStatus == NetworkStatus.loading;
   }, [configNetworkStatus, depsLoading]);
 
   // couldnt really quickly figure out how to use just activeAccount + extension loading states
   // so depsLoading is reused here as well
   const loading = useMemo(
-    () => activeAccountLoading || extensionLoading || depsLoading || configLoading,
+    () =>
+      activeAccountLoading || extensionLoading || depsLoading || configLoading,
     [activeAccountLoading, extensionLoading, depsLoading, configLoading]
   );
 
@@ -64,65 +80,81 @@ export const WalletPage = () => {
   });
 
   const assets = useMemo(() => {
-    return activeAccount?.balances.map((balance) => ({ id: balance.assetId }))
+    return activeAccount?.balances.map((balance) => ({ id: balance.assetId }));
   }, [activeAccount]);
 
-  const { modalPortal: transferFormModalPortal, openModal: openTransferFormModalPortal } = useTransferFormModalPortal(modalContainerRef, setNotification, assets);
+  const {
+    modalPortal: transferFormModalPortal,
+    openModal: openTransferFormModalPortal,
+  } = useTransferFormModalPortal(modalContainerRef, setNotification, assets);
 
-  const handleOpenTransformForm = useCallback((assetId: string) => {
-    console.log('asset id', assetId);
-    openTransferFormModalPortal({ assetId })
-  }, [openTransferFormModalPortal])
+  const handleOpenTransformForm = useCallback(
+    (assetId: string) => {
+      console.log('asset id', assetId);
+      openTransferFormModalPortal({ assetId });
+    },
+    [openTransferFormModalPortal]
+  );
 
-  const [setConfigMutation, { loading: setConfigLoading }] = useSetConfigMutation()
+  const [setConfigMutation, { loading: setConfigLoading }] =
+    useSetConfigMutation();
   const clearNotificationIntervalRef = useRef<any>();
 
   useEffect(() => {
     if (setConfigLoading) setNotification('pending');
   }, [setConfigLoading]);
 
-  const onSetAsFeePaymentAsset = useCallback((feePaymentAsset: string) => {
-    clearNotificationIntervalRef.current &&
-      clearTimeout(clearNotificationIntervalRef.current);
-    clearNotificationIntervalRef.current = null;
-    
-    console.log('setting fee payment asset', feePaymentAsset);
-    setConfigMutation({
-      onCompleted: () => {
-        setNotification('success');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-      onError: () => {
-        setNotification('failed');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-      variables: {
-        config: {
-          feePaymentAsset
-        }
-      }
-    })
-  }, [setConfigMutation]);
+  const onSetAsFeePaymentAsset = useCallback(
+    (feePaymentAsset: string) => {
+      clearNotificationIntervalRef.current &&
+        clearTimeout(clearNotificationIntervalRef.current);
+      clearNotificationIntervalRef.current = null;
+
+      console.log('setting fee payment asset', feePaymentAsset);
+      setConfigMutation({
+        onCompleted: () => {
+          setNotification('success');
+          clearNotificationIntervalRef.current = setTimeout(() => {
+            setNotification('standby');
+          }, 4000);
+        },
+        onError: () => {
+          setNotification('failed');
+          clearNotificationIntervalRef.current = setTimeout(() => {
+            setNotification('standby');
+          }, 4000);
+        },
+        variables: {
+          config: {
+            feePaymentAsset,
+          },
+        },
+      });
+    },
+    [setConfigMutation]
+  );
 
   return (
-    <div className='wallet-page'>
+    <div className="wallet-page">
       <div ref={modalContainerRef}></div>
       {modalPortal}
       {transferFormModalPortal}
+      <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification">transaction {notification}</div>
+      </div>
       <div>
         {loading ? (
-          <div>Wallet loading...</div>
+          <div className="modal-button-container">
+            <div className="button--primary">
+              <div className="button--primary label">Wallet loading...</div>
+            </div>
+          </div>
         ) : (
           <div>
-            <div>Notification: {notification}</div>
             {activeAccount ? (
               <>
-                <ActiveAccount 
-                  account={activeAccount} 
+                <ActiveAccount
+                  account={activeAccount}
                   loading={loading}
                   onOpenAccountSelector={openModal}
                   onOpenTransferForm={handleOpenTransformForm}
@@ -132,8 +164,12 @@ export const WalletPage = () => {
                 />
               </>
             ) : (
-              <div onClick={() => openModal()}>
-                Click here to connect an account
+              <div className="modal-button-container">
+                <div className="button--primary" onClick={() => openModal()}>
+                  <div className="button--primary label">
+                    Click here to connect an account
+                  </div>
+                </div>
               </div>
             )}
           </div>

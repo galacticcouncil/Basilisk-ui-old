@@ -17,7 +17,7 @@
     color: $l-gray3;
     font-size: 22px;
     font-weight: 500;
-    padding: 0px 32px 24px 32px;
+    margin: 0px 32px 32px 32px;
     background: linear-gradient(
         90deg,
         #4fffb0 1.27%,
@@ -67,6 +67,7 @@
   }
 
   .balance-list-button {
+    height: 40px;
     user-select: none;
     border-radius: 9999px;
     background-color: #4fffb0;
@@ -77,22 +78,26 @@
     justify-content: center;
     border: none;
 
+    &:hover {
+      background-color: #41db96;
+    }
+
     &__label {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
       padding: 8px 16px;
-      font-size: 18px;
-      line-height: 18px;
+      font-size: 16px;
+      line-height: 16px;
+      font-weight: 600;
     }
   }
   .balance-list-actions {
-    width: 350px;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: right;
-    gap: 10px;
+    gap: 20px;
   }
 }

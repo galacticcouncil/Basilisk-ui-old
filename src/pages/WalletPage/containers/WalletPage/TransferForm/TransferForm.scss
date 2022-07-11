@@ -3,17 +3,18 @@
 
 .transfer-form {
   position: fixed;
+  top: 0;
+  left: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-
-  padding: 16px;
-  width: 100%;
   height: 100%;
-  top: 0;
-  left: 0;
+  width: 100%;
+
   background: rgba(50, 50, 50, 0.5);
   color: white;
+
+  z-index: 3;
 
   &__content-wrapper {
     width: 460px;
@@ -22,7 +23,12 @@
     padding: 16px;
 
     border-radius: $border-radius;
-    background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
+    background: linear-gradient(
+      180deg,
+      #1c2527 0%,
+      #14161a 80.73%,
+      #121316 100%
+    );
     position: relative;
   }
 
@@ -30,7 +36,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    padding: 16px 16px 0px 16px;
+    padding: 8px 16px 0px 16px;
   }
 
   .transfer-form-title {
@@ -67,14 +73,15 @@
     justify-content: space-between;
     gap: 10px;
     color: #bdccd4;
-    font-size: 12px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 400;
   }
 
   &__transfer-form-address-input {
     border-radius: $border-radius;
     height: 52px;
     flex-grow: 1;
+    font-weight: 600;
     padding: 16px 12px;
     background-color: rgba(218, 255, 238, 0.06);
     box-shadow: 0 0 0 1px rgb(255 255 238 / 30%);
@@ -87,6 +94,10 @@
     height: 50px;
     background-color: #4fffb0;
     color: #26282f;
+
+    &:hover {
+      background-color: #41db96;
+    }
   }
 
   &__submit-button:disabled {

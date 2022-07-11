@@ -13,6 +13,9 @@ export const Confirmation = ({
   options?: SubmitTradeMutationVariables; // or any other type that might be handled through confirmations
   confirmationType: ConfirmationType;
 }) => {
+
+  console.log('options', options);
+  
   return isModalOpen ? (
     <div className="confirmation-screen">
       <div className="modal-component-wrapper">
@@ -32,8 +35,12 @@ export const Confirmation = ({
           <p>Limit: {options?.amountWithSlippage}</p>
         </div>
         <div className="buttons">
-          <button onClick={() => reject()}>Cancel</button>
-          <button onClick={() => resolve()}>Sign and send</button>
+          <button className="button button--secondary" onClick={() => reject()}>
+            Cancel
+          </button>
+          <button className="button--primary" onClick={() => resolve()}>
+            <div className="button--primary label">Sign and send</div>
+          </button>
         </div>
       </div>
     </div>
