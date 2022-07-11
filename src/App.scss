@@ -63,6 +63,7 @@
 }
 
 .modal-component-wrapper {
+  width: 460px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -158,6 +159,7 @@
     flex-direction: column;
     gap: 16px;
     flex-grow: 1;
+    color: white;
 
     overflow-y: scroll;
 

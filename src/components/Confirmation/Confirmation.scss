@@ -1,25 +1,25 @@
 .confirmation-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+
+  background: rgba(50, 50, 50, 0.5);
+
+  z-index: 3;
+
+  .modal-component-wrapper {
+    width: 400px;
+    min-height: 300px;
+    max-height: 500px;
+  }
+
+  .buttons {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 100%;
-
-    background: rgba(50, 50, 50, 0.5);
-
-    z-index: 3;
-
-    .modal-component-wrapper {
-        width: 400px;
-        min-height: 300px;
-        max-height: 500px;
-    }
-
-    .buttons {
-        display: flex;
-        justify-content: space-between;
-    }
+    justify-content: space-between;
+  }
 }

@@ -8,17 +8,19 @@
   background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
   padding: 32px 0px 0px 0px;
   color: white;
-  margin: 50px 0px;
+  margin: 0px 0px 50px 0px;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  position: relative;
+  z-index: 0;
 
   &__title {
     width: fit-content;
     color: $l-gray3;
     font-size: 22px;
     font-weight: 500;
-    padding: 0px 32px 16px 32px;
+    margin: 0px 32px 24px 32px;
     background: linear-gradient(
         90deg,
         #4fffb0 1.27%,
@@ -51,6 +53,7 @@
   }
 
   .active-account-button {
+    height: 40px;
     user-select: none;
     border-radius: 9999px;
     background-color: #4fffb0;
@@ -60,14 +63,19 @@
     align-items: center;
     justify-content: center;
 
+    &:hover {
+      background-color: #41db96;
+    }
+
     &__label {
       display: flex;
       flex-direction: row;
       justify-content: center;
       align-items: center;
       padding: 8px 16px;
-      font-size: 18px;
-      line-height: 18px;
+      font-size: 16px;
+      line-height: 16px;
+      font-weight: 600;
     }
   }
   .active-account-actions {
@@ -75,6 +83,6 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 20px;
   }
 }

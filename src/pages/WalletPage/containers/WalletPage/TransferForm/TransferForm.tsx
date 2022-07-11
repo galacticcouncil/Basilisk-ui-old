@@ -112,68 +112,71 @@ export const TransferForm = ({
   ]);
 
   return (
-    <div className="transfer-form modal-component-wrapper">
-      <div className="transfer-form__content-wrapper">
-        <div ref={modalContainerRef}></div>
-        <div className="transfer-form-heading">
-          <div className="transfer-form-title">Transfer</div>
-          <div className="close-modal-btn" onClick={() => closeModal()}>
-            <Icon name="Cancel" />
+    <>
+      <div ref={modalContainerRef}></div>
+      <div className="transfer-form">
+        <div className="modal-component-wrapper ">
+          <div className="modal-component-heading">
+            <div className="modal-component-heading__main-text">Transfer</div>
+            <div className="close-modal-btn" onClick={() => closeModal()}>
+              <Icon name="Cancel" />
+            </div>
           </div>
-        </div>
 
-        <FormProvider {...form}>
-          <form
-            className="transfer-form__transfer-form-parent"
-            onSubmit={form.handleSubmit(handleSubmit)}
-          >
-            <div className="transfer-form__transfer-form-asset-input-container">
-              <label>To: </label>
-              {/* TODO: validate address */}
-              <input
-                className="transfer-form__transfer-form-address-input"
-                type="text"
-                {...form.register('to', { required: true })}
-              />
-            </div>
+          <FormProvider {...form}>
+            <form onSubmit={form.handleSubmit(handleSubmit)}>
+              <div className="modal-component-content">
+                <div className="transfer-form__transfer-form-asset-input-container">
+                  <label>To </label>
+                  {/* TODO: validate address */}
+                  <input
+                    className="transfer-form__transfer-form-address-input"
+                    type="text"
+                    {...form.register('to', { required: true })}
+                  />
+                </div>
 
-            <div className="transfer-form__transfer-form-asset-input-container">
-              <label>Amount: </label>
-              <AssetBalanceInput
-                modalContainerRef={modalContainerRef}
-                balanceInputName="amount"
-                assetInputName="asset"
-                assets={assets}
-              />
-            </div>
-            {/* Form state: {form.formState.isDirty ? 'dirty': 'clean'}, {form.formState.isValid ? 'valid' : 'invalid'} */}
-            <div className="transfer-form__transfer-form-fee">
-              Tx fee:{' '}
-              {txFee ? (
-                <FormattedBalance
-                  balance={{
-                    assetId: '0',
-                    balance: txFee,
-                  }}
+                <div className="transfer-form__transfer-form-asset-input-container">
+                  <label>Amount </label>
+                  <AssetBalanceInput
+                    modalContainerRef={modalContainerRef}
+                    balanceInputName="amount"
+                    assetInputName="asset"
+                    assets={assets}
+                  />
+                </div>
+                {/* Form state: {form.formState.isDirty ? 'dirty': 'clean'}, {form.formState.isValid ? 'valid' : 'invalid'} */}
+                <div className="transfer-form__transfer-form-fee">
+                  Tx fee:{' '}
+                  {txFee ? (
+                    <FormattedBalance
+                      balance={{
+                        assetId: '0',
+                        balance: txFee,
+                      }}
+                    />
+                  ) : (
+                    <>-</>
+                  )}
+                </div>
+              </div>
+              <div className="buttons">
+                <input
+                  type="submit"
+                  className="transfer-form__submit-button"
+                  disabled={!form.formState.isDirty || !form.formState.isValid}
+                  {...form.register('submit', {
+                    validate: {
+                      asset: () => form.getValues('asset') !== undefined,
+                      amount: () => form.getValues('amount') !== undefined,
+                    },
+                  })}
                 />
-              ) : (
-                <>-</>
-              )}
-            </div>
-            <input
-              type="submit"
-              className="transfer-form__submit-button"
-              disabled={!form.formState.isDirty || !form.formState.isValid}
-              {...form.register('submit', {
-                validate: {
-                  asset: () => form.getValues('asset') !== undefined,
-                  amount: () => form.getValues('amount') !== undefined,
-                },
-              })}
-            />
-          </form>
-        </FormProvider>
+              </div>
+            </form>
+          </FormProvider>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
