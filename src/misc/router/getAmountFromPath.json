@@ -1,0 +1,173 @@
+{
+  "sell": [
+    {
+      "path": {
+        "id": "address-1address-2address-3",
+        "swaps": [
+          {
+            "id": "address-1",
+            "assetIn": { "id": "0" },
+            "assetOut": { "id": "1" }
+          },
+          {
+            "id": "address-2",
+            "assetIn": { "id": "1" },
+            "assetOut": { "id": "2" }
+          }
+        ],
+        "pools": [
+          {
+            "id": "address-1",
+            "assetInId": "0",
+            "assetOutId": "1",
+            "balances": [
+              {
+                "id": "0",
+                "assetId": "0",
+                "balance": "1000"
+              },
+              {
+                "id": "1",
+                "assetId": "1",
+                "balance": "5000"
+              }
+            ]
+          },
+          {
+            "id": "address-2",
+            "assetInId": "1",
+            "assetOutId": "2",
+            "balances": [
+              {
+                "id": "1",
+                "assetId": "1",
+                "balance": "10000"
+              },
+              {
+                "id": "2",
+                "assetId": "2",
+                "balance": "1500"
+              }
+            ]
+          }
+        ]
+      },
+      "amounts": ["50", "238", "34"]
+    }
+  ],
+  "buy": [
+    {
+      "path": {
+        "id": "address-1address-2address-3",
+        "swaps": [
+          {
+            "id": "address-1",
+            "assetIn": { "id": "0" },
+            "assetOut": { "id": "1" }
+          },
+          {
+            "id": "address-2",
+            "assetIn": { "id": "1" },
+            "assetOut": { "id": "2" }
+          }
+        ],
+        "pools": [
+          {
+            "id": "address-1",
+            "assetInId": "0",
+            "assetOutId": "1",
+            "balances": [
+              {
+                "id": "0",
+                "assetId": "0",
+                "balance": "1000"
+              },
+              {
+                "id": "1",
+                "assetId": "1",
+                "balance": "5000"
+              }
+            ]
+          },
+          {
+            "id": "address-2",
+            "assetInId": "1",
+            "assetOutId": "2",
+            "balances": [
+              {
+                "id": "1",
+                "assetId": "1",
+                "balance": "10000"
+              },
+              {
+                "id": "2",
+                "assetId": "2",
+                "balance": "1500"
+              }
+            ]
+          }
+        ]
+      },
+      "amounts": ["75", "345", "50"]
+    }
+  ],
+  "brokenPath": {
+    "path": {
+      "id": "address-1address-2address-3",
+      "swaps": [
+        {
+          "id": "address-1",
+          "assetIn": { "id": "0" },
+          "assetOut": { "id": "1" }
+        },
+        {
+          "id": "address-2",
+          "assetIn": { "id": "1" },
+          "assetOut": { "id": "2" }
+        },
+        {
+          "id": "address-3",
+          "assetIn": { "id": "2" },
+          "assetOut": { "id": "3" }
+        }
+      ],
+      "pools": [
+        {
+          "id": "address-1",
+          "assetInId": "0",
+          "assetOutId": "1",
+          "balances": [
+            {
+              "id": "0",
+              "assetId": "0",
+              "balance": "1000"
+            },
+            {
+              "id": "1",
+              "assetId": "1",
+              "balance": "5000"
+            }
+          ]
+        },
+        {
+          "id": "address-2",
+          "assetInId": "1",
+          "assetOutId": "2",
+          "balances": [
+            {
+              "id": "1",
+              "assetId": "1",
+              "balance": "10000"
+            },
+            {
+              "id": "2",
+              "assetId": "2",
+              "balance": "1500"
+            }
+          ]
+        }
+      ]
+    },
+    "amounts": ["50", "11", "3"]
+  }
+}

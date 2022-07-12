@@ -1,5 +1,6 @@
 import { Pool } from "../../generated/graphql";
 import { computeAllPaths } from "./computeAllPaths";
+import { Path } from "./types";
 
 describe('router', () => {
     const pool1: Pool = {
@@ -84,7 +85,7 @@ describe('router', () => {
           const maxHops = 3;
     
           const path = computeAllPaths({ id: '0' }, { id: '3' }, allPools, maxHops);
-    
+          
           expect(path).toEqual([
             {
               id: 'address-1address-2address-3',
