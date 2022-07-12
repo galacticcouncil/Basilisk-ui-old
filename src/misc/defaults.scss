@@ -1,23 +1,32 @@
 @import './colors.module.scss';
 @import './misc.module.scss';
 
+@font-face {
+  font-family: 'Satoshi';
+  src: url('./fonts/Satoshi-Variable.ttf') format('truetype-variations');
+  font-weight: 300 900;
+}
+
 html,
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Satoshi', sans-serif;
   /* Better Font Rendering */
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: $d-gray3;
-  color: $white1;
+  background: radial-gradient(
+      89.2% 89.2% at 50.07% 87.94%,
+      #008a69 0%,
+      #262f31 88.52%
+    ),
+    #2c3335;
+
+  background-attachment: fixed;
   padding: 0;
 
   min-width: 360px;
   min-height: 400px;
   height: 100%;
-
-  /*  */
-  background: linear-gradient(0deg, #2d2a32 0%, #34333e 100%);
 }
 
 div {

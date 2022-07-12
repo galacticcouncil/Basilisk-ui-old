@@ -4,7 +4,7 @@
 .metric-unit-selector {
   position: relative;
 
-  display: flex;
+  display: none;
   flex-shrink: 1;
   justify-content: right;
 
@@ -16,7 +16,7 @@
 
   &:hover {
     cursor: pointer;
-    
+
     svg {
       path {
         fill: $green1;

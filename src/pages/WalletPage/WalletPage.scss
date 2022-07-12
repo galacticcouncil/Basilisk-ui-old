@@ -1,0 +1,86 @@
+@import '../../misc/colors.module.scss';
+@import '../../misc/misc.module.scss';
+
+.wallet-page {
+  min-width: 800px;
+  max-width: 1200px;
+  padding: 32px;
+  color: white;
+  margin: 0px auto;
+  color: white;
+
+  .modal-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .notifications-bar {
+    display: flex;
+    justify-content: center;
+
+    font-size: 14px;
+    font-weight: 600;
+    height: 50px;
+    padding: 2px 16px;
+    width: 200px;
+
+    margin: 0 auto;
+
+    background-color: $d-gray5;
+    border-radius: $border-radius;
+
+    transition: top 200ms ease, background-color, 200ms ease;
+
+    top: 24px;
+    position: relative;
+
+    &.transaction-standby {
+      top: 0;
+      background-color: transparent;
+
+      .notification {
+        visibility: hidden;
+      }
+    }
+
+    &.transaction-success {
+      background-color: $green2;
+      color: $black;
+    }
+
+    &.transaction-failed {
+      background-color: $red1;
+      color: $black;
+    }
+
+    &.transaction-pending {
+      background-color: $orange1;
+      color: $black;
+
+      .notification {
+        display: flex;
+        line-height: 20px;
+        &:before {
+          content: ' ';
+          display: block;
+          width: 14px;
+          height: 14px;
+          margin: 4px 4px 0 0;
+          border-radius: 50%;
+          border: 2px solid $black;
+          border-color: $black transparent $black transparent;
+          animation: loader 1.2s linear infinite;
+        }
+        @keyframes loader {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      }
+    }
+  }
+}

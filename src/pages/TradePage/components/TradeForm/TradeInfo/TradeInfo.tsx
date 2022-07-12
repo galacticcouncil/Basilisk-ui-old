@@ -16,7 +16,7 @@ export interface TradeInfoProps {
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
   errors?: FieldErrors<TradeFormFields>;
-  paymentInfo?: string,
+  paymentInfo?: string;
 }
 
 export const TradeInfo = ({
@@ -25,7 +25,7 @@ export const TradeInfo = ({
   tradeLimit,
   isDirty,
   tradeFee = constants.xykFee,
-  paymentInfo
+  paymentInfo,
 }: TradeInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
@@ -44,7 +44,9 @@ export const TradeInfo = ({
       case 'notEnoughBalanceIn':
         return 'Insufficient balance';
       case 'notEnoughFeeBalance':
-        return 'Insufficient fee balance'
+        return 'Insufficient fee balance';
+      case 'poolDoesNotExist':
+        return 'Please select valid pool';
     }
     return;
   }, [errors?.submit]);
@@ -66,8 +68,7 @@ export const TradeInfo = ({
           <div className="data-piece__value">
             {!expectedSlippage || expectedSlippage?.isNaN()
               ? horizontalBar
-              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`
-            }
+              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`}
           </div>
         </div>
         <div className="data-piece">

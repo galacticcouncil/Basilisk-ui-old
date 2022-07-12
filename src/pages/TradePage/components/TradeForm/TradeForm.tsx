@@ -11,7 +11,13 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import { Account, Balance, Maybe, Pool, TradeType } from '../../../../generated/graphql';
+import {
+  Account,
+  Balance,
+  Maybe,
+  Pool,
+  TradeType,
+} from '../../../../generated/graphql';
 import { fromPrecision12 } from '../../../../hooks/math/useFromPrecision';
 import { useMath } from '../../../../hooks/math/useMath';
 import { percentageChange } from '../../../../hooks/math/usePercentageChange';
@@ -48,13 +54,14 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } =
-    useForm<TradeFormSettingsFormFields>({
-      defaultValues: {
-        allowedSlippage,
-        autoSlippage: true,
-      },
-    });
+  const { register, watch, getValues, setValue, handleSubmit } = useForm<
+    TradeFormSettingsFormFields
+  >({
+    defaultValues: {
+      allowedSlippage,
+      autoSlippage: true,
+    },
+  });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -149,7 +156,7 @@ export interface TradeFormProps {
     inBalance?: Balance;
   };
   activeAccountTradeBalancesLoading: boolean;
-  activeAccount?: Maybe<Account>
+  activeAccount?: Maybe<Account>;
 }
 
 export interface TradeFormFields {
@@ -202,7 +209,7 @@ export const TradeForm = ({
   assets,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
-  activeAccount
+  activeAccount,
 }: TradeFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
@@ -344,8 +351,12 @@ export const TradeForm = ({
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
-    const assetInAmount = fromPrecision12(getValues('assetInAmount') || undefined);
-    const assetOutAmount = fromPrecision12(getValues('assetOutAmount') || undefined);
+    const assetInAmount = fromPrecision12(
+      getValues('assetInAmount') || undefined
+    );
+    const assetOutAmount = fromPrecision12(
+      getValues('assetOutAmount') || undefined
+    );
     const assetIn = getValues('assetIn');
     const assetOut = getValues('assetOut');
 
@@ -454,24 +465,50 @@ export const TradeForm = ({
     [assetIds]
   );
 
-  const { apiInstance } = usePolkadotJsContext()
+  const { apiInstance } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
   useEffect(() => {
     if (!apiInstance) return;
-    const [ assetIn, assetOut, assetInAmount, assetOutAmount ] = getValues(['assetIn', 'assetOut', 'assetInAmount', 'assetOutAmount']);
-    
-    if (!assetIn || !assetOut || !assetInAmount || !assetOutAmount || !tradeLimit) return;
+    const [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([
+      'assetIn',
+      'assetOut',
+      'assetInAmount',
+      'assetOutAmount',
+    ]);
+
+    if (
+      !assetIn ||
+      !assetOut ||
+      !assetInAmount ||
+      !assetOutAmount ||
+      !tradeLimit
+    )
+      return;
 
     (async () => {
       switch (tradeType) {
         case TradeType.Buy: {
-          const estimate = (await estimateBuy(cache, apiInstance, assetOut, assetIn, assetOutAmount, tradeLimit.balance))
+          const estimate = await estimateBuy(
+            cache,
+            apiInstance,
+            assetOut,
+            assetIn,
+            assetOutAmount,
+            tradeLimit.balance
+          );
           const partialFee = estimate?.partialFee.toString();
           return setPaymentInfo(partialFee);
         }
         case TradeType.Sell: {
-          const estimate = (await estimateSell(cache, apiInstance, assetIn, assetOut, assetInAmount, tradeLimit.balance))
+          const estimate = await estimateSell(
+            cache,
+            apiInstance,
+            assetIn,
+            assetOut,
+            assetInAmount,
+            tradeLimit.balance
+          );
           const partialFee = estimate?.partialFee.toString();
           return setPaymentInfo(partialFee);
         }
@@ -479,8 +516,13 @@ export const TradeForm = ({
           return;
       }
     })();
-    
-  }, [apiInstance, cache, ...watch(['assetInAmount', 'assetOutAmount']), tradeLimit, tradeType]);
+  }, [
+    apiInstance,
+    cache,
+    ...watch(['assetInAmount', 'assetOutAmount']),
+    tradeLimit,
+    tradeType,
+  ]);
 
   useEffect(() => {
     setValue('assetIn', assetIds.assetIn);
@@ -491,30 +533,36 @@ export const TradeForm = ({
     const assetOutAmount = getValues('assetOutAmount');
     const outBeforeTrade = activeAccountTradeBalances?.outBalance?.balance;
     const outAfterTrade =
-      outBeforeTrade &&
-      assetOutAmount &&
-      new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0) || undefined;
+      (outBeforeTrade &&
+        assetOutAmount &&
+        new BigNumber(outBeforeTrade).plus(assetOutAmount).toFixed(0)) ||
+      undefined;
     const outTradeChange =
       outBeforeTrade !== '0'
         ? percentageChange(
             fromPrecision12(outBeforeTrade),
             fromPrecision12(outAfterTrade)
           )?.multipliedBy(100)
-        : new BigNumber(outAfterTrade && outAfterTrade !== '0' ? '100.000' : '0');
+        : new BigNumber(
+            outAfterTrade && outAfterTrade !== '0' ? '100.000' : '0'
+          );
 
     const assetInAmount = getValues('assetInAmount');
     const inBeforeTrade = activeAccountTradeBalances?.inBalance?.balance;
     const inAfterTrade =
-      inBeforeTrade &&
-      assetInAmount &&
-      new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0) || undefined
+      (inBeforeTrade &&
+        assetInAmount &&
+        new BigNumber(inBeforeTrade).minus(assetInAmount).toFixed(0)) ||
+      undefined;
     const inTradeChange =
       inBeforeTrade !== '0'
         ? percentageChange(
             fromPrecision12(inBeforeTrade),
             fromPrecision12(inAfterTrade)
           )?.multipliedBy(100)
-        : new BigNumber(inAfterTrade && inAfterTrade !== '0' ? '-100.000' : '0');
+        : new BigNumber(
+            inAfterTrade && inAfterTrade !== '0' ? '-100.000' : '0'
+          );
 
     return {
       outBeforeTrade,
@@ -562,7 +610,7 @@ export const TradeForm = ({
     errors,
     assetInLiquidity,
     assetOutLiquidity,
-    slippage
+    slippage,
   ]);
 
   return (
@@ -589,32 +637,34 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
+              assets={assets?.filter(
+                (asset) => !Object.values(assetIds).includes(asset.id)
+              )}
             />
             <div className="balance-info balance-out-info">
-              {activeAccountTradeBalancesLoading ||
-              isPoolLoading
-              ? (
+              {activeAccountTradeBalancesLoading || isPoolLoading ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
                   {assetIds.assetIn ? (
-                    tradeBalances.inBeforeTrade !== undefined
-                      ? (
-                        <FormattedBalance
-                          balance={{
-                            balance: tradeBalances.inBeforeTrade,
-                            assetId: assetIds.assetIn,
-                          }}
-                        />
-                      )
-                      : <> {horizontalBar}</>
+                    tradeBalances.inBeforeTrade !== undefined ? (
+                      <FormattedBalance
+                        balance={{
+                          balance: tradeBalances.inBeforeTrade,
+                          assetId: assetIds.assetIn,
+                        }}
+                      />
+                    ) : (
+                      <> {horizontalBar}</>
+                    )
                   ) : (
                     <> {horizontalBar}</>
                   )}
-                  {tradeBalances.inAfterTrade !== undefined && tradeBalances.inBeforeTrade !== undefined && assetIds.assetIn ? (
+                  {tradeBalances.inAfterTrade !== undefined &&
+                  tradeBalances.inBeforeTrade !== undefined &&
+                  assetIds.assetIn ? (
                     <>
                       <Icon name="RightArrow" />
                       <FormattedBalance
@@ -721,32 +771,34 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets?.filter(asset => !Object.values(assetIds).includes(asset.id))}
+              assets={assets?.filter(
+                (asset) => !Object.values(assetIds).includes(asset.id)
+              )}
             />{' '}
             <div className="balance-info balance-out-info">
-              {activeAccountTradeBalancesLoading ||
-              isPoolLoading
-              ? (
+              {activeAccountTradeBalancesLoading || isPoolLoading ? (
                 'Your balance: loading'
               ) : (
                 // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                 <>
                   Your balance:
                   {assetIds.assetOut ? (
-                    tradeBalances.outBeforeTrade !== undefined
-                      ? (
-                        <FormattedBalance
-                          balance={{
-                            balance: tradeBalances.outBeforeTrade,
-                            assetId: assetIds.assetOut,
-                          }}
-                        />
-                      )
-                      : <> {horizontalBar}</>
+                    tradeBalances.outBeforeTrade !== undefined ? (
+                      <FormattedBalance
+                        balance={{
+                          balance: tradeBalances.outBeforeTrade,
+                          assetId: assetIds.assetOut,
+                        }}
+                      />
+                    ) : (
+                      <> {horizontalBar}</>
+                    )
                   ) : (
                     <> {horizontalBar}</>
                   )}
-                  {assetIds.assetOut && tradeBalances.outBeforeTrade !== undefined && tradeBalances.outAfterTrade !== undefined ? (
+                  {assetIds.assetOut &&
+                  tradeBalances.outBeforeTrade !== undefined &&
+                  tradeBalances.outAfterTrade !== undefined ? (
                     <>
                       <Icon name="RightArrow" />
                       <FormattedBalance
@@ -837,7 +889,7 @@ export const TradeForm = ({
                   const assetInAmount = getValues('assetInAmount');
 
                   let nativeAssetBalance = find(activeAccount?.balances, {
-                    assetId: '0'
+                    assetId: '0',
                   })?.balance;
 
                   let balanceForFee = nativeAssetBalance;
@@ -851,9 +903,8 @@ export const TradeForm = ({
                   // this can haunt us later, maybe if !paymentInfo then true?
                   if (!paymentInfo || !balanceForFee) return false;
 
-                  return new BigNumber(balanceForFee)
-                    .gte(paymentInfo);
-                }
+                  return new BigNumber(balanceForFee).gte(paymentInfo);
+                },
               },
             })}
             disabled={!isValid || tradeLoading || !isDirty}
