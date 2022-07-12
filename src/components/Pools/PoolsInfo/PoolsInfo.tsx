@@ -2,31 +2,32 @@ import BigNumber from 'bignumber.js';
 import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
-import { Balance, Fee } from '../../../../../generated/graphql';
-import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
-import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader';
-import { TradeFormFields } from '../TradeForm';
-import constants from '../../../../../constants';
-import './TradeInfo.scss';
+import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider';
+import { Balance, Fee } from '../../../generated/graphql';
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
+import { PoolsFormFields } from '../PoolsForm';
+import constants from '../../../constants';
+import './PoolsInfo.scss';
 
-export interface TradeInfoProps {
+export interface PoolsInfoProps {
   transactionFee?: string;
   tradeFee?: Fee;
   tradeLimit?: Balance;
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
-  errors?: FieldErrors<TradeFormFields>;
+  errors?: FieldErrors<PoolsFormFields>;
   paymentInfo?: string;
 }
 
-export const TradeInfo = ({
+export const PoolsInfo = ({
   errors,
   expectedSlippage,
   tradeLimit,
   isDirty,
   tradeFee = constants.xykFee,
   paymentInfo,
-}: TradeInfoProps) => {
+}: PoolsInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
   const formError = useMemo(() => {
@@ -47,6 +48,8 @@ export const TradeInfo = ({
         return 'Insufficient fee balance';
       case 'poolDoesNotExist':
         return 'Please select valid pool';
+      case 'activeAccount':
+        return 'Please connect a wallet to continue';
     }
     return;
   }, [errors?.submit]);
@@ -60,9 +63,11 @@ export const TradeInfo = ({
     return () => timeoutId && clearTimeout(timeoutId);
   }, [formError]);
 
+  const { feePaymentAsset } = useMultiFeePaymentConversionContext();
+
   return (
-    <div className="trade-info">
-      <div className="trade-info__data">
+    <div className="pools-info">
+      <div className="pools-info__data">
         <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
           <div className="data-piece__value">
@@ -93,7 +98,7 @@ export const TradeInfo = ({
               <FormattedBalance
                 balance={{
                   balance: paymentInfo,
-                  assetId: '0',
+                  assetId: feePaymentAsset || '0',
                 }}
               />
             ) : (

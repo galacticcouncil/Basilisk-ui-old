@@ -43,7 +43,7 @@ import Unknown from '../../misc/icons/assets/Unknown.svg';
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
-import { PoolsForm } from './components/PoolsForm/PoolsForm';
+import { PoolsForm } from '../../components/Pools/PoolsForm';
 
 export interface TradeAssetIds {
   assetIn: string | null;
