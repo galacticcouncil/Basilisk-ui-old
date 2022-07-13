@@ -222,7 +222,7 @@ export const PoolsForm = ({
 }: PoolsFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
-  const [provisioningType, setProvisioningType] = useState<ProvisioningType>(ProvisioningType.Remove);
+  const [provisioningType, setProvisioningType] = useState<ProvisioningType>(ProvisioningType.Add);
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
 
   console.log('activeAccountTradeBalances', activeAccountTradeBalances);
@@ -284,26 +284,48 @@ export const PoolsForm = ({
 
   const calculateAssetIn = useCallback(() => {
     setTimeout(() => {
-      const assetOutAmount = getValues('assetOutAmount');
-      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+      const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues(['assetOutAmount', 'shareAssetAmount', 'assetIn', 'assetOut']);
+      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !activeAccountTradeBalances || !assetIn || !assetOut || !shareAssetAmount) return;
       // if (provisioningType !== ProvisioningType.Add) return;
 
       if (!assetOutAmount) return setValue('assetInAmount', null);
 
-      const amount = math.xyk.calculate_in_given_out(
-        // which combination is correct?
-        // assetOutLiquidity,
-        // assetInLiquidity,
-        assetInLiquidity,
-        assetOutLiquidity,
-        assetOutAmount
-      );
+      // const amount = math.xyk.calculate_in_given_out(
+      //   // which combination is correct?
+      //   // assetOutLiquidity,
+      //   // assetInLiquidity,
+      //   assetInLiquidity,
+      //   assetOutLiquidity,
+      //   assetOutAmount
+      // );
 
-      // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
-      if (amount === '0' && assetOutAmount !== '0') return;
-      setValue('assetInAmount', amount || null);
+      console.log('math', math.xyk, provisioningType)
+      if (provisioningType === ProvisioningType.Add) {
+        const amount = math.xyk.calculate_liquidity_in(
+          assetOutLiquidity,
+          assetInLiquidity,
+          assetOutAmount
+        );
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetOutAmount !== '0') return;
+        setValue('assetInAmount', amount || null);
+      } else {
+        const amount = math.xyk.calculate_liquidity_out_asset_a(
+          assetInLiquidity,
+          assetOutLiquidity,
+          shareAssetAmount,
+          pool.totalLiquidity
+        );
+
+        console.log('amount', amount)
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetOutAmount !== '0') return;
+        setValue('assetInAmount', amount || null);
+      }
     }, 0)
-  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity]);
+  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity, provisioningType, activeAccountTradeBalances]);
 
   useEffect(() => {
     calculateAssetIn()
@@ -311,22 +333,36 @@ export const PoolsForm = ({
 
   const calculateAssetOut = useCallback(() => {
     setTimeout(() => {
-      const assetInAmount = getValues('assetInAmount');
-      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
-      // if (provisioningType !== ProvisioningType.Remove) return;
+      const [assetInAmount, shareAssetAmount, assetIn, assetOut] = getValues(['assetInAmount', 'shareAssetAmount', 'assetIn', 'assetOut']);
+      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !activeAccountTradeBalances || !assetIn || !assetOut) return;
+            // if (provisioningType !== ProvisioningType.Remove) return;
 
       if (!assetInAmount) return setValue('assetOutAmount', null);
 
-      const amount = math.xyk.calculate_out_given_in(
-        assetInLiquidity,
-        assetOutLiquidity,
-        assetInAmount
-      );
-      if (amount === '0' && assetInAmount !== '0')
-        return setValue('assetOutAmount', null);
-      setValue('assetOutAmount', amount || null);
+      // const amount = math.xyk.calculate_out_given_in(
+      //   assetInLiquidity,
+      //   assetOutLiquidity,
+      //   assetInAmount
+      // );
+      // if (amount === '0' && assetInAmount !== '0')
+      //   return setValue('assetOutAmount', null);
+      // setValue('assetOutAmount', amount || null);
+
+      if (provisioningType === ProvisioningType.Add) {
+        const amount = math.xyk.calculate_liquidity_in(
+          assetInLiquidity,
+          assetOutLiquidity,
+          assetInAmount
+        );
+
+        console.log('liquidity in2', amount)
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetInAmount !== '0') return;
+        setValue('assetOutAmount', amount || null);
+      }
     }, 0)
-  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity]);
+  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity, provisioningType, activeAccountTradeBalances]);
 
   useEffect(() => {
     calculateAssetOut()
@@ -786,6 +822,7 @@ export const PoolsForm = ({
               assets={assets?.filter(
                 (asset) => !Object.values(assetIds).includes(asset.id)
               )}
+              disabled={provisioningType === ProvisioningType.Remove}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
@@ -903,6 +940,7 @@ export const PoolsForm = ({
               assets={assets?.filter(
                 (asset) => !Object.values(assetIds).includes(asset.id)
               )}
+              disabled={provisioningType === ProvisioningType.Remove}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">Second token</div>
@@ -945,6 +983,7 @@ export const PoolsForm = ({
               assets={assets?.filter(
                 (asset) => !Object.values(assetIds).includes(asset.id)
               )}
+              disabled={provisioningType === ProvisioningType.Add}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">Share token</div>
