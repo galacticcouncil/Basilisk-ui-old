@@ -20,6 +20,11 @@ export const BalanceList = ({
   return (
     <div className="balance-list">
       <h2 className="balance-list__title">Balance</h2>
+      <div className="balance-list-wrapper">
+        <div className="item">Asset Name</div>
+        <div className="item">Balance</div>
+        <div className="item balance-list-actions"></div>
+      </div>
       {/* TODO: ordere by assetId? */}
       {balances?.map((balance) => (
         <div className="balance-list-wrapper">

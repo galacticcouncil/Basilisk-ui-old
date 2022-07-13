@@ -41,7 +41,7 @@ import DAI from '../../misc/icons/assets/DAI.svg';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
-import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
 import { PoolsForm, PoolsFormFields, ProvisioningType } from '../../components/Pools/PoolsForm';
 import { idToAsset } from '../TradePage/TradePage';
@@ -196,7 +196,7 @@ export const PoolsPage = () => {
       if (variables.provisioningType === ProvisioningType.Remove) {
         console.log('removing liquidity', variables);
         if (!variables.assetIn || !variables.assetOut || !variables.shareAssetAmount) return;
-        removeLiquidity({ 
+        removeLiquidity({
           variables: {
             assetA: variables.assetIn,
             assetB: variables.assetOut,
@@ -285,6 +285,7 @@ export const PoolsPage = () => {
 
   return (
     <div className="pools-page-wrapper">
+      {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification">transaction {notification}</div>
       </div>

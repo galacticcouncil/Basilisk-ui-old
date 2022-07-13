@@ -42,7 +42,7 @@ import DAI from '../../misc/icons/assets/DAI.svg';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
-import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
 
 export interface TradeAssetIds {
@@ -358,13 +358,7 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const {
-    mutation: [
-      submitTrade,
-      { loading: tradeLoading, error: tradeError },
-    ],
-    confirmationScreen
-  } = useWithConfirmation(
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
     useSubmitTradeMutation({
       onCompleted: () => {
         setNotification('success');
@@ -378,9 +372,7 @@ export const TradePage = () => {
           setNotification('standby');
         }, 4000);
       },
-    }),
-    ConfirmationType.Trade
-  );
+    });
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -454,7 +446,7 @@ export const TradePage = () => {
 
   return (
     <div className="trade-page-wrapper">
-      {confirmationScreen}
+      {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification">transaction {notification}</div>
       </div>

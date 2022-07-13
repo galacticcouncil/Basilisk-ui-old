@@ -77,18 +77,24 @@ export const VestingClaim = ({
   return (
     <div className="vesting-claim">
       <h2 className="vesting-claim__title">Vesting</h2>
+      <div className="vesting-claim-wrapper">
+        <div className="item">Claimable</div>
+        <div className="item">Original vesting</div>
+        <div className="item">Remaining vesting</div>
+        <div className="vesting-claim__fee">Tx fee</div>
+        <div className="item"></div>
+      </div>
       {isVestingAvailable ? (
         <div className="vesting-claim-wrapper">
-          <div>Claimable: {fromPrecision12(vesting?.claimableAmount)} BSX</div>
-          <div>
-            Original vesting (TODO: fix calc):{' '}
+          <div className="item">
+            {fromPrecision12(vesting?.claimableAmount)} BSX
+          </div>
+          <div className="item">
             {fromPrecision12(vesting?.originalLockBalance)} BSX
           </div>
-          <div>
-            Remaining vesting: {fromPrecision12(vesting?.lockedVestingBalance)}{' '}
-            BSX
+          <div className="item">
+            {fromPrecision12(vesting?.lockedVestingBalance)} BSX
           </div>
-          Tx fee:{' '}
           <div className="vesting-claim__fee">
             {txFee ? (
               <FormattedBalance
@@ -101,12 +107,14 @@ export const VestingClaim = ({
               <>-</>
             )}
           </div>
-          <button
-            className="vesting-claim-button"
-            onClick={() => handleClaimClick()}
-          >
-            <div className="vesting-claim-button__label">Claim</div>
-          </button>
+          <div className="item">
+            <button
+              className="vesting-claim-button"
+              onClick={() => handleClaimClick()}
+            >
+              <div className="vesting-claim-button__label">Claim</div>
+            </button>
+          </div>
         </div>
       ) : (
         <div className="vesting-claim-wrapper">

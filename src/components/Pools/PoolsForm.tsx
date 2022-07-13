@@ -8,15 +8,10 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import {
-  Account,
-  Balance,
-  Maybe,
-  Pool,
-} from '../../generated/graphql';
+import { Account, Balance, Maybe, Pool } from '../../generated/graphql';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
 import { useMath } from '../../hooks/math/useMath';
 import { percentageChange } from '../../hooks/math/usePercentageChange';
@@ -47,7 +42,7 @@ export interface PoolsFormSettingsProps {
 
 export enum ProvisioningType {
   Add,
-  Remove
+  Remove,
 }
 
 export interface PoolsFormSettingsFormFields {
@@ -60,14 +55,13 @@ export const PoolsFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: PoolsFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    PoolsFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true,
-    },
-  });
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<PoolsFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true,
+      },
+    });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -161,7 +155,7 @@ export interface PoolsFormProps {
   activeAccountTradeBalances?: {
     outBalance?: Balance;
     inBalance?: Balance;
-    shareBalance?: Balance
+    shareBalance?: Balance;
   };
   activeAccountTradeBalancesLoading: boolean;
   activeAccount?: Maybe<Account>;
@@ -223,7 +217,9 @@ export const PoolsForm = ({
 }: PoolsFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
-  const [provisioningType, setProvisioningType] = useState<ProvisioningType>(ProvisioningType.Add);
+  const [provisioningType, setProvisioningType] = useState<ProvisioningType>(
+    ProvisioningType.Add
+  );
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
 
   console.log('activeAccountTradeBalances', activeAccountTradeBalances);
@@ -252,7 +248,6 @@ export const PoolsForm = ({
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null);
   const assetInAmountInputRef = useRef<HTMLInputElement>(null);
   const shareAmountInputRef = useRef<HTMLInputElement>(null);
-
 
   // trigger form field validation right away
   useEffect(() => {
@@ -287,8 +282,23 @@ export const PoolsForm = ({
   
   const calculateAssetIn = useCallback(() => {
     setTimeout(() => {
-      const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues(['assetOutAmount', 'shareAssetAmount', 'assetIn', 'assetOut']);
-      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !activeAccountTradeBalances || !assetIn || !assetOut || !shareAssetAmount) return;
+      const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues([
+        'assetOutAmount',
+        'shareAssetAmount',
+        'assetIn',
+        'assetOut',
+      ]);
+      if (
+        !pool ||
+        !math ||
+        !assetInLiquidity ||
+        !assetOutLiquidity ||
+        !activeAccountTradeBalances ||
+        !assetIn ||
+        !assetOut ||
+        !shareAssetAmount
+      )
+        return;
       // if (provisioningType !== ProvisioningType.Add) return;
 
       if (!assetOutAmount) return setValue('assetInAmount', null);
@@ -302,7 +312,7 @@ export const PoolsForm = ({
       //   assetOutAmount
       // );
 
-      console.log('math', math.xyk, provisioningType)
+      console.log('math', math.xyk, provisioningType);
       if (provisioningType === ProvisioningType.Add) {
         const amount = math.xyk.calculate_liquidity_in(
           assetOutLiquidity,
@@ -321,24 +331,53 @@ export const PoolsForm = ({
           pool.totalLiquidity
         );
 
-        console.log('amount', amount)
+        console.log('amount', amount);
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetOutAmount !== '0') return;
         setValue('assetInAmount', amount || null);
       }
-    }, 0)
-  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity, provisioningType, activeAccountTradeBalances]);
+    }, 0);
+  }, [
+    math,
+    getValues,
+    setValue,
+    pool,
+    assetInLiquidity,
+    assetOutLiquidity,
+    provisioningType,
+    activeAccountTradeBalances,
+  ]);
 
   useEffect(() => {
-    calculateAssetIn()
-  }, [provisioningType, assetOutLiquidity, assetInLiquidity, assetOutAmountInput, calculateAssetIn]);
+    calculateAssetIn();
+  }, [
+    provisioningType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutAmountInput,
+    calculateAssetIn,
+  ]);
 
   const calculateAssetOut = useCallback(() => {
     setTimeout(() => {
-      const [assetInAmount, shareAssetAmount, assetIn, assetOut] = getValues(['assetInAmount', 'shareAssetAmount', 'assetIn', 'assetOut']);
-      if (!pool || !math || !assetInLiquidity || !assetOutLiquidity || !activeAccountTradeBalances || !assetIn || !assetOut) return;
-            // if (provisioningType !== ProvisioningType.Remove) return;
+      const [assetInAmount, shareAssetAmount, assetIn, assetOut] = getValues([
+        'assetInAmount',
+        'shareAssetAmount',
+        'assetIn',
+        'assetOut',
+      ]);
+      if (
+        !pool ||
+        !math ||
+        !assetInLiquidity ||
+        !assetOutLiquidity ||
+        !activeAccountTradeBalances ||
+        !assetIn ||
+        !assetOut
+      )
+        return;
+      // if (provisioningType !== ProvisioningType.Remove) return;
 
       if (!assetInAmount) return setValue('assetOutAmount', null);
 
@@ -358,37 +397,71 @@ export const PoolsForm = ({
           assetInAmount
         );
 
-        console.log('liquidity in2', amount)
+        console.log('liquidity in2', amount);
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetInAmount !== '0') return;
         setValue('assetOutAmount', amount || null);
       }
-    }, 0)
-  }, [math, getValues, setValue, pool, assetInLiquidity, assetOutLiquidity, provisioningType, activeAccountTradeBalances]);
+    }, 0);
+  }, [
+    math,
+    getValues,
+    setValue,
+    pool,
+    assetInLiquidity,
+    assetOutLiquidity,
+    provisioningType,
+    activeAccountTradeBalances,
+  ]);
 
   useEffect(() => {
-    calculateAssetOut()
-  }, [provisioningType, assetOutLiquidity, assetInLiquidity, assetInAmountInput, calculateAssetOut]);
+    calculateAssetOut();
+  }, [
+    provisioningType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetInAmountInput,
+    calculateAssetOut,
+  ]);
 
   useEffect(() => {
-    const [assetInAmount, assetOutAmount, assetIn, assetOut] = getValues(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut']);
+    const [assetInAmount, assetOutAmount, assetIn, assetOut] = getValues([
+      'assetInAmount',
+      'assetOutAmount',
+      'assetIn',
+      'assetOut',
+    ]);
     if (!assetIn || !assetOut) return;
-    assetIn > assetOut ? setValue('shareAssetAmount', assetOutAmount) : setValue('shareAssetAmount', assetInAmount)
-  }, [...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut'])])
+    assetIn > assetOut
+      ? setValue('shareAssetAmount', assetOutAmount)
+      : setValue('shareAssetAmount', assetInAmount);
+  }, [...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut'])]);
 
   useEffect(() => {
-   setTimeout(() => {
-    const [assetInAmount, assetOutAmount, assetIn, assetOut, shareAssetAmount] = getValues(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut', 'shareAssetAmount']);
-    if (!assetIn || !assetOut) return;
-    if (assetIn > assetOut) {
-      setValue('assetOutAmount', shareAssetAmount)
-      calculateAssetIn();
-    } else {
-      setValue('assetInAmount', shareAssetAmount)
-      calculateAssetOut()
-    }
-   }, 0)
+    setTimeout(() => {
+      const [
+        assetInAmount,
+        assetOutAmount,
+        assetIn,
+        assetOut,
+        shareAssetAmount,
+      ] = getValues([
+        'assetInAmount',
+        'assetOutAmount',
+        'assetIn',
+        'assetOut',
+        'shareAssetAmount',
+      ]);
+      if (!assetIn || !assetOut) return;
+      if (assetIn > assetOut) {
+        setValue('assetOutAmount', shareAssetAmount);
+        calculateAssetIn();
+      } else {
+        setValue('assetInAmount', shareAssetAmount);
+        calculateAssetOut();
+      }
+    }, 0);
   }, [shareAssetAmountInput, calculateAssetIn, calculateAssetOut]);
 
   const getSubmitText = useCallback(() => {
@@ -406,7 +479,9 @@ export const PoolsForm = ({
 
     if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amount';
 
-    return provisioningType === ProvisioningType.Add ? 'Add Liquidity' : 'Remove Liquidity';
+    return provisioningType === ProvisioningType.Add
+      ? 'Add Liquidity'
+      : 'Remove Liquidity';
   }, [isPoolLoading, errors, isDirty, provisioningType]);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
@@ -803,8 +878,26 @@ export const PoolsForm = ({
       <div ref={modalContainerRef}></div>
       {modalPortal}
 
-      <button disabled={provisioningType === ProvisioningType.Add} onClick={() => { setProvisioningType(ProvisioningType.Add) }}>Add</button>
-      <button disabled={provisioningType === ProvisioningType.Remove} onClick={() => { setProvisioningType(ProvisioningType.Remove) }}>Remove</button>
+      <div className="pool-page-tabs">
+        <button
+          className="button--primary"
+          disabled={provisioningType === ProvisioningType.Add}
+          onClick={() => {
+            setProvisioningType(ProvisioningType.Add);
+          }}
+        >
+          <div className="label">Add</div>
+        </button>
+        <button
+          className="button--primary"
+          disabled={provisioningType === ProvisioningType.Remove}
+          onClick={() => {
+            setProvisioningType(ProvisioningType.Remove);
+          }}
+        >
+          <div className="label">Remove</div>
+        </button>
+      </div>
 
       <FormProvider {...form}>
         <form className="pools-form" onSubmit={handleSubmit(_handleSubmit)}>
@@ -818,7 +911,10 @@ export const PoolsForm = ({
             <Icon name="Settings" />
           </div>
 
-          <div className="pools-form-heading">{provisioningType === ProvisioningType.Add ? 'Add' : 'Remove'} Liquidity</div>
+          <div className="pools-form-heading">
+            {provisioningType === ProvisioningType.Add ? 'Add' : 'Remove'}{' '}
+            Liquidity
+          </div>
           <div className="balance-wrapper">
             <AssetBalanceInput
               balanceInputName="assetInAmount"
@@ -975,7 +1071,7 @@ export const PoolsForm = ({
             </div>
           </div>
 
-          <br/>
+          <br />
 
           <div className="balance-wrapper">
             {' '}
@@ -1001,11 +1097,13 @@ export const PoolsForm = ({
                   Your balance:
                   {activeAccountTradeBalances?.shareBalance ? (
                     <FormattedBalance
-                    balance={{
-                      balance: activeAccountTradeBalances.shareBalance.balance,
-                      assetId: activeAccountTradeBalances.shareBalance.assetId,
-                    }}
-                  />
+                      balance={{
+                        balance:
+                          activeAccountTradeBalances.shareBalance.balance,
+                        assetId:
+                          activeAccountTradeBalances.shareBalance.assetId,
+                      }}
+                    />
                   ) : (
                     <> {horizontalBar}</>
                   )}

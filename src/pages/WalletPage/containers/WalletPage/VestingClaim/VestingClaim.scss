@@ -12,6 +12,12 @@
   &-wrapper {
     @extend .active-account-wrapper;
 
+    .item {
+      width: 22.5%;
+      &:last-child {
+        width: 10%;
+      }
+    }
   }
 
   &-button {

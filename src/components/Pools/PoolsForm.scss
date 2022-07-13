@@ -20,6 +20,14 @@
 
   color: white;
 
+  .pool-page-tabs {
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    gap: 20px;
+    width: 90%;
+  }
+
   .pools-form {
     display: flex;
     flex-direction: column;

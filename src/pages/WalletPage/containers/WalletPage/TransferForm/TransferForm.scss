@@ -16,8 +16,11 @@
 
   z-index: 3;
 
-  &__content-wrapper {
+  .transfer-form-container {
     width: 460px;
+  }
+
+  &__content-wrapper {
     min-height: fit-content;
     max-height: 85vh;
     padding: 16px;
