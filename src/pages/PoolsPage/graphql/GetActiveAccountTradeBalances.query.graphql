@@ -1,11 +1,11 @@
-query GetActiveAccountTradeBalances($assetInId: String, $assetOutId: String) {
+query GetActiveAccountTradeBalances($assetInId: String, $assetOutId: String, $shareTokenId: String) {
     lastBlock @client {
         parachainBlockNumber
         relaychainBlockNumber
     }
 
     activeAccount @client {
-        balances(assetIds: [$assetInId, $assetOutId]) {
+        balances(assetIds: [$assetInId, $assetOutId, $shareTokenId]) {
             assetId,
             balance
         }

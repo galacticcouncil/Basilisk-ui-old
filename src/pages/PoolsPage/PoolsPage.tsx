@@ -44,6 +44,7 @@ import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountT
 import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
 import { PoolsForm } from '../../components/Pools/PoolsForm';
+import { idToAsset } from '../TradePage/TradePage';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -59,43 +60,6 @@ export interface TradeChartProps {
     inOut?: string;
   };
 }
-
-// TODO EXTRACT
-export const idToAsset = (id: string | null) => {
-  const assetMetadata: Record<string, any> = {
-    '0': {
-      id: '0',
-      symbol: 'BSX',
-      fullName: 'Basilisk',
-      icon: BSX,
-    },
-    '1': {
-      id: '1',
-      symbol: 'KSM',
-      fullName: 'Kusama',
-      icon: KSM,
-    },
-    '2': {
-      id: '2',
-      symbol: 'aUSD',
-      fullName: 'Acala USD',
-      icon: Unknown,
-    },
-    '3': {
-      id: '3',
-      symbol: 'DAI',
-      fullName: 'DAI Stablecoin',
-      icon: DAI,
-    },
-  };
-
-  return assetMetadata[id!] as any || id && {
-    id,
-    symbol: horizontalBar,
-    fullName: `Unknown asset ${id}`,
-    icon: Unknown
-  };
-};
 
 export const PoolsPage = () => {
   // taking assetIn/assetOut from search params / query url
@@ -233,6 +197,7 @@ export const PoolsPage = () => {
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
           : assetIds.assetIn) || undefined,
+      shareTokenId: pool?.shareTokenId || undefined
     },
   });
 
@@ -247,8 +212,14 @@ export const PoolsPage = () => {
       assetId: assetIds.assetIn,
     }) as Balance | undefined;
 
-    return { outBalance, inBalance };
-  }, [activeAccountTradeBalancesData, assetIds]);
+    const shareBalance = find(balances, {
+      assetId: pool?.shareTokenId,
+    }) as Balance | undefined;
+
+    console.log('share balance', balances, shareBalance);
+
+    return { outBalance, inBalance, shareBalance };
+  }, [activeAccountTradeBalancesData, assetIds, pool]);
 
   return (
     <div className="pools-page-wrapper">

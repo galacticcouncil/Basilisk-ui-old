@@ -11235,7 +11235,7 @@ husky@^7.0.4:
 
 "hydra-dx-wasm@https://github.com/galacticcouncil/HydraDX-wasm#main":
   version "3.0.0"
-  resolved "https://github.com/galacticcouncil/HydraDX-wasm#4451b1dfdef924aab07de97e639b0adf28b5109e"
+  resolved "https://github.com/galacticcouncil/HydraDX-wasm#420b6b18fe9697582c46ce9e66be57929b9d97fd"
 
 hyphenate-style-name@^1.0.2:
   version "1.0.4"

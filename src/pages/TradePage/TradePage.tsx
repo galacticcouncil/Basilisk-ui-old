@@ -83,8 +83,8 @@ export const idToAsset = (id: string | null) => {
     },
     '3': {
       id: '3',
-      symbol: 'DAI',
-      fullName: 'DAI Stablecoin',
+      symbol: 'LP BSX/KSM',
+      fullName: 'BSX/KSM Share token',
       icon: DAI,
     },
   };

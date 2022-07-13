@@ -6,26 +6,24 @@ import { useMultiFeePaymentConversionContext } from '../../../containers/MultiPr
 import { Balance, Fee } from '../../../generated/graphql';
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
-import { PoolsFormFields } from '../PoolsForm';
+import { PoolsFormFields, ProvisioningType } from '../PoolsForm';
 import constants from '../../../constants';
 import './PoolsInfo.scss';
 
 export interface PoolsInfoProps {
   transactionFee?: string;
-  tradeFee?: Fee;
   tradeLimit?: Balance;
   isDirty?: boolean;
-  expectedSlippage?: BigNumber;
   errors?: FieldErrors<PoolsFormFields>;
   paymentInfo?: string;
+  provisioningType: ProvisioningType;
 }
 
 export const PoolsInfo = ({
   errors,
-  expectedSlippage,
   tradeLimit,
+  provisioningType,
   isDirty,
-  tradeFee = constants.xykFee,
   paymentInfo,
 }: PoolsInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
@@ -68,29 +66,34 @@ export const PoolsInfo = ({
   return (
     <div className="pools-info">
       <div className="pools-info__data">
-        <div className="data-piece">
+        {/* <div className="data-piece">
           <span className="data-piece__label">Current slippage </span>
           <div className="data-piece__value">
             {!expectedSlippage || expectedSlippage?.isNaN()
               ? horizontalBar
               : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`}
           </div>
-        </div>
-        <div className="data-piece">
-          <span className="data-piece__label">Trade limit </span>
-          <div className="data-piece__value">
-            {tradeLimit?.balance ? (
-              <FormattedBalance
-                balance={{
-                  balance: tradeLimit?.balance,
-                  assetId: tradeLimit?.assetId,
-                }}
-              />
-            ) : (
-              <>{horizontalBar}</>
-            )}
-          </div>
-        </div>
+        </div> */}
+        {provisioningType === ProvisioningType.Add
+          ? (
+            <div className="data-piece">
+              <span className="data-piece__label">Provisioning limit </span>
+              <div className="data-piece__value">
+                {tradeLimit?.balance ? (
+                  <FormattedBalance
+                    balance={{
+                      balance: tradeLimit?.balance,
+                      assetId: tradeLimit?.assetId,
+                    }}
+                  />
+                ) : (
+                  <>{horizontalBar}</>
+                )}
+              </div>
+            </div>
+          )
+          : <></>
+        }
         <div className="data-piece">
           <span className="data-piece__label">Transaction fee </span>
           <div className="data-piece__value">
@@ -106,7 +109,7 @@ export const PoolsInfo = ({
             )}
           </div>
         </div>
-        <div className="data-piece">
+        {/* <div className="data-piece">
           <span className="data-piece__label">Trade fee </span>
           <div className="data-piece__value">
             {new BigNumber(tradeFee.numerator)
@@ -115,7 +118,7 @@ export const PoolsInfo = ({
               .toFixed(2)}
             %
           </div>
-        </div>
+        </div> */}
       </div>
       {/* TODO Error message */}
 

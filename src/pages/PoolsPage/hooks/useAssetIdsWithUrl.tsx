@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
-import { idToAsset, TradeAssetIds } from "../PoolsPage";
+import { TradeAssetIds } from "../PoolsPage";
 import { useDebugBoxContext } from "./useDebugBox";
+import { idToAsset } from "../../TradePage/TradePage";
 
 export const useAssetIdsWithUrl = (): [TradeAssetIds, Dispatch<SetStateAction<TradeAssetIds>>] => {
     const [searchParams] = useSearchParams();

@@ -10,7 +10,9 @@ export const useGetXykPool = () => {
 
         return mapToPool(apiInstance)([
             poolId,
-            await apiInstance.query.xyk.poolAssets(poolId)
+            await apiInstance.query.xyk.poolAssets(poolId),
+            await apiInstance.query.xyk.shareToken(poolId),
+            await apiInstance.query.xyk.totalLiquidity(poolId)
         ]);
     }, [
         apiInstance,
