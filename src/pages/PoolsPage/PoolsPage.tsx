@@ -43,8 +43,10 @@ import Unknown from '../../misc/icons/assets/Unknown.svg';
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
-import { PoolsForm } from '../../components/Pools/PoolsForm';
+import { PoolsForm, PoolsFormFields, ProvisioningType } from '../../components/Pools/PoolsForm';
 import { idToAsset } from '../TradePage/TradePage';
+import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation';
+import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -120,42 +122,102 @@ export const PoolsPage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const {
-    mutation: [
-      submitTrade,
-      { loading: tradeLoading, error: tradeError },
-    ],
-    confirmationScreen
-  } = useWithConfirmation(
-    useSubmitTradeMutation({
-      onCompleted: () => {
-        setNotification('success');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-      onError: () => {
-        setNotification('failed');
-        clearNotificationIntervalRef.current = setTimeout(() => {
-          setNotification('standby');
-        }, 4000);
-      },
-    }),
-    ConfirmationType.Trade
-  );
+  // const {
+  //   mutation: [
+  //     submitTrade,
+  //     { loading: tradeLoading, error: tradeError },
+  //   ],
+  //   confirmationScreen
+  // } = useWithConfirmation(
+  //   useSubmitTradeMutation({
+  //     onCompleted: () => {
+  //       setNotification('success');
+  //       clearNotificationIntervalRef.current = setTimeout(() => {
+  //         setNotification('standby');
+  //       }, 4000);
+  //     },
+  //     onError: () => {
+  //       setNotification('failed');
+  //       clearNotificationIntervalRef.current = setTimeout(() => {
+  //         setNotification('standby');
+  //       }, 4000);
+  //     },
+  //   }),
+  //   ConfirmationType.Trade
+  // );
+
+  const [
+    removeLiquidity,
+    { loading: removeLiquidityLoading, error: removeLiquidityError },
+  ] = useRemoveLiquidityMutation({
+    onCompleted: () => {
+      setNotification('success');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+    onError: () => {
+      setNotification('failed');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+  });
+
+  const [
+    addLiquidity,
+    { loading: addLiquidityLoading, error: addLiquidityLError },
+  ] = useAddLiquidityMutation({
+    onCompleted: () => {
+      setNotification('success');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+    onError: () => {
+      setNotification('failed');
+      clearNotificationIntervalRef.current = setTimeout(() => {
+        setNotification('standby');
+      }, 4000);
+    },
+  });
+
+  console.log('removeLiquidityError', removeLiquidityError)
 
   useEffect(() => {
-    if (tradeLoading) setNotification('pending');
-  }, [tradeLoading]);
+    if (removeLiquidityLoading || addLiquidityLoading) setNotification('pending');
+  }, [removeLiquidityLoading, addLiquidityLoading]);
 
-  const handleSubmitTrade = useCallback(
-    (variables) => {
+  const handleSubmit = useCallback(
+    (variables: PoolsFormFields & { amountBMaxLimit?: string }) => {
       clearNotificationIntervalRef.current &&
         clearTimeout(clearNotificationIntervalRef.current);
       clearNotificationIntervalRef.current = null;
-      submitTrade({ variables });
+      if (variables.provisioningType === ProvisioningType.Remove) {
+        console.log('removing liquidity', variables);
+        if (!variables.assetIn || !variables.assetOut || !variables.shareAssetAmount) return;
+        removeLiquidity({ 
+          variables: {
+            assetA: variables.assetIn,
+            assetB: variables.assetOut,
+            amount: variables.shareAssetAmount
+          }
+        });
+      } else {
+        console.log('adding liquidity', variables);
+        if (!variables.assetIn || !variables.assetOut || !variables.assetInAmount || !variables.amountBMaxLimit) return;
+
+        addLiquidity({
+          variables: {
+            assetA: variables.assetIn,
+            assetB: variables.assetOut,
+            amountA: variables.assetInAmount,
+            amountBMaxLimit: variables.amountBMaxLimit
+          }
+        })
+      }
     },
-    [submitTrade]
+    [removeLiquidity]
   );
 
   const assetOutLiquidity = useMemo(() => {
@@ -223,7 +285,6 @@ export const PoolsPage = () => {
 
   return (
     <div className="pools-page-wrapper">
-      {confirmationScreen}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification">transaction {notification}</div>
       </div>
@@ -252,8 +313,8 @@ export const PoolsPage = () => {
           assetInLiquidity={assetInLiquidity}
           assetOutLiquidity={assetOutLiquidity}
           spotPrice={spotPrice}
-          onSubmitTrade={handleSubmitTrade}
-          tradeLoading={tradeLoading}
+          onSubmit={handleSubmit}
+          tradeLoading={removeLiquidityLoading || addLiquidityLoading}
           assets={assets}
           activeAccount={activeAccountData?.activeAccount}
           activeAccountTradeBalances={tradeBalances}
@@ -264,11 +325,6 @@ export const PoolsPage = () => {
             depsLoading
           }
         />
-        <div className="debug">
-          <h3>[Trade Page] Debug Box</h3>
-          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-          {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
-        </div>
       </div>
     </div>
   );

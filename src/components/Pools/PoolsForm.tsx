@@ -156,7 +156,7 @@ export interface PoolsFormProps {
     inOut?: string;
   };
   isPoolLoading: boolean;
-  onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
+  onSubmit: (form: PoolsFormFields & { amountBMaxLimit?: string }) => void;
   tradeLoading: boolean;
   activeAccountTradeBalances?: {
     outBalance?: Balance;
@@ -175,6 +175,7 @@ export interface PoolsFormFields {
   shareAssetAmount: string | null;
   submit: void;
   warnings: any;
+  provisioningType: ProvisioningType
 }
 
 /**
@@ -213,7 +214,7 @@ export const PoolsForm = ({
   assetInLiquidity,
   assetOutLiquidity,
   spotPrice,
-  onSubmitTrade,
+  onSubmit,
   tradeLoading,
   assets,
   activeAccountTradeBalances,
@@ -282,6 +283,8 @@ export const PoolsForm = ({
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
   const shareAssetAmountInput = useListenForInput(shareAmountInputRef);
 
+  useEffect(() => setValue('provisioningType', provisioningType), [setValue, provisioningType])
+  
   const calculateAssetIn = useCallback(() => {
     setTimeout(() => {
       const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues(['assetOutAmount', 'shareAssetAmount', 'assetIn', 'assetOut']);
@@ -418,6 +421,8 @@ export const PoolsForm = ({
     false
   );
 
+  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<string | null>();
+
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
     const assetInAmount = fromPrecision12(
@@ -440,16 +445,16 @@ export const PoolsForm = ({
     )
       return;
 
-    switch (provisioningType) {
-      case ProvisioningType.Remove:
+    switch (lastAssetInteractedWith) {
+      case assetIds.assetIn:
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice?.inOut)
-            .multipliedBy(new BigNumber('1').minus(allowedSlippage))
+            .multipliedBy(new BigNumber('1').plus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut,
         };
-      case ProvisioningType.Add:
+      case assetIds.assetOut:
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
@@ -463,6 +468,8 @@ export const PoolsForm = ({
     provisioningType,
     allowedSlippage,
     getValues,
+    assetIds,
+    lastAssetInteractedWith,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
@@ -496,30 +503,29 @@ export const PoolsForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
+
+  useEffect(() => {
+    setLastAssetInteractedWith(assetIds.assetIn)
+  }, [assetInAmountInput, assetIds.assetIn]);
+
+  useEffect(() => {
+    setLastAssetInteractedWith(assetIds.assetOut)
+  }, [assetOutAmountInput, assetIds.assetOut]);
+
   // handle submit of the form
   const _handleSubmit = useCallback(
     (data: PoolsFormFields) => {
-      if (
-        !data.assetIn ||
-        !data.assetOut ||
-        !data.assetInAmount ||
-        !data.assetOutAmount ||
-        !tradeLimit
-      ) {
-        throw new Error('Unable to submit trade due to missing data');
-      }
-
-      // onSubmitTrade({
-      //   assetInId: data.assetIn,
-      //   assetOutId: data.assetOut,
-      //   assetInAmount: data.assetInAmount,
-      //   assetOutAmount: data.assetOutAmount,
-      //   poolType: PoolType.XYK,
-      //   provisioningType: provisioningType,
-      //   amountWithSlippage: tradeLimit.balance,
-      // });
+      if (!lastAssetInteractedWith) return;
+      onSubmit({
+        ...data,
+        assetIn: lastAssetInteractedWith,
+        assetOut: lastAssetInteractedWith === data.assetOut ? data.assetIn : data.assetOut,
+        assetInAmount:  lastAssetInteractedWith === data.assetOut ? data.assetOutAmount : data.assetInAmount,
+        assetOutAmount:  lastAssetInteractedWith === data.assetOut ? data.assetInAmount : data.assetOutAmount,
+        amountBMaxLimit: tradeLimit?.balance
+      });
     },
-    [provisioningType, tradeLimit]
+    [provisioningType, tradeLimit, lastAssetInteractedWith, assetIds, tradeLimit]
   );
 
   const handleSwitchAssets = useCallback(
