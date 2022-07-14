@@ -169,7 +169,7 @@ export interface PoolsFormFields {
   shareAssetAmount: string | null;
   submit: void;
   warnings: any;
-  provisioningType: ProvisioningType
+  provisioningType: ProvisioningType;
 }
 
 /**
@@ -278,8 +278,11 @@ export const PoolsForm = ({
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
   const shareAssetAmountInput = useListenForInput(shareAmountInputRef);
 
-  useEffect(() => setValue('provisioningType', provisioningType), [setValue, provisioningType])
-  
+  useEffect(
+    () => setValue('provisioningType', provisioningType),
+    [setValue, provisioningType]
+  );
+
   const calculateAssetIn = useCallback(() => {
     setTimeout(() => {
       const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues([
@@ -496,7 +499,9 @@ export const PoolsForm = ({
     false
   );
 
-  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<string | null>();
+  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
+    string | null
+  >();
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
@@ -578,13 +583,12 @@ export const PoolsForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
-
   useEffect(() => {
-    setLastAssetInteractedWith(assetIds.assetIn)
+    setLastAssetInteractedWith(assetIds.assetIn);
   }, [assetInAmountInput, assetIds.assetIn]);
 
   useEffect(() => {
-    setLastAssetInteractedWith(assetIds.assetOut)
+    setLastAssetInteractedWith(assetIds.assetOut);
   }, [assetOutAmountInput, assetIds.assetOut]);
 
   // handle submit of the form
@@ -594,13 +598,28 @@ export const PoolsForm = ({
       onSubmit({
         ...data,
         assetIn: lastAssetInteractedWith,
-        assetOut: lastAssetInteractedWith === data.assetOut ? data.assetIn : data.assetOut,
-        assetInAmount:  lastAssetInteractedWith === data.assetOut ? data.assetOutAmount : data.assetInAmount,
-        assetOutAmount:  lastAssetInteractedWith === data.assetOut ? data.assetInAmount : data.assetOutAmount,
-        amountBMaxLimit: tradeLimit?.balance
+        assetOut:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetIn
+            : data.assetOut,
+        assetInAmount:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetOutAmount
+            : data.assetInAmount,
+        assetOutAmount:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetInAmount
+            : data.assetOutAmount,
+        amountBMaxLimit: tradeLimit?.balance,
       });
     },
-    [provisioningType, tradeLimit, lastAssetInteractedWith, assetIds, tradeLimit]
+    [
+      provisioningType,
+      tradeLimit,
+      lastAssetInteractedWith,
+      assetIds,
+      tradeLimit,
+    ]
   );
 
   const handleSwitchAssets = useCallback(
@@ -878,37 +897,38 @@ export const PoolsForm = ({
       <div ref={modalContainerRef}></div>
       {modalPortal}
 
-      <div className="pool-page-tabs">
-        <button
-          className="button--primary"
-          disabled={provisioningType === ProvisioningType.Add}
-          onClick={() => {
-            setProvisioningType(ProvisioningType.Add);
-          }}
-        >
-          <div className="label">Add</div>
-        </button>
-        <button
-          className="button--primary"
-          disabled={provisioningType === ProvisioningType.Remove}
-          onClick={() => {
-            setProvisioningType(ProvisioningType.Remove);
-          }}
-        >
-          <div className="label">Remove</div>
-        </button>
-      </div>
-
       <FormProvider {...form}>
         <form className="pools-form" onSubmit={handleSubmit(_handleSubmit)}>
-          <div
-            className="settings-button"
-            onClick={(e) => {
-              e.preventDefault();
-              toggleModal();
-            }}
-          >
-            <Icon name="Settings" />
+          <div className="settings-button-wrapper">
+            <div className="pool-page-tabs">
+              <button
+                className="tab"
+                disabled={provisioningType === ProvisioningType.Add}
+                onClick={() => {
+                  setProvisioningType(ProvisioningType.Add);
+                }}
+              >
+                <div className="label">Add</div>
+              </button>
+              <button
+                className="tab"
+                disabled={provisioningType === ProvisioningType.Remove}
+                onClick={() => {
+                  setProvisioningType(ProvisioningType.Remove);
+                }}
+              >
+                <div className="label">Remove</div>
+              </button>
+            </div>
+            <div
+              className="pool-settings-button"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleModal();
+              }}
+            >
+              <Icon name="Settings" />
+            </div>
           </div>
 
           <div className="pools-form-heading">

@@ -1,5 +1,6 @@
 @import './../../misc/colors.module.scss';
 @import './../../misc/misc.module.scss';
+@import '../Button/Button.scss';
 
 .pools-form-wrapper {
   position: relative;
@@ -20,12 +21,71 @@
 
   color: white;
 
-  .pool-page-tabs {
+  .settings-button-wrapper {
+    position: absolute;
     display: flex;
     flex-direction: row;
-    justify-content: right;
-    gap: 20px;
-    width: 90%;
+    justify-content: left;
+    right: 10px;
+    top: 10px;
+    gap: 10px;
+    padding: 10px;
+
+    .pool-settings-button {
+      display: flex;
+      padding: 10px 8px;
+      width: fit-content;
+      height: fit-content;
+      border-radius: 50%;
+      background-color: rgba(162, 176, 187, 0.1);
+
+      svg {
+        width: 24px;
+      }
+
+      &:hover {
+        cursor: pointer;
+
+        svg {
+          path {
+            fill: $green1;
+          }
+        }
+      }
+    }
+
+    .pool-page-tabs {
+      display: flex;
+      flex-direction: row;
+      justify-content: right;
+      width: 90%;
+
+      .tab {
+        @extend .button--primary;
+        border-radius: $border-radius 0px 0px $border-radius;
+        background-color: rgba(79, 255, 176, 0.9);
+
+        &:hover {
+          background-color: rgba(79, 255, 176, 1);
+        }
+
+        &:disabled {
+          background-color: rgba(162, 176, 187, 0.7);
+        }
+
+        &:first-child {
+          border-radius: $border-radius 0px 0px $border-radius;
+        }
+
+        &:last-child {
+          border-radius: 0px $border-radius $border-radius 0px;
+        }
+
+        &:not(:last-child) {
+          border-right: 1px solid rgba(162, 176, 187, 0.5);
+        }
+      }
+    }
   }
 
   .pools-form {
@@ -180,30 +240,6 @@
 
       background: rgba(218, 255, 238, 0.06);
       border-radius: 7px;
-    }
-  }
-}
-
-.settings-button {
-  position: absolute;
-  display: flex;
-  right: 24px;
-  top: 20px;
-  padding: 10px 8px;
-  border-radius: 50%;
-  background-color: rgba(162, 176, 187, 0.1);
-
-  svg {
-    width: 24px;
-  }
-
-  &:hover {
-    cursor: pointer;
-
-    svg {
-      path {
-        fill: $green1;
-      }
     }
   }
 }
