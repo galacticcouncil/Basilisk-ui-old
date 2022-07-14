@@ -61,6 +61,8 @@ export const getLockedBalanceByAddressAndLockId = async (
 /**
  * Calculates original and future lock for given VestingSchedule.
  * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
+ * 
+ * returns [originalLock, futureLock]
  */
 export const calculateLock = (
   vesting: VestingSchedule,
@@ -78,7 +80,9 @@ export const calculateLock = (
   const periodCount = new BigNumber(vesting.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
-  const unlocked = vestedOverPeriods.gte(originalLock) ? originalLock : vestedOverPeriods;
+  const unlocked = vestedOverPeriods.gte(originalLock)
+    ? originalLock
+    : vestedOverPeriods;
   const futureLock = originalLock.minus(unlocked);
 
   return [originalLock, futureLock];
@@ -96,15 +100,21 @@ export const calculateTotalLocks = (
    * .reduce did not play well with an object that has multiple BigNumbers
    * that's why the summation runs twice.
    */
-  const sumOriginalLock = vestingSchedules.reduce((accumulator, vestingSchedule) => {
-    const [originalLock] = calculateLock(vestingSchedule, currentBlockNumber);
-    return accumulator.plus(originalLock);
-  }, new BigNumber(0));
+  const sumOriginalLock = vestingSchedules.reduce(
+    (accumulator, vestingSchedule) => {
+      const [originalLock] = calculateLock(vestingSchedule, currentBlockNumber);
+      return accumulator.plus(originalLock);
+    },
+    new BigNumber(0)
+  );
 
-  const sumFutureLock = vestingSchedules.reduce((accumulator, vestingSchedule) => {
-    const [, futureLock] = calculateLock(vestingSchedule, currentBlockNumber);
-    return accumulator.plus(futureLock);
-  }, new BigNumber(0));
+  const sumFutureLock = vestingSchedules.reduce(
+    (accumulator, vestingSchedule) => {
+      const [, futureLock] = calculateLock(vestingSchedule, currentBlockNumber);
+      return accumulator.plus(futureLock);
+    },
+    new BigNumber(0)
+  );
 
   return {
     original: sumOriginalLock.toString(),

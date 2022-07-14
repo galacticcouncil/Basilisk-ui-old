@@ -22,9 +22,8 @@ export const getVestingByAddressFactory =
     address?: string
   ): Promise<Query['vesting']> => {
     if (!apiInstance || !address) return;
-
     const currentBlockNumber =
-      readLastBlock(client)?.lastBlock?.relaychainBlockNumber;
+      readLastBlock(client)?.lastBlock?.parachainBlockNumber;
     if (!currentBlockNumber)
       throw Error(`Can't calculate locks without current block number.`);
 
@@ -49,6 +48,7 @@ export const getVestingByAddressFactory =
       vestingSchedules,
       currentBlockNumber!
     );
+    console.log('totalLocks', totalLocks)
 
     const lockedVestingBalance = (
       await getLockedBalanceByAddressAndLockId(
@@ -64,16 +64,17 @@ export const getVestingByAddressFactory =
       lockedVestingBalance: '0',
     }
 
-    const totalRemainingVesting = new BigNumber(lockedVestingBalance!);
+    // TODO: add support for lockIds other than ormlvest 
+    const originalOrmlvestVesting = new BigNumber(lockedVestingBalance!);
     // claimable = remainingVesting - all future locks
-    const claimableAmount = totalRemainingVesting.minus(
+    const claimableAmount = originalOrmlvestVesting.minus(
       new BigNumber(totalLocks.future)
     );
 
     return {
       claimableAmount: claimableAmount.toString(),
-      originalLockBalance: totalLocks.original,
-      lockedVestingBalance: totalRemainingVesting.toString(),
+      originalLockBalance: totalLocks.original, // totalLocks.original == originalOrmlvestVesting
+      lockedVestingBalance: totalLocks.future.toString(),
     } as Vesting;
   };
 
