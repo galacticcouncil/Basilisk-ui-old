@@ -1,7 +1,8 @@
-@import './../../../misc/colors.module.scss';
-@import './../../../misc/misc.module.scss';
+@import './../../misc/colors.module.scss';
+@import './../../misc/misc.module.scss';
+@import '../Button/Button.scss';
 
-.trade-form-wrapper {
+.pools-form-wrapper {
   position: relative;
   flex-basis: 350px;
   flex-grow: 1;
@@ -20,17 +21,86 @@
 
   color: white;
 
-  .trade-form {
+  .settings-button-wrapper {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    right: 10px;
+    top: 10px;
+    gap: 10px;
+    padding: 10px;
+
+    .pool-settings-button {
+      display: flex;
+      padding: 10px 8px;
+      width: fit-content;
+      height: fit-content;
+      border-radius: 50%;
+      background-color: rgba(162, 176, 187, 0.1);
+
+      svg {
+        width: 24px;
+      }
+
+      &:hover {
+        cursor: pointer;
+
+        svg {
+          path {
+            fill: $green1;
+          }
+        }
+      }
+    }
+
+    .pool-page-tabs {
+      display: flex;
+      flex-direction: row;
+      justify-content: right;
+      width: 90%;
+
+      .tab {
+        @extend .button--primary;
+        width: 100px;
+        border-radius: $border-radius 0px 0px $border-radius;
+        color: $gray4;
+        background-color: rgba(162, 176, 187, 0.1);
+
+        &:hover {
+          color: rgba(79, 255, 176, 1);
+          background-color: rgba(162, 176, 187, 0.15);
+        }
+
+        &:disabled {
+          color: rgba(79, 255, 176, 1);
+          background-color: rgba(162, 176, 187, 0.2);
+        }
+
+        &:first-child {
+          border-radius: $border-radius 0px 0px $border-radius;
+        }
+
+        &:last-child {
+          border-radius: 0px $border-radius $border-radius 0px;
+        }
+
+        &:not(:last-child) {
+          border-right: 1px solid rgba(162, 176, 187, 0.1);
+        }
+      }
+    }
+  }
+
+  .pools-form {
+    height: 100%;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
     gap: 14px;
 
-    height: 100%;
-    min-height: 400px;
-
-    .trade-form-heading {
+    .pools-form-heading {
       width: fit-content;
       padding-top: 4px;
       color: $l-gray3;
@@ -73,10 +143,16 @@
       align-items: end;
       background: rgba(162, 176, 187, 0.1);
       padding: 12px;
-      padding-top: 18px;
+      padding-top: 24px;
       border-radius: 10px;
       gap: 6px;
       padding-bottom: 16px;
+    }
+
+    .balance-wrapper-share-tokens {
+      @extend .balance-wrapper;
+      margin-top: 8px;
+      margin-bottom: 8px;
     }
 
     .submit-button {
@@ -116,6 +192,7 @@
   .balance-info-type {
     position: absolute;
     left: 0;
+    top: -7px;
     font-weight: 600;
     font-size: 16px;
     color: $green1;
@@ -173,30 +250,6 @@
 
       background: rgba(218, 255, 238, 0.06);
       border-radius: 7px;
-    }
-  }
-}
-
-.settings-button {
-  position: absolute;
-  display: flex;
-  right: 24px;
-  top: 20px;
-  padding: 10px 8px;
-  border-radius: 50%;
-  background-color: rgba(162, 176, 187, 0.1);
-
-  svg {
-    width: 24px;
-  }
-
-  &:hover {
-    cursor: pointer;
-
-    svg {
-      path {
-        fill: $green1;
-      }
     }
   }
 }

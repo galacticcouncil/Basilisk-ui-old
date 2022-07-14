@@ -1,0 +1,35 @@
+@import '../../misc/misc.module.scss';
+@import '../../misc/colors.module.scss';
+@import '../TradePage/TradePage.scss';
+
+.pools-page-wrapper {
+  @extend .trade-page-wrapper;
+}
+
+.pools-page {
+  @extend .pools-page;
+}
+
+.notifications-bar {
+  @extend .notifications-bar;
+
+  &.transaction-standby {
+    @extend .notifications-bar, .transaction-standby;
+  }
+
+  &.transaction-success {
+    @extend .notifications-bar, .transaction-success;
+  }
+
+  &.transaction-failed {
+    @extend .notifications-bar, .transaction-failed;
+  }
+
+  &.transaction-pending {
+    @extend .notifications-bar, .transaction-pending;
+
+    .notification {
+      @extend .notification;
+    }
+  }
+}

@@ -11,59 +11,57 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import {
-  Account,
-  Balance,
-  Maybe,
-  Pool,
-  TradeType,
-} from '../../../generated/graphql';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { useMath } from '../../../hooks/math/useMath';
-import { percentageChange } from '../../../hooks/math/usePercentageChange';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
-import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
-import { idToAsset, TradeAssetIds } from '../../../pages/TradePage/TradePage';
-import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput';
-import { PoolType } from '../../Chart/shared';
-import { TradeInfo } from './TradeInfo/TradeInfo';
-import './TradeForm.scss';
-import Icon from '../../Icon/Icon';
-import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal';
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
-import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
-import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
+import { Account, Balance, Maybe, Pool } from '../../generated/graphql';
+import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
+import { useMath } from '../../hooks/math/useMath';
+import { percentageChange } from '../../hooks/math/usePercentageChange';
+import { toPrecision12 } from '../../hooks/math/useToPrecision';
+import { SubmitTradeMutationVariables } from '../../hooks/pools/mutations/useSubmitTradeMutation';
+import { idToAsset, TradeAssetIds } from '../../pages/TradePage/TradePage';
+import { AssetBalanceInput } from '../Balance/AssetBalanceInput/AssetBalanceInput';
+import { PoolType } from '../Chart/shared';
+import { PoolsInfo } from './PoolsInfo/PoolsInfo';
+import './PoolsForm.scss';
+import Icon from '../Icon/Icon';
+import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPortal';
+import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
+import { useDebugBoxContext } from '../../pages/TradePage/hooks/useDebugBox';
+import { horizontalBar } from '../Chart/ChartHeader/ChartHeader';
+import { usePolkadotJsContext } from '../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
-import { estimateBuy } from '../../../hooks/pools/xyk/buy';
-import { estimateSell } from '../../../hooks/pools/xyk/sell';
+import { estimateBuy } from '../../hooks/pools/xyk/buy';
+import { estimateSell } from '../../hooks/pools/xyk/sell';
 import { payment } from '@polkadot/types/interfaces/definitions';
-import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider';
+import { useMultiFeePaymentConversionContext } from '../../containers/MultiProvider';
 
-export interface TradeFormSettingsProps {
+export interface PoolsFormSettingsProps {
   allowedSlippage: string | null;
   onAllowedSlippageChange: (allowedSlippage: string | null) => void;
   closeModal: any;
 }
 
-export interface TradeFormSettingsFormFields {
+export enum ProvisioningType {
+  Add,
+  Remove,
+}
+
+export interface PoolsFormSettingsFormFields {
   allowedSlippage: string | null;
   autoSlippage: boolean;
 }
 
-export const TradeFormSettings = ({
+export const PoolsFormSettings = ({
   allowedSlippage,
   onAllowedSlippageChange,
   closeModal,
-}: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true,
-    },
-  });
+}: PoolsFormSettingsProps) => {
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<PoolsFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true,
+      },
+    });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -125,7 +123,7 @@ export const useModalPortalElement = ({
             'trade-settings-wrapper': true,
           })}
         >
-          <TradeFormSettings
+          <PoolsFormSettings
             closeModal={closeModal}
             allowedSlippage={allowedSlippage}
             onAllowedSlippageChange={(allowedSlippage) => {
@@ -139,7 +137,7 @@ export const useModalPortalElement = ({
   );
 };
 
-export interface TradeFormProps {
+export interface PoolsFormProps {
   assets?: { id: string }[];
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
@@ -152,23 +150,26 @@ export interface TradeFormProps {
     inOut?: string;
   };
   isPoolLoading: boolean;
-  onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
+  onSubmit: (form: PoolsFormFields & { amountBMaxLimit?: string }) => void;
   tradeLoading: boolean;
   activeAccountTradeBalances?: {
     outBalance?: Balance;
     inBalance?: Balance;
+    shareBalance?: Balance;
   };
   activeAccountTradeBalancesLoading: boolean;
   activeAccount?: Maybe<Account>;
 }
 
-export interface TradeFormFields {
+export interface PoolsFormFields {
   assetIn: string | null;
   assetOut: string | null;
   assetInAmount: string | null;
   assetOutAmount: string | null;
+  shareAssetAmount: string | null;
   submit: void;
   warnings: any;
+  provisioningType: ProvisioningType;
 }
 
 /**
@@ -198,7 +199,7 @@ export const useListenForInput = (
   return state;
 };
 
-export const TradeForm = ({
+export const PoolsForm = ({
   assetIds,
   onAssetIdsChange,
   isActiveAccountConnected,
@@ -207,19 +208,23 @@ export const TradeForm = ({
   assetInLiquidity,
   assetOutLiquidity,
   spotPrice,
-  onSubmitTrade,
+  onSubmit,
   tradeLoading,
   assets,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
   activeAccount,
-}: TradeFormProps) => {
+}: PoolsFormProps) => {
   // TODO: include math into loading form state
   const { math, loading: mathLoading } = useMath();
-  const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell);
+  const [provisioningType, setProvisioningType] = useState<ProvisioningType>(
+    ProvisioningType.Add
+  );
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
 
-  const form = useForm<TradeFormFields>({
+  console.log('activeAccountTradeBalances', activeAccountTradeBalances);
+
+  const form = useForm<PoolsFormFields>({
     reValidateMode: 'onChange',
     mode: 'all',
     defaultValues: {
@@ -242,6 +247,7 @@ export const TradeForm = ({
 
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null);
   const assetInAmountInputRef = useRef<HTMLInputElement>(null);
+  const shareAmountInputRef = useRef<HTMLInputElement>(null);
 
   // trigger form field validation right away
   useEffect(() => {
@@ -269,56 +275,197 @@ export const TradeForm = ({
   }, watch(['assetIn', 'assetOut']));
 
   const assetInAmountInput = useListenForInput(assetInAmountInputRef);
-  useEffect(() => {
-    if (tradeType === TradeType.Sell || assetInAmountInput === undefined)
-      return;
-    setTradeType(TradeType.Sell);
-  }, [assetInAmountInput]);
-
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
+  const shareAssetAmountInput = useListenForInput(shareAmountInputRef);
+
+  useEffect(
+    () => setValue('provisioningType', provisioningType),
+    [setValue, provisioningType]
+  );
+
+  const calculateAssetIn = useCallback(() => {
+    setTimeout(() => {
+      const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues([
+        'assetOutAmount',
+        'shareAssetAmount',
+        'assetIn',
+        'assetOut',
+      ]);
+      if (
+        !pool ||
+        !math ||
+        !assetInLiquidity ||
+        !assetOutLiquidity ||
+        !activeAccountTradeBalances ||
+        !assetIn ||
+        !assetOut ||
+        !shareAssetAmount
+      )
+        return;
+      // if (provisioningType !== ProvisioningType.Add) return;
+
+      if (!assetOutAmount) return setValue('assetInAmount', null);
+
+      // const amount = math.xyk.calculate_in_given_out(
+      //   // which combination is correct?
+      //   // assetOutLiquidity,
+      //   // assetInLiquidity,
+      //   assetInLiquidity,
+      //   assetOutLiquidity,
+      //   assetOutAmount
+      // );
+
+      console.log('math', math.xyk, provisioningType);
+      if (provisioningType === ProvisioningType.Add) {
+        const amount = math.xyk.calculate_liquidity_in(
+          assetOutLiquidity,
+          assetInLiquidity,
+          assetOutAmount
+        );
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetOutAmount !== '0') return;
+        setValue('assetInAmount', amount || null);
+      } else {
+        const amount = math.xyk.calculate_liquidity_out_asset_a(
+          assetInLiquidity,
+          assetOutLiquidity,
+          shareAssetAmount,
+          pool.totalLiquidity
+        );
+
+        console.log('amount', amount);
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetOutAmount !== '0') return;
+        setValue('assetInAmount', amount || null);
+      }
+    }, 0);
+  }, [
+    math,
+    getValues,
+    setValue,
+    pool,
+    assetInLiquidity,
+    assetOutLiquidity,
+    provisioningType,
+    activeAccountTradeBalances,
+  ]);
+
   useEffect(() => {
-    if (tradeType === TradeType.Buy || assetOutAmountInput === undefined)
-      return;
+    calculateAssetIn();
+  }, [
+    provisioningType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutAmountInput,
+    calculateAssetIn,
+  ]);
 
-    setTradeType(TradeType.Buy);
-  }, [assetOutAmountInput]);
+  const calculateAssetOut = useCallback(() => {
+    setTimeout(() => {
+      const [assetInAmount, shareAssetAmount, assetIn, assetOut] = getValues([
+        'assetInAmount',
+        'shareAssetAmount',
+        'assetIn',
+        'assetOut',
+      ]);
+      if (
+        !pool ||
+        !math ||
+        !assetInLiquidity ||
+        !assetOutLiquidity ||
+        !activeAccountTradeBalances ||
+        !assetIn ||
+        !assetOut
+      )
+        return;
+      // if (provisioningType !== ProvisioningType.Remove) return;
+
+      if (!assetInAmount) return setValue('assetOutAmount', null);
+
+      // const amount = math.xyk.calculate_out_given_in(
+      //   assetInLiquidity,
+      //   assetOutLiquidity,
+      //   assetInAmount
+      // );
+      // if (amount === '0' && assetInAmount !== '0')
+      //   return setValue('assetOutAmount', null);
+      // setValue('assetOutAmount', amount || null);
+
+      if (provisioningType === ProvisioningType.Add) {
+        const amount = math.xyk.calculate_liquidity_in(
+          assetInLiquidity,
+          assetOutLiquidity,
+          assetInAmount
+        );
+
+        console.log('liquidity in2', amount);
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        if (amount === '0' && assetInAmount !== '0') return;
+        setValue('assetOutAmount', amount || null);
+      }
+    }, 0);
+  }, [
+    math,
+    getValues,
+    setValue,
+    pool,
+    assetInLiquidity,
+    assetOutLiquidity,
+    provisioningType,
+    activeAccountTradeBalances,
+  ]);
 
   useEffect(() => {
-    const assetOutAmount = getValues('assetOutAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
-    if (tradeType !== TradeType.Buy) return;
-
-    if (!assetOutAmount) return setValue('assetInAmount', null);
-
-    const amount = math.xyk.calculate_in_given_out(
-      // which combination is correct?
-      // assetOutLiquidity,
-      // assetInLiquidity,
-      assetInLiquidity,
-      assetOutLiquidity,
-      assetOutAmount
-    );
-    // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
-    if (amount === '0' && assetOutAmount !== '0') return;
-    setValue('assetInAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
+    calculateAssetOut();
+  }, [
+    provisioningType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetInAmountInput,
+    calculateAssetOut,
+  ]);
 
   useEffect(() => {
-    const assetInAmount = getValues('assetInAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
-    if (tradeType !== TradeType.Sell) return;
+    const [assetInAmount, assetOutAmount, assetIn, assetOut] = getValues([
+      'assetInAmount',
+      'assetOutAmount',
+      'assetIn',
+      'assetOut',
+    ]);
+    if (!assetIn || !assetOut) return;
+    assetIn > assetOut
+      ? setValue('shareAssetAmount', assetOutAmount)
+      : setValue('shareAssetAmount', assetInAmount);
+  }, [...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut'])]);
 
-    if (!assetInAmount) return setValue('assetOutAmount', null);
-
-    const amount = math.xyk.calculate_out_given_in(
-      assetInLiquidity,
-      assetOutLiquidity,
-      assetInAmount
-    );
-    if (amount === '0' && assetInAmount !== '0')
-      return setValue('assetOutAmount', null);
-    setValue('assetOutAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
+  useEffect(() => {
+    setTimeout(() => {
+      const [
+        assetInAmount,
+        assetOutAmount,
+        assetIn,
+        assetOut,
+        shareAssetAmount,
+      ] = getValues([
+        'assetInAmount',
+        'assetOutAmount',
+        'assetIn',
+        'assetOut',
+        'shareAssetAmount',
+      ]);
+      if (!assetIn || !assetOut) return;
+      if (assetIn > assetOut) {
+        setValue('assetOutAmount', shareAssetAmount);
+        calculateAssetIn();
+      } else {
+        setValue('assetInAmount', shareAssetAmount);
+        calculateAssetOut();
+      }
+    }, 0);
+  }, [shareAssetAmountInput, calculateAssetIn, calculateAssetOut]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
@@ -335,10 +482,10 @@ export const TradeForm = ({
 
     if (errors.assetInAmount || errors.assetOutAmount) return 'invalid amount';
 
-    if (Object.keys(errors).length) return 'Swap';
-
-    return 'Swap';
-  }, [isPoolLoading, errors, isDirty]);
+    return provisioningType === ProvisioningType.Add
+      ? 'Add Liquidity'
+      : 'Remove Liquidity';
+  }, [isPoolLoading, errors, isDirty, provisioningType]);
 
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -351,6 +498,10 @@ export const TradeForm = ({
     modalContainerRef,
     false
   );
+
+  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
+    string | null
+  >();
 
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
@@ -374,16 +525,16 @@ export const TradeForm = ({
     )
       return;
 
-    switch (tradeType) {
-      case TradeType.Sell:
+    switch (lastAssetInteractedWith) {
+      case assetIds.assetIn:
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice?.inOut)
-            .multipliedBy(new BigNumber('1').minus(allowedSlippage))
+            .multipliedBy(new BigNumber('1').plus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut,
         };
-      case TradeType.Buy:
+      case assetIds.assetOut:
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
@@ -394,9 +545,11 @@ export const TradeForm = ({
     }
   }, [
     spotPrice,
-    tradeType,
+    provisioningType,
     allowedSlippage,
     getValues,
+    assetIds,
+    lastAssetInteractedWith,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
@@ -407,15 +560,15 @@ export const TradeForm = ({
     if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
       return;
 
-    switch (tradeType) {
-      case TradeType.Sell:
+    switch (provisioningType) {
+      case ProvisioningType.Remove:
         return percentageChange(
           new BigNumber(assetInAmount).multipliedBy(
             fromPrecision12(spotPrice.inOut) || '1'
           ),
           assetOutAmount
         )?.abs();
-      case TradeType.Buy:
+      case ProvisioningType.Add:
         return percentageChange(
           new BigNumber(assetOutAmount).multipliedBy(
             fromPrecision12(spotPrice.outIn) || '1'
@@ -424,36 +577,49 @@ export const TradeForm = ({
         )?.abs();
     }
   }, [
-    tradeType,
+    provisioningType,
     getValues,
     spotPrice,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
+  useEffect(() => {
+    setLastAssetInteractedWith(assetIds.assetIn);
+  }, [assetInAmountInput, assetIds.assetIn]);
+
+  useEffect(() => {
+    setLastAssetInteractedWith(assetIds.assetOut);
+  }, [assetOutAmountInput, assetIds.assetOut]);
+
   // handle submit of the form
   const _handleSubmit = useCallback(
-    (data: TradeFormFields) => {
-      if (
-        !data.assetIn ||
-        !data.assetOut ||
-        !data.assetInAmount ||
-        !data.assetOutAmount ||
-        !tradeLimit
-      ) {
-        throw new Error('Unable to submit trade due to missing data');
-      }
-
-      onSubmitTrade({
-        assetInId: data.assetIn,
-        assetOutId: data.assetOut,
-        assetInAmount: data.assetInAmount,
-        assetOutAmount: data.assetOutAmount,
-        poolType: PoolType.XYK,
-        tradeType: tradeType,
-        amountWithSlippage: tradeLimit.balance,
+    (data: PoolsFormFields) => {
+      if (!lastAssetInteractedWith) return;
+      onSubmit({
+        ...data,
+        assetIn: lastAssetInteractedWith,
+        assetOut:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetIn
+            : data.assetOut,
+        assetInAmount:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetOutAmount
+            : data.assetInAmount,
+        assetOutAmount:
+          lastAssetInteractedWith === data.assetOut
+            ? data.assetInAmount
+            : data.assetOutAmount,
+        amountBMaxLimit: tradeLimit?.balance,
       });
     },
-    [tradeType, tradeLimit]
+    [
+      provisioningType,
+      tradeLimit,
+      lastAssetInteractedWith,
+      assetIds,
+      tradeLimit,
+    ]
   );
 
   const handleSwitchAssets = useCallback(
@@ -471,7 +637,7 @@ export const TradeForm = ({
   const { apiInstance } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
-  const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
+  const { convertToFeePaymentAsset } = useMultiFeePaymentConversionContext();
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([
@@ -490,8 +656,8 @@ export const TradeForm = ({
     )
       return;
 
-    switch (tradeType) {
-      case TradeType.Buy: {
+    switch (provisioningType) {
+      case ProvisioningType.Add: {
         const estimate = await estimateBuy(
           cache,
           apiInstance,
@@ -503,7 +669,7 @@ export const TradeForm = ({
         const partialFee = estimate?.partialFee.toString();
         return convertToFeePaymentAsset(partialFee);
       }
-      case TradeType.Sell: {
+      case ProvisioningType.Remove: {
         const estimate = await estimateSell(
           cache,
           apiInstance,
@@ -523,7 +689,7 @@ export const TradeForm = ({
     cache,
     ...watch(['assetInAmount', 'assetOutAmount', 'assetIn']),
     tradeLimit,
-    tradeType,
+    provisioningType,
     convertToFeePaymentAsset,
   ]);
 
@@ -538,7 +704,7 @@ export const TradeForm = ({
     cache,
     ...watch(['assetInAmount', 'assetOutAmount']),
     tradeLimit,
-    tradeType,
+    provisioningType,
   ]);
 
   useEffect(() => {
@@ -607,7 +773,7 @@ export const TradeForm = ({
   const { debugComponent } = useDebugBoxContext();
 
   useEffect(() => {
-    debugComponent('TradeForm', {
+    debugComponent('PoolsForm', {
       ...getValues(),
       spotPrice,
       tradeLimit,
@@ -618,7 +784,7 @@ export const TradeForm = ({
         inTradeChange: tradeBalances.inTradeChange?.toString(),
         outTradeChange: tradeBalances.outTradeChange?.toString(),
       },
-      tradeType,
+      provisioningType,
       slippage: slippage?.toString(),
       errors: Object.keys(errors).reduce((reducedErrors, error) => {
         return {
@@ -632,7 +798,7 @@ export const TradeForm = ({
     spotPrice,
     tradeBalances,
     tradeBalances,
-    tradeType,
+    provisioningType,
     errors,
     assetInLiquidity,
     assetOutLiquidity,
@@ -683,12 +849,7 @@ export const TradeForm = ({
     console.log('calculateMaxAmountIn11 estimate done', estimate);
     const paymentInfo = estimate?.partialFee.toString();
     const maxAmountWithoutFee = new BigNumber(maxAmount).minus(
-      (feePaymentAsset === getValues('assetIn')
-        ? feePaymentAsset === '0'
-          ? paymentInfo
-          : convertToFeePaymentAsset(paymentInfo)
-        : '0'
-      ) || '0'
+      paymentInfo || '0'
     );
     console.log('calculateMaxAmountIn12', {
       inBeforeTrade: tradeBalances.inBeforeTrade,
@@ -698,7 +859,7 @@ export const TradeForm = ({
       maxAmountWithoutFee: maxAmountWithoutFee.toFixed(10),
     });
 
-    return getValues('assetIn') === feePaymentAsset
+    return getValues('assetIn') === '0'
       ? // max amount changed when all fields are filled out since that allows
         // us to calculate paymentInfo
         maxAmountWithoutFee.gt('0')
@@ -710,7 +871,6 @@ export const TradeForm = ({
     paymentInfo,
     cache,
     apiInstance,
-    feePaymentAsset, convertToFeePaymentAsset,
     ...watch(['assetIn']),
   ]);
 
@@ -733,23 +893,48 @@ export const TradeForm = ({
   }, [calculateMaxAmountIn]);
 
   return (
-    <div className="trade-form-wrapper">
+    <div className="pools-form-wrapper">
       <div ref={modalContainerRef}></div>
       {modalPortal}
 
       <FormProvider {...form}>
-        <form className="trade-form" onSubmit={handleSubmit(_handleSubmit)}>
-          <div
-            className="settings-button"
-            onClick={(e) => {
-              e.preventDefault();
-              toggleModal();
-            }}
-          >
-            <Icon name="Settings" />
+        <form className="pools-form" onSubmit={handleSubmit(_handleSubmit)}>
+          <div className="settings-button-wrapper">
+            <div className="pool-page-tabs">
+              <button
+                className="tab"
+                disabled={provisioningType === ProvisioningType.Add}
+                onClick={() => {
+                  setProvisioningType(ProvisioningType.Add);
+                }}
+              >
+                <div className="label">Add</div>
+              </button>
+              <button
+                className="tab"
+                disabled={provisioningType === ProvisioningType.Remove}
+                onClick={() => {
+                  setProvisioningType(ProvisioningType.Remove);
+                }}
+              >
+                <div className="label">Remove</div>
+              </button>
+            </div>
+            <div
+              className="pool-settings-button"
+              onClick={(e) => {
+                e.preventDefault();
+                toggleModal();
+              }}
+            >
+              <Icon name="Settings" />
+            </div>
           </div>
 
-          <div className="trade-form-heading">Trade Tokens</div>
+          <div className="pools-form-heading">
+            {provisioningType === ProvisioningType.Add ? 'Add' : 'Remove'}{' '}
+            Liquidity
+          </div>
           <div className="balance-wrapper">
             <AssetBalanceInput
               balanceInputName="assetInAmount"
@@ -759,10 +944,11 @@ export const TradeForm = ({
               assets={assets?.filter(
                 (asset) => !Object.values(assetIds).includes(asset.id)
               )}
+              disabled={provisioningType === ProvisioningType.Remove}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
-              <div className="balance-info-type">Pay with</div>
+              <div className="balance-info-type">First token</div>
               {activeAccountTradeBalancesLoading || isPoolLoading ? (
                 'Your balance: loading'
               ) : (
@@ -784,14 +970,14 @@ export const TradeForm = ({
                   )}
                 </>
               )}
-              <div
+              {/* <div
                 className={classNames('max-button', {
                   disabled: maxButtonDisabled,
                 })}
                 onClick={() => handleMaxButtonOnClick()}
               >
                 Max
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -805,8 +991,8 @@ export const TradeForm = ({
                 {(() => {
                   const assetOut = getValues('assetOut');
                   const assetIn = getValues('assetIn');
-                  switch (tradeType) {
-                    case TradeType.Sell:
+                  switch (provisioningType) {
+                    case ProvisioningType.Remove:
                       // return `1 ${
                       //   idToAsset(getValues('assetIn'))?.symbol ||
                       //   getValues('assetIn')
@@ -833,7 +1019,7 @@ export const TradeForm = ({
                       ) : (
                         <>-</>
                       );
-                    case TradeType.Buy:
+                    case ProvisioningType.Add:
                       // return `1 ${
                       //   idToAsset(getValues('assetOut'))?.symbol ||
                       //   getValues('assetOut')
@@ -876,9 +1062,10 @@ export const TradeForm = ({
               assets={assets?.filter(
                 (asset) => !Object.values(assetIds).includes(asset.id)
               )}
+              disabled={provisioningType === ProvisioningType.Remove}
             />{' '}
             <div className="balance-info balance-out-info">
-              <div className="balance-info-type">You get</div>
+              <div className="balance-info-type">Second token</div>
               {activeAccountTradeBalancesLoading || isPoolLoading ? (
                 'Your balance: loading'
               ) : (
@@ -903,10 +1090,48 @@ export const TradeForm = ({
               )}
             </div>
           </div>
+          <div className="balance-wrapper-share-tokens">
+            {' '}
+            <AssetBalanceInput
+              balanceInputName="shareAssetAmount"
+              assetInputName="shareAsset"
+              isAssetSelectable={false}
+              modalContainerRef={modalContainerRef}
+              balanceInputRef={shareAmountInputRef}
+              // disabled={provisioningType === ProvisioningType.Add}
+              assets={assets?.filter(
+                (asset) => !Object.values(assetIds).includes(asset.id)
+              )}
+              disabled={provisioningType === ProvisioningType.Add}
+            />{' '}
+            <div className="balance-info balance-out-info">
+              <div className="balance-info-type">Share token</div>
+              {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                'Your balance: loading'
+              ) : (
+                // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+                <>
+                  Your balance:
+                  {activeAccountTradeBalances?.shareBalance ? (
+                    <FormattedBalance
+                      balance={{
+                        balance:
+                          activeAccountTradeBalances.shareBalance.balance,
+                        assetId:
+                          activeAccountTradeBalances.shareBalance.assetId,
+                      }}
+                    />
+                  ) : (
+                    <> {horizontalBar}</>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
 
-          <TradeInfo
+          <PoolsInfo
             tradeLimit={tradeLimit}
-            expectedSlippage={slippage}
+            provisioningType={provisioningType}
             errors={errors}
             isDirty={isDirty}
             paymentInfo={paymentInfo}
@@ -918,17 +1143,8 @@ export const TradeForm = ({
               validate: {
                 activeAccount: () => isActiveAccountConnected,
                 poolDoesNotExist: () => !isPoolLoading && !!pool,
-                minTradeLimitOut: () => {
-                  const assetOutAmount = getValues('assetOutAmount');
-                  if (!assetOutAmount || assetOutAmount === '0') return false;
-                  return true;
-                },
-                minTradeLimitIn: () => {
-                  const assetInAmount = getValues('assetInAmount');
-                  if (!assetInAmount || assetInAmount === '0') return false;
-                  return true;
-                },
-                notEnoughBalanceIn: () => {
+                notEnoughBalanceInA: () => {
+                  if (provisioningType === ProvisioningType.Remove) return true;
                   const assetInAmount = getValues('assetInAmount');
                   if (
                     !activeAccountTradeBalances?.inBalance?.balance ||
@@ -939,44 +1155,51 @@ export const TradeForm = ({
                     activeAccountTradeBalances.inBalance.balance
                   ).gte(assetInAmount);
                 },
-                maxTradeLimitOut: () => {
-                  const assetOutAmount = getValues('assetOutAmount');
-                  if (!assetOutAmount || assetOutAmount === '0') return false;
-                  return new BigNumber(assetOutLiquidity || '0')
-                    .dividedBy(3)
-                    .gte(assetOutAmount);
+                notEnoughBalanceInB: () => {
+                  if (provisioningType === ProvisioningType.Remove) return true;
+                  const assetInAmount = getValues('assetOutAmount');
+                  if (
+                    !activeAccountTradeBalances?.outBalance?.balance ||
+                    !assetInAmount
+                  )
+                    return false;
+                  return new BigNumber(
+                    activeAccountTradeBalances.outBalance.balance
+                  ).gte(assetInAmount);
                 },
-                maxTradeLimitIn: () => {
-                  const assetInAmount = getValues('assetInAmount');
-                  return minTradeLimitIn(assetInAmount);
+                notEnoughBalanceInShare: () => {
+                  if (provisioningType === ProvisioningType.Add) return true;
+                  const shareAssetAmount = getValues('shareAssetAmount');
+                  if (
+                    !activeAccountTradeBalances?.shareBalance?.balance ||
+                    !shareAssetAmount
+                  )
+                    return false;
+                  return new BigNumber(
+                    activeAccountTradeBalances.shareBalance.balance
+                  ).gte(shareAssetAmount);
                 },
-                slippageHigherThanTolerance: () => {
-                  if (!allowedSlippage) return false;
-                  return slippage?.lt(allowedSlippage);
-                },
-                notEnoughFeeBalance: () => {
-                  const assetIn = getValues('assetIn');
-                  const assetInAmount = getValues('assetInAmount');
+                // notEnoughFeeBalance: () => {
+                //   const assetIn = getValues('assetIn');
+                //   const assetInAmount = getValues('assetInAmount');
 
-                  if (!feePaymentAsset) return false;
+                //   let nativeAssetBalance = find(activeAccount?.balances, {
+                //     assetId: '0',
+                //   })?.balance;
 
-                  let feePaymentAssetBalance = find(activeAccount?.balances, {
-                    assetId: feePaymentAsset,
-                  })?.balance
+                //   let balanceForFee = nativeAssetBalance;
 
-                  let balanceForFee = feePaymentAssetBalance;
+                //   if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
+                //     balanceForFee = new BigNumber(nativeAssetBalance)
+                //       .minus(assetInAmount)
+                //       .toString();
+                //   }
 
-                  if (assetIn === feePaymentAsset && assetInAmount && feePaymentAssetBalance) {
-                    balanceForFee = new BigNumber(feePaymentAssetBalance)
-                      .minus(assetInAmount)
-                      .toString();
-                  }
+                //   if (!paymentInfo) return true;
+                //   if (!balanceForFee) return false;
 
-                  if (!paymentInfo) return true;
-                  if (!balanceForFee) return false;
-                  console.log('balance for free', balanceForFee, paymentInfo);
-                  return new BigNumber(balanceForFee).gte(paymentInfo);
-                },
+                //   return new BigNumber(balanceForFee).gte(paymentInfo);
+                // },
               },
             })}
             disabled={!isValid || tradeLoading || !isDirty}

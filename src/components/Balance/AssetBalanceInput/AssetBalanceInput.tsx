@@ -25,6 +25,7 @@ export interface AssetBalanceInputProps {
   // onAssetSelected: (asset: Asset) => void,
   balanceInputRef?: MutableRefObject<HTMLInputElement | null>;
   required?: boolean;
+  disabled?: boolean;
   maxBalanceLoading?: boolean,
 }
 
@@ -39,6 +40,7 @@ export const AssetBalanceInput = ({
   // onAssetSelected,
   balanceInputRef,
   required,
+  disabled,
   maxBalanceLoading,
 }: AssetBalanceInputProps) => {
   const modalPortalElement = useModalPortalElement({
@@ -65,32 +67,40 @@ export const AssetBalanceInput = ({
     })}>
       {/* This portal will be rendered at it's container ref as defined above */}
       {modalPortal}
-      <div
-        className="asset-balance-input__asset-info"
-        onClick={(_) => handleAssetSelectorClick()}
-        data-modal-portal-toggle={toggleId}
-      >
-        <div
-          className="asset-icon"
-          style={{
-            backgroundImage: `url('${
-              idToAsset(methods.getValues(assetInputName))?.icon
-            }')`,
-          }}
-        ></div>
-        <div className="asset-balance-input__asset-info__names">
-          <div className="asset-balance-input__asset-info__names__full-name">
-            {idToAsset(methods.getValues(assetInputName))?.fullName ||
-              'Select asset'}
+      {isAssetSelectable
+        ? (
+          <div
+            className="asset-balance-input__asset-info"
+            onClick={(_) => handleAssetSelectorClick()}
+            data-modal-portal-toggle={toggleId}
+          >
+            <div
+              className="asset-icon"
+              style={{
+                backgroundImage: `url('${
+                  idToAsset(methods.getValues(assetInputName))?.icon
+                }')`,
+              }}
+            ></div>
+            <div className="asset-balance-input__asset-info__names">
+              <div className="asset-balance-input__asset-info__names__full-name">
+                {isAssetSelectable
+                  ? (idToAsset(methods.getValues(assetInputName))?.fullName ||
+                  'Select asset')
+                  : 'No asset'
+                }
+              </div>
+              <div className="asset-balance-input__asset-info__names__ticker">
+                {idToAsset(methods.getValues(assetInputName))?.symbol ||
+                  methods.getValues(assetInputName) ||
+                  '---'}
+                {isAssetSelectable && <Icon name="DropdownArrow" />}
+              </div>
+            </div>
           </div>
-          <div className="asset-balance-input__asset-info__names__ticker">
-            {idToAsset(methods.getValues(assetInputName))?.symbol ||
-              methods.getValues(assetInputName) ||
-              '---'}
-            <Icon name="DropdownArrow" />
-          </div>
-        </div>
-      </div>
+        )
+        : <></>
+      }
       <div className="asset-balance-input__input-wrapper">
         <div className='asset-balance-input__input-wrapper__controls'>
           <div className="asset-balance-input__input-wrapper__controls__unit-selector">
@@ -118,6 +128,7 @@ export const AssetBalanceInput = ({
           showMetricUnitSelector={false}
           inputRef={balanceInputRef}
           required={required}
+          disabled={disabled}
         />
       </div>
     </div>

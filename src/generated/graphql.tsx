@@ -133,7 +133,7 @@ export type Mutation = {
   setActiveAccount?: Maybe<Account>;
 };
 
-export type Pool = LbpPool | XykPool;
+export type Pool = XykPool;
 
 export type Query = Balances & IVesting & {
   __typename?: 'Query';
@@ -191,4 +191,6 @@ export type XykPool = {
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
+  shareTokenId: Scalars['String'];
+  totalLiquidity: Scalars['String'];
 };

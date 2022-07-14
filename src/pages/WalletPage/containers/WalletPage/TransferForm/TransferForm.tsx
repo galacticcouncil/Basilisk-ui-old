@@ -115,7 +115,7 @@ export const TransferForm = ({
     <>
       <div ref={modalContainerRef}></div>
       <div className="transfer-form">
-        <div className="modal-component-wrapper ">
+        <div className="modal-component-wrapper transfer-form-container">
           <div className="modal-component-heading">
             <div className="modal-component-heading__main-text">Transfer</div>
             <div className="close-modal-btn" onClick={() => closeModal()}>
