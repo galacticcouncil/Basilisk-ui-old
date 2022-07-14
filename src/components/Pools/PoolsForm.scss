@@ -66,12 +66,12 @@
         border-radius: $border-radius 0px 0px $border-radius;
         color: $gray4;
         background-color: rgba(162, 176, 187, 0.1);
-        
+
         &:hover {
           color: rgba(79, 255, 176, 1);
           background-color: rgba(162, 176, 187, 0.15);
         }
-        
+
         &:disabled {
           color: rgba(79, 255, 176, 1);
           background-color: rgba(162, 176, 187, 0.2);
@@ -93,14 +93,12 @@
   }
 
   .pools-form {
+    height: 100%;
+    min-height: 400px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-
     gap: 14px;
-
-    height: 100%;
-    min-height: 400px;
 
     .pools-form-heading {
       width: fit-content;
@@ -150,6 +148,11 @@
       gap: 6px;
     }
 
+    .balance-wrapper-share-tokens {
+      @extend .balance-wrapper;
+      margin-top: 12px;
+    }
+
     .submit-button {
       background: $green1;
       text-transform: uppercase;
@@ -187,6 +190,7 @@
   .balance-info-type {
     position: absolute;
     left: 0;
+    top: -7px;
     font-weight: 600;
     font-size: 16px;
     color: $green1;
