@@ -62,15 +62,19 @@
 
       .tab {
         @extend .button--primary;
+        width: 100px;
         border-radius: $border-radius 0px 0px $border-radius;
-        background-color: rgba(79, 255, 176, 0.9);
-
+        color: $gray4;
+        background-color: rgba(162, 176, 187, 0.1);
+        
         &:hover {
-          background-color: rgba(79, 255, 176, 1);
+          color: rgba(79, 255, 176, 1);
+          background-color: rgba(162, 176, 187, 0.15);
         }
-
+        
         &:disabled {
-          background-color: rgba(162, 176, 187, 0.7);
+          color: rgba(79, 255, 176, 1);
+          background-color: rgba(162, 176, 187, 0.2);
         }
 
         &:first-child {
@@ -82,7 +86,7 @@
         }
 
         &:not(:last-child) {
-          border-right: 1px solid rgba(162, 176, 187, 0.5);
+          border-right: 1px solid rgba(162, 176, 187, 0.1);
         }
       }
     }
