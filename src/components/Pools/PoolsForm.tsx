@@ -1090,10 +1090,7 @@ export const PoolsForm = ({
               )}
             </div>
           </div>
-
-          <br />
-
-          <div className="balance-wrapper">
+          <div className="balance-wrapper-share-tokens">
             {' '}
             <AssetBalanceInput
               balanceInputName="shareAssetAmount"
