@@ -30,18 +30,14 @@ export const PoolsInfo = ({
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
   const formError = useMemo(() => {
     switch (errors?.submit?.type) {
-      case 'minTradeLimitOut':
-        return 'Min trade limit not reached';
-      case 'minTradeLimitIn':
-        return 'Min trade limit not reached';
-      case 'maxTradeLimitOut':
-        return 'Max trade limit reached';
-      case 'maxTradeLimitIn':
-        return 'Max trade limit reached';
       case 'slippageHigherThanTolerance':
         return 'Slippage higher than tolerance';
-      case 'notEnoughBalanceIn':
-        return 'Insufficient balance';
+      case 'notEnoughBalanceInA':
+        return 'Insufficient Token A balance';
+      case 'notEnoughBalanceInB':
+        return 'Insufficient Token B balance';
+      case 'notEnoughBalanceInShare':
+          return 'Insufficient Share token balance';
       case 'notEnoughFeeBalance':
         return 'Insufficient fee balance';
       case 'poolDoesNotExist':

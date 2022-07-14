@@ -970,14 +970,14 @@ export const PoolsForm = ({
                   )}
                 </>
               )}
-              <div
+              {/* <div
                 className={classNames('max-button', {
                   disabled: maxButtonDisabled,
                 })}
                 onClick={() => handleMaxButtonOnClick()}
               >
                 Max
-              </div>
+              </div> */}
             </div>
           </div>
 
@@ -1146,17 +1146,8 @@ export const PoolsForm = ({
               validate: {
                 activeAccount: () => isActiveAccountConnected,
                 poolDoesNotExist: () => !isPoolLoading && !!pool,
-                // minTradeLimitOut: () => {
-                //   const assetOutAmount = getValues('assetOutAmount');
-                //   if (!assetOutAmount || assetOutAmount === '0') return false;
-                //   return true;
-                // },
-                // minTradeLimitIn: () => {
-                //   const assetInAmount = getValues('assetInAmount');
-                //   if (!assetInAmount || assetInAmount === '0') return false;
-                //   return true;
-                // },
-                notEnoughBalanceIn: () => {
+                notEnoughBalanceInA: () => {
+                  if (provisioningType === ProvisioningType.Remove) return true;
                   const assetInAmount = getValues('assetInAmount');
                   if (
                     !activeAccountTradeBalances?.inBalance?.balance ||
@@ -1167,42 +1158,51 @@ export const PoolsForm = ({
                     activeAccountTradeBalances.inBalance.balance
                   ).gt(assetInAmount);
                 },
-                // maxTradeLimitOut: () => {
-                //   const assetOutAmount = getValues('assetOutAmount');
-                //   if (!assetOutAmount || assetOutAmount === '0') return false;
-                //   return new BigNumber(assetOutLiquidity || '0')
-                //     .dividedBy(3)
-                //     .gte(assetOutAmount);
-                // },
-                // maxTradeLimitIn: () => {
-                //   const assetInAmount = getValues('assetInAmount');
-                //   return minTradeLimitIn(assetInAmount);
-                // },
-                // slippageHigherThanTolerance: () => {
-                //   if (!allowedSlippage) return false;
-                //   return slippage?.lt(allowedSlippage);
-                // },
-                notEnoughFeeBalance: () => {
-                  const assetIn = getValues('assetIn');
-                  const assetInAmount = getValues('assetInAmount');
-
-                  let nativeAssetBalance = find(activeAccount?.balances, {
-                    assetId: '0',
-                  })?.balance;
-
-                  let balanceForFee = nativeAssetBalance;
-
-                  if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
-                    balanceForFee = new BigNumber(nativeAssetBalance)
-                      .minus(assetInAmount)
-                      .toString();
-                  }
-
-                  if (!paymentInfo) return true;
-                  if (!balanceForFee) return false;
-
-                  return new BigNumber(balanceForFee).gte(paymentInfo);
+                notEnoughBalanceInB: () => {
+                  if (provisioningType === ProvisioningType.Remove) return true;
+                  const assetInAmount = getValues('assetOutAmount');
+                  if (
+                    !activeAccountTradeBalances?.outBalance?.balance ||
+                    !assetInAmount
+                  )
+                    return false;
+                  return new BigNumber(
+                    activeAccountTradeBalances.outBalance.balance
+                  ).gt(assetInAmount);
                 },
+                notEnoughBalanceInShare: () => {
+                  if (provisioningType === ProvisioningType.Add) return true;
+                  const shareAssetAmount = getValues('shareAssetAmount');
+                  if (
+                    !activeAccountTradeBalances?.shareBalance?.balance ||
+                    !shareAssetAmount
+                  )
+                    return false;
+                  return new BigNumber(
+                    activeAccountTradeBalances.shareBalance.balance
+                  ).gt(shareAssetAmount);
+                },
+                // notEnoughFeeBalance: () => {
+                //   const assetIn = getValues('assetIn');
+                //   const assetInAmount = getValues('assetInAmount');
+
+                //   let nativeAssetBalance = find(activeAccount?.balances, {
+                //     assetId: '0',
+                //   })?.balance;
+
+                //   let balanceForFee = nativeAssetBalance;
+
+                //   if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
+                //     balanceForFee = new BigNumber(nativeAssetBalance)
+                //       .minus(assetInAmount)
+                //       .toString();
+                //   }
+
+                //   if (!paymentInfo) return true;
+                //   if (!balanceForFee) return false;
+
+                //   return new BigNumber(balanceForFee).gte(paymentInfo);
+                // },
               },
             })}
             disabled={!isValid || tradeLoading || !isDirty}
