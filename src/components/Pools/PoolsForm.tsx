@@ -1153,7 +1153,7 @@ export const PoolsForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.inBalance.balance
-                  ).gt(assetInAmount);
+                  ).gte(assetInAmount);
                 },
                 notEnoughBalanceInB: () => {
                   if (provisioningType === ProvisioningType.Remove) return true;
@@ -1165,7 +1165,7 @@ export const PoolsForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.outBalance.balance
-                  ).gt(assetInAmount);
+                  ).gte(assetInAmount);
                 },
                 notEnoughBalanceInShare: () => {
                   if (provisioningType === ProvisioningType.Add) return true;
@@ -1177,7 +1177,7 @@ export const PoolsForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.shareBalance.balance
-                  ).gt(shareAssetAmount);
+                  ).gte(shareAssetAmount);
                 },
                 // notEnoughFeeBalance: () => {
                 //   const assetIn = getValues('assetIn');

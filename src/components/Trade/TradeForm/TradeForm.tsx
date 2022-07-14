@@ -471,7 +471,7 @@ export const TradeForm = ({
   const { apiInstance } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
-  const { convertToFeePaymentAsset } = useMultiFeePaymentConversionContext();
+  const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([
@@ -683,7 +683,12 @@ export const TradeForm = ({
     console.log('calculateMaxAmountIn11 estimate done', estimate);
     const paymentInfo = estimate?.partialFee.toString();
     const maxAmountWithoutFee = new BigNumber(maxAmount).minus(
-      paymentInfo || '0'
+      (feePaymentAsset === getValues('assetIn')
+        ? feePaymentAsset === '0'
+          ? paymentInfo
+          : convertToFeePaymentAsset(paymentInfo)
+        : '0'
+      ) || '0'
     );
     console.log('calculateMaxAmountIn12', {
       inBeforeTrade: tradeBalances.inBeforeTrade,
@@ -693,7 +698,7 @@ export const TradeForm = ({
       maxAmountWithoutFee: maxAmountWithoutFee.toFixed(10),
     });
 
-    return getValues('assetIn') === '0'
+    return getValues('assetIn') === feePaymentAsset
       ? // max amount changed when all fields are filled out since that allows
         // us to calculate paymentInfo
         maxAmountWithoutFee.gt('0')
@@ -705,6 +710,7 @@ export const TradeForm = ({
     paymentInfo,
     cache,
     apiInstance,
+    feePaymentAsset, convertToFeePaymentAsset,
     ...watch(['assetIn']),
   ]);
 
@@ -931,7 +937,7 @@ export const TradeForm = ({
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.inBalance.balance
-                  ).gt(assetInAmount);
+                  ).gte(assetInAmount);
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount');
@@ -952,21 +958,23 @@ export const TradeForm = ({
                   const assetIn = getValues('assetIn');
                   const assetInAmount = getValues('assetInAmount');
 
-                  let nativeAssetBalance = find(activeAccount?.balances, {
-                    assetId: '0',
-                  })?.balance;
+                  if (!feePaymentAsset) return false;
 
-                  let balanceForFee = nativeAssetBalance;
+                  let feePaymentAssetBalance = find(activeAccount?.balances, {
+                    assetId: feePaymentAsset,
+                  })?.balance
 
-                  if (assetIn === '0' && assetInAmount && nativeAssetBalance) {
-                    balanceForFee = new BigNumber(nativeAssetBalance)
+                  let balanceForFee = feePaymentAssetBalance;
+
+                  if (assetIn === feePaymentAsset && assetInAmount && feePaymentAssetBalance) {
+                    balanceForFee = new BigNumber(feePaymentAssetBalance)
                       .minus(assetInAmount)
                       .toString();
                   }
 
                   if (!paymentInfo) return true;
                   if (!balanceForFee) return false;
-
+                  console.log('balance for free', balanceForFee, paymentInfo);
                   return new BigNumber(balanceForFee).gte(paymentInfo);
                 },
               },
