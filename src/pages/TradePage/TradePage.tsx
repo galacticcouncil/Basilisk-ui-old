@@ -449,7 +449,7 @@ export const TradePage = () => {
     <div className="trade-page-wrapper">
       {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
-        <div className="notification">transaction {notification}</div>
+        <div className="notification">Transaction {notification}</div>
         <div className="notification-cancel-wrapper">
           <button
             className="notification-cancel-button"

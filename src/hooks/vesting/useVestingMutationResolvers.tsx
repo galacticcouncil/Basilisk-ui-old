@@ -11,6 +11,7 @@ import {
   GET_ACTIVE_ACCOUNT,
 } from '../accounts/queries/useGetActiveAccountQuery';
 import { ApiPromise } from '@polkadot/api';
+import { reject } from 'lodash';
 
 /**
  * Run an async function and handle the thrown errors
@@ -179,14 +180,20 @@ export const useVestingMutationResolvers = () => {
         // [gracefulExtensionCancelationErrorHandler]
         // );
 
-        return new Promise(async (resolve, reject) => {
+        await new Promise(async (resolve, reject) => {
           const { signer } = await web3FromAddress(address);
-          await claimVestingExtrinsic(apiInstance)().signAndSend(
-            address,
-            { signer },
-            vestingClaimHandler(resolve, reject)
-          );
+          try {
+            await claimVestingExtrinsic(apiInstance)().signAndSend(
+              address,
+              { signer },
+              vestingClaimHandler(resolve, reject)
+            );
+          } catch(e) {
+            reject(e)
+          }
         });
+
+        
       },
       [loading, apiInstance]
     ),

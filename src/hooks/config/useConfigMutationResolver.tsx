@@ -40,12 +40,13 @@ export const useConfigMutationResolvers = () => {
 
         // TODO: return an optimistic update to the cache with the new config
         // await withGracefulErrors(
-          await new Promise(async (resolve, reject) => {
-            const address = cache.readQuery<GetActiveAccountQueryResponse>({
-              query: GET_ACTIVE_ACCOUNT,
-            })?.activeAccount?.id;
+        await new Promise(async (resolve, reject) => {
+          const address = cache.readQuery<GetActiveAccountQueryResponse>({
+            query: GET_ACTIVE_ACCOUNT,
+          })?.activeAccount?.id;
 
-            if (!address) return resolve(null);
+          try {
+            if (!address) return reject();
 
             const { signer } = await web3FromAddress(address);
 
@@ -56,7 +57,10 @@ export const useConfigMutationResolvers = () => {
                 { signer },
                 xykBuyHandler(resolve, reject, apiInstance)
               );
-          });
+          } catch (e) {
+            reject(e)
+          }
+        })
           // [gracefulExtensionCancelationErrorHandler]
           // []
         // );
