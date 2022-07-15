@@ -75,16 +75,22 @@
     }
   }
 
+  opacity: 1;
+  visibility: visible;
+
   &.transaction-standby {
     top: 0;
     background-color: transparent;
+    opacity: 0;
+    visibility: hidden;
+    transition: none;
 
-    .notification {
-      visibility: hidden;
-    }
-    .notification-cancel-wrapper {
-      visibility: hidden;
-    }
+    // .notification {
+    //   visibility: hidden;
+    // }
+    // .notification-cancel-wrapper {
+    //   visibility: hidden;
+    // }
   }
 
   &.transaction-success {
