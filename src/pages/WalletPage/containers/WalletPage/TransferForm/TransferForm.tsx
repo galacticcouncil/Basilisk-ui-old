@@ -143,6 +143,7 @@ export const TransferForm = ({
                     balanceInputName="amount"
                     assetInputName="asset"
                     assets={assets}
+                    isAssetSelectable={false}
                   />
                 </div>
                 {/* Form state: {form.formState.isDirty ? 'dirty': 'clean'}, {form.formState.isValid ? 'valid' : 'invalid'} */}

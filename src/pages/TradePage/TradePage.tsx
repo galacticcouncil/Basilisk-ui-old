@@ -44,6 +44,7 @@ import Unknown from '../../misc/icons/assets/Unknown.svg';
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
+import Icon from '../../components/Icon/Icon';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -449,6 +450,14 @@ export const TradePage = () => {
       {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification">transaction {notification}</div>
+        <div className="notification-cancel-wrapper">
+          <button
+            className="notification-cancel-button"
+            onClick={() => setNotification('standby')}
+          >
+            <Icon name="Cancel" />
+          </button>
+        </div>
       </div>
       <div className="trade-page">
         {/* <TradeChart

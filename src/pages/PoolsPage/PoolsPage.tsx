@@ -47,6 +47,7 @@ import { PoolsForm, PoolsFormFields, ProvisioningType } from '../../components/P
 import { idToAsset } from '../TradePage/TradePage';
 import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation';
 import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation';
+import Icon from '../../components/Icon/Icon';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -288,6 +289,14 @@ export const PoolsPage = () => {
       {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification">transaction {notification}</div>
+        <div className="notification-cancel-wrapper">
+          <button
+            className="notification-cancel-button"
+            onClick={() => setNotification('standby')}
+          >
+            <Icon name="Cancel" />
+          </button>
+        </div>
       </div>
       <div className="pools-page">
         {/* <TradeChart

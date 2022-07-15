@@ -12,24 +12,4 @@
 
 .notifications-bar {
   @extend .notifications-bar;
-
-  &.transaction-standby {
-    @extend .notifications-bar, .transaction-standby;
-  }
-
-  &.transaction-success {
-    @extend .notifications-bar, .transaction-success;
-  }
-
-  &.transaction-failed {
-    @extend .notifications-bar, .transaction-failed;
-  }
-
-  &.transaction-pending {
-    @extend .notifications-bar, .transaction-pending;
-
-    .notification {
-      @extend .notification;
-    }
-  }
 }
