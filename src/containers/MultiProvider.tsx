@@ -66,6 +66,7 @@ export const useMultiFeePaymentConversion = () => {
   const { math } = useMath()
 
   const convertToFeePaymentAsset = useCallback((txFee?: string) => {
+    console.log('convertToFeePaymentAsset', txFee, feePaymentAsset);
     if (!txFee || poolLoading || !math) return;
     if (feePaymentAsset === '0') return txFee;
 
@@ -82,7 +83,6 @@ export const useMultiFeePaymentConversion = () => {
 
     if (!spotPrice) return;
 
-    const convertedTxFee = txFee;
     return new BigNumber(spotPrice)
       .dividedBy(
         new BigNumber(10).pow(12)

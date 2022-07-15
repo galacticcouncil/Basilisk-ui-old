@@ -72,6 +72,7 @@ export const VestingClaim = ({
     estimateClaimVesting,
     client,
     convertToFeePaymentAsset,
+    feePaymentAsset
   ]);
 
   return (

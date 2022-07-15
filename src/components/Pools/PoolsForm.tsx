@@ -222,8 +222,6 @@ export const PoolsForm = ({
   );
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null);
 
-  console.log('activeAccountTradeBalances', activeAccountTradeBalances);
-
   const form = useForm<PoolsFormFields>({
     reValidateMode: 'onChange',
     mode: 'all',
@@ -315,7 +313,6 @@ export const PoolsForm = ({
       //   assetOutAmount
       // );
 
-      console.log('math', math.xyk, provisioningType);
       if (provisioningType === ProvisioningType.Add) {
         const amount = math.xyk.calculate_liquidity_in(
           assetOutLiquidity,
@@ -334,7 +331,6 @@ export const PoolsForm = ({
           pool.totalLiquidity
         );
 
-        console.log('amount', amount);
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetOutAmount !== '0') return;
@@ -399,8 +395,6 @@ export const PoolsForm = ({
           assetOutLiquidity,
           assetInAmount
         );
-
-        console.log('liquidity in2', amount);
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetInAmount !== '0') return;
@@ -705,6 +699,7 @@ export const PoolsForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
     tradeLimit,
     provisioningType,
+    calculatePaymentInfo
   ]);
 
   useEffect(() => {
