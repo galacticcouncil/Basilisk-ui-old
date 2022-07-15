@@ -48,7 +48,6 @@ export const getVestingByAddressFactory =
       vestingSchedules,
       currentBlockNumber!
     );
-    console.log('totalLocks', totalLocks)
 
     const lockedVestingBalance = (
       await getLockedBalanceByAddressAndLockId(

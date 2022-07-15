@@ -61,7 +61,7 @@ export const getLockedBalanceByAddressAndLockId = async (
 /**
  * Calculates original and future lock for given VestingSchedule.
  * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
- * 
+ *
  * returns [originalLock, futureLock]
  */
 export const calculateLock = (
@@ -70,9 +70,14 @@ export const calculateLock = (
 ): [BigNumber, BigNumber] => {
   const startPeriod = new BigNumber(vesting.start);
   const period = new BigNumber(vesting.period);
-  const numberOfPeriods = new BigNumber(currentBlockNumber)
+
+  // if the vesting has not started, number of periods is 0
+  let numberOfPeriods = new BigNumber(currentBlockNumber)
     .minus(startPeriod)
     .dividedBy(period);
+  numberOfPeriods = numberOfPeriods.isNegative()
+    ? new BigNumber('0')
+    : numberOfPeriods;
 
   const perPeriod = new BigNumber(vesting.perPeriod);
   const vestedOverPeriods = numberOfPeriods.multipliedBy(perPeriod);
