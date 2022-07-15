@@ -1,0 +1,13 @@
+mutation AddLiquidity(
+    $assetA: String!,
+    $assetB: String!,
+    $amountA: String!,
+    $amountBMaxLimit: String!
+) {
+    addLiquidity(
+        assetA: $assetA,
+        assetB: $assetB,
+        amountA: $amountA,
+        amountBMaxLimit: $amountBMaxLimit
+    ) @client
+}

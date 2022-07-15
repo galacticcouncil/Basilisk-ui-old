@@ -50,6 +50,11 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
                 Wallet
               </Link>
             </div>
+            <div className="page-header__menu-wrapper__menu-item">
+              <Link to='pools'>
+                Pools
+              </Link>
+            </div>
           </div>
           <div className="page-header__wallet-wrapper">
             <a

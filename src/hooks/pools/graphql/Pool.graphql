@@ -40,6 +40,8 @@ type XYKPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
+  totalLiquidity: String!,
+  shareTokenId: String!
 }
 
 union Pool = XYKPool | LBPPool

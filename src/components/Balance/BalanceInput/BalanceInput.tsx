@@ -34,7 +34,8 @@ export interface BalanceInputProps {
    * retrieve the actual input element from the form state
    */
   inputRef?: MutableRefObject<HTMLInputElement | null>;
-  required?: boolean
+  required?: boolean;
+  disabled?: boolean
 }
 
 const MaskedInputWithRef = React.forwardRef(
@@ -80,7 +81,8 @@ export const BalanceInput = ({
   defaultUnit = MetricUnit.NONE,
   showMetricUnitSelector = true,
   inputRef,
-  required
+  required,
+  disabled
 }: BalanceInputProps) => {
   const { control, register, setValue, getValues, watch } = useFormContext();
   const { unit, setUnit } = useDefaultUnit(defaultUnit);
@@ -123,6 +125,7 @@ export const BalanceInput = ({
                 required={required}
                 onChange={(e) => handleOnChange(field, e)}
                 placeholder="0.00"
+                disabled={disabled}
               />
             </>
           )}

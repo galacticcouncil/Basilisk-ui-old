@@ -11,9 +11,7 @@
   margin: 0px 0px 50px 0px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   position: relative;
-  z-index: 0;
 
   &__title {
     width: fit-content;
@@ -35,7 +33,7 @@
     text-fill-color: transparent;
   }
 
-  .active-account-wrapper {
+  &-wrapper {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -43,16 +41,35 @@
     padding: 20px 32px;
     font-size: 18px;
     font-weight: 500;
+    &:nth-of-type(1) {
+      border-top: 1px solid rgb(41, 41, 45);
+    }
 
-    &:nth-child(even) {
+    &:nth-child(odd) {
       background: rgba(255, 255, 255, 0.06);
     }
     &:last-child {
       border-radius: 0px 0px $border-radius $border-radius;
     }
+
+    .item {
+      width: 50%;
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+      gap: 10px;
+
+      &:first-child {
+        width: 20%;
+      }
+      &:last-child {
+        width: 30%;
+      }
+    }
   }
 
-  .active-account-button {
+  &-button {
     height: 40px;
     user-select: none;
     border-radius: 9999px;
@@ -62,6 +79,7 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    border: none;
 
     &:hover {
       background-color: #41db96;
@@ -78,11 +96,12 @@
       font-weight: 600;
     }
   }
-  .active-account-actions {
+
+  &-actions {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 20px;
+    gap: 10px;
   }
 }
