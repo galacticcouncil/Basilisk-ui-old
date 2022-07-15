@@ -23,7 +23,7 @@ export const getVestingByAddressFactory =
   ): Promise<Query['vesting']> => {
     if (!apiInstance || !address) return;
     const currentBlockNumber =
-      readLastBlock(client)?.lastBlock?.parachainBlockNumber;
+      readLastBlock(client)?.lastBlock?.relaychainBlockNumber;
     if (!currentBlockNumber)
       throw Error(`Can't calculate locks without current block number.`);
 
@@ -35,7 +35,6 @@ export const getVestingByAddressFactory =
     ) as Vec<VestingScheduleOf>;
 
     const vestingSchedules = vestingSchedulesData.map((vestingSchedule) => {
-      // remap to object with string properties
       return {
         start: vestingSchedule?.start.toString(),
         period: vestingSchedule?.period.toString(),
@@ -49,7 +48,8 @@ export const getVestingByAddressFactory =
       currentBlockNumber!
     );
 
-    const lockedVestingBalance = (
+    // 'ormlvest' is being fetched
+    const currentLockedVestingBalanceOrmlvest = (
       await getLockedBalanceByAddressAndLockId(
         apiInstance,
         address,
@@ -57,23 +57,26 @@ export const getVestingByAddressFactory =
       )
     )?.amount?.toString();
 
-    if (!lockedVestingBalance) return {
-      claimableAmount: '0',
-      originalLockBalance: '0',
-      lockedVestingBalance: '0',
-    }
+    if (!currentLockedVestingBalanceOrmlvest)
+      return {
+        claimableAmount: '0',
+        originalLockBalance: '0',
+        lockedVestingBalance: '0',
+      };
 
-    // TODO: add support for lockIds other than ormlvest 
-    const originalOrmlvestVesting = new BigNumber(lockedVestingBalance!);
-    // claimable = remainingVesting - all future locks
-    const claimableAmount = originalOrmlvestVesting.minus(
+    // TODO: add support for lockIds other than ormlvest
+    const currentLockedVestingOrmlvest = new BigNumber(
+      currentLockedVestingBalanceOrmlvest
+    );
+    // claimable = currentRemainingVesting - all future locks
+    const claimableAmount = currentLockedVestingOrmlvest.minus(
       new BigNumber(totalLocks.future)
     );
 
     return {
       claimableAmount: claimableAmount.toString(),
       originalLockBalance: totalLocks.original, // totalLocks.original == originalOrmlvestVesting
-      lockedVestingBalance: totalLocks.future.toString(),
+      lockedVestingBalance: currentLockedVestingOrmlvest.toString(),
     } as Vesting;
   };
 
