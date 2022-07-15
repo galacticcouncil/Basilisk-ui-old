@@ -33,6 +33,7 @@ import { useTransferFormModalPortal } from './containers/WalletPage/TransferForm
 import { useSetConfigMutation } from '../../hooks/config/useSetConfigMutation';
 import { useGetConfigQuery } from '../../hooks/config/useGetConfigQuery';
 import './WalletPage.scss';
+import Icon from '../../components/Icon/Icon';
 
 export type Notification = 'standby' | 'pending' | 'success' | 'failed';
 
@@ -140,7 +141,15 @@ export const WalletPage = () => {
       {modalPortal}
       {transferFormModalPortal}
       <div className={'notifications-bar transaction-' + notification}>
-        <div className="notification">transaction {notification}</div>
+        <div className="notification">Transaction {notification}</div>
+        <div className="notification-cancel-wrapper">
+          <button
+            className="notification-cancel-button"
+            onClick={() => setNotification('standby')}
+          >
+            <Icon name="Cancel" />
+          </button>
+        </div>
       </div>
       <div>
         {loading ? (

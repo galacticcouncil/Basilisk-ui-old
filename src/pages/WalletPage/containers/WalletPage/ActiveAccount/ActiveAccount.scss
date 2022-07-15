@@ -65,6 +65,7 @@
       }
       &:last-child {
         width: 30%;
+        justify-content: right;
       }
     }
   }
@@ -73,8 +74,8 @@
     height: 40px;
     user-select: none;
     border-radius: 9999px;
-    background-color: #4fffb0;
-    color: #26282f;
+    background-color: rgba(76, 243, 168, 0.12);
+    color: #4fffb0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -82,7 +83,7 @@
     border: none;
 
     &:hover {
-      background-color: #41db96;
+      background: rgba(76, 243, 168, 0.3);
     }
 
     &__label {
