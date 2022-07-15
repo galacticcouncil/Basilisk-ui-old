@@ -148,11 +148,11 @@ export const TransferForm = ({
                 {/* Form state: {form.formState.isDirty ? 'dirty': 'clean'}, {form.formState.isValid ? 'valid' : 'invalid'} */}
                 <div className="transfer-form__transfer-form-fee">
                   Tx fee:{' '}
-                  {txFee ? (
+                  {txFee && feePaymentAsset ? (
                     <FormattedBalance
                       balance={{
-                        assetId: '0',
-                        balance: txFee,
+                        assetId: feePaymentAsset,
+                        balance: convertToFeePaymentAsset(txFee)!,
                       }}
                     />
                   ) : (

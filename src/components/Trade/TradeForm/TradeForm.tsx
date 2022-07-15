@@ -525,6 +525,9 @@ export const TradeForm = ({
     tradeLimit,
     tradeType,
     convertToFeePaymentAsset,
+    feePaymentAsset,
+    getValues,
+    pool
   ]);
 
   useEffect(() => {
@@ -539,6 +542,7 @@ export const TradeForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
     tradeLimit,
     tradeType,
+    calculatePaymentInfo
   ]);
 
   useEffect(() => {
