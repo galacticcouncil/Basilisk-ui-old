@@ -188,7 +188,7 @@ export const useListenForInput = (
     // TODO: figure out why using the 'input' broke the mask
     // 'keydown' also doesnt work bcs its triggered by copy/paste, which then
     // changes the trade type (which this hook is primarily)
-    const listener = inputRef.current?.addEventListener('keypress', () =>
+    const listener = inputRef.current?.addEventListener('keydown', () =>
       setState((state) => !state)
     );
 
@@ -281,6 +281,10 @@ export const PoolsForm = ({
     [setValue, provisioningType]
   );
 
+  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
+    string | null
+  >();
+
   const calculateAssetIn = useCallback(() => {
     setTimeout(() => {
       const [assetOutAmount, shareAssetAmount, assetIn, assetOut] = getValues([
@@ -302,7 +306,7 @@ export const PoolsForm = ({
         return;
       // if (provisioningType !== ProvisioningType.Add) return;
 
-      if (!assetOutAmount) return setValue('assetInAmount', null);
+      // if (!assetOutAmount) return setValue('assetInAmount', null);
 
       // const amount = math.xyk.calculate_in_given_out(
       //   // which combination is correct?
@@ -313,28 +317,35 @@ export const PoolsForm = ({
       //   assetOutAmount
       // );
 
-      if (provisioningType === ProvisioningType.Add) {
+      if (provisioningType === ProvisioningType.Add && assetOutAmount) {
         const amount = math.xyk.calculate_liquidity_in(
           assetOutLiquidity,
           assetInLiquidity,
           assetOutAmount
         );
 
+        console.log('calculateAssetIn2', {
+          assetOutLiquidity, assetInLiquidity, assetOutAmount, amount
+        })
+
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetOutAmount !== '0') return;
         setValue('assetInAmount', amount || null);
       } else {
-        const amount = math.xyk.calculate_liquidity_out_asset_a(
+        const amountA = math.xyk.calculate_liquidity_out_asset_a(
           assetInLiquidity,
           assetOutLiquidity,
           shareAssetAmount,
           pool.totalLiquidity
         );
 
+        console.log('calculateAssetIn1', {
+          assetOutLiquidity, assetInLiquidity, assetOutAmount, amountA
+        })
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
-        if (amount === '0' && assetOutAmount !== '0') return;
-        setValue('assetInAmount', amount || null);
+        // if (amountA === '0' && amountB !== '0') return;
+        setValue('assetInAmount', amountA || null);
       }
     }, 0);
   }, [
@@ -346,16 +357,6 @@ export const PoolsForm = ({
     assetOutLiquidity,
     provisioningType,
     activeAccountTradeBalances,
-  ]);
-
-  useEffect(() => {
-    calculateAssetIn();
-  }, [
-    provisioningType,
-    assetOutLiquidity,
-    assetInLiquidity,
-    assetOutAmountInput,
-    calculateAssetIn,
   ]);
 
   const calculateAssetOut = useCallback(() => {
@@ -366,6 +367,9 @@ export const PoolsForm = ({
         'assetIn',
         'assetOut',
       ]);
+
+      console.log('calculateAssetOut1', [assetInAmount, shareAssetAmount, assetIn, assetOut]);
+
       if (
         !pool ||
         !math ||
@@ -373,12 +377,13 @@ export const PoolsForm = ({
         !assetOutLiquidity ||
         !activeAccountTradeBalances ||
         !assetIn ||
-        !assetOut
+        !assetOut ||
+        !shareAssetAmount
       )
         return;
       // if (provisioningType !== ProvisioningType.Remove) return;
 
-      if (!assetInAmount) return setValue('assetOutAmount', null);
+      // if (!assetInAmount) return setValue('assetOutAmount', null);
 
       // const amount = math.xyk.calculate_out_given_in(
       //   assetInLiquidity,
@@ -389,7 +394,7 @@ export const PoolsForm = ({
       //   return setValue('assetOutAmount', null);
       // setValue('assetOutAmount', amount || null);
 
-      if (provisioningType === ProvisioningType.Add) {
+      if (provisioningType === ProvisioningType.Add && assetInAmount) {
         const amount = math.xyk.calculate_liquidity_in(
           assetInLiquidity,
           assetOutLiquidity,
@@ -397,8 +402,20 @@ export const PoolsForm = ({
         );
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
-        if (amount === '0' && assetInAmount !== '0') return;
+        if (amount === '0' && assetInAmount !== '0' ) return;
         setValue('assetOutAmount', amount || null);
+      }  else {
+        const amountB = math.xyk.calculate_liquidity_out_asset_b(
+          assetInLiquidity,
+          assetOutLiquidity,
+          shareAssetAmount,
+          pool.totalLiquidity
+        );
+
+
+        // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+        // if (amountB === '0' && assetInAmount !== '0') return;
+        setValue('assetOutAmount', amountB || null);
       }
     }, 0);
   }, [
@@ -413,30 +430,52 @@ export const PoolsForm = ({
   ]);
 
   useEffect(() => {
-    calculateAssetOut();
+    if (lastAssetInteractedWith === assetIds.assetIn) return;
+    calculateAssetIn();
   }, [
-    provisioningType,
-    assetOutLiquidity,
-    assetInLiquidity,
-    assetInAmountInput,
-    calculateAssetOut,
+    calculateAssetIn,
+    lastAssetInteractedWith,
+    assetOutAmountInput,
+    assetIds
   ]);
 
   useEffect(() => {
+    if (lastAssetInteractedWith === assetIds.assetOut) return;
+    calculateAssetOut();
+  }, [
+    calculateAssetOut,
+    lastAssetInteractedWith,
+    assetInAmountInput,
+    assetIds,
+  ]);
+
+  useEffect(() => {
+    if (provisioningType === ProvisioningType.Remove) return;
     const [assetInAmount, assetOutAmount, assetIn, assetOut] = getValues([
       'assetInAmount',
       'assetOutAmount',
       'assetIn',
       'assetOut',
     ]);
-    if (!assetIn || !assetOut) return;
-    assetIn > assetOut
-      ? setValue('shareAssetAmount', assetOutAmount)
-      : setValue('shareAssetAmount', assetInAmount);
-  }, [...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut'])]);
+    if (!assetIn || !assetOut || !assetInLiquidity || !assetInAmount || !pool) return;
+
+    const shareAmount = math?.xyk.calculate_shares(assetInLiquidity, assetInAmount, pool?.totalLiquidity);
+    shareAmount && setValue('shareAssetAmount', shareAmount);
+    // assetIn > assetOut
+    //   ? setValue('shareAssetAmount', assetOutAmount)
+    //   : setValue('shareAssetAmount', assetInAmount);
+  }, [
+    ...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut']), 
+    math,
+    assetInLiquidity,
+    provisioningType,
+    getValues,
+    pool
+  ]);
 
   useEffect(() => {
     setTimeout(() => {
+      if (provisioningType === ProvisioningType.Add) return;
       const [
         assetInAmount,
         assetOutAmount,
@@ -451,15 +490,11 @@ export const PoolsForm = ({
         'shareAssetAmount',
       ]);
       if (!assetIn || !assetOut) return;
-      if (assetIn > assetOut) {
-        setValue('assetOutAmount', shareAssetAmount);
-        calculateAssetIn();
-      } else {
-        setValue('assetInAmount', shareAssetAmount);
-        calculateAssetOut();
-      }
+      console.log('calc', assetIn, assetOut)
+      calculateAssetIn();
+      calculateAssetOut();  
     }, 0);
-  }, [shareAssetAmountInput, calculateAssetIn, calculateAssetOut]);
+  }, [shareAssetAmountInput, calculateAssetIn, calculateAssetOut, provisioningType]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
@@ -493,10 +528,6 @@ export const PoolsForm = ({
     false
   );
 
-  const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
-    string | null
-  >();
-
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
     const assetInAmount = fromPrecision12(
@@ -518,6 +549,12 @@ export const PoolsForm = ({
       !allowedSlippage
     )
       return;
+
+    console.log('limit', {
+      assetInAmount,
+      spotPrice,
+      allowedSlippage
+    })
 
     switch (lastAssetInteractedWith) {
       case assetIds.assetIn:

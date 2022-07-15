@@ -233,7 +233,7 @@ export const PoolsPage = () => {
 
   const spotPrice = useMemo(() => {
     if (!assetOutLiquidity || !assetInLiquidity || !math) return;
-    return {
+    let spotPrice = {
       outIn: math.xyk.get_spot_price(
         assetOutLiquidity,
         assetInLiquidity,
@@ -245,6 +245,15 @@ export const PoolsPage = () => {
         '1000000000000'
       ),
     };
+
+    // spotPrice = {
+    //   outIn: new BigNumber(spotPrice.outIn!).dividedBy(1000).toFixed(3),
+    //   inOut: new BigNumber(spotPrice.inOut!).dividedBy(1000).toFixed(3)
+    // }
+
+    console.log('limit spotPrice', spotPrice)
+
+    return spotPrice;
   }, [assetOutLiquidity, assetInLiquidity, math]);
 
   const {

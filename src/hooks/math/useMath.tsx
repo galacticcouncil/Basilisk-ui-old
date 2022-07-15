@@ -8,7 +8,8 @@ export interface HydraDxMathXyk {
     calculate_out_given_in: (a: string, b: string, c: string) => string | undefined
     calculate_liquidity_in: (a: string, b: string, c: string) => string | undefined,
     calculate_liquidity_out_asset_a: (a: string, b: string, c: string, d: string) => string | undefined,
-    calculate_liquidity_out_asset_b: (a: string, b: string, c: string, d: string) => string | undefined
+    calculate_liquidity_out_asset_b: (a: string, b: string, c: string, d: string) => string | undefined,
+    calculate_shares: (a: string, b: string, c: string) => string | undefined;
 }
 
 export interface HydraDxMathLbp {
