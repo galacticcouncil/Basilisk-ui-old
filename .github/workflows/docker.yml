@@ -37,6 +37,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v3
         with:
+          push: true
           context: .
           build-args: |
             GITHUB_SHA=${{ github.sha }}
