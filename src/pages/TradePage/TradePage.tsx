@@ -38,7 +38,7 @@ import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
-import DAI from '../../misc/icons/assets/DAI.svg';
+import AUSD from '../../misc/icons/assets/AUSD.png';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -80,19 +80,19 @@ export const idToAsset = (id: string | null) => {
       id: '4',
       symbol: 'aUSD',
       fullName: 'Acala USD',
-      icon: Unknown,
+      icon: AUSD,
     },
     '6': {
       id: '6',
       symbol: 'LP BSX/KSM',
       fullName: 'BSX/KSM Share token',
-      icon: DAI,
+      icon: Unknown,
     },
     '7': {
       id: '7',
       symbol: 'LP BSX/aUSD',
       fullName: 'BSX/aUSD Share token',
-      icon: DAI,
+      icon: Unknown,
     },
   };
 
