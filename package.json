@@ -93,6 +93,7 @@
   },
   "scripts": {
     "start": "export NODE_OPTIONS=--openssl-legacy-provider && craco start --openssl-legacy-provider",
+    "start:rococo": "REACT_APP_NODE_URL=wss://rpc-01.basilisk-rococo.hydradx.io craco start",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && craco build",
     "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
     "test": "craco test",
