@@ -4,7 +4,7 @@ import { idToAsset } from '../../../../TradePage/TradePage';
 import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader';
 import './BalanceList.scss';
 
-export const availableFeePaymentAssetIds = ['0', '1'];
+export const availableFeePaymentAssetIds = ['0', '4', '5'];
 
 export const BalanceList = ({
   balances,
