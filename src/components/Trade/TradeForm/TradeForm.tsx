@@ -464,8 +464,20 @@ export const TradeForm = ({
         assetIn: assetIds.assetOut,
         assetOut: assetIds.assetIn,
       });
+      
+      if (tradeType === TradeType.Buy) {
+        const assetOutAmount = getValues('assetOutAmount');
+        setValue('assetInAmount', assetOutAmount);
+        setTradeType(TradeType.Sell);
+        setValue('assetOutAmount', null)
+      } else {
+        const assetInAmount = getValues('assetInAmount');
+        setValue('assetOutAmount', assetInAmount);
+        setTradeType(TradeType.Buy);
+        setValue('assetInAmount', null)
+      }
     },
-    [assetIds]
+    [assetIds, tradeType, setValue, getValues, setTradeType]
   );
 
   const { apiInstance } = usePolkadotJsContext();
