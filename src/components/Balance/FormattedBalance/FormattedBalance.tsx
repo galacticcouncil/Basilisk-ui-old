@@ -8,6 +8,7 @@ import { idToAsset } from '../../../pages/TradePage/TradePage';
 import ReactTooltip from 'react-tooltip';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
+import BigNumber from 'bignumber.js';
 
 export interface FormattedBalanceProps {
   balance: Balance;
@@ -24,7 +25,17 @@ export const FormattedBalance = ({
     balance.assetId,
   ]);
   // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
-  const formattedBalance = fromPrecision12(balance.balance);
+  let formattedBalance = fromPrecision12(balance.balance);
+
+  const decimalPlacesCount = formattedBalance!.split('.')[1]?.length;
+  console.log('formattedBalance', decimalPlacesCount, formattedBalance )
+
+  if (formattedBalance && !(new BigNumber(formattedBalance).isZero()) && new BigNumber(formattedBalance).lte(0.000001)) {
+    formattedBalance = '< 0.000001'
+  } else if (formattedBalance && decimalPlacesCount > 6 && new BigNumber(formattedBalance).gt(0.000001)) {
+    formattedBalance = '~' + new BigNumber(formattedBalance).toFixed(6);
+  } 
+
 
   const tooltipText = useMemo(() => {
     // TODO: get rid of raw html
