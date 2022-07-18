@@ -85,24 +85,29 @@ export const AccountSelector = ({
                     ))}
                   </div>
                 ) : (
-                  //TODO update href param when we know where to send user
+                    //TODO update href param when we know where to send user
                   <div className="account-selector__message">
-                    <h5>
-                      <FormattedMessage
-                        id="Wallet.NoAccountsAvailable"
-                        defaultMessage="No accounts available"
+                    <FormattedMessage
+                      id="Wallet.NoAccountsAvailable"
+                      defaultMessage="No accounts available "
                       />
-                    </h5>
-                    <div className="account-selector__create-account-link">
-                      <FormattedMessage
-                        id="Wallet.SelectAccountHelp"
-                        defaultMessage="Need help creating an account?"
-                      />
-                      <br />
-                      <a href="/#" title="" target="_blank">
-                        <FormattedMessage id="Wallet.ClickHere" />
-                      </a>
-                    </div>
+                    <FormattedMessage
+                      id="Wallet.SelectAccountHelp"
+                      values={{
+                        link: (
+                          <a
+                            href="/#"
+                            title=""
+                            className="account-selector__create-account-link"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <FormattedMessage id="Wallet.ClickHere" />
+                          </a>
+                        ),
+                      }}
+                      defaultMessage="Need help creating an account? {link}"
+                    />
                   </div>
                 )}
                 {account && (
