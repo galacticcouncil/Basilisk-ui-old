@@ -51,7 +51,7 @@
     "graphql": "^16.3.0",
     "graphql.macro": "^1.4.2",
     "husky": "^7.0.4",
-    "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm#main",
+    "hydra-dx-wasm": "https://github.com/galacticcouncil/HydraDX-wasm#0e3d625c22c32525a4619047223cac019c0cfa46",
     "jest-image-snapshot": "^4.5.1",
     "jest-junit": "^13.0.0",
     "lint-staged": "^12.1.2",

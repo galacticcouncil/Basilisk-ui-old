@@ -26,12 +26,15 @@ export const useConfigQueryResolvers = () => {
         _variables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
+        console.log('config query resolver')
         if (!apiInstance || loading) return;
 
         // TODO: evict config from the cache after active account changes
         const address = cache.readQuery<GetActiveAccountQueryResponse>({
           query: GET_ACTIVE_ACCOUNT,
         })?.activeAccount?.id;
+
+        if (!address) return;
 
         let feePaymentAsset = address
           ? apiInstance
@@ -43,6 +46,8 @@ export const useConfigQueryResolvers = () => {
               )
               ?.toHuman()
           : null;
+
+        console.log('found fee payment asset', feePaymentAsset);
 
         feePaymentAsset = feePaymentAsset ? feePaymentAsset : nativeAssetId;
 

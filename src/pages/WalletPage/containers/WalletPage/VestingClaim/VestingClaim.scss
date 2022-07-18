@@ -1,0 +1,36 @@
+@import '../../../../../misc/colors.module.scss';
+@import '../../../../../misc/misc.module.scss';
+@import '../ActiveAccount/ActiveAccount.scss';
+
+.vesting-claim {
+  @extend .active-account;
+
+  &__title {
+    @extend .active-account__title;
+  }
+
+  &-wrapper {
+    @extend .active-account-wrapper;
+
+    .item {
+      width: 22.5%;
+      &:last-child {
+        width: 10%;
+        justify-content: right;
+      }
+    }
+  }
+
+  &-button {
+    @extend .active-account-button;
+    &__label {
+      @extend .active-account-button__label;
+    }
+  }
+
+  &__fee {
+    width: 100px;
+    display: flex;
+    justify-content: left;
+  }
+}

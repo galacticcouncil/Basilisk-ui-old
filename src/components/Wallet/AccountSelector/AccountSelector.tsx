@@ -1,5 +1,5 @@
 import { MutableRefObject, useMemo } from 'react';
-import { Account } from '../../../generated/graphql';
+import { Account, Maybe } from '../../../generated/graphql';
 import { AccountItem } from './AccountItem/AccountItem';
 import { Button, ButtonKind } from '../../Button/Button';
 import './AccountSelector.scss';
@@ -9,7 +9,7 @@ import Icon from '../../Icon/Icon';
 export interface AccountSelectorProps {
   accounts?: Account[];
   accountsLoading: boolean;
-  account?: Account;
+  account?: Maybe<Account>;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
   innerRef: MutableRefObject<HTMLDivElement | null>;
@@ -38,15 +38,24 @@ export const AccountSelector = ({
         <div className="modal-component-heading">
           <div>
             {isExtensionAvailable ? (
-              <FormattedMessage
-                id="Wallet.SelectAccount"
-                defaultMessage="Select account"
-              />
+              <>
+                <div className="modal-component-heading__main-text">
+                  <FormattedMessage
+                    id="Wallet.SelectAccount"
+                    defaultMessage="Select account"
+                  />
+                </div>
+                <div className="modal-component-heading__main-text__secondary">
+                  Pick one of your accounts to connect to Basilisk
+                </div>
+              </>
             ) : (
-              <FormattedMessage
-                id="Wallet.InstallExtension"
-                defaultMessage="Install extension"
-              />
+              <div className="modal-component-heading__main-text">
+                <FormattedMessage
+                  id="Wallet.InstallExtension"
+                  defaultMessage="Install extension"
+                />
+              </div>
             )}
           </div>
           <div className="close-modal-btn" onClick={() => closeModal()}>

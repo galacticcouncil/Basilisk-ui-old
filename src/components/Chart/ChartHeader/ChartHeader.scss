@@ -59,7 +59,8 @@ $disabledOpacity: 0.3;
 
   &__pool-info {
     display: flex;
-    justify-content: space-between;
+    justify-content: start;
+    padding-top: 36px;
 
     &__assets {
       display: flex;

@@ -7,11 +7,8 @@
 
   position: relative;
   width: 100%;
-  padding: 16px;
 
   gap: 36px;
-
-  max-width: 1100px;
 
   left: 0;
   right: 0;
@@ -23,6 +20,10 @@
     align-items: center;
 
     gap: 10px;
+
+    background: rgba(28, 26, 31, 0.2);
+    padding: 0 36px;
+    width: 100%;
 
     &__wallet-wrapper {
       display: flex;
@@ -63,6 +64,27 @@
         }
       }
     }
+
+    &__menu-wrapper {
+      display: flex;
+      flex-grow: 1;
+      gap: 20px;
+      padding-left: 24px;
+      &__menu-item {
+        a {
+          cursor: pointer;
+          font-weight: 700;
+          color: $l-gray2;
+          text-decoration: none;
+          &:visited {
+            color: $l-gray2;
+          }
+          &:hover {
+            color: $green1;
+          }
+        }
+      }
+    }
   }
 
   .footer {
@@ -70,6 +92,7 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    padding-bottom: 50px;
 
     color: #bdccd4;
     font-weight: 400;

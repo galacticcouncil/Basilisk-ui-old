@@ -1,0 +1,22 @@
+@import '../../misc/colors.module.scss';
+@import '../../misc/misc.module.scss';
+@import '../TradePage/TradePage.scss';
+
+.wallet-page {
+  min-width: 800px;
+  max-width: 1200px;
+  padding: 32px;
+  color: white;
+  margin: 0px auto;
+  color: white;
+
+  .modal-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .notifications-bar {
+    @extend .notifications-bar;
+  }
+}

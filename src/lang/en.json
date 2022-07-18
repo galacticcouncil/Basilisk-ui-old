@@ -18,7 +18,7 @@
     "defaultMessage": "Clear account"
   },
   "Wallet.SelectAccount": {
-    "defaultMessage": "Select an account"
+    "defaultMessage": "Select account"
   },
   "Wallet.InstallInstructions": {
     "defaultMessage": "To connect your account, please {link}."

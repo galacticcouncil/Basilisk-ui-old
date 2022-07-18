@@ -1,0 +1,120 @@
+@import '../../../../../misc/colors.module.scss';
+@import '../../../../../misc/misc.module.scss';
+
+.transfer-form {
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+
+  background: rgba(50, 50, 50, 0.5);
+  color: white;
+
+  z-index: 3;
+
+  .transfer-form-container {
+    width: 460px;
+  }
+
+  &__content-wrapper {
+    min-height: fit-content;
+    max-height: 85vh;
+    padding: 16px;
+
+    border-radius: $border-radius;
+    background: linear-gradient(
+      180deg,
+      #1c2527 0%,
+      #14161a 80.73%,
+      #121316 100%
+    );
+    position: relative;
+  }
+
+  .transfer-form-heading {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 16px 0px 16px;
+  }
+
+  .transfer-form-title {
+    width: fit-content;
+    padding-top: 4px;
+    color: $l-gray3;
+    font-size: 22px;
+    font-weight: 500;
+    background: linear-gradient(
+        90deg,
+        #4fffb0 1.27%,
+        #b3ff8f 48.96%,
+        #ff984e 104.14%
+      ),
+      linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
+      linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+  }
+
+  &__transfer-form-parent {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  &__transfer-form-fee {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    color: #bdccd4;
+    font-size: 15px;
+    font-weight: 400;
+  }
+
+  &__transfer-form-address-input {
+    border-radius: $border-radius;
+    height: 52px;
+    flex-grow: 1;
+    font-weight: 600;
+    padding: 16px 12px;
+    background-color: rgba(218, 255, 238, 0.06);
+    box-shadow: 0 0 0 1px rgb(255 255 238 / 30%);
+  }
+
+  &__submit-button {
+    user-select: none;
+    border-radius: 9999px;
+    width: 100%;
+    height: 50px;
+    background-color: #4fffb0;
+    color: #26282f;
+
+    &:hover {
+      background-color: #41db96;
+    }
+  }
+
+  &__submit-button:disabled {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #a2b0b8;
+  }
+
+  &__transfer-form-asset-input-container {
+    display: flex;
+    flex-direction: column;
+    background: rgba(162, 176, 187, 0.1);
+    color: $green1;
+    padding: 12px;
+    border-radius: 10px;
+    gap: 6px;
+  }
+}

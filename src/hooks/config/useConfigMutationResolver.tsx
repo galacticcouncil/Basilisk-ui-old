@@ -16,6 +16,7 @@ import {
 } from '../vesting/useVestingMutationResolvers';
 import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig';
 import { SetConfigMutationVariables } from './useSetConfigMutation';
+import { xykBuyHandler } from '../pools/xyk/buy';
 
 export const defaultAssetId = '0';
 
@@ -38,13 +39,14 @@ export const useConfigMutationResolvers = () => {
         if (!apiInstance || loading) return;
 
         // TODO: return an optimistic update to the cache with the new config
-        await withGracefulErrors(
-          async (resolve, reject) => {
-            const address = cache.readQuery<GetActiveAccountQueryResponse>({
-              query: GET_ACTIVE_ACCOUNT,
-            })?.activeAccount?.id;
+        // await withGracefulErrors(
+        await new Promise(async (resolve, reject) => {
+          const address = cache.readQuery<GetActiveAccountQueryResponse>({
+            query: GET_ACTIVE_ACCOUNT,
+          })?.activeAccount?.id;
 
-            if (!address) return resolve();
+          try {
+            if (!address) return reject();
 
             const { signer } = await web3FromAddress(address);
 
@@ -53,18 +55,22 @@ export const useConfigMutationResolvers = () => {
               .signAndSend(
                 address,
                 { signer },
-                setCurrencyHandler(resolve, reject)
+                xykBuyHandler(resolve, reject, apiInstance)
               );
-          },
-          [gracefulExtensionCancelationErrorHandler]
-        );
+          } catch (e) {
+            reject(e)
+          }
+        })
+          // [gracefulExtensionCancelationErrorHandler]
+          // []
+        // );
 
         const persistableConfig = args.config;
         // there's no point in persisting the feePaymentAsset since it will
         // be refetched from the node anyways
         delete persistableConfig?.feePaymentAsset;
 
-        setPersistedConfig(persistableConfig || defaultConfigValue);
+        // setPersistedConfig(persistableConfig || defaultConfigValue);
       },
       [apiInstance, loading, setPersistedConfig]
     )

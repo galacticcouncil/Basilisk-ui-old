@@ -1,10 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
-import { BalanceLock } from '@polkadot/types/interfaces';
 import { Codec } from '@polkadot/types/types';
 import BigNumber from 'bignumber.js';
 import { find } from 'lodash';
-import constants from '../../constants';
-import { VestingSchedule } from './useGetVestingScheduleByAddress';
+import { VestingSchedule } from '../../generated/graphql';
 
 export const balanceLockDataType = 'Vec<BalanceLock>';
 export const tokensLockDataType = balanceLockDataType;
@@ -33,9 +31,7 @@ export const getLockedBalanceByAddressAndLockId = async (
       balanceLockDataType,
       await apiInstance.query.balances.locks(address)
     ),
-    (lockedAmount) =>
-      // lockedAmount.id.eq(lockId)
-      false
+    (lockedAmount) => lockedAmount.id.eq(lockId)
   );
 
   const tokenBalanceLocks = (
@@ -63,58 +59,70 @@ export const getLockedBalanceByAddressAndLockId = async (
 };
 
 /**
- * This function casts a number in string representation
- * to a BigNumber. If the input is undefined, it returns
- * a default value.
+ * Calculates original and future lock for given VestingSchedule.
+ * https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
+ *
+ * returns [originalLock, futureLock]
  */
-export const toBN = (numberAsString: string | undefined) => {
-  // TODO: check if it is any good to use default values
-  // on undefined VestingSchedule properties!
-  if (!numberAsString) return new BigNumber(constants.defaultValue);
-  return new BigNumber(numberAsString);
-};
+export const calculateLock = (
+  vesting: VestingSchedule,
+  currentBlockNumber: string
+): [BigNumber, BigNumber] => {
+  const startPeriod = new BigNumber(vesting.start);
+  const period = new BigNumber(vesting.period);
 
-// https://gist.github.com/maht0rz/53466af0aefba004d5a4baad23f8ce26
-// TODO: check if calc makes sense for undefined VestingSchedule properties
-export const calculateFutureLock = (
-  vestingSchedule: VestingSchedule,
-  currentBlockNumber: BigNumber
-) => {
-  const startPeriod = toBN(vestingSchedule.start);
-  const period = toBN(vestingSchedule.period);
-  const numberOfPeriods = currentBlockNumber
+  // if the vesting has not started, number of periods is 0
+  let numberOfPeriods = new BigNumber(currentBlockNumber)
     .minus(startPeriod)
     .dividedBy(period);
+  numberOfPeriods = numberOfPeriods.isNegative()
+    ? new BigNumber('0')
+    : numberOfPeriods;
 
-  const perPeriod = toBN(vestingSchedule.perPeriod);
+  const perPeriod = new BigNumber(vesting.perPeriod);
   const vestedOverPeriods = numberOfPeriods.multipliedBy(perPeriod);
 
-  const periodCount = toBN(vestingSchedule.periodCount);
+  const periodCount = new BigNumber(vesting.periodCount);
   const originalLock = periodCount.multipliedBy(perPeriod);
 
-  const futureLock = originalLock.minus(vestedOverPeriods);
-  return futureLock;
+  const unlocked = vestedOverPeriods.gte(originalLock)
+    ? originalLock
+    : vestedOverPeriods;
+  const futureLock = originalLock.minus(unlocked);
+
+  return [originalLock, futureLock];
 };
 
-// get lockedVestingAmount from function getLockedBalanceByAddressAndLockId
-export const calculateClaimableAmount = (
+/**
+ * Calculates originalLock and futureLock for every vesting schedule and
+ * sums it to total.
+ */
+export const calculateTotalLocks = (
   vestingSchedules: VestingSchedule[],
-  lockedVestingAmount: BalanceLock | LockedTokens,
-  currentBlockNumber: BigNumber
-): BigNumber => {
-  // calculate futureLock for every vesting schedule and sum to total
-  const totalFutureLocks = vestingSchedules.reduce(function (
-    total,
-    vestingSchedule
-  ) {
-    const futureLock = calculateFutureLock(vestingSchedule, currentBlockNumber);
-    return total.plus(futureLock);
-  },
-  new BigNumber(0));
+  currentBlockNumber: string
+) => {
+  /**
+   * .reduce did not play well with an object that has multiple BigNumbers
+   * that's why the summation runs twice.
+   */
+  const sumOriginalLock = vestingSchedules.reduce(
+    (accumulator, vestingSchedule) => {
+      const [originalLock] = calculateLock(vestingSchedule, currentBlockNumber);
+      return accumulator.plus(originalLock);
+    },
+    new BigNumber(0)
+  );
 
-  // calculate claimable amount
-  const remainingVestingAmount = toBN(lockedVestingAmount?.amount?.toString());
-  const claimableAmount = remainingVestingAmount.minus(totalFutureLocks);
+  const sumFutureLock = vestingSchedules.reduce(
+    (accumulator, vestingSchedule) => {
+      const [, futureLock] = calculateLock(vestingSchedule, currentBlockNumber);
+      return accumulator.plus(futureLock);
+    },
+    new BigNumber(0)
+  );
 
-  return claimableAmount;
+  return {
+    original: sumOriginalLock.toString(),
+    future: sumFutureLock.toString(),
+  };
 };

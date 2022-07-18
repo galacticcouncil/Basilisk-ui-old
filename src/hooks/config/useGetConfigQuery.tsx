@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { QueryHookOptions, useQuery } from '@apollo/client';
 import { loader } from 'graphql.macro';
 import { Query } from '../../generated/graphql';
 
@@ -8,6 +8,7 @@ export interface GetConfigQueryResponse {
     config: Query['config']
 }
 
-export const useGetConfigQuery = () => useQuery<GetConfigQueryResponse>(GET_CONFIG, {
-    notifyOnNetworkStatusChange: true
+export const useGetConfigQuery = (options?: QueryHookOptions) => useQuery<GetConfigQueryResponse>(GET_CONFIG, {
+    notifyOnNetworkStatusChange: true,
+    ...options
 });

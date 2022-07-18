@@ -12,6 +12,8 @@ query GetPoolByAssets($assetInId: String!, $assetOutId: String!) {
             assetId,
             balance
         },
+        shareTokenId,
+        totalLiquidity
 
         # TODO: investigate how caching works when these fields are missing for XYK pools
         # lbp fields,

@@ -1,0 +1,29 @@
+# https://github.com/open-web3-stack/open-runtime-module-library/blob/master/vesting/src/lib.rs#L11
+type VestingSchedule {
+  # since this block
+  start: String!
+  # every `period` blocks
+  period: String!
+  # for number of periods
+  periodCount: String!
+  # claimable amount per period
+  perPeriod: String!
+}
+
+extend type Query {
+  _vestingSchedule: VestingSchedule
+}
+
+type Vesting {
+  claimableAmount: String!
+  originalLockBalance: String!
+  lockedVestingBalance: String!
+}
+
+interface IVesting {
+  vesting: Vesting
+}
+
+extend type Query implements IVesting {
+  vesting: Vesting
+}

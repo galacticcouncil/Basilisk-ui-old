@@ -4,6 +4,7 @@ import { ReactComponent as NotificationActiveIcon } from './assets/NotificationA
 import { ReactComponent as NotificationInactiveIcon } from './assets/NotificationInactiveIcon.svg';
 import { ReactComponent as DropdownArrowIcon } from './assets/DropdownArrowIcon.svg';
 import { ReactComponent as CancelIcon } from './assets/Cancel.svg';
+import { ReactComponent as BackIcon } from './assets/Back.svg';
 import { ReactComponent as BasiliskLogoFull } from './assets/BasiliskLogoFull.svg';
 import { ReactComponent as AssetSwitchIcon } from './assets/AssetSwitchIcon.svg';
 import { ReactComponent as SettingsIcon } from './assets/Settings.svg';
@@ -15,6 +16,7 @@ const Icons = {
   NotificationInactive: () => <NotificationInactiveIcon />,
   DropdownArrow: () => <DropdownArrowIcon />,
   Cancel: () => <CancelIcon />,
+  Back: () => <BackIcon />,
   BasiliskLogoFull: () => <BasiliskLogoFull />,
   AssetSwitch: () => <AssetSwitchIcon />,
   Settings: () => <SettingsIcon />,

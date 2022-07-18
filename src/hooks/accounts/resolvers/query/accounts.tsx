@@ -10,8 +10,6 @@ export const useAccountsQueryResolver = () => {
       useCallback(async (_obj) => {
         const accounts = await getAccounts();
 
-        log.debug('got accounts', accounts);
-
         // if no results were found, return undefined/null
         // this is useful when un-setting the active account
         if (!accounts) {

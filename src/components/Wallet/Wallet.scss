@@ -3,17 +3,12 @@
 
 .wallet {
   width: auto;
-
   max-width: 550px;
   min-width: 350px;
-
-  // flex-basis: 350px;
-
   gap: 12px;
-
-  background-color: $d-gray4;
-  border-radius: $border-radius;
+  border-radius: 8px;
   padding: 16px;
+  color: white;
 
   &__info {
     display: flex;
@@ -50,7 +45,7 @@
   &__account-btn {
     min-width: 90px;
 
-    padding: 8px 12px;
+    padding: 12px 16px;
 
     font-weight: 600;
     line-height: 16px;
@@ -58,7 +53,7 @@
 
     color: $l-gray2;
     background-color: $d-gray5;
-    border-radius: $border-radius;
+    border-radius: 9999px;
 
     text-align: center;
 

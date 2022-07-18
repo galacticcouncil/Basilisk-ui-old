@@ -42,6 +42,9 @@ import DAI from '../../misc/icons/assets/DAI.svg';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
+// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
+import Icon from '../../components/Icon/Icon';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -81,13 +84,18 @@ export const idToAsset = (id: string | null) => {
     },
     '3': {
       id: '3',
-      symbol: 'DAI',
-      fullName: 'DAI Stablecoin',
+      symbol: 'LP BSX/KSM',
+      fullName: 'BSX/KSM Share token',
       icon: DAI,
     },
   };
 
-  return assetMetadata[id!] as any;
+  return assetMetadata[id!] as any || id && {
+    id,
+    symbol: horizontalBar,
+    fullName: `Unknown asset ${id}`,
+    icon: Unknown
+  };
 };
 
 export const TradeChart = ({
@@ -275,8 +283,6 @@ export const TradeChart = ({
     historicalBalancesLoading,
   ]);
 
-  console.log('graph loading status _isPoolLoading', _isPoolLoading);
-
   return (
     <TradeChartComponent
       assetPair={{
@@ -353,23 +359,21 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-    onError: () => {
-      setNotification('failed');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+      onError: () => {
+        setNotification('failed');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+    });
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -443,11 +447,20 @@ export const TradePage = () => {
 
   return (
     <div className="trade-page-wrapper">
+      {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
-        <div className="notification">transaction {notification}</div>
+        <div className="notification">Transaction {notification}</div>
+        <div className="notification-cancel-wrapper">
+          <button
+            className="notification-cancel-button"
+            onClick={() => setNotification('standby')}
+          >
+            <Icon name="Cancel" />
+          </button>
+        </div>
       </div>
       <div className="trade-page">
-        <TradeChart
+        {/* <TradeChart
           pool={pool}
           assetIds={assetIds}
           spotPrice={spotPrice}
@@ -456,7 +469,7 @@ export const TradePage = () => {
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
-        />
+        /> */}
         <TradeForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
