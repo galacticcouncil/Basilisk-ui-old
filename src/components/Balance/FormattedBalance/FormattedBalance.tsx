@@ -27,7 +27,7 @@ export const FormattedBalance = ({
   // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
   let formattedBalance = fromPrecision12(balance.balance);
 
-  const decimalPlacesCount = formattedBalance!.split('.')[1]?.length;
+  const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0;
   console.log('formattedBalance', decimalPlacesCount, formattedBalance )
 
   if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
