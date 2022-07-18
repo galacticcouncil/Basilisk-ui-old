@@ -1,5 +1,6 @@
 @import '../../../../../misc/colors.module.scss';
 @import '../../../../../misc/misc.module.scss';
+@import '../../../../../components/Wallet/AccountSelector/AccountItem/AccountItem.scss';
 
 .active-account {
   min-width: 800px;
@@ -31,6 +32,18 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     text-fill-color: transparent;
+  }
+
+  .active-account__account-item__heading__left__name {
+    @extend .account-item__heading__left__name;
+    white-space: break-spaces;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  .active-account__account-item__heading__left {
+    @extend .account-item__heading__left;
+    flex-wrap: wrap;
   }
 
   &-wrapper {

@@ -44,17 +44,14 @@ export const ActiveAccount = ({
           <div className="active-account">
             <h2 className="active-account__title">Active account</h2>
             <div className="active-account-wrapper">
-              <div className="account-item__heading item">
-                Name
-              </div>
+              <div className="account-item__heading item">Name</div>
               <div className="item">Address</div>
-              <div className="active-account-actions item">
-              </div>
+              <div className="active-account-actions item"></div>
             </div>
             <div className="active-account-wrapper">
               <div className="account-item__heading item">
-                <div className="account-item__heading__left">
-                  <div className="account-item__heading__left__name">
+                <div className="active-account__account-item__heading__left">
+                  <div className="active-account__account-item__heading__left__name">
                     {account.name}
                   </div>
                   <div className="account-item__heading__left__source">
