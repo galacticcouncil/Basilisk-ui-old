@@ -30,10 +30,14 @@ export const FormattedBalance = ({
   const decimalPlacesCount = formattedBalance!.split('.')[1]?.length;
   console.log('formattedBalance', decimalPlacesCount, formattedBalance )
 
-  if (formattedBalance && !(new BigNumber(formattedBalance).isZero()) && new BigNumber(formattedBalance).lte(0.000001)) {
-    formattedBalance = '< 0.000001'
-  } else if (formattedBalance && decimalPlacesCount > 6 && new BigNumber(formattedBalance).gt(0.000001)) {
-    formattedBalance = '~' + new BigNumber(formattedBalance).toFixed(6);
+  if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
+    formattedBalance = new BigNumber(formattedBalance).toFixed(
+      decimalPlacesCount > 4 ? 4 : decimalPlacesCount
+    );
+  } else if (formattedBalance) {
+    formattedBalance = new BigNumber(formattedBalance).toFixed(
+      decimalPlacesCount <= 4 ? 4 : decimalPlacesCount
+    );
   } 
 
 
