@@ -23,7 +23,8 @@ export const FormattedBalance = ({
   const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
     balance.assetId,
   ]);
-  const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
+  // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
+  const formattedBalance = fromPrecision12(balance.balance);
 
   const tooltipText = useMemo(() => {
     // TODO: get rid of raw html
@@ -37,12 +38,12 @@ export const FormattedBalance = ({
     ReactTooltip.rebuild();
   }, [tooltipText]);
 
-  log.debug(
-    'FormattedBalance',
-    formattedBalance?.value,
-    formattedBalance?.unit,
-    formattedBalance?.numberOfDecimalPlaces
-  );
+  // log.debug(
+  //   'FormattedBalance',
+  //   formattedBalance?.value,
+  //   formattedBalance?.unit,
+  //   formattedBalance?.numberOfDecimalPlaces
+  // );
 
   // We don't need to use the currency input here
   // because when there is more than 3 significant digits, the formatter
@@ -55,10 +56,11 @@ export const FormattedBalance = ({
       data-html={true}
       data-delay-show={20}
     >
-      <div className="formatted-balance__value">{formattedBalance.value}</div>
-      <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
+      {/* <div className="formatted-balance__value">{formattedBalance.value}</div> */}
+      <div className="formatted-balance__value">{formattedBalance}</div>
+      {/* <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
-      </div>
+      </div> */}
       <div className="formatted-balance__symbol">
         {assetSymbol || horizontalBar}
       </div>
