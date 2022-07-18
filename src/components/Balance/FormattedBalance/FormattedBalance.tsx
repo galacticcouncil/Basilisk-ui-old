@@ -8,6 +8,7 @@ import { idToAsset } from '../../../pages/TradePage/TradePage';
 import ReactTooltip from 'react-tooltip';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
+import BigNumber from 'bignumber.js';
 
 export interface FormattedBalanceProps {
   balance: Balance;
@@ -23,7 +24,22 @@ export const FormattedBalance = ({
   const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
     balance.assetId,
   ]);
-  const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
+  // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
+  let formattedBalance = fromPrecision12(balance.balance);
+
+  const decimalPlacesCount = formattedBalance!.split('.')[1]?.length;
+  console.log('formattedBalance', decimalPlacesCount, formattedBalance )
+
+  if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
+    formattedBalance = new BigNumber(formattedBalance).toFixed(
+      decimalPlacesCount > 4 ? 4 : decimalPlacesCount
+    );
+  } else if (formattedBalance) {
+    formattedBalance = new BigNumber(formattedBalance).toFixed(
+      decimalPlacesCount <= 4 ? 4 : decimalPlacesCount
+    );
+  } 
+
 
   const tooltipText = useMemo(() => {
     // TODO: get rid of raw html
@@ -37,12 +53,12 @@ export const FormattedBalance = ({
     ReactTooltip.rebuild();
   }, [tooltipText]);
 
-  log.debug(
-    'FormattedBalance',
-    formattedBalance?.value,
-    formattedBalance?.unit,
-    formattedBalance?.numberOfDecimalPlaces
-  );
+  // log.debug(
+  //   'FormattedBalance',
+  //   formattedBalance?.value,
+  //   formattedBalance?.unit,
+  //   formattedBalance?.numberOfDecimalPlaces
+  // );
 
   // We don't need to use the currency input here
   // because when there is more than 3 significant digits, the formatter
@@ -55,10 +71,11 @@ export const FormattedBalance = ({
       data-html={true}
       data-delay-show={20}
     >
-      <div className="formatted-balance__value">{formattedBalance.value}</div>
-      <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
+      {/* <div className="formatted-balance__value">{formattedBalance.value}</div> */}
+      <div className="formatted-balance__value">{formattedBalance}</div>
+      {/* <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
         {formattedBalance.suffix}
-      </div>
+      </div> */}
       <div className="formatted-balance__symbol">
         {assetSymbol || horizontalBar}
       </div>
