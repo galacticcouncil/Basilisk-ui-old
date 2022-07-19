@@ -82,7 +82,9 @@
   &__heading {
     width: 100%;
     display: flex;
-    gap: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
     font-weight: 500;
     justify-content: space-between;
 
