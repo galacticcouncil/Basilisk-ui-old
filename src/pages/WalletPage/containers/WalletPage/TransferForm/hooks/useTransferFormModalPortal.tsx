@@ -5,9 +5,9 @@ import { Notification } from "../../../../WalletPage"
 import { TransferForm } from "../TransferForm"
 
 export const useModalPortalElement = (setNotification: (notification: Notification) => void, assets?: Asset[]) => {
-    return useCallback<ModalPortalElementFactory<{ assetId: string }>>(({ isModalOpen, closeModal, state }) => {
+    return useCallback<ModalPortalElementFactory<{ assetId: string, balance: string }>>(({ isModalOpen, closeModal, state }) => {
         return isModalOpen 
-            ? <TransferForm closeModal={closeModal} assetId={state?.assetId} setNotification={setNotification} assets={assets}/>
+            ? <TransferForm closeModal={closeModal} assetId={state?.assetId} balance={state?.balance} setNotification={setNotification} assets={assets}/>
             : <></>
     }, [assets, setNotification])
 }

@@ -90,9 +90,10 @@ export const WalletPage = () => {
   } = useTransferFormModalPortal(modalContainerRef, setNotification, assets);
 
   const handleOpenTransformForm = useCallback(
-    (assetId: string) => {
-      console.log('asset id', assetId);
-      openTransferFormModalPortal({ assetId });
+    (assetId: string, balance: string) => {
+      console.log('handleOpenTransformForm with asset id', assetId);
+      console.log('handleOpenTransformForm with balance', balance);
+      openTransferFormModalPortal({ assetId, balance });
     },
     [openTransferFormModalPortal]
   );

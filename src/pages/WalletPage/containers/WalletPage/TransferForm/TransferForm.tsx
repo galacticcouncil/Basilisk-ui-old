@@ -12,15 +12,20 @@ import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolv
 import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
 import { Notification } from '../../../WalletPage';
 import './TransferForm.scss';
+import BigNumber from 'bignumber.js';
+import { toPrecision12 } from '../../../../../hooks/math/useToPrecision';
+import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
 
 export const TransferForm = ({
   closeModal,
   assetId = '0',
+  balance = '0',
   setNotification,
   assets,
 }: {
   closeModal: () => void;
   assetId?: string;
+  balance?: string;
   setNotification: (notification: Notification) => void;
   assets?: Asset[];
 }) => {
@@ -170,6 +175,13 @@ export const TransferForm = ({
                     validate: {
                       asset: () => form.getValues('asset') !== undefined,
                       amount: () => form.getValues('amount') !== undefined,
+                      notEnoughBalance: () => {
+                        const amount = form.getValues('amount');
+
+                        return new BigNumber(fromPrecision12(balance)!).gte(
+                          fromPrecision12(amount!)!
+                        );
+                      },
                     },
                   })}
                 />
