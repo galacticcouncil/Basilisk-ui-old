@@ -108,13 +108,13 @@ export const buildPath = (
   // sanity check
   throwForInvalidPath(path);
 
-  // TODO: remove next block
-  // sanity check that we start with tokenIn and end with tokenOut
-  const tokenInMatches = path.swaps[0].assetIn.id === tokenIn.id;
-  const tokenOutMatches = path.swaps.at(-1)!.assetOut.id === tokenOut.id;
-  if (tokenInMatches && tokenOutMatches) return path;
+  // // TODO: remove next block
+  // // sanity check that we start with tokenIn and end with tokenOut
+  // const tokenInMatches = path.swaps[0].assetIn.id === tokenIn.id;
+  // const tokenOutMatches = path.swaps.at(-1).assetOut.id === tokenOut.id;
+  // if (tokenInMatches && tokenOutMatches) return path;
 
-  return undefined;
+  return path;
 };
 
 const asAsset = (id: string) => {
