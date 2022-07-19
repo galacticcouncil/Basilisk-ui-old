@@ -655,14 +655,28 @@ export const PoolsForm = ({
 
   const handleSwitchAssets = useCallback(
     (event: any) => {
-      // prevent form submit
-      event.preventDefault();
       onAssetIdsChange({
         assetIn: assetIds.assetOut,
         assetOut: assetIds.assetIn,
       });
+
+      // prevent form submit
+      event.preventDefault();
+      if (lastAssetInteractedWith === assetIds.assetOut) {
+        setLastAssetInteractedWith(assetIds.assetIn)
+        const assetOutAmount = getValues('assetOutAmount');
+        setValue('assetInAmount', assetOutAmount);
+      } else {
+        setLastAssetInteractedWith(assetIds.assetOut);
+        const assetInAmount = getValues('assetInAmount');
+        setValue('assetOutAmount', assetInAmount);
+      }
+
+      setTimeout(() => {
+        
+      }, 0);
     },
-    [assetIds]
+    [assetIds, setValue, getValues, lastAssetInteractedWith]
   );
 
   const { apiInstance } = usePolkadotJsContext();
@@ -1015,9 +1029,9 @@ export const PoolsForm = ({
 
           <div className="asset-switch">
             <hr className="divider asset-switch-divider"></hr>
-            <div className="asset-switch-icon" onClick={handleSwitchAssets}>
+            {/* <div className="asset-switch-icon" onClick={handleSwitchAssets}>
               <Icon name="AssetSwitch" />
-            </div>
+            </div> */}
             <div className="asset-switch-price">
               <div className="asset-switch-price__wrapper">
                 {(() => {
