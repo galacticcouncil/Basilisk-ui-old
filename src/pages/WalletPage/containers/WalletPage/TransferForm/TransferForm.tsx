@@ -12,6 +12,8 @@ import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolv
 import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
 import { Notification } from '../../../WalletPage';
 import './TransferForm.scss';
+import { checkAddress } from '@polkadot/util-crypto';
+import constants from '../../../../../constants';
 
 export const TransferForm = ({
   closeModal,
@@ -170,6 +172,18 @@ export const TransferForm = ({
                     validate: {
                       asset: () => form.getValues('asset') !== undefined,
                       amount: () => form.getValues('amount') !== undefined,
+                      address: () => {
+                        const recipientAddress = form.getValues('to');
+
+                        if (
+                          checkAddress(
+                            recipientAddress!,
+                            constants.basiliskAddressPrefix
+                          )[0]
+                        )
+                          return true;
+                        return false;
+                      },
                     },
                   })}
                 />
