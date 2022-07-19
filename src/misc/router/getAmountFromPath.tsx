@@ -2,6 +2,7 @@ import { XykPool } from '../../generated/graphql';
 import { HydraDxMath } from '../../hooks/math/useMath';
 import { calculateInGivenOutFromPool } from '../../hooks/pools/xyk/calculateInGivenOut';
 import { calculateOutGivenInFromPool } from '../../hooks/pools/xyk/calculateOutGivenIn';
+import { throwForInvalidPath } from './buildPath';
 import { Path, Swap, SwapTypes } from './types';
 
 /**
@@ -14,7 +15,7 @@ import { Path, Swap, SwapTypes } from './types';
  * 
  * Note: path contains all swap info and pool balances
  * 
- * @param path computed by the router and pool balances
+ * @param path computed by the router
  * @param swapType sell or buy
  * @param amount amountIn for sell & amountOut for buy
  * @param math HydraDX wasm library for XYK math
@@ -34,6 +35,7 @@ export function getAmounts(
   const amounts = [amount];
 
   if (swapType === SwapTypes.SwapExactIn) {
+    // TODO: refactor old-fashioned for loop
     for (let i = 0; i < swaps.length; i++) {
       amounts.push(
         getOutputAmountSwap(
@@ -47,6 +49,7 @@ export function getAmounts(
     }
   } else if (swapType === SwapTypes.SwapExactOut) {
     const n = swaps.length;
+    // TODO: refactor old-fashioned for loop
     for (let i = 0; i < swaps.length; i++) {
       amounts.unshift(
         getOutputAmountSwap(
@@ -95,9 +98,4 @@ export function getOutputAmountSwap(
     );
     return amountIn ? amountIn : '0';
   } else throw Error('Unsupported swap');
-}
-
-function throwForInvalidPath(path: Path) {
-  if (path.pools.length !== path.swaps.length)
-    throw Error('Path is invalid. Not equal amount of Swaps and Pools');
 }

@@ -1,6 +1,6 @@
 import { getAmounts } from './getAmountFromPath';
 import { SwapTypes } from './types';
-import * as xyk from 'hydra-dx-wasm/build/xyk/nodejs';
+import xyk from 'hydra-dx-wasm/build/xyk/nodejs';
 import { HydraDxMath, HydraDxMathLbp } from '../../hooks/math/useMath';
 import testData from './getAmountFromPath.json';
 

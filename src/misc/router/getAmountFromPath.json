@@ -20,6 +20,8 @@
             "id": "address-1",
             "assetInId": "0",
             "assetOutId": "1",
+            "shareTokenId": "10",
+            "totalLiquidity": "1234",
             "balances": [
               {
                 "id": "0",
@@ -37,6 +39,8 @@
             "id": "address-2",
             "assetInId": "1",
             "assetOutId": "2",
+            "shareTokenId": "10",
+            "totalLiquidity": "1234",
             "balances": [
               {
                 "id": "1",
@@ -76,6 +80,8 @@
             "id": "address-1",
             "assetInId": "0",
             "assetOutId": "1",
+            "shareTokenId": "10",
+            "totalLiquidity": "1234",
             "balances": [
               {
                 "id": "0",
@@ -93,6 +99,8 @@
             "id": "address-2",
             "assetInId": "1",
             "assetOutId": "2",
+            "shareTokenId": "10",
+            "totalLiquidity": "1234",
             "balances": [
               {
                 "id": "1",
@@ -136,6 +144,8 @@
           "id": "address-1",
           "assetInId": "0",
           "assetOutId": "1",
+          "shareTokenId": "10",
+          "totalLiquidity": "1234",
           "balances": [
             {
               "id": "0",
@@ -153,6 +163,8 @@
           "id": "address-2",
           "assetInId": "1",
           "assetOutId": "2",
+          "shareTokenId": "10",
+          "totalLiquidity": "1234",
           "balances": [
             {
               "id": "1",

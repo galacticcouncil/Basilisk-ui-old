@@ -25,7 +25,7 @@ const createPath = (tokens: Asset[], pools: Pool[]): Path => {
   });
 
   return {
-    id, // a string of all pools concated
+    id, // a string of all pools concatenated
     swaps, // all necessary swaps
     pools, // returns pool base as well
   } as Path;
@@ -105,10 +105,13 @@ export const buildPath = (
   // order swaps tokenIn and tokenOut accordingly
   //path = orderSwapsInPath(tokenIn, tokenOut, path);
 
+  // sanity check
+  throwForInvalidPath(path);
+
   // TODO: remove next block
   // sanity check that we start with tokenIn and end with tokenOut
   const tokenInMatches = path.swaps[0].assetIn.id === tokenIn.id;
-  const tokenOutMatches = path.swaps.at(-1).assetOut.id === tokenOut.id;
+  const tokenOutMatches = path.swaps.at(-1)!.assetOut.id === tokenOut.id;
   if (tokenInMatches && tokenOutMatches) return path;
 
   return undefined;
@@ -117,3 +120,8 @@ export const buildPath = (
 const asAsset = (id: string) => {
   return { id };
 };
+
+export function throwForInvalidPath(path: Path) {
+  if (path.pools.length !== path.swaps.length)
+    throw Error('Path is invalid. Not equal amount of Swaps and Pools');
+}
