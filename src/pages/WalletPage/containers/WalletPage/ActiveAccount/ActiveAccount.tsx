@@ -79,7 +79,10 @@ export const ActiveAccount = ({
                     <div className="account-item__address-entry">
                       <Identicon
                         className="account-item__identicon"
-                        value={account.id}
+                        value={encodeAddress(
+                          decodeAddress(account.id),
+                          genesisHashToChain(account.genesisHash)?.prefix
+                        )}
                         size={32}
                         theme="polkadot"
                       />
