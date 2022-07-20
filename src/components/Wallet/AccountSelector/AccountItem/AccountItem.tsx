@@ -81,7 +81,10 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
           </div>
         </div>
         <div className="account-item__address-info">
-          <div className="account-item__address-entry">
+          <div
+            className="account-item__address-entry"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Identicon
               className="account-item__identicon"
               value={account.id}
@@ -95,10 +98,16 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
             </div>
           </div>
           {genesisHashToChain(account.genesisHash).network !== 'basilisk' ? (
-            <div className="account-item__address-entry">
+            <div
+              className="account-item__address-entry"
+              onClick={(e) => e.stopPropagation()}
+            >
               <Identicon
                 className="account-item__identicon"
-                value={account.id}
+                value={encodeAddress(
+                  decodeAddress(account.id),
+                  genesisHashToChain(account.genesisHash)?.prefix
+                )}
                 size={32}
                 theme="polkadot"
               />

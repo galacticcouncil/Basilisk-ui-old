@@ -16,8 +16,39 @@
 
   z-index: 3;
 
+  .validation {
+    opacity: 0;
+    line-height: 16px;
+    padding: 0 16px;
+    height: 100%;
+    max-height: 0px;
+    overflow: hidden;
+    margin-bottom: 14px;
+    margin-top: 4px;
+
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    border-radius: 8px;
+
+    &.visible {
+      max-height: 80px;
+      padding: 16px;
+      opacity: 1;
+    }
+
+    &.error {
+      background: rgba(255, 104, 104, 0.3);
+    }
+
+    &.warning {
+      color: $orange1;
+    }
+  }
+
   .transfer-form-container {
     width: 460px;
+    &.modal-component-wrapper .modal-component-content {
+      padding: 0;
+    }
   }
 
   &__content-wrapper {

@@ -14,7 +14,7 @@ export const BalanceList = ({
 }: {
   balances?: Array<Balance>;
   feePaymentAssetId?: Maybe<string>;
-  onOpenTransferForm: (assetId: string) => void;
+  onOpenTransferForm: (assetId: string, balance: string) => void;
   onSetAsFeePaymentAsset: (assetId: string) => void;
 }) => {
   return (
@@ -54,7 +54,9 @@ export const BalanceList = ({
             )}
             <button
               className="balance-list-button"
-              onClick={() => onOpenTransferForm(balance.assetId)}
+              onClick={() =>
+                onOpenTransferForm(balance.assetId, balance.balance)
+              }
             >
               <div className="balance-list-button__label">Transfer</div>
             </button>
