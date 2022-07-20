@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { watch } from 'fs';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { AssetBalanceInput } from '../../../../../components/Balance/AssetBalanceInput/AssetBalanceInput';
 import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
@@ -30,7 +30,12 @@ export const TransferForm = ({
   assets?: Asset[];
 }) => {
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
-  const form = useForm({
+  const form = useForm<{
+    to?: string,
+    amount?: string,
+    asset?: string,
+    submit: any
+  }>({
     // mode: 'all',
     defaultValues: {
       asset: assetId,
@@ -39,6 +44,18 @@ export const TransferForm = ({
       submit: undefined,
     },
   });
+
+  const {
+    register,
+    watch,
+    getValues,
+    setValue,
+    trigger,
+    control,
+    formState,
+  } = form;
+
+  const { isValid, isDirty, errors } = formState;
 
   const [transferBalance] = useTransferBalanceMutation();
 
@@ -72,11 +89,9 @@ export const TransferForm = ({
     [closeModal, setNotification, transferBalance]
   );
 
-  console.log('form state', form.formState);
-
   useEffect(() => {
     form.trigger('submit');
-  }, [form.watch(['submit', 'amount', 'to', 'asset'])]);
+  }, [...form.watch(['amount', 'to', 'asset'])]);
 
   const [txFee, setTxFee] = useState<string>();
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
@@ -113,8 +128,30 @@ export const TransferForm = ({
     apiInstance,
     apiInstanceLoading,
     client,
-    form.watch(['amount', 'asset', 'to']),
+    ...form.watch(['amount', 'asset', 'to']),
   ]);
+
+  const [displayError, setDisplayError] = useState<string | undefined>();
+  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
+  const formError = useMemo(() => {
+    console.log('form.formState.errors?.submit?.type', form.formState.errors?.submit?.type)
+    switch (form.formState.errors?.submit?.type) {
+      case 'notEnoughBalance':
+        return 'Insufficient balance'
+      case 'amount':
+        return 'Amount must be more than zero'
+    }
+    return;
+  }, [form.formState.errors.submit]);
+
+  useEffect(() => {
+    if (formError) {
+      const timeoutId = setTimeout(() => setDisplayError(formError), 50);
+      return () => timeoutId && clearTimeout(timeoutId);
+    }
+    const timeoutId = setTimeout(() => setDisplayError(formError), 300);
+    return () => timeoutId && clearTimeout(timeoutId);
+  }, [formError]);
 
   return (
     <>
@@ -166,6 +203,11 @@ export const TransferForm = ({
                   )}
                 </div>
               </div>
+              <div
+                className={'validation error ' + (isError && isDirty ? 'visible' : '')}
+              >
+                {displayError}
+              </div>
               <div className="buttons">
                 <input
                   type="submit"
@@ -174,12 +216,12 @@ export const TransferForm = ({
                   {...form.register('submit', {
                     validate: {
                       asset: () => form.getValues('asset') !== undefined,
-                      amount: () => form.getValues('amount') !== undefined,
+                      amount: () => new BigNumber(form.getValues('amount') || 0).gte(0),
                       notEnoughBalance: () => {
                         const amount = form.getValues('amount');
 
-                        return new BigNumber(fromPrecision12(balance)!).gte(
-                          fromPrecision12(amount!)!
+                        return new BigNumber(fromPrecision12(balance) || 0).gte(
+                          fromPrecision12(amount || '0')!
                         );
                       },
                     },
