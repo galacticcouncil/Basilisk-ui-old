@@ -12,9 +12,13 @@ import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolv
 import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
 import { Notification } from '../../../WalletPage';
 import './TransferForm.scss';
+import { checkAddress } from '@polkadot/util-crypto';
+import constants from '../../../../../constants';
 import BigNumber from 'bignumber.js';
 import { toPrecision12 } from '../../../../../hooks/math/useToPrecision';
 import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
+import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
+
 
 export const TransferForm = ({
   closeModal,
@@ -138,6 +142,8 @@ export const TransferForm = ({
     switch (form.formState.errors?.submit?.type) {
       case 'notEnoughBalance':
         return 'Insufficient balance'
+      case 'address':
+        return 'Incorrect address'
       case 'amount':
         return 'Amount must be more than zero'
     }
@@ -215,8 +221,17 @@ export const TransferForm = ({
                   disabled={!form.formState.isDirty || !form.formState.isValid}
                   {...form.register('submit', {
                     validate: {
-                      asset: () => form.getValues('asset') !== undefined,
-                      amount: () => new BigNumber(form.getValues('amount') || 0).gte(0),
+                      address: () => {
+                        const recipientAddress = form.getValues('to');
+
+                        try {
+                          decodeAddress(recipientAddress);
+                          return true;
+                        } catch (e) {
+                          return false;
+                        }
+                      },
+                      amount: () => form.getValues('amount') !== undefined,
                       notEnoughBalance: () => {
                         const amount = form.getValues('amount');
 
