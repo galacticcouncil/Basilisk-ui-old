@@ -82,7 +82,9 @@
   &__heading {
     width: 100%;
     display: flex;
-    gap: 16px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
     font-weight: 500;
     justify-content: space-between;
 
@@ -90,6 +92,7 @@
       display: flex;
       gap: 8px;
       align-items: center;
+      width: 100%;
 
       &__name {
         font-size: 16px;
