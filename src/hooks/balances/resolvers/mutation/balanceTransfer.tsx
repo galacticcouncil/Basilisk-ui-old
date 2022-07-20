@@ -15,6 +15,7 @@ import { withErrorHandler } from '../../../apollo/withErrorHandler';
 import { useMemo } from 'react';
 import { readActiveAccount } from '../../../accounts/lib/readActiveAccount';
 import { add } from 'lodash';
+import { xykBuyHandler } from '../../../pools/xyk/buy';
 
 export const TRANSFER_BALANCE = loader(
   './../../graphql/TransferBalance.mutation.graphql'
@@ -88,7 +89,7 @@ const balanceTransferMutationResolverFactory =
           .signAndSend(
             address,
             { signer },
-            transferBalanceHandler(apiInstance, resolve, reject)
+            xykBuyHandler(resolve, reject, apiInstance)
           );
       } catch (e) {
         reject(e)
