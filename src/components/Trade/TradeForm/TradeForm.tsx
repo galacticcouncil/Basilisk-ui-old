@@ -90,23 +90,28 @@ export const TradeFormSettings = ({
         </div>
       </div>
       <div className="modal-component-content">
-        <div className="settings-section">Slippage</div>
+        <div className="settings-section">Trade settings</div>
         <label className="settings-field">
-          <div className="settings-field__label">Auto slippage</div>
+          <div className="settings-field__label">Auto </div>
           <input {...register('autoSlippage')} type="checkbox" />
         </label>
         <label className="settings-field">
-          <div className="settings-field__label">Allowed slippage percent</div>
+          <div className="settings-field__label">Trade limit (%)</div>
           <input
             {...register('allowedSlippage', {
+              max: 100,
+              min: 0,
               setValueAs: (value) =>
                 value && new BigNumber(value).dividedBy('100').toFixed(3),
             })}
             // disabled if using auto slippage
             disabled={getValues('autoSlippage')}
-            type="text"
+            type="number"
           />
         </label>
+        <div className="disclaimer">
+          The deviation of the final acceptable price from the spot price caused by protocol fee, price impact (depends on trade & pool size) and change in price between announcing the transaction and processing it.
+        </div>
       </div>
     </form>
   );

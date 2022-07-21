@@ -88,13 +88,13 @@ export const PoolsFormSettings = ({
         </div>
       </div>
       <div className="modal-component-content">
-        <div className="settings-section">Slippage</div>
+        <div className="settings-section">Liquidity provisioning</div>
         <label className="settings-field">
-          <div className="settings-field__label">Auto slippage</div>
+          <div className="settings-field__label">Auto</div>
           <input {...register('autoSlippage')} type="checkbox" />
         </label>
         <label className="settings-field">
-          <div className="settings-field__label">Allowed slippage percent</div>
+          <div className="settings-field__label">Provisioning limit (%)</div>
           <input
             {...register('allowedSlippage', {
               setValueAs: (value) =>
@@ -105,6 +105,9 @@ export const PoolsFormSettings = ({
             type="text"
           />
         </label>
+        <div className="disclaimer">
+          The deviation of the final acceptable price from the spot price caused by the change in price between announcing the transaction and processing it.
+        </div>
       </div>
     </form>
   );
