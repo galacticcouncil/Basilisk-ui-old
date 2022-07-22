@@ -94,6 +94,12 @@ export const idToAsset = (id: string | null) => {
       fullName: 'BSX/aUSD Share token',
       icon: Unknown,
     },
+    '8': {
+      id: '8',
+      symbol: 'LP KSM/aUSD',
+      fullName: 'KSM/aUSD Share token',
+      icon: Unknown,
+    },
   };
 
   return assetMetadata[id!] as any || id && {
@@ -114,7 +120,7 @@ export const TradeChart = ({
   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
     from: moment().subtract(1, 'days').toISOString(),
     to: moment().toISOString(),
-  }); 
+  });
   const { math } = useMath();
   const {
     data: historicalBalancesData,
