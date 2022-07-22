@@ -69,7 +69,7 @@ export const TradeInfo = ({
     <div className="trade-info">
       <div className="trade-info__data">
         <div className="data-piece">
-          <span className="data-piece__label">Current slippage </span>
+          <span className="data-piece__label">Price impact </span>
           <div className="data-piece__value">
             {!expectedSlippage || expectedSlippage?.isNaN()
               ? horizontalBar
