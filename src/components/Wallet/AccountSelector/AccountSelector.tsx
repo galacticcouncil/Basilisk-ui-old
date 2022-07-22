@@ -1,5 +1,5 @@
 import { MutableRefObject, useMemo } from 'react';
-import { Account } from '../../../generated/graphql';
+import { Account, Maybe } from '../../../generated/graphql';
 import { AccountItem } from './AccountItem/AccountItem';
 import { Button, ButtonKind } from '../../Button/Button';
 import './AccountSelector.scss';
@@ -9,7 +9,7 @@ import Icon from '../../Icon/Icon';
 export interface AccountSelectorProps {
   accounts?: Account[];
   accountsLoading: boolean;
-  account?: Account;
+  account?: Maybe<Account>;
   onAccountSelected: (account: Account) => void;
   onAccountCleared: () => void;
   innerRef: MutableRefObject<HTMLDivElement | null>;
@@ -38,15 +38,24 @@ export const AccountSelector = ({
         <div className="modal-component-heading">
           <div>
             {isExtensionAvailable ? (
-              <FormattedMessage
-                id="Wallet.SelectAccount"
-                defaultMessage="Select account"
-              />
+              <>
+                <div className="modal-component-heading__main-text">
+                  <FormattedMessage
+                    id="Wallet.SelectAccount"
+                    defaultMessage="Select account"
+                  />
+                </div>
+                <div className="modal-component-heading__main-text__secondary">
+                  Pick one of your accounts to connect to Basilisk
+                </div>
+              </>
             ) : (
-              <FormattedMessage
-                id="Wallet.InstallExtension"
-                defaultMessage="Install extension"
-              />
+              <div className="modal-component-heading__main-text">
+                <FormattedMessage
+                  id="Wallet.InstallExtension"
+                  defaultMessage="Install extension"
+                />
+              </div>
             )}
           </div>
           <div className="close-modal-btn" onClick={() => closeModal()}>
@@ -76,24 +85,29 @@ export const AccountSelector = ({
                     ))}
                   </div>
                 ) : (
-                  //TODO update href param when we know where to send user
+                    //TODO update href param when we know where to send user
                   <div className="account-selector__message">
-                    <h5>
-                      <FormattedMessage
-                        id="Wallet.NoAccountsAvailable"
-                        defaultMessage="No accounts available"
+                    <FormattedMessage
+                      id="Wallet.NoAccountsAvailable"
+                      defaultMessage="No accounts available "
                       />
-                    </h5>
-                    <div className="account-selector__create-account-link">
-                      <FormattedMessage
-                        id="Wallet.SelectAccountHelp"
-                        defaultMessage="Need help creating an account?"
-                      />
-                      <br />
-                      <a href="/#" title="" target="_blank">
-                        <FormattedMessage id="Wallet.ClickHere" />
-                      </a>
-                    </div>
+                    <FormattedMessage
+                      id="Wallet.SelectAccountHelp"
+                      values={{
+                        link: (
+                          <a
+                            href="/#"
+                            title=""
+                            className="account-selector__create-account-link"
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <FormattedMessage id="Wallet.ClickHere" />
+                          </a>
+                        ),
+                      }}
+                      defaultMessage="Need help creating an account? {link}"
+                    />
                   </div>
                 )}
                 {account && (

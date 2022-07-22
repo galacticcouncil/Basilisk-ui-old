@@ -1,0 +1,11 @@
+mutation RemoveLiquidity(
+    $assetA: String!,
+    $assetB: String!,
+    $amount: String!
+) {
+    removeLiquidity(
+        assetA: $assetA,
+        assetB: $assetB,
+        amount: $amount
+    ) @client
+}

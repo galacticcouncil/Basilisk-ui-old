@@ -1,0 +1,41 @@
+@import '../../../../../misc/colors.module.scss';
+@import '../../../../../misc/misc.module.scss';
+@import '../ActiveAccount/ActiveAccount.scss';
+
+.balance-list {
+  @extend .active-account;
+
+  &__title {
+    @extend .active-account__title;
+  }
+
+  &-wrapper {
+    @extend .active-account-wrapper;
+
+    .item {
+      width: 30%;
+      display: flex;
+      flex-direction: row;
+      justify-content: left;
+      align-items: center;
+      gap: 10px;
+
+      &:last-child {
+        width: 40%;
+        justify-content: right;
+      }
+    }
+  }
+
+  &-button {
+    @extend .active-account-button;
+    &__label {
+      @extend .active-account-button__label;
+    }
+  }
+
+  &-actions {
+    @extend .active-account-actions;
+    justify-content: right;
+  }
+}

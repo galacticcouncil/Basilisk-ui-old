@@ -66,59 +66,70 @@ export const AccountItem = ({ account, onClick, active }: AccountItemProps) => {
         onClick(account);
       }}
     >
-      <div className="account-item__heading">
-        <div className="account-item__heading__left">
-          <div className="account-item__heading__left__name">
-            {account.name}
-          </div>
-          <div className="account-item__heading__left__source">
-            {sourceToHuman(account.source)}
-          </div>
-        </div>
-        <div className="account-item__heading__balance">
-          {<FormattedBalance balance={getBsxBalance(account)} />}
-        </div>
-      </div>
-      <div className="account-item__address-info">
-        <div className="account-item__address-entry">
-          <Identicon
-            className="account-item__identicon"
-            value={account.id}
-            size={40}
-          />
-          <div className="account-item__chain-info">
-            <div className="account-item__chain-name">Basilisk</div>
-            <div className="account-item__chain-address">
-              {trimAddress(account.id, 24)}
+      <div className="account-item__wrapper">
+        <div className="account-item__heading">
+          <div className="account-item__heading__left">
+            <div className="account-item__heading__left__name">
+              {account.name}
+            </div>
+            <div className="account-item__heading__left__source">
+              {sourceToHuman(account.source)}
             </div>
           </div>
+          <div className="account-item__heading__balance">
+            {<FormattedBalance balance={getBsxBalance(account)} />}
+          </div>
         </div>
-        {genesisHashToChain(account.genesisHash).network !== 'basilisk' ? (
-          <div className="account-item__address-entry">
+        <div className="account-item__address-info">
+          <div
+            className="account-item__address-entry"
+            onClick={(e) => e.stopPropagation()}
+          >
             <Identicon
               className="account-item__identicon"
               value={account.id}
               size={32}
-              theme="polkadot"
             />
             <div className="account-item__chain-info">
-              <div className="account-item__chain-name">
-                {genesisHashToChain(account.genesisHash).displayName}
-              </div>
+              <div className="account-item__chain-name">Basilisk</div>
               <div className="account-item__chain-address">
-                {trimAddress(
-                  encodeAddress(
-                    decodeAddress(account.id),
-                    genesisHashToChain(account.genesisHash)?.prefix
-                  ),
-                  24
-                )}
+                {trimAddress(account.id, 24)}
               </div>
             </div>
           </div>
-        ) : (
-          <></>
-        )}
+          {genesisHashToChain(account.genesisHash).network !== 'basilisk' ? (
+            <div
+              className="account-item__address-entry"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Identicon
+                className="account-item__identicon"
+                value={encodeAddress(
+                  decodeAddress(account.id),
+                  genesisHashToChain(account.genesisHash)?.prefix
+                )}
+                size={32}
+                theme="polkadot"
+              />
+              <div className="account-item__chain-info">
+                <div className="account-item__chain-name">
+                  {genesisHashToChain(account.genesisHash).displayName}
+                </div>
+                <div className="account-item__chain-address">
+                  {trimAddress(
+                    encodeAddress(
+                      decodeAddress(account.id),
+                      genesisHashToChain(account.genesisHash)?.prefix
+                    ),
+                    24
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
       </div>
     </div>
   );

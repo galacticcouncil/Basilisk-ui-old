@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
+import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider';
 import { Balance, Fee } from '../../../../generated/graphql';
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
 import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader';
@@ -16,7 +17,7 @@ export interface TradeInfoProps {
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
   errors?: FieldErrors<TradeFormFields>;
-  paymentInfo?: string,
+  paymentInfo?: string;
 }
 
 export const TradeInfo = ({
@@ -25,7 +26,7 @@ export const TradeInfo = ({
   tradeLimit,
   isDirty,
   tradeFee = constants.xykFee,
-  paymentInfo
+  paymentInfo,
 }: TradeInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
@@ -44,7 +45,11 @@ export const TradeInfo = ({
       case 'notEnoughBalanceIn':
         return 'Insufficient balance';
       case 'notEnoughFeeBalance':
-        return 'Insufficient fee balance'
+        return 'Insufficient fee balance';
+      case 'poolDoesNotExist':
+        return 'Please select valid pool';
+      case 'activeAccount':
+        return 'Please connect a wallet to continue';
     }
     return;
   }, [errors?.submit]);
@@ -58,16 +63,17 @@ export const TradeInfo = ({
     return () => timeoutId && clearTimeout(timeoutId);
   }, [formError]);
 
+  const { feePaymentAsset } = useMultiFeePaymentConversionContext();
+
   return (
     <div className="trade-info">
       <div className="trade-info__data">
         <div className="data-piece">
-          <span className="data-piece__label">Current slippage </span>
+          <span className="data-piece__label">Price impact </span>
           <div className="data-piece__value">
             {!expectedSlippage || expectedSlippage?.isNaN()
               ? horizontalBar
-              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`
-            }
+              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`}
           </div>
         </div>
         <div className="data-piece">
@@ -92,7 +98,7 @@ export const TradeInfo = ({
               <FormattedBalance
                 balance={{
                   balance: paymentInfo,
-                  assetId: '0',
+                  assetId: feePaymentAsset || '0',
                 }}
               />
             ) : (

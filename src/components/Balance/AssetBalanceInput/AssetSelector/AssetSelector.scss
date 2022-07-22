@@ -18,8 +18,6 @@
     height: 100%;
 
     &__asset-item {
-      height: 50px;
-
       border: 1px solid transparent;
       border-radius: $border-radius;
 
@@ -39,7 +37,7 @@
       }
 
       cursor: pointer;
-      padding: 0.5em 0;
+      padding: 16px;
 
       &:hover {
         color: $green1;

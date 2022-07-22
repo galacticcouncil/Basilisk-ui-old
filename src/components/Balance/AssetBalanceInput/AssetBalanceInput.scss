@@ -6,20 +6,21 @@
   position: relative;
   align-items: center;
 
-  height: 60px;
+  width: 100%;
 
-  background-color: $d-gray2;
   border-radius: $border-radius;
 
   .balance-input {
     height: 20px;
     border-radius: 0;
+
+    input {
+      background: transparent;
+    }
   }
 
   &__asset-info {
     height: 100%;
-
-    padding: 16px 12px;
 
     display: flex;
     align-items: center;
@@ -76,13 +77,16 @@
         }
       }
     }
-
-    box-shadow: 1px 0 $d-gray4;
   }
+
+  box-shadow: 1px 0 $d-gray4;
 
   &__input-wrapper {
     flex-grow: 1;
     padding: 16px 12px;
+    background-color: rgba(218, 255, 238, 0.06);
+    border-radius: $border-radius;
+    box-shadow: 0 0 0 1px rgba(255, 255, 238, 0.3);
 
     &__unit-selector {
       display: flex;

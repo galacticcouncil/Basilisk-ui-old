@@ -1,9 +1,11 @@
+import { useAddLiquidityMutationResolver } from './useAddLiquidityMutationResolver';
+import { useRemoveLiquidityMutationResolver } from './useRemoveLiquidityMutationResolver';
 import { useSubmitTradeMutationResolver } from './useSubmitTradeMutationResolvers'
 
 export const usePoolsMutationResolvers = () => {
-    const submitTrade = useSubmitTradeMutationResolver();
-    
     return {
-        submitTrade
+        submitTrade: useSubmitTradeMutationResolver(),
+        removeLiquidity: useRemoveLiquidityMutationResolver(),
+        addLiquidity: useAddLiquidityMutationResolver()
     }
 }

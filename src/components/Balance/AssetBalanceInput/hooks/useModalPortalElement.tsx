@@ -16,7 +16,7 @@ export type ModalPortalElement = ({
   AssetBalanceInputProps,
   'assets' | 'defaultAsset' | 'assetInputName'
 >) => ModalPortalElementFactory;
-export type CloseModal = ModalPortalElementFactoryArgs['closeModal'];
+export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal'];
 
 export const useModalPortalElement: ModalPortalElement = ({
   assets,

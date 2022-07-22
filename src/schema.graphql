@@ -1,20 +1,18 @@
 #import './hooks/accounts/graphql/Accounts.graphql'
 #import './hooks/lastBlock/graphql/LastBlock.graphql'
 #import './hooks/config/graphql/Config.graphql'
-#import './hooks/vesting/graphql/VestingSchedule.graphql'
+#import './hooks/vesting/graphql/Vesting.graphql'
 #import './hooks/extension/graphql/Extension.graphql'
 #import './hooks/feePaymentAssets/graphql/FeePaymentAssets.graphql'
 #import './hooks/pools/graphql/Pool.graphql'
 #import './hooks/assets/graphql/Asset.graphql'
 #import './hooks/balances/graphql/LockedBalance.graphql'
 
-# directive @client on FIELD
-
-# type Query {
-#   # just a placeholder to make the codegen not complain about
-#   # root query not being defined
-#   _empty: String
-# }
+type Query {
+  # just a placeholder to make the codegen not complain about
+  # root query not being defined
+  _empty: String
+}
 
 type Mutation {
   # just a placeholder to make the codegen not complain about

@@ -1,7 +1,8 @@
 import { NetworkStatus, useApolloClient } from '@apollo/client';
 import classNames from 'classnames';
-import { find, uniq } from 'lodash';
+import { find, uniq, last } from 'lodash';
 import moment from 'moment';
+import { usePageVisibility } from 'react-page-visibility';
 import {
   Dispatch,
   SetStateAction,
@@ -37,10 +38,13 @@ import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
-import DAI from '../../misc/icons/assets/DAI.svg';
+import AUSD from '../../misc/icons/assets/AUSD.png';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
+// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
+import Icon from '../../components/Icon/Icon';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -66,27 +70,38 @@ export const idToAsset = (id: string | null) => {
       fullName: 'Basilisk',
       icon: BSX,
     },
-    '1': {
-      id: '1',
+    '5': {
+      id: '5',
       symbol: 'KSM',
       fullName: 'Kusama',
       icon: KSM,
     },
-    '2': {
-      id: '2',
+    '4': {
+      id: '4',
       symbol: 'aUSD',
       fullName: 'Acala USD',
+      icon: AUSD,
+    },
+    '6': {
+      id: '6',
+      symbol: 'LP BSX/KSM',
+      fullName: 'BSX/KSM Share token',
       icon: Unknown,
     },
-    '3': {
-      id: '3',
-      symbol: 'DAI',
-      fullName: 'DAI Stablecoin',
-      icon: DAI,
+    '7': {
+      id: '7',
+      symbol: 'LP BSX/aUSD',
+      fullName: 'BSX/aUSD Share token',
+      icon: Unknown,
     },
   };
 
-  return assetMetadata[id!] as any;
+  return assetMetadata[id!] as any || id && {
+    id,
+    symbol: horizontalBar,
+    fullName: `Unknown asset ${id}`,
+    icon: Unknown
+  };
 };
 
 export const TradeChart = ({
@@ -95,14 +110,18 @@ export const TradeChart = ({
   spotPrice,
   isPoolLoading,
 }: TradeChartProps) => {
+  const isVisible = usePageVisibility();
+  const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
+    from: moment().subtract(1, 'days').toISOString(),
+    to: moment().toISOString(),
+  }); 
   const { math } = useMath();
   const {
     data: historicalBalancesData,
     networkStatus: historicalBalancesNetworkStatus,
   } = useGetHistoricalBalancesQuery(
     {
-      from: useMemo(() => moment().subtract(1, 'days').toISOString(), []),
-      to: useMemo(() => moment().toISOString(), []),
+      ...historicalBalancesRange,
       quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
       poolId: pool?.id || '',
@@ -121,6 +140,7 @@ export const TradeChart = ({
 
   const [dataset, setDataset] = useState<Array<any>>();
   const [datasetLoading, setDatasetLoading] = useState(true);
+  const [datasetRefreshing, setDatasetRefreshing] = useState(false);
 
   const assetOutLiquidity = useMemo(() => {
     const assetId = assetIds.assetOut || undefined;
@@ -196,6 +216,7 @@ export const TradeChart = ({
     });
 
     setDataset(dataset);
+    setDatasetRefreshing(false);
     setDatasetLoading(false);
   }, [
     historicalBalancesData?.historicalBalances,
@@ -203,6 +224,43 @@ export const TradeChart = ({
     math,
     spotPrice,
     assetIds,
+  ]);
+
+  useEffect(() => {
+    const lastRecordOutdatedBy = 60000;
+
+    if (
+      !isVisible ||
+      historicalBalancesLoading ||
+      datasetRefreshing
+    )
+      return;
+
+    const refetchHistoricalBalancesData = () => {
+      if (
+        isVisible && !historicalBalancesLoading && !datasetRefreshing &&
+        (!dataset?.length || last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
+      ) {
+        setDatasetRefreshing(true);
+        setHistoricalBalancesRange({
+          from: moment().subtract(1, 'days').toISOString(),
+          to: moment().toISOString(),
+        });
+      }
+    };
+
+    refetchHistoricalBalancesData();
+
+    const refetchData = setInterval(() => {
+      refetchHistoricalBalancesData();
+    }, lastRecordOutdatedBy)
+
+    return () => clearInterval(refetchData)
+  }, [
+    dataset,
+    isVisible,
+    historicalBalancesLoading,
+    datasetRefreshing,
   ]);
 
   // useEffect(() => {
@@ -220,12 +278,16 @@ export const TradeChart = ({
   //   })
   // }, [pool, spotPrice,])
 
-  const _isPoolLoading = useMemo(
-    () => isPoolLoading || historicalBalancesLoading || datasetLoading,
-    [datasetLoading, isPoolLoading, historicalBalancesLoading]
-  );
+  const _isPoolLoading = useMemo(() => {
+    if (!isPoolLoading || datasetRefreshing) return false;
 
-  console.log('graph loading status _isPoolLoading', _isPoolLoading);
+    return isPoolLoading || historicalBalancesLoading || datasetLoading;
+  }, [
+    datasetRefreshing,
+    datasetLoading,
+    isPoolLoading,
+    historicalBalancesLoading,
+  ]);
 
   return (
     <TradeChartComponent
@@ -303,23 +365,21 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>();
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError },
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-    onError: () => {
-      setNotification('failed');
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+      onError: () => {
+        setNotification('failed');
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby');
+        }, 4000);
+      },
+    });
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending');
@@ -393,11 +453,20 @@ export const TradePage = () => {
 
   return (
     <div className="trade-page-wrapper">
+      {/* {confirmationScreen} */}
       <div className={'notifications-bar transaction-' + notification}>
-        <div className="notification">transaction {notification}</div>
+        <div className="notification">Transaction {notification}</div>
+        <div className="notification-cancel-wrapper">
+          <button
+            className="notification-cancel-button"
+            onClick={() => setNotification('standby')}
+          >
+            <Icon name="Cancel" />
+          </button>
+        </div>
       </div>
       <div className="trade-page">
-        <TradeChart
+        {/* <TradeChart
           pool={pool}
           assetIds={assetIds}
           spotPrice={spotPrice}
@@ -406,7 +475,7 @@ export const TradePage = () => {
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
-        />
+        /> */}
         <TradeForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}

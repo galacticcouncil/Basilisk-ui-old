@@ -40,9 +40,11 @@ type XYKPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
+  totalLiquidity: String!,
+  shareTokenId: String!
 }
 
-union Pool = LBPPool | XYKPool
+union Pool = XYKPool | LBPPool
 
 extend type Query {
   pools: [Pool!]!

@@ -54,7 +54,7 @@ export const balanceMutationResolverFactory =
   (apiInstance?: ApiPromise) =>
   async (_obj: any, args: TransferBalanceMutationVariables) => {
     if (!apiInstance) throw Error(errors.apiInstanceNotInitialized);
-    if (!args.from || !args.to || !args.currencyId || !args.amount)
+    if (!args.to || !args.currencyId || !args.amount)
       throw new Error(errors.invalidTransferVariables);
 
     return withGracefulErrors(
