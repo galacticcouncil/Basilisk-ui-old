@@ -1,1 +1,0 @@
-import{settings}from"./bundle.js";export*from"./bundle.js";export default settings;
