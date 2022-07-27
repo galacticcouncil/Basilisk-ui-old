@@ -38,7 +38,7 @@ export const applyAllowedSlippage = (
 export const applyTradeFee = (
   amount: string,
   // TODO: get this from constants
-  tradeFee: string = '0.002', // 0.2% default
+  tradeFee: string = '0.003', // 0.3% default
   tradeType: TradeType
 ) => {
   let fee = new BigNumber(amount).multipliedBy(new BigNumber(tradeFee));

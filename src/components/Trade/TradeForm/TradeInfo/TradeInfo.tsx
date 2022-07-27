@@ -112,7 +112,7 @@ export const TradeInfo = ({
             {new BigNumber(tradeFee.numerator)
               .dividedBy(tradeFee.denominator)
               .multipliedBy(100)
-              .toFixed(2)}
+              .toFixed(1)}
             %
           </div>
         </div>

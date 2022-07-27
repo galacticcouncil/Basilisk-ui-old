@@ -38,7 +38,7 @@ import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
-import DAI from '../../misc/icons/assets/DAI.svg';
+import AUSD from '../../misc/icons/assets/AUSD.png';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -71,34 +71,34 @@ export const idToAsset = (id: string | null) => {
         fullName: 'Basilisk',
         icon: BSX,
       },
-      '1': {
-        id: '1',
+      '5': {
+        id: '5',
         symbol: 'KSM',
         fullName: 'Kusama',
         icon: KSM,
       },
-      '2': {
-        id: '2',
-        symbol: 'aUSD',
-        fullName: 'Acala USD',
-        icon: Unknown,
-      },
-      '3': {
-        id: '3',
-        symbol: 'LP BSX/AUSD',
-        fullName: 'BSX/AUSD Share token',
-        icon: Unknown,
-      },
       '4': {
         id: '4',
+        symbol: 'aUSD',
+        fullName: 'Acala USD',
+        icon: AUSD,
+      },
+      '6': {
+        id: '6',
         symbol: 'LP BSX/KSM',
         fullName: 'BSX/KSM Share token',
         icon: Unknown,
       },
-      '5': {
-        id: '5',
-        symbol: 'LP KSM/AUSD',
-        fullName: 'KSM/AUSD Share token',
+      '7': {
+        id: '7',
+        symbol: 'LP BSX/aUSD',
+        fullName: 'BSX/aUSD Share token',
+        icon: Unknown,
+      },
+      '8': {
+        id: '8',
+        symbol: 'LP KSM/aUSD',
+        fullName: 'KSM/aUSD Share token',
         icon: Unknown,
       },
     },
@@ -162,7 +162,7 @@ export const TradeChart = ({
   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
     from: moment().subtract(1, 'days').toISOString(),
     to: moment().toISOString(),
-  }); 
+  });
   const { math } = useMath();
   const {
     data: historicalBalancesData,
