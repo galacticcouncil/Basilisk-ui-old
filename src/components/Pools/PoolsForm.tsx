@@ -1251,7 +1251,8 @@ export const PoolsForm = ({
                 // },
               },
             })}
-            disabled={!isValid || tradeLoading || !isDirty}
+            // disabled={!isValid || tradeLoading || !isDirty}
+            disabled={true}
             value={getSubmitText()}
           />
         </form>
