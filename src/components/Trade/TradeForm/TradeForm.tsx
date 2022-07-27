@@ -485,7 +485,7 @@ export const TradeForm = ({
     [assetIds, tradeType, setValue, getValues, setTradeType]
   );
 
-  const { apiInstance } = usePolkadotJsContext();
+  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
   const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
@@ -753,6 +753,10 @@ export const TradeForm = ({
     setMaxAmountInLoading(false);
   }, [calculateMaxAmountIn]);
 
+  const xykDisabled = useMemo(() => {
+    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') <= 69
+  }, [apiInstance, apiInstanceLoading]);
+
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
@@ -1000,8 +1004,7 @@ export const TradeForm = ({
                 },
               },
             })}
-            // disabled={!isValid || tradeLoading || !isDirty}
-            disabled={true}
+            disabled={xykDisabled || !isValid || tradeLoading || !isDirty}
             value={getSubmitText()}
           />
         </form>
