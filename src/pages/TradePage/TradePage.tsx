@@ -142,6 +142,7 @@ export const idToAsset = (id: string | null) => {
     }
   };
 
+  assetMetadata['development'] = assetMetadata['rococo'];
 
   return assetMetadata[process.env.REACT_APP_ENV || 'production'][id!] as any || id && {
     id,

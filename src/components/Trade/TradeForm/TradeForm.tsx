@@ -1000,7 +1000,8 @@ export const TradeForm = ({
                 },
               },
             })}
-            disabled={!isValid || tradeLoading || !isDirty}
+            // disabled={!isValid || tradeLoading || !isDirty}
+            disabled={true}
             value={getSubmitText()}
           />
         </form>
