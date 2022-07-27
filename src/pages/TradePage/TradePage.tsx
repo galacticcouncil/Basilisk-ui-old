@@ -61,8 +61,6 @@ export interface TradeChartProps {
   };
 }
 
-console.log('env', process.env.REACT_APP_ENV)
-
 // TODO EXTRACT
 export const idToAsset = (id: string | null) => {
   const assetMetadata: any = {
