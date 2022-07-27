@@ -61,48 +61,91 @@ export interface TradeChartProps {
   };
 }
 
+console.log('env', process.env.REACT_APP_ENV)
+
 // TODO EXTRACT
 export const idToAsset = (id: string | null) => {
-  const assetMetadata: Record<string, any> = {
-    '0': {
-      id: '0',
-      symbol: 'BSX',
-      fullName: 'Basilisk',
-      icon: BSX,
+  const assetMetadata: any = {
+    rococo: {
+      '0': {
+        id: '0',
+        symbol: 'BSX',
+        fullName: 'Basilisk',
+        icon: BSX,
+      },
+      '1': {
+        id: '1',
+        symbol: 'KSM',
+        fullName: 'Kusama',
+        icon: KSM,
+      },
+      '2': {
+        id: '2',
+        symbol: 'aUSD',
+        fullName: 'Acala USD',
+        icon: Unknown,
+      },
+      '3': {
+        id: '3',
+        symbol: 'LP BSX/AUSD',
+        fullName: 'BSX/AUSD Share token',
+        icon: Unknown,
+      },
+      '4': {
+        id: '4',
+        symbol: 'LP BSX/KSM',
+        fullName: 'BSX/KSM Share token',
+        icon: Unknown,
+      },
+      '5': {
+        id: '5',
+        symbol: 'LP KSM/AUSD',
+        fullName: 'KSM/AUSD Share token',
+        icon: Unknown,
+      },
     },
-    '1': {
-      id: '1',
-      symbol: 'KSM',
-      fullName: 'Kusama',
-      icon: KSM,
-    },
-    '2': {
-      id: '2',
-      symbol: 'aUSD',
-      fullName: 'Acala USD',
-      icon: Unknown,
-    },
-    '3': {
-      id: '3',
-      symbol: 'LP BSX/AUSD',
-      fullName: 'BSX/AUSD Share token',
-      icon: Unknown,
-    },
-    '4': {
-      id: '4',
-      symbol: 'LP BSX/KSM',
-      fullName: 'BSX/KSM Share token',
-      icon: Unknown,
-    },
-    '5': {
-      id: '5',
-      symbol: 'LP KSM/AUSD',
-      fullName: 'KSM/AUSD Share token',
-      icon: Unknown,
-    },
+    production: {
+      '0': {
+        id: '0',
+        symbol: 'BSX',
+        fullName: 'Basilisk',
+        icon: BSX,
+      },
+      '1': {
+        id: '1',
+        symbol: 'KSM',
+        fullName: 'Kusama',
+        icon: KSM,
+      },
+      '2': {
+        id: '2',
+        symbol: 'aUSD',
+        fullName: 'Acala USD',
+        icon: Unknown,
+      },
+      '3': {
+        id: '3',
+        symbol: 'LP BSX/AUSD',
+        fullName: 'BSX/AUSD Share token',
+        icon: Unknown,
+      },
+      '4': {
+        id: '4',
+        symbol: 'LP BSX/KSM',
+        fullName: 'BSX/KSM Share token',
+        icon: Unknown,
+      },
+      '5': {
+        id: '5',
+        symbol: 'LP KSM/AUSD',
+        fullName: 'KSM/AUSD Share token',
+        icon: Unknown,
+      },
+    }
   };
 
-  return assetMetadata[id!] as any || id && {
+
+  return assetMetadata[process.env.REACT_APP_ENV || 'production'][id!] as any || id && {
     id,
     symbol: horizontalBar,
     fullName: `Unknown asset ${id}`,
