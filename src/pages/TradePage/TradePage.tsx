@@ -119,12 +119,12 @@ export const idToAsset = (id: string | null) => {
         id: '2',
         symbol: 'aUSD',
         fullName: 'Acala USD',
-        icon: Unknown,
+        icon: AUSD,
       },
       '3': {
         id: '3',
-        symbol: 'LP BSX/AUSD',
-        fullName: 'BSX/AUSD Share token',
+        symbol: 'LP BSX/aUSD',
+        fullName: 'BSX/aUSD Share token',
         icon: Unknown,
       },
       '4': {
@@ -135,8 +135,8 @@ export const idToAsset = (id: string | null) => {
       },
       '5': {
         id: '5',
-        symbol: 'LP KSM/AUSD',
-        fullName: 'KSM/AUSD Share token',
+        symbol: 'LP KSM/aUSD',
+        fullName: 'KSM/aUSD Share token',
         icon: Unknown,
       },
     }
