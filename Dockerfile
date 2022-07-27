@@ -5,7 +5,7 @@ COPY . .
 ARG GITHUB_SHA
 ENV PUBLIC_URL /
 ENV REACT_APP_NODE_URL "wss://rpc-01.basilisk-rococo.hydradx.io"
-RUN yarn && yarn run build
+RUN yarn && yarn run build:rococo
 
 FROM node:lts-slim
 
