@@ -84,9 +84,21 @@ export const idToAsset = (id: string | null) => {
     },
     '3': {
       id: '3',
+      symbol: 'LP BSX/AUSD',
+      fullName: 'BSX/AUSD Share token',
+      icon: Unknown,
+    },
+    '4': {
+      id: '4',
       symbol: 'LP BSX/KSM',
       fullName: 'BSX/KSM Share token',
-      icon: DAI,
+      icon: Unknown,
+    },
+    '5': {
+      id: '5',
+      symbol: 'LP KSM/AUSD',
+      fullName: 'KSM/AUSD Share token',
+      icon: Unknown,
     },
   };
 
