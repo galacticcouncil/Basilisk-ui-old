@@ -942,7 +942,7 @@ export const PoolsForm = ({
   }, [calculateMaxAmountIn]);
 
   const xykDisabled = useMemo(() => {
-    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') <= 69
+    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
   }, [apiInstance, apiInstanceLoading]);
 
   return (
