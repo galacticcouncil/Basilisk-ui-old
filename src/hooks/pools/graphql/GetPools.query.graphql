@@ -3,9 +3,9 @@ query GetPools {
         id
         assetInId
         assetOutId,
-        # balances {
-        #     assetId,
-        #     balance
-        # }
+        balances {
+            assetId,
+            balance
+        }
     }
 }

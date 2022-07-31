@@ -11,6 +11,7 @@ import { useGetConfigQuery } from '../hooks/config/useGetConfigQuery';
 import { useLoading } from '../hooks/misc/useLoading';
 import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
 import BigNumber from 'bignumber.js';
+import { GetPoolsQueryProvider } from '../hooks/pools/queries/useGetPoolsQuery';
 
 export const ConfiguredApolloProvider = ({
   children,
@@ -96,12 +97,13 @@ export const useMultiFeePaymentConversion = () => {
 
 export const [MultiFeePaymentConversionProvider, useMultiFeePaymentConversionContext] = constate(useMultiFeePaymentConversion);
 
-
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => (
   <GetExtensionQueryProvider>
     <GetActiveAccountQueryProvider>
       <MultiFeePaymentConversionProvider>
-        <>{children}</>
+        <GetPoolsQueryProvider>
+          <>{children}</>
+        </GetPoolsQueryProvider>
       </MultiFeePaymentConversionProvider>
     </GetActiveAccountQueryProvider>
   </GetExtensionQueryProvider>
