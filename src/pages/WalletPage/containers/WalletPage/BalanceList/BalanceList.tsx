@@ -4,7 +4,7 @@ import { idToAsset } from '../../../../TradePage/TradePage';
 import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader';
 import './BalanceList.scss';
 
-export const availableFeePaymentAssetIds = ['0', '1'];
+export const availableFeePaymentAssetIds = ['0', '4', '5'];
 
 export const BalanceList = ({
   balances,
@@ -14,7 +14,7 @@ export const BalanceList = ({
 }: {
   balances?: Array<Balance>;
   feePaymentAssetId?: Maybe<string>;
-  onOpenTransferForm: (assetId: string) => void;
+  onOpenTransferForm: (assetId: string, balance: string) => void;
   onSetAsFeePaymentAsset: (assetId: string) => void;
 }) => {
   return (
@@ -54,7 +54,9 @@ export const BalanceList = ({
             )}
             <button
               className="balance-list-button"
-              onClick={() => onOpenTransferForm(balance.assetId)}
+              onClick={() =>
+                onOpenTransferForm(balance.assetId, balance.balance)
+              }
             >
               <div className="balance-list-button__label">Transfer</div>
             </button>

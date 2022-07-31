@@ -25,7 +25,7 @@ export const ActiveAccount = ({
   loading: boolean;
   feePaymentAssetId?: Maybe<string>;
   onOpenAccountSelector: () => void;
-  onOpenTransferForm: (assetId: string) => void;
+  onOpenTransferForm: (assetId: string, balance: string) => void;
   onSetAsFeePaymentAsset: (assetId: string) => void;
   setNotification: (notification: Notification) => void;
 }) => {
@@ -44,12 +44,9 @@ export const ActiveAccount = ({
           <div className="active-account">
             <h2 className="active-account__title">Active account</h2>
             <div className="active-account-wrapper">
-              <div className="account-item__heading item">
-                Name
-              </div>
+              <div className="account-item__heading item">Name</div>
               <div className="item">Address</div>
-              <div className="active-account-actions item">
-              </div>
+              <div className="active-account-actions item"></div>
             </div>
             <div className="active-account-wrapper">
               <div className="account-item__heading item">
@@ -82,7 +79,10 @@ export const ActiveAccount = ({
                     <div className="account-item__address-entry">
                       <Identicon
                         className="account-item__identicon"
-                        value={account.id}
+                        value={encodeAddress(
+                          decodeAddress(account.id),
+                          genesisHashToChain(account.genesisHash)?.prefix
+                        )}
                         size={32}
                         theme="polkadot"
                       />

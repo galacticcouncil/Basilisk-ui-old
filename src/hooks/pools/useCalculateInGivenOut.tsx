@@ -28,7 +28,7 @@ export const useCalculateInGivenOut = (
         inGivenOut,
         inGivenOutWithFee: applyTradeFee(
             inGivenOut,
-            '0.002',
+            '0.003',
             tradeType
         )
     }

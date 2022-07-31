@@ -11237,10 +11237,6 @@ husky@^7.0.4:
   version "3.0.0"
   resolved "https://github.com/galacticcouncil/HydraDX-wasm#0e3d625c22c32525a4619047223cac019c0cfa46"
 
-"hydra-dx-wasm@https://github.com/galacticcouncil/HydraDX-wasm#3cf219bcd74bff72d0810ab6e596e3d2c91a9646":
-  version "3.0.0"
-  resolved "https://github.com/galacticcouncil/HydraDX-wasm#3cf219bcd74bff72d0810ab6e596e3d2c91a9646"
-
 hyphenate-style-name@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"

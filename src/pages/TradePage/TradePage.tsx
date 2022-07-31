@@ -38,7 +38,7 @@ import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
-import DAI from '../../misc/icons/assets/DAI.svg';
+import AUSD from '../../misc/icons/assets/AUSD.png';
 import Unknown from '../../misc/icons/assets/Unknown.svg';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -63,34 +63,88 @@ export interface TradeChartProps {
 
 // TODO EXTRACT
 export const idToAsset = (id: string | null) => {
-  const assetMetadata: Record<string, any> = {
-    '0': {
-      id: '0',
-      symbol: 'BSX',
-      fullName: 'Basilisk',
-      icon: BSX,
+  const assetMetadata: any = {
+    rococo: {
+      '0': {
+        id: '0',
+        symbol: 'BSX',
+        fullName: 'Basilisk',
+        icon: BSX,
+      },
+      '5': {
+        id: '5',
+        symbol: 'KSM',
+        fullName: 'Kusama',
+        icon: KSM,
+      },
+      '4': {
+        id: '4',
+        symbol: 'aUSD',
+        fullName: 'Acala USD',
+        icon: AUSD,
+      },
+      '6': {
+        id: '6',
+        symbol: 'LP BSX/KSM',
+        fullName: 'BSX/KSM Share token',
+        icon: Unknown,
+      },
+      '7': {
+        id: '7',
+        symbol: 'LP BSX/aUSD',
+        fullName: 'BSX/aUSD Share token',
+        icon: Unknown,
+      },
+      '8': {
+        id: '8',
+        symbol: 'LP KSM/aUSD',
+        fullName: 'KSM/aUSD Share token',
+        icon: Unknown,
+      },
     },
-    '1': {
-      id: '1',
-      symbol: 'KSM',
-      fullName: 'Kusama',
-      icon: KSM,
-    },
-    '2': {
-      id: '2',
-      symbol: 'aUSD',
-      fullName: 'Acala USD',
-      icon: Unknown,
-    },
-    '3': {
-      id: '3',
-      symbol: 'LP BSX/KSM',
-      fullName: 'BSX/KSM Share token',
-      icon: DAI,
-    },
+    production: {
+      '0': {
+        id: '0',
+        symbol: 'BSX',
+        fullName: 'Basilisk',
+        icon: BSX,
+      },
+      '1': {
+        id: '1',
+        symbol: 'KSM',
+        fullName: 'Kusama',
+        icon: KSM,
+      },
+      '2': {
+        id: '2',
+        symbol: 'aUSD',
+        fullName: 'Acala USD',
+        icon: AUSD,
+      },
+      '3': {
+        id: '3',
+        symbol: 'LP BSX/aUSD',
+        fullName: 'BSX/aUSD Share token',
+        icon: Unknown,
+      },
+      '4': {
+        id: '4',
+        symbol: 'LP BSX/KSM',
+        fullName: 'BSX/KSM Share token',
+        icon: Unknown,
+      },
+      '5': {
+        id: '5',
+        symbol: 'LP KSM/aUSD',
+        fullName: 'KSM/aUSD Share token',
+        icon: Unknown,
+      },
+    }
   };
 
-  return assetMetadata[id!] as any || id && {
+  assetMetadata['develop'] = assetMetadata['rococo'];
+
+  return assetMetadata[process.env.REACT_APP_ENV || 'production'][id!] as any || id && {
     id,
     symbol: horizontalBar,
     fullName: `Unknown asset ${id}`,
@@ -108,7 +162,7 @@ export const TradeChart = ({
   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
     from: moment().subtract(1, 'days').toISOString(),
     to: moment().toISOString(),
-  }); 
+  });
   const { math } = useMath();
   const {
     data: historicalBalancesData,

@@ -90,23 +90,28 @@ export const TradeFormSettings = ({
         </div>
       </div>
       <div className="modal-component-content">
-        <div className="settings-section">Slippage</div>
+        <div className="settings-section">Trade settings</div>
         <label className="settings-field">
-          <div className="settings-field__label">Auto slippage</div>
+          <div className="settings-field__label">Auto </div>
           <input {...register('autoSlippage')} type="checkbox" />
         </label>
         <label className="settings-field">
-          <div className="settings-field__label">Allowed slippage percent</div>
+          <div className="settings-field__label">Trade limit (%)</div>
           <input
             {...register('allowedSlippage', {
+              max: 100,
+              min: 0,
               setValueAs: (value) =>
                 value && new BigNumber(value).dividedBy('100').toFixed(3),
             })}
             // disabled if using auto slippage
             disabled={getValues('autoSlippage')}
-            type="text"
+            type="number"
           />
         </label>
+        <div className="disclaimer">
+          The deviation of the final acceptable price from the spot price caused by protocol fee, price impact (depends on trade & pool size) and change in price between announcing the transaction and processing it.
+        </div>
       </div>
     </form>
   );
@@ -464,11 +469,23 @@ export const TradeForm = ({
         assetIn: assetIds.assetOut,
         assetOut: assetIds.assetIn,
       });
+      
+      if (tradeType === TradeType.Buy) {
+        const assetOutAmount = getValues('assetOutAmount');
+        setValue('assetInAmount', assetOutAmount);
+        setTradeType(TradeType.Sell);
+        setValue('assetOutAmount', null)
+      } else {
+        const assetInAmount = getValues('assetInAmount');
+        setValue('assetOutAmount', assetInAmount);
+        setTradeType(TradeType.Buy);
+        setValue('assetInAmount', null)
+      }
     },
-    [assetIds]
+    [assetIds, tradeType, setValue, getValues, setTradeType]
   );
 
-  const { apiInstance } = usePolkadotJsContext();
+  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
   const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
@@ -736,6 +753,10 @@ export const TradeForm = ({
     setMaxAmountInLoading(false);
   }, [calculateMaxAmountIn]);
 
+  const xykDisabled = useMemo(() => {
+    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+  }, [apiInstance, apiInstanceLoading]);
+
   return (
     <div className="trade-form-wrapper">
       <div ref={modalContainerRef}></div>
@@ -983,7 +1004,7 @@ export const TradeForm = ({
                 },
               },
             })}
-            disabled={!isValid || tradeLoading || !isDirty}
+            disabled={xykDisabled || !isValid || tradeLoading || !isDirty}
             value={getSubmitText()}
           />
         </form>

@@ -1,5 +1,12 @@
 @import './misc/colors.module.scss';
 
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none; 
+}
+
 .debug {
   display: none;
 
@@ -160,7 +167,7 @@
     flex-grow: 1;
     color: white;
 
-    overflow-y: scroll;
+    overflow-y: auto;
 
     padding: 0 16px 16px 0;
 

@@ -88,13 +88,13 @@ export const PoolsFormSettings = ({
         </div>
       </div>
       <div className="modal-component-content">
-        <div className="settings-section">Slippage</div>
+        <div className="settings-section">Liquidity provisioning</div>
         <label className="settings-field">
-          <div className="settings-field__label">Auto slippage</div>
+          <div className="settings-field__label">Auto</div>
           <input {...register('autoSlippage')} type="checkbox" />
         </label>
         <label className="settings-field">
-          <div className="settings-field__label">Allowed slippage percent</div>
+          <div className="settings-field__label">Provisioning limit (%)</div>
           <input
             {...register('allowedSlippage', {
               setValueAs: (value) =>
@@ -105,6 +105,9 @@ export const PoolsFormSettings = ({
             type="text"
           />
         </label>
+        <div className="disclaimer">
+          The deviation of the final acceptable price from the spot price caused by the change in price between announcing the transaction and processing it.
+        </div>
       </div>
     </form>
   );
@@ -655,17 +658,31 @@ export const PoolsForm = ({
 
   const handleSwitchAssets = useCallback(
     (event: any) => {
-      // prevent form submit
-      event.preventDefault();
       onAssetIdsChange({
         assetIn: assetIds.assetOut,
         assetOut: assetIds.assetIn,
       });
+
+      // prevent form submit
+      event.preventDefault();
+      if (lastAssetInteractedWith === assetIds.assetOut) {
+        setLastAssetInteractedWith(assetIds.assetIn)
+        const assetOutAmount = getValues('assetOutAmount');
+        setValue('assetInAmount', assetOutAmount);
+      } else {
+        setLastAssetInteractedWith(assetIds.assetOut);
+        const assetInAmount = getValues('assetInAmount');
+        setValue('assetOutAmount', assetInAmount);
+      }
+
+      setTimeout(() => {
+        
+      }, 0);
     },
-    [assetIds]
+    [assetIds, setValue, getValues, lastAssetInteractedWith]
   );
 
-  const { apiInstance } = usePolkadotJsContext();
+  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
   const { convertToFeePaymentAsset } = useMultiFeePaymentConversionContext();
@@ -924,6 +941,10 @@ export const PoolsForm = ({
     setMaxAmountInLoading(false);
   }, [calculateMaxAmountIn]);
 
+  const xykDisabled = useMemo(() => {
+    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+  }, [apiInstance, apiInstanceLoading]);
+
   return (
     <div className="pools-form-wrapper">
       <div ref={modalContainerRef}></div>
@@ -1015,9 +1036,9 @@ export const PoolsForm = ({
 
           <div className="asset-switch">
             <hr className="divider asset-switch-divider"></hr>
-            <div className="asset-switch-icon" onClick={handleSwitchAssets}>
+            {/* <div className="asset-switch-icon" onClick={handleSwitchAssets}>
               <Icon name="AssetSwitch" />
-            </div>
+            </div> */}
             <div className="asset-switch-price">
               <div className="asset-switch-price__wrapper">
                 {(() => {
@@ -1234,7 +1255,7 @@ export const PoolsForm = ({
                 // },
               },
             })}
-            disabled={!isValid || tradeLoading || !isDirty}
+            disabled={xykDisabled || !isValid || tradeLoading || !isDirty}
             value={getSubmitText()}
           />
         </form>

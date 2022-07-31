@@ -209,6 +209,13 @@
   left: 0;
 
   z-index: 1;
+  
+  .disclaimer {
+    padding: 12px 24px;
+    padding-top: 0px;
+    font-size: 14px;
+    color: $gray4;
+  }
 
   .trade-settings {
     height: 100%;

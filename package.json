@@ -92,9 +92,13 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "export NODE_OPTIONS=--openssl-legacy-provider && craco start --openssl-legacy-provider",
-    "build": "export NODE_OPTIONS=--openssl-legacy-provider && craco build",
-    "build:deployment": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && craco build",
+    "start:develop": "env-cmd -f .env.develop craco start --openssl-legacy-provider",
+    "start:rococo": "env-cmd -f .env.rococo craco start --openssl-legacy-provider",
+    "start:production": "env-cmd -f .env.production craco start --openssl-legacy-provider",
+    "build": "craco build",
+    "build:develop": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.develop craco build",
+    "build:rococo": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.rococo craco build",
+    "build:production": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.production craco build",
     "test": "craco test",
     "test:ci": "CI=true craco test",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache",

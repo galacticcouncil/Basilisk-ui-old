@@ -55,11 +55,16 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
                 Pools
               </Link>
             </div>
+            <div className="page-header__menu-wrapper__menu-item">
+              <a target="_blank" href='https://docs.bsx.fi/howto_bridge'>
+                Bridge
+              </a>
+            </div>
           </div>
           <div className="page-header__wallet-wrapper">
             <a
               className="page-header__wallet-wrapper__help"
-              href="https://discord.gg/9vR4bpx5vQ"
+              href="https://docs.bsx.fi"
               rel="noreferrer"
               target="_blank"
             >
