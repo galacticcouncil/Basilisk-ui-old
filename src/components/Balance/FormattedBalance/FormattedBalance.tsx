@@ -65,29 +65,32 @@ export const FormattedBalance = ({
   const displayValue = useMemo(() => {
     console.log('display value', { poolsData, displayId: process.env })
     if (!poolsData?.pools || !process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID || !math) return;
-    let spotPrice = toPrecision12('1')!;
+    let spotPrice: string | undefined = toPrecision12('1')!;
     // dont look for a spot price through the router
     if (process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID != balance.assetId) {
       const paths = computeAllPaths(
         { id: balance.assetId }, 
         { id: process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID }, 
-        poolsData?.pools, 
+        poolsData.pools, 
         5
       );
+
   
-      spotPrice = getSpotPriceFromPath(paths[1], math);
+      spotPrice = paths.length ? getSpotPriceFromPath(paths[1], math) : undefined;
     }
 
-    const formattedDisplayValue = new BigNumber(balance.balance || '0')
-      .dividedBy(spotPrice)
+    if (spotPrice) {
+      const formattedDisplayValue = new BigNumber(balance.balance || '0')
+        .dividedBy(spotPrice)
 
-    if (formattedDisplayValue && new BigNumber(formattedDisplayValue).lt(0.01)) {
-      return '< 0.01'
-    } else {
-      return formattedDisplayValue && new BigNumber(formattedDisplayValue).toFixed(2)
+      if (formattedDisplayValue && new BigNumber(formattedDisplayValue).lt(0.01)) {
+        return '< 0.01'
+      } else {
+        return formattedDisplayValue && new BigNumber(formattedDisplayValue).toFixed(2)
+      }
     }
 
-  }, [poolsData, balance.assetId, math])
+  }, [poolsData, math, balance])
 
   // log.debug(
   //   'FormattedBalance',
@@ -117,7 +120,7 @@ export const FormattedBalance = ({
           {assetSymbol || horizontalBar}
         </div>
       </div>
-     {showDisplayValue
+     {showDisplayValue && displayValue
       ? (
         <div className='formatted-balance__display-value'>
           <div className="formatted-balance__display-value__value">{displayValue}</div>
