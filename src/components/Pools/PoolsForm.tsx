@@ -1196,6 +1196,21 @@ export const PoolsForm = ({
               validate: {
                 activeAccount: () => isActiveAccountConnected,
                 poolDoesNotExist: () => !isPoolLoading && !!pool,
+                minBalanceInA: () => {
+                  const assetInAmount = getValues('assetInAmount');
+                  if (!assetInAmount || assetInAmount === '0') return false;
+                  return true;
+                },
+                minBalanceInB: () => {
+                  const assetOutAmount = getValues('assetOutAmount');
+                  if (!assetOutAmount || assetOutAmount === '0') return false;
+                  return true;
+                },
+                minBalanceInShare: () => {
+                  const shareAssetAmount = getValues('shareAssetAmount');
+                  if (!shareAssetAmount || shareAssetAmount === '0') return false;
+                  return true;
+                },
                 notEnoughBalanceInA: () => {
                   if (provisioningType === ProvisioningType.Remove) return true;
                   const assetInAmount = getValues('assetInAmount');
@@ -1210,15 +1225,15 @@ export const PoolsForm = ({
                 },
                 notEnoughBalanceInB: () => {
                   if (provisioningType === ProvisioningType.Remove) return true;
-                  const assetInAmount = getValues('assetOutAmount');
+                  const assetOutAmount = getValues('assetOutAmount');
                   if (
                     !activeAccountTradeBalances?.outBalance?.balance ||
-                    !assetInAmount
+                    !assetOutAmount
                   )
                     return false;
                   return new BigNumber(
                     activeAccountTradeBalances.outBalance.balance
-                  ).gte(assetInAmount);
+                  ).gte(assetOutAmount);
                 },
                 notEnoughBalanceInShare: () => {
                   if (provisioningType === ProvisioningType.Add) return true;
