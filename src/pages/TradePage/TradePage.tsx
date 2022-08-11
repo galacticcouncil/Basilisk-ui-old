@@ -34,7 +34,7 @@ import {
 } from '../../components/Chart/shared';
 import BigNumber from 'bignumber.js';
 import { useLoading } from '../../hooks/misc/useLoading';
-import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
+import { useGetPoolsQuery, useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import KSM from '../../misc/icons/assets/KSM.svg';
 import BSX from '../../misc/icons/assets/BSX.svg';
@@ -388,9 +388,7 @@ export const TradePage = () => {
   const {
     data: poolsData,
     networkStatus: poolsNetworkStatus,
-  } = useGetPoolsQuery({
-    skip: depsLoading,
-  });
+  } = useGetPoolsQueryProvider();
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
