@@ -1,5 +1,6 @@
 import { Extension } from '../../../generated/graphql';
 import promiseRetry from 'promise-retry';
+import { isEmpty } from 'lodash';
 
 // id for cache normalization purposes, serves no other purpose
 const id = '0';
@@ -12,7 +13,7 @@ export const getExtension = async (): Promise<Extension> => {
   const { isAvailable }: Pick<Extension, 'isAvailable'> = await new Promise(
     (resolve, reject) => {
       promiseRetry(async (retry, attempt) => {
-        const isAvailable = !!(window as any).injectedWeb3?.['polkadot-js'];
+        const isAvailable = !isEmpty((window as any).injectedWeb3);
         isAvailable
           ? (
             resolve({
