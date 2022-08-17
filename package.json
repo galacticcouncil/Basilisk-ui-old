@@ -98,6 +98,7 @@
     "build": "craco build",
     "build:develop": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.develop craco build",
     "build:rococo": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.rococo craco build",
+    "build:staging": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.production craco build",
     "build:production": "export REACT_APP_GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD) && env-cmd -f .env.production craco build",
     "test": "craco test",
     "test:ci": "CI=true craco test",
