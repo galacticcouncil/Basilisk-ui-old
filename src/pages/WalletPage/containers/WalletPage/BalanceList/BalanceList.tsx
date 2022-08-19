@@ -37,7 +37,7 @@ export const BalanceList = ({
 
           <div className="item">
             {/* TODO: how to deal with unknown assets? (not knowing the metadata e.g. symbol/fullname) */}
-            <FormattedBalance balance={balance} showDisplayValue={true}/>
+            <FormattedBalance balance={balance} />
           </div>
           <div className="item balance-list-actions">
             {availableFeePaymentAssetIds.includes(balance.assetId) ? (
