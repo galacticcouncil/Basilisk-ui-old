@@ -32,6 +32,12 @@ export const PoolsInfo = ({
     switch (errors?.submit?.type) {
       case 'slippageHigherThanTolerance':
         return 'Slippage higher than tolerance';
+      case 'minBalanceInA':
+        return 'First token amount cannot be zero';
+      case 'minBalanceInB':
+        return 'Second token amount cannot be zero';
+      case 'minBalanceInShare':
+        return 'Share token amount cannot be zero';
       case 'notEnoughBalanceInA':
         return 'Insufficient Token A balance';
       case 'notEnoughBalanceInB':
