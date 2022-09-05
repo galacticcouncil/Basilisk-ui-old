@@ -56,14 +56,13 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true,
-    },
-  });
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<TradeFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true,
+      },
+    });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -110,7 +109,9 @@ export const TradeFormSettings = ({
           />
         </label>
         <div className="disclaimer">
-          The deviation of the final acceptable price from the spot price caused by protocol fee, price impact (depends on trade & pool size) and change in price between announcing the transaction and processing it.
+          The deviation of the final acceptable price from the spot price caused
+          by protocol fee, price impact (depends on trade & pool size) and
+          change in price between announcing the transaction and processing it.
         </div>
       </div>
     </form>
@@ -469,17 +470,17 @@ export const TradeForm = ({
         assetIn: assetIds.assetOut,
         assetOut: assetIds.assetIn,
       });
-      
+
       if (tradeType === TradeType.Buy) {
         const assetOutAmount = getValues('assetOutAmount');
         setValue('assetInAmount', assetOutAmount);
         setTradeType(TradeType.Sell);
-        setValue('assetOutAmount', null)
+        setValue('assetOutAmount', null);
       } else {
         const assetInAmount = getValues('assetInAmount');
         setValue('assetOutAmount', assetInAmount);
         setTradeType(TradeType.Buy);
-        setValue('assetInAmount', null)
+        setValue('assetInAmount', null);
       }
     },
     [assetIds, tradeType, setValue, getValues, setTradeType]
@@ -488,7 +489,8 @@ export const TradeForm = ({
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
-  const { convertToFeePaymentAsset, feePaymentAsset } = useMultiFeePaymentConversionContext();
+  const { convertToFeePaymentAsset, feePaymentAsset } =
+    useMultiFeePaymentConversionContext();
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([
@@ -544,7 +546,7 @@ export const TradeForm = ({
     convertToFeePaymentAsset,
     feePaymentAsset,
     getValues,
-    pool
+    pool,
   ]);
 
   useEffect(() => {
@@ -559,7 +561,7 @@ export const TradeForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
     tradeLimit,
     tradeType,
-    calculatePaymentInfo
+    calculatePaymentInfo,
   ]);
 
   useEffect(() => {
@@ -708,8 +710,7 @@ export const TradeForm = ({
         ? feePaymentAsset === '0'
           ? paymentInfo
           : convertToFeePaymentAsset(paymentInfo)
-        : '0'
-      ) || '0'
+        : '0') || '0'
     );
     console.log('calculateMaxAmountIn12', {
       inBeforeTrade: tradeBalances.inBeforeTrade,
@@ -731,7 +732,8 @@ export const TradeForm = ({
     paymentInfo,
     cache,
     apiInstance,
-    feePaymentAsset, convertToFeePaymentAsset,
+    feePaymentAsset,
+    convertToFeePaymentAsset,
     ...watch(['assetIn']),
   ]);
 
@@ -754,7 +756,11 @@ export const TradeForm = ({
   }, [calculateMaxAmountIn]);
 
   const xykDisabled = useMemo(() => {
-    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+    return (
+      apiInstance &&
+      !apiInstanceLoading &&
+      parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+    );
   }, [apiInstance, apiInstanceLoading]);
 
   return (
@@ -788,34 +794,36 @@ export const TradeForm = ({
             />
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">Pay with</div>
-              {activeAccountTradeBalancesLoading || isPoolLoading ? (
-                'Your balance: loading'
-              ) : (
-                <>
-                  Your balance:
-                  {assetIds.assetIn ? (
-                    tradeBalances.inBeforeTrade !== undefined ? (
-                      <FormattedBalance
-                        balance={{
-                          balance: tradeBalances.inBeforeTrade,
-                          assetId: assetIds.assetIn,
-                        }}
-                      />
+              <div className="balance-info-balance">
+                {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                  'Your balance: loading'
+                ) : (
+                  <>
+                    Your balance:
+                    {assetIds.assetIn ? (
+                      tradeBalances.inBeforeTrade !== undefined ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.inBeforeTrade,
+                            assetId: assetIds.assetIn,
+                          }}
+                        />
+                      ) : (
+                        <> {horizontalBar}</>
+                      )
                     ) : (
                       <> {horizontalBar}</>
-                    )
-                  ) : (
-                    <> {horizontalBar}</>
-                  )}
-                </>
-              )}
-              <div
-                className={classNames('max-button', {
-                  disabled: maxButtonDisabled,
-                })}
-                onClick={() => handleMaxButtonOnClick()}
-              >
-                Max
+                    )}
+                  </>
+                )}
+                <div
+                  className={classNames('max-button', {
+                    disabled: maxButtonDisabled,
+                  })}
+                  onClick={() => handleMaxButtonOnClick()}
+                >
+                  Max
+                </div>
               </div>
             </div>
           </div>
@@ -904,28 +912,30 @@ export const TradeForm = ({
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">You get</div>
-              {activeAccountTradeBalancesLoading || isPoolLoading ? (
-                'Your balance: loading'
-              ) : (
-                // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
-                <>
-                  Your balance:
-                  {assetIds.assetOut ? (
-                    tradeBalances.outBeforeTrade !== undefined ? (
-                      <FormattedBalance
-                        balance={{
-                          balance: tradeBalances.outBeforeTrade,
-                          assetId: assetIds.assetOut,
-                        }}
-                      />
+              <div className="balance-info-balance">
+                {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                  'Your balance: loading'
+                ) : (
+                  // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+                  <>
+                    Your balance:
+                    {assetIds.assetOut ? (
+                      tradeBalances.outBeforeTrade !== undefined ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.outBeforeTrade,
+                            assetId: assetIds.assetOut,
+                          }}
+                        />
+                      ) : (
+                        <> {horizontalBar}</>
+                      )
                     ) : (
                       <> {horizontalBar}</>
-                    )
-                  ) : (
-                    <> {horizontalBar}</>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -987,11 +997,15 @@ export const TradeForm = ({
 
                   let feePaymentAssetBalance = find(activeAccount?.balances, {
                     assetId: feePaymentAsset,
-                  })?.balance
+                  })?.balance;
 
                   let balanceForFee = feePaymentAssetBalance;
 
-                  if (assetIn === feePaymentAsset && assetInAmount && feePaymentAssetBalance) {
+                  if (
+                    assetIn === feePaymentAsset &&
+                    assetInAmount &&
+                    feePaymentAssetBalance
+                  ) {
                     balanceForFee = new BigNumber(feePaymentAssetBalance)
                       .minus(assetInAmount)
                       .toString();

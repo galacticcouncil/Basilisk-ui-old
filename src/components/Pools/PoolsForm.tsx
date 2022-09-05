@@ -106,7 +106,9 @@ export const PoolsFormSettings = ({
           />
         </label>
         <div className="disclaimer">
-          The deviation of the final acceptable price from the spot price caused by the change in price between announcing the transaction and processing it.
+          The deviation of the final acceptable price from the spot price caused
+          by the change in price between announcing the transaction and
+          processing it.
         </div>
       </div>
     </form>
@@ -328,8 +330,11 @@ export const PoolsForm = ({
         );
 
         console.log('calculateAssetIn2', {
-          assetOutLiquidity, assetInLiquidity, assetOutAmount, amount
-        })
+          assetOutLiquidity,
+          assetInLiquidity,
+          assetOutAmount,
+          amount,
+        });
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         if (amount === '0' && assetOutAmount !== '0') return;
@@ -343,8 +348,11 @@ export const PoolsForm = ({
         );
 
         console.log('calculateAssetIn1', {
-          assetOutLiquidity, assetInLiquidity, assetOutAmount, amountA
-        })
+          assetOutLiquidity,
+          assetInLiquidity,
+          assetOutAmount,
+          amountA,
+        });
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         // if (amountA === '0' && amountB !== '0') return;
@@ -371,7 +379,12 @@ export const PoolsForm = ({
         'assetOut',
       ]);
 
-      console.log('calculateAssetOut1', [assetInAmount, shareAssetAmount, assetIn, assetOut]);
+      console.log('calculateAssetOut1', [
+        assetInAmount,
+        shareAssetAmount,
+        assetIn,
+        assetOut,
+      ]);
 
       if (
         !pool ||
@@ -405,16 +418,15 @@ export const PoolsForm = ({
         );
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
-        if (amount === '0' && assetInAmount !== '0' ) return;
+        if (amount === '0' && assetInAmount !== '0') return;
         setValue('assetOutAmount', amount || null);
-      }  else {
+      } else {
         const amountB = math.xyk.calculate_liquidity_out_asset_b(
           assetInLiquidity,
           assetOutLiquidity,
           shareAssetAmount,
           pool.totalLiquidity
         );
-
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
         // if (amountB === '0' && assetInAmount !== '0') return;
@@ -439,7 +451,7 @@ export const PoolsForm = ({
     calculateAssetIn,
     lastAssetInteractedWith,
     assetOutAmountInput,
-    assetIds
+    assetIds,
   ]);
 
   useEffect(() => {
@@ -460,20 +472,25 @@ export const PoolsForm = ({
       'assetIn',
       'assetOut',
     ]);
-    if (!assetIn || !assetOut || !assetInLiquidity || !assetInAmount || !pool) return;
+    if (!assetIn || !assetOut || !assetInLiquidity || !assetInAmount || !pool)
+      return;
 
-    const shareAmount = math?.xyk.calculate_shares(assetInLiquidity, assetInAmount, pool?.totalLiquidity);
+    const shareAmount = math?.xyk.calculate_shares(
+      assetInLiquidity,
+      assetInAmount,
+      pool?.totalLiquidity
+    );
     shareAmount && setValue('shareAssetAmount', shareAmount);
     // assetIn > assetOut
     //   ? setValue('shareAssetAmount', assetOutAmount)
     //   : setValue('shareAssetAmount', assetInAmount);
   }, [
-    ...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut']), 
+    ...watch(['assetInAmount', 'assetOutAmount', 'assetIn', 'assetOut']),
     math,
     assetInLiquidity,
     provisioningType,
     getValues,
-    pool
+    pool,
   ]);
 
   useEffect(() => {
@@ -493,11 +510,16 @@ export const PoolsForm = ({
         'shareAssetAmount',
       ]);
       if (!assetIn || !assetOut) return;
-      console.log('calc', assetIn, assetOut)
+      console.log('calc', assetIn, assetOut);
       calculateAssetIn();
-      calculateAssetOut();  
+      calculateAssetOut();
     }, 0);
-  }, [shareAssetAmountInput, calculateAssetIn, calculateAssetOut, provisioningType]);
+  }, [
+    shareAssetAmountInput,
+    calculateAssetIn,
+    calculateAssetOut,
+    provisioningType,
+  ]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
@@ -556,8 +578,8 @@ export const PoolsForm = ({
     console.log('limit', {
       assetInAmount,
       spotPrice,
-      allowedSlippage
-    })
+      allowedSlippage,
+    });
 
     switch (lastAssetInteractedWith) {
       case assetIds.assetIn:
@@ -666,7 +688,7 @@ export const PoolsForm = ({
       // prevent form submit
       event.preventDefault();
       if (lastAssetInteractedWith === assetIds.assetOut) {
-        setLastAssetInteractedWith(assetIds.assetIn)
+        setLastAssetInteractedWith(assetIds.assetIn);
         const assetOutAmount = getValues('assetOutAmount');
         setValue('assetInAmount', assetOutAmount);
       } else {
@@ -675,9 +697,7 @@ export const PoolsForm = ({
         setValue('assetOutAmount', assetInAmount);
       }
 
-      setTimeout(() => {
-        
-      }, 0);
+      setTimeout(() => {}, 0);
     },
     [assetIds, setValue, getValues, lastAssetInteractedWith]
   );
@@ -753,7 +773,7 @@ export const PoolsForm = ({
     ...watch(['assetInAmount', 'assetOutAmount']),
     tradeLimit,
     provisioningType,
-    calculatePaymentInfo
+    calculatePaymentInfo,
   ]);
 
   useEffect(() => {
@@ -942,7 +962,11 @@ export const PoolsForm = ({
   }, [calculateMaxAmountIn]);
 
   const xykDisabled = useMemo(() => {
-    return apiInstance && !apiInstanceLoading && parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+    return (
+      apiInstance &&
+      !apiInstanceLoading &&
+      parseInt(apiInstance?.runtimeVersion.specVersion.toString() || '0') < 69
+    );
   }, [apiInstance, apiInstanceLoading]);
 
   return (
@@ -1002,28 +1026,29 @@ export const PoolsForm = ({
             />
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">First token</div>
-              {activeAccountTradeBalancesLoading || isPoolLoading ? (
-                'Your balance: loading'
-              ) : (
-                <>
-                  Your balance:
-                  {assetIds.assetIn ? (
-                    tradeBalances.inBeforeTrade !== undefined ? (
-                      <FormattedBalance
-                        balance={{
-                          balance: tradeBalances.inBeforeTrade,
-                          assetId: assetIds.assetIn,
-                        }}
-                      />
+              <div className="balance-info-balance">
+                {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                  'Your balance: loading'
+                ) : (
+                  <>
+                    Your balance:
+                    {assetIds.assetIn ? (
+                      tradeBalances.inBeforeTrade !== undefined ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.inBeforeTrade,
+                            assetId: assetIds.assetIn,
+                          }}
+                        />
+                      ) : (
+                        <> {horizontalBar}</>
+                      )
                     ) : (
                       <> {horizontalBar}</>
-                    )
-                  ) : (
-                    <> {horizontalBar}</>
-                  )}
-                </>
-              )}
-              {/* <div
+                    )}
+                  </>
+                )}
+                {/* <div
                 className={classNames('max-button', {
                   disabled: maxButtonDisabled,
                 })}
@@ -1031,6 +1056,7 @@ export const PoolsForm = ({
               >
                 Max
               </div> */}
+              </div>
             </div>
           </div>
 
@@ -1119,28 +1145,30 @@ export const PoolsForm = ({
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">Second token</div>
-              {activeAccountTradeBalancesLoading || isPoolLoading ? (
-                'Your balance: loading'
-              ) : (
-                // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
-                <>
-                  Your balance:
-                  {assetIds.assetOut ? (
-                    tradeBalances.outBeforeTrade !== undefined ? (
-                      <FormattedBalance
-                        balance={{
-                          balance: tradeBalances.outBeforeTrade,
-                          assetId: assetIds.assetOut,
-                        }}
-                      />
+              <div className="balance-info-balance">
+                {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                  'Your balance: loading'
+                ) : (
+                  // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+                  <>
+                    Your balance:
+                    {assetIds.assetOut ? (
+                      tradeBalances.outBeforeTrade !== undefined ? (
+                        <FormattedBalance
+                          balance={{
+                            balance: tradeBalances.outBeforeTrade,
+                            assetId: assetIds.assetOut,
+                          }}
+                        />
+                      ) : (
+                        <> {horizontalBar}</>
+                      )
                     ) : (
                       <> {horizontalBar}</>
-                    )
-                  ) : (
-                    <> {horizontalBar}</>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
           <div className="balance-wrapper-share-tokens">
@@ -1159,26 +1187,28 @@ export const PoolsForm = ({
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">Share token</div>
-              {activeAccountTradeBalancesLoading || isPoolLoading ? (
-                'Your balance: loading'
-              ) : (
-                // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
-                <>
-                  Your balance:
-                  {activeAccountTradeBalances?.shareBalance ? (
-                    <FormattedBalance
-                      balance={{
-                        balance:
-                          activeAccountTradeBalances.shareBalance.balance,
-                        assetId:
-                          activeAccountTradeBalances.shareBalance.assetId,
-                      }}
-                    />
-                  ) : (
-                    <> {horizontalBar}</>
-                  )}
-                </>
-              )}
+              <div className="balance-info-balance">
+                {activeAccountTradeBalancesLoading || isPoolLoading ? (
+                  'Your balance: loading'
+                ) : (
+                  // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
+                  <>
+                    Your balance:
+                    {activeAccountTradeBalances?.shareBalance ? (
+                      <FormattedBalance
+                        balance={{
+                          balance:
+                            activeAccountTradeBalances.shareBalance.balance,
+                          assetId:
+                            activeAccountTradeBalances.shareBalance.assetId,
+                        }}
+                      />
+                    ) : (
+                      <> {horizontalBar}</>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1208,7 +1238,8 @@ export const PoolsForm = ({
                 },
                 minBalanceInShare: () => {
                   const shareAssetAmount = getValues('shareAssetAmount');
-                  if (!shareAssetAmount || shareAssetAmount === '0') return false;
+                  if (!shareAssetAmount || shareAssetAmount === '0')
+                    return false;
                   return true;
                 },
                 notEnoughBalanceInA: () => {

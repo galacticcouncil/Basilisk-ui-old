@@ -4,11 +4,11 @@
 
 .pools-form-wrapper {
   position: relative;
-  flex-basis: 350px;
+  flex-basis: 450px;
   flex-grow: 1;
 
   padding: 22px;
-  min-width: 350px;
+  min-width: 450px;
   max-width: 610px;
   margin: 0 auto;
 
@@ -149,6 +149,12 @@
       padding-bottom: 16px;
     }
 
+    @media only screen and (max-width: 500px) {
+      .balance-wrapper {
+        padding-bottom: 45px;
+      }
+    }
+
     .balance-wrapper-share-tokens {
       @extend .balance-wrapper;
       margin-top: 8px;
@@ -197,6 +203,24 @@
     font-size: 16px;
     color: $green1;
     padding: 6px;
+  }
+  .balance-info-balance {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    gap: 8px;
+  }
+
+  @media only screen and (max-width: 500px) {
+    .balance-info-balance {
+      position: absolute;
+      bottom: -90px;
+      display: flex;
+      align-items: center;
+      justify-content: right;
+      gap: 8px;
+    }
   }
 }
 
