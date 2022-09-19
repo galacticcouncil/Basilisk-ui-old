@@ -21,7 +21,7 @@ import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetAct
 import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
 import { useMath } from '../../hooks/math/useMath';
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetXYKPoolByAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
 import { Line } from 'react-chartjs-2';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
@@ -37,7 +37,7 @@ import { useLoading } from '../../hooks/misc/useLoading';
 import {
   useGetPoolsQuery,
   useGetPoolsQueryProvider,
-} from '../../hooks/pools/queries/useGetXYKPoolsQuery';
+} from '../../hooks/pools/queries/useGetPoolsQuery';
 import { idToAsset } from '../../misc/idToAsset';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -304,7 +304,12 @@ export const TradePage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  const pool = useMemo(() => poolData?.pool, [poolData]);
+  const xykPool =
+    poolData?.pool && poolData.pool.__typename === 'XYKPool'
+      ? poolData.pool
+      : undefined;
+
+  const pool = useMemo(() => xykPool, [xykPool]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;

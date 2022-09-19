@@ -21,7 +21,7 @@ import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetAct
 import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
 import { useMath } from '../../hooks/math/useMath';
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetLBPPoolByAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
 import { Line } from 'react-chartjs-2';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
@@ -37,7 +37,7 @@ import { useLoading } from '../../hooks/misc/useLoading';
 import {
   useGetPoolsQuery,
   useGetPoolsQueryProvider,
-} from '../../hooks/pools/queries/useGetLBPPoolsQuery';
+} from '../../hooks/pools/queries/useGetPoolsQuery';
 import { idToAsset } from '../../misc/idToAsset';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';

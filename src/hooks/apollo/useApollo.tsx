@@ -6,8 +6,7 @@ import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
-import { useXYKPoolsQueryResolver } from '../pools/resolvers/useXYKPoolsQueryResolver';
-import { useLBPPoolsQueryResolver } from '../pools/resolvers/useLBPPoolsQueryResolver';
+import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
@@ -27,8 +26,13 @@ export const useResolvers: () => Resolvers = () => {
     Query: AccountsQueryResolvers,
     Mutation: AccountsMutationResolvers,
   } = useAccountsResolvers();
-  const { Query: XYKPoolsQueryResolver, XYKPool } = useXYKPoolsQueryResolver();
-  const { Query: LBPPoolsQueryResolver, LBPPool } = useLBPPoolsQueryResolver();
+
+  const {
+    Query: PoolsQueryResolver,
+    XYKPool,
+    LBPPool,
+  } = usePoolsQueryResolver();
+
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
   return {
     Query: {
@@ -36,8 +40,7 @@ export const useResolvers: () => Resolvers = () => {
       ...ExtensionQueryResolver,
       ...useFeePaymentAssetsQueryResolvers(),
       ...useBalanceQueryResolvers(),
-      ...XYKPoolsQueryResolver,
-      ...LBPPoolsQueryResolver,
+      ...PoolsQueryResolver,
       ...useAssetsQueryResolvers(),
       ...useConfigQueryResolvers(),
     },

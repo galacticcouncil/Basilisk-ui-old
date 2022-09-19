@@ -12,9 +12,9 @@ import {
 import { GetExtensionQueryProvider } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useGetConfigQuery } from '../hooks/config/useGetConfigQuery';
 import { useLoading } from '../hooks/misc/useLoading';
-import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetXYKPoolByAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery';
 import BigNumber from 'bignumber.js';
-import { GetPoolsQueryProvider } from '../hooks/pools/queries/useGetXYKPoolsQuery';
+import { GetPoolsQueryProvider } from '../hooks/pools/queries/useGetPoolsQuery';
 
 export const ConfiguredApolloProvider = ({
   children,

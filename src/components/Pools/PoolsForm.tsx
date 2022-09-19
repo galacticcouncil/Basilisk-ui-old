@@ -11,7 +11,13 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import { Account, Balance, Maybe, XykPool } from '../../generated/graphql';
+import {
+  Account,
+  Balance,
+  Maybe,
+  Pool,
+  XykPool,
+} from '../../generated/graphql';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
 import { useMath } from '../../hooks/math/useMath';
 import { percentageChange } from '../../hooks/math/usePercentageChange';

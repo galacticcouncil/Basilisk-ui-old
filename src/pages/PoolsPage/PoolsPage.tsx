@@ -3,19 +3,19 @@ import { NetworkStatus } from '@apollo/client';
 import { find, uniq } from 'lodash';
 
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { AssetIds, Balance, XykPool } from '../../generated/graphql';
+import { AssetIds, Balance, Pool } from '../../generated/graphql';
 import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 
 import { useMath } from '../../hooks/math/useMath';
 
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetXYKPoolByAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
 
 import './PoolsPage.scss';
 
 import { useLoading } from '../../hooks/misc/useLoading';
-import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetXYKPoolsQuery';
+import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
 
@@ -28,6 +28,7 @@ import { idToAsset } from '../../misc/idToAsset';
 import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation';
 import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation';
 import Icon from '../../components/Icon/Icon';
+import { PoolType } from '../../components/Chart/shared';
 
 export interface TradeAssetIds {
   assetIn: string | null;
@@ -85,7 +86,12 @@ export const PoolsPage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  const pool = useMemo(() => poolData?.pool, [poolData]);
+  const xykPool =
+    poolData?.pool && poolData.pool.__typename === 'XYKPool'
+      ? poolData.pool
+      : undefined;
+
+  const pool = useMemo(() => xykPool, [xykPool]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;

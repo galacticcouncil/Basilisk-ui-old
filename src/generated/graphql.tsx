@@ -105,11 +105,11 @@ export type LbpPool = {
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
-  endBlock: Scalars['String'];
+  endBlock?: Maybe<Scalars['String']>;
   fee: Fee;
   id: Scalars['String'];
   repayTargetReached: Scalars['Boolean'];
-  startBlock: Scalars['String'];
+  startBlock?: Maybe<Scalars['String']>;
 };
 
 export type LastBlock = {

@@ -31,8 +31,8 @@ type LBPPool {
   repayTargetReached: Boolean!
   assetAWeights: LBPAssetWeights!
   assetBWeights: LBPAssetWeights!
-  startBlock: String!
-  endBlock: String!
+  startBlock: String
+  endBlock: String
 }
 
 type XYKPool {
