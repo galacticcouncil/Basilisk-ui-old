@@ -31,8 +31,8 @@ type LBPPool {
   repayTargetReached: Boolean!
   assetAWeights: LBPAssetWeights!
   assetBWeights: LBPAssetWeights!
-  startBlock: String
-  endBlock: String
+  startBlock: String!
+  endBlock: String!
 }
 
 type XYKPool {
@@ -47,7 +47,7 @@ type XYKPool {
 union Pool = XYKPool | LBPPool
 
 extend type Query {
-  pools: [Pool!]
+  pools: [Pool!]!
   # Just to make sure TradeType makes it through the codegen
   # otherwise it'd be ignored
   _tradeType: TradeType

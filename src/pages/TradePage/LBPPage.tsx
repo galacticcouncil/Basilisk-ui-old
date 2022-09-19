@@ -291,10 +291,14 @@ export const LBPPage = () => {
     networkStatus: poolsNetworkStatus,
   } = useGetPoolsQueryProvider();
 
+  console.log('LBPPage:mapPoolData', poolsData);
+
   const assets = useMemo(() => {
     const assets = poolsData?.pools
       ?.map((pool) => {
-        return [pool.assetInId, pool.assetOutId];
+        if (pool.__typename === 'LBPPool') {
+          return [pool.assetInId, pool.assetOutId];
+        } else return [];
       })
       .reduce((assets, poolAssets) => {
         return assets.concat(poolAssets);
@@ -304,7 +308,12 @@ export const LBPPage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  const pool = useMemo(() => poolData?.pool, [poolData]);
+  const lbpPool =
+    poolData?.pool && poolData.pool.__typename === 'LBPPool'
+      ? poolData.pool
+      : undefined;
+
+  const pool = useMemo(() => lbpPool, [lbpPool]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;

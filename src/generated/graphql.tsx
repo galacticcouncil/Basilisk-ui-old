@@ -105,11 +105,11 @@ export type LbpPool = {
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
-  endBlock?: Maybe<Scalars['String']>;
+  endBlock: Scalars['String'];
   fee: Fee;
   id: Scalars['String'];
   repayTargetReached: Scalars['Boolean'];
-  startBlock?: Maybe<Scalars['String']>;
+  startBlock: Scalars['String'];
 };
 
 export type LastBlock = {
@@ -150,7 +150,7 @@ export type Query = Balances & IVesting & {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   lockedBalances: Array<LockedBalance>;
-  pools?: Maybe<Array<Pool>>;
+  pools: Array<Pool>;
   vesting?: Maybe<Vesting>;
 };
 

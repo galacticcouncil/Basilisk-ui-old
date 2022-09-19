@@ -14,6 +14,7 @@ import { Control, FormProvider, useForm } from 'react-hook-form';
 import {
   Account,
   Balance,
+  LbpPool,
   Maybe,
   Pool,
   TradeType,
@@ -151,7 +152,7 @@ export interface TradeFormProps {
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
-  pool?: Pool;
+  pool?: LbpPool;
   assetInLiquidity?: string;
   assetOutLiquidity?: string;
   spotPrice?: {

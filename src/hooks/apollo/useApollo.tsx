@@ -26,13 +26,11 @@ export const useResolvers: () => Resolvers = () => {
     Query: AccountsQueryResolvers,
     Mutation: AccountsMutationResolvers,
   } = useAccountsResolvers();
-
   const {
     Query: PoolsQueryResolver,
     XYKPool,
     LBPPool,
   } = usePoolsQueryResolver();
-
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
   return {
     Query: {
@@ -52,8 +50,8 @@ export const useResolvers: () => Resolvers = () => {
       ...useFaucetResolvers().Mutation,
       ...useBalanceMutationsResolvers(),
     },
-    XYKPool,
     LBPPool,
+    XYKPool,
     Account: {
       ...useBalanceQueryResolvers(),
       ...useVestingQueryResolvers(),

@@ -76,7 +76,9 @@ export const PoolsPage = () => {
   const assets = useMemo(() => {
     const assets = poolsData?.pools
       ?.map((pool) => {
-        return [pool.assetInId, pool.assetOutId];
+        if (pool.__typename === 'XYKPool') {
+          return [pool.assetInId, pool.assetOutId];
+        } else return [];
       })
       .reduce((assets, poolAssets) => {
         return assets.concat(poolAssets);

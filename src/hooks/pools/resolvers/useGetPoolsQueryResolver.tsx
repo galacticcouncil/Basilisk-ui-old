@@ -65,6 +65,7 @@ export const useGetPoolsQueryResolver = () => {
 
         // use the provided poolId
         let poolId = args?.poolId;
+        let poolType = args?.poolType;
         let poolIds: PoolIds = {
           lbpPoolId: poolId,
           xykPoolId: poolId,
@@ -127,11 +128,13 @@ export const useGetPoolsQueryResolver = () => {
         }
 
         // if no extra args were provided, get all the pools
-        const [lbpPools, xykPools] = await Promise.all([
-          // getLbpPools(context.client),
-          [] as any[],
+        let [lbpPools, xykPools] = await Promise.all([
+          getLbpPools(context.client),
           getXykPools(),
         ]);
+
+        if (poolType === PoolType.XYK) lbpPools = [];
+        if (poolType === PoolType.LBP) xykPools = [];
 
         log.debug('useGetPoolsQueryResolver', 'returning multiple pools', [
           lbpPools,
