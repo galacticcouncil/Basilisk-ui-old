@@ -1,7 +1,7 @@
 import { useBalanceQueryResolvers } from '../../balances/resolvers/query/balances';
-import { useGetPoolsQueryResolver } from './useGetPoolsQueryResolver';
+import { useGetPoolsQueryResolver } from './useGetLBPPoolsQueryResolver';
 
-export const usePoolsQueryResolver = () => {
+export const useLBPPoolsQueryResolver = () => {
   const getPoolsQueryResolver = useGetPoolsQueryResolver();
   const poolFieldsQueryResolvers = {
     ...useBalanceQueryResolvers(),
@@ -11,7 +11,6 @@ export const usePoolsQueryResolver = () => {
     Query: {
       pools: getPoolsQueryResolver,
     },
-    XYKPool: poolFieldsQueryResolvers,
     LBPPool: poolFieldsQueryResolvers,
   };
 };

@@ -133,7 +133,7 @@ export type Mutation = {
   setActiveAccount?: Maybe<Account>;
 };
 
-export type Pool = XykPool;
+export type Pool = LbpPool | XykPool;
 
 export type Query = Balances & IVesting & {
   __typename?: 'Query';
@@ -150,7 +150,7 @@ export type Query = Balances & IVesting & {
   feePaymentAssets?: Maybe<Array<FeePaymentAsset>>;
   lastBlock?: Maybe<LastBlock>;
   lockedBalances: Array<LockedBalance>;
-  pools: Array<Pool>;
+  pools?: Maybe<Array<Pool>>;
   vesting?: Maybe<Vesting>;
 };
 

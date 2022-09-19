@@ -17,13 +17,14 @@ import {
   Maybe,
   Pool,
   TradeType,
+  XykPool,
 } from '../../../generated/graphql';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { useMath } from '../../../hooks/math/useMath';
 import { percentageChange } from '../../../hooks/math/usePercentageChange';
 import { toPrecision12 } from '../../../hooks/math/useToPrecision';
 import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation';
-import { idToAsset, TradeAssetIds } from '../../../pages/TradePage/TradePage';
+import { TradeAssetIds } from '../../../pages/TradePage/TradePage';
 import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput';
 import { PoolType } from '../../Chart/shared';
 import { TradeInfo } from './TradeInfo/TradeInfo';
@@ -56,13 +57,14 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } =
-    useForm<TradeFormSettingsFormFields>({
-      defaultValues: {
-        allowedSlippage,
-        autoSlippage: true,
-      },
-    });
+  const { register, watch, getValues, setValue, handleSubmit } = useForm<
+    TradeFormSettingsFormFields
+  >({
+    defaultValues: {
+      allowedSlippage,
+      autoSlippage: true,
+    },
+  });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -150,7 +152,7 @@ export interface TradeFormProps {
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
-  pool?: Pool;
+  pool?: XykPool;
   assetInLiquidity?: string;
   assetOutLiquidity?: string;
   spotPrice?: {
@@ -489,8 +491,10 @@ export const TradeForm = ({
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
   const { cache } = useApolloClient();
   const [paymentInfo, setPaymentInfo] = useState<string>();
-  const { convertToFeePaymentAsset, feePaymentAsset } =
-    useMultiFeePaymentConversionContext();
+  const {
+    convertToFeePaymentAsset,
+    feePaymentAsset,
+  } = useMultiFeePaymentConversionContext();
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return;
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([
@@ -787,9 +791,7 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets?.filter(
-                (asset) => !Object.values(assetIds).includes(asset.id)
-              )}
+              assets={assets}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
@@ -906,9 +908,7 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets?.filter(
-                (asset) => !Object.values(assetIds).includes(asset.id)
-              )}
+              assets={assets}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">You get</div>

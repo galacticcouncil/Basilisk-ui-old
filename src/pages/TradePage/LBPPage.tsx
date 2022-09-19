@@ -14,14 +14,14 @@ import {
 } from 'react';
 import { Control, useForm, UseFormReturn } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { TradeForm } from '../../components/Trade/TradeForm/TradeForm';
-import { AssetIds, Balance, XykPool, TradeType } from '../../generated/graphql';
+import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm';
+import { AssetIds, Balance, LbpPool, TradeType } from '../../generated/graphql';
 import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
 import { useMath } from '../../hooks/math/useMath';
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetXYKPoolByAssetsQuery';
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetLBPPoolByAssetsQuery';
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
 import { Line } from 'react-chartjs-2';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
@@ -37,7 +37,7 @@ import { useLoading } from '../../hooks/misc/useLoading';
 import {
   useGetPoolsQuery,
   useGetPoolsQueryProvider,
-} from '../../hooks/pools/queries/useGetXYKPoolsQuery';
+} from '../../hooks/pools/queries/useGetLBPPoolsQuery';
 import { idToAsset } from '../../misc/idToAsset';
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
@@ -51,7 +51,7 @@ export interface TradeAssetIds {
 }
 
 export interface TradeChartProps {
-  pool?: XykPool;
+  pool?: LbpPool;
   isPoolLoading?: boolean;
   assetIds: TradeAssetIds;
   spotPrice?: {
@@ -245,7 +245,7 @@ export const TradeChart = ({
         assetB: idToAsset(assetIds.assetOut),
       }}
       isPoolLoading={_isPoolLoading}
-      poolType={PoolType.XYK}
+      poolType={PoolType.LBP}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
       primaryDataset={dataset as any}
@@ -255,7 +255,7 @@ export const TradeChart = ({
   );
 };
 
-export const TradePage = () => {
+export const LBPPage = () => {
   // taking assetIn/assetOut from search params / query url
   const [assetIds, setAssetIds] = useAssetIdsWithUrl();
   const { data: activeAccountData } = useGetActiveAccountQuery({

@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider';

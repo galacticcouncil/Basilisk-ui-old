@@ -5,7 +5,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.5.9",
-    "@craco/craco": "^6.4.3",
+    "@craco/craco": "^7.0.0-alpha.7",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@fortawesome/fontawesome-svg-core": "^1.2.36",
     "@fortawesome/free-solid-svg-icons": "^5.15.4",

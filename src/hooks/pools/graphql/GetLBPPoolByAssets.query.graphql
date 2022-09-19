@@ -1,0 +1,25 @@
+query GetLBPPoolByAssets($assetInId: String!, $assetOutId: String!) {
+  lastBlock @client {
+    parachainBlockNumber
+    relaychainBlockNumber
+  }
+
+  pool: pools(assetIds: [$assetInId, $assetOutId]) @client {
+    id
+    assetInId
+    assetOutId
+    balances(assetIds: [$assetInId, $assetOutId]) {
+      assetId
+      balance
+    }
+    repayTarget
+    assetAWeights
+    assetBWeights
+    startBlock
+    endBlock
+    fee {
+      numerator
+      denominator
+    }
+  }
+}

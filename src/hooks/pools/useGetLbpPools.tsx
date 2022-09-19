@@ -14,10 +14,7 @@ export type AssetPair = number[];
 export interface PoolData {
   assets: AssetPair;
   feeCollector: string;
-  fee: {
-    numerator: number;
-    denominator: number;
-  };
+  fee: string[];
   repayTarget: number;
   initialWeight: number;
   finalWeight: number;
@@ -40,26 +37,37 @@ const repayFee: Fee = {
  * @param client
  * @returns Function to format the given codec into an LBPPool
  */
-export const mapToPool =
-  (math: HydraDxMath, client: ApolloClient<object>, apiInstance: ApiPromise) =>
+export const mapToPool = (
+  math: HydraDxMath,
+  client: ApolloClient<object>,
+  apiInstance: ApiPromise
+) =>
   /**
    * @param [id, codec]
    * @returns LBPPool parsed from the coded provided as an argument
    */
   async ([id, codec]: [string, Codec]) => {
     // TODO this is possibly VERY unsafe and needs to be revisited for type parsing / creation
-    const poolData = codec.toJSON() as unknown as PoolData;
+
+    // const poolData = apiInstance.registry.createType(
+    //   'Option<PalletLbpPool>',
+    //   codec
+    // ).unwrap()
+
+    const poolData = (codec.toJSON() as unknown) as PoolData;
+
     const lastBlockData = readLastBlock(client);
     const relaychainBlockNumber =
       lastBlockData?.lastBlock?.relaychainBlockNumber;
 
     if (!poolData || !relaychainBlockNumber) return;
 
+    console.log('have LBP pool data', poolData);
+
     // const feeCollector = poolData.feeCollector.toString();
-    // const repayTarget = apiInstance.createType(
-    //     balanceDataType,
-    //     poolData.repayTarget.toString()
-    // ).toString()
+    // const repayTarget = apiInstance
+    //   .createType(balanceDataType, poolData.repayTarget.toString())
+    //   .toString();
 
     // construct the pool entity without weights
     const partialPool: Omit<
@@ -89,12 +97,16 @@ export const mapToPool =
       ),
     };
 
+    console.log('have A weights', assetAWeights);
+
     // determine weights for asset B
     const assetBWeights: LbpAssetWeights = {
       initial: calculateOppositeAssetWeight(assetAWeights.initial),
       final: calculateOppositeAssetWeight(assetAWeights.final),
       current: calculateOppositeAssetWeight(assetAWeights.current),
     };
+
+    console.log('have B weights', assetBWeights);
 
     // TODO: this function only works by finding the first lock with the given ID
     // TODO: this data fetching should be moved to a resolver, and this mapper
@@ -112,9 +124,11 @@ export const mapToPool =
     //     : false
 
     const poolFee: Fee = {
-      numerator: poolData.fee.numerator.toString(),
-      denominator: poolData.fee.denominator.toString(),
+      numerator: poolData.fee[0],
+      denominator: poolData.fee[1],
     };
+
+    console.log('have fee', poolFee);
 
     const pool: LbpPool = {
       ...partialPool,
@@ -124,6 +138,8 @@ export const mapToPool =
       // if we've haven't reached the repay target, the pool will carry a larger fee
       fee: false ? poolFee : repayFee,
     };
+
+    console.log('returning pool', pool);
 
     return pool;
   };
@@ -153,7 +169,10 @@ export const useGetLbpPools = () => {
   return useCallback(
     async (client: ApolloClient<object>) => {
       // return an empty array by default
+      console.log('getting LBP pools');
       if (!apiInstance || loading || !math) return [];
+
+      console.log('getting LBP pools');
       return getLbpPools(apiInstance, math, client);
     },
     [apiInstance, loading, math]

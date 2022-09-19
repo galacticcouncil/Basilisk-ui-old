@@ -41,22 +41,23 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
           <Icon name="BasiliskLogoFull" />
           <div className="page-header__menu-wrapper">
             <div className="page-header__menu-wrapper__menu-item">
-              <Link to='trade'>
-                Trade
-              </Link>
+              <Link to="lbp">LBP</Link>
             </div>
             <div className="page-header__menu-wrapper__menu-item">
-              <Link to='wallet'>
-                Wallet
-              </Link>
+              <Link to="trade">Trade</Link>
             </div>
             <div className="page-header__menu-wrapper__menu-item">
-              <Link to='pools'>
-                Pools
-              </Link>
+              <Link to="wallet">Wallet</Link>
             </div>
             <div className="page-header__menu-wrapper__menu-item">
-              <a target="_blank" href='https://docs.bsx.fi/howto_bridge'>
+              <Link to="pools">Pools</Link>
+            </div>
+            <div className="page-header__menu-wrapper__menu-item">
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href="https://docs.bsx.fi/howto_bridge"
+              >
                 Bridge
               </a>
             </div>

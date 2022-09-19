@@ -6,7 +6,8 @@ import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
 import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
 import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
 import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
-import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
+import { useXYKPoolsQueryResolver } from '../pools/resolvers/useXYKPoolsQueryResolver';
+import { useLBPPoolsQueryResolver } from '../pools/resolvers/useLBPPoolsQueryResolver';
 import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
 import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
 import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
@@ -22,13 +23,12 @@ import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolvers, Mutation: AccountsMutationResolvers } =
-    useAccountsResolvers();
   const {
-    Query: PoolsQueryResolver,
-    XYKPool,
-    LBPPool,
-  } = usePoolsQueryResolver();
+    Query: AccountsQueryResolvers,
+    Mutation: AccountsMutationResolvers,
+  } = useAccountsResolvers();
+  const { Query: XYKPoolsQueryResolver, XYKPool } = useXYKPoolsQueryResolver();
+  const { Query: LBPPoolsQueryResolver, LBPPool } = useLBPPoolsQueryResolver();
   const { Query: ExtensionQueryResolver } = useExtensionResolvers();
   return {
     Query: {
@@ -36,7 +36,8 @@ export const useResolvers: () => Resolvers = () => {
       ...ExtensionQueryResolver,
       ...useFeePaymentAssetsQueryResolvers(),
       ...useBalanceQueryResolvers(),
-      ...PoolsQueryResolver,
+      ...XYKPoolsQueryResolver,
+      ...LBPPoolsQueryResolver,
       ...useAssetsQueryResolvers(),
       ...useConfigQueryResolvers(),
     },
@@ -46,14 +47,14 @@ export const useResolvers: () => Resolvers = () => {
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
       ...useFaucetResolvers().Mutation,
-      ...useBalanceMutationsResolvers()
+      ...useBalanceMutationsResolvers(),
     },
     XYKPool,
     LBPPool,
     Account: {
       ...useBalanceQueryResolvers(),
-      ...useVestingQueryResolvers()
-    }
+      ...useVestingQueryResolvers(),
+    },
   };
 };
 

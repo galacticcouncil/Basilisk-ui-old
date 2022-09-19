@@ -1,6 +1,6 @@
 import { Balance, Maybe } from '../../../../../generated/graphql';
 import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
-import { idToAsset } from '../../../../TradePage/TradePage';
+import { idToAsset } from '../../../../../misc/idToAsset';
 import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader';
 import './BalanceList.scss';
 

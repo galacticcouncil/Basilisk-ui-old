@@ -1,31 +1,40 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useSearchParams, useNavigate, createSearchParams } from "react-router-dom";
-import { TradeAssetIds } from "../PoolsPage";
-import { useDebugBoxContext } from "./useDebugBox";
-import { idToAsset } from "../../TradePage/TradePage";
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import {
+  useSearchParams,
+  useNavigate,
+  createSearchParams,
+} from 'react-router-dom';
+import { TradeAssetIds } from '../PoolsPage';
+import { useDebugBoxContext } from './useDebugBox';
+import { idToAsset } from '../../../misc/idToAsset';
 
-export const useAssetIdsWithUrl = (): [TradeAssetIds, Dispatch<SetStateAction<TradeAssetIds>>] => {
-    const [searchParams] = useSearchParams();
-    const assetOut = idToAsset(searchParams.get('assetOut'));
-    const assetIn = idToAsset(searchParams.get('assetIn'));
-    const [assetIds, setAssetIds] = useState<TradeAssetIds>({
-      // with default values if the router params are empty
-      assetIn: assetIn?.id,
-      assetOut: assetOut?.id || '0'
-    });
+export const useAssetIdsWithUrl = (): [
+  TradeAssetIds,
+  Dispatch<SetStateAction<TradeAssetIds>>
+] => {
+  const [searchParams] = useSearchParams();
+  const assetOut = idToAsset(searchParams.get('assetOut'));
+  const assetIn = idToAsset(searchParams.get('assetIn'));
+  const [assetIds, setAssetIds] = useState<TradeAssetIds>({
+    // with default values if the router params are empty
+    assetIn: assetIn?.id,
+    assetOut: assetOut?.id || '0',
+  });
 
-    const navigate = useNavigate();
-    const { debugBoxEnabled } = useDebugBoxContext();
+  const navigate = useNavigate();
+  const { debugBoxEnabled } = useDebugBoxContext();
 
-    useEffect(() => {
-      assetIds.assetIn && assetIds.assetOut && navigate({
+  useEffect(() => {
+    assetIds.assetIn &&
+      assetIds.assetOut &&
+      navigate({
         search: `?${createSearchParams({
           assetIn: assetIds.assetIn,
           assetOut: assetIds.assetOut,
-          ...(debugBoxEnabled ? { debug: 'true' } : null)
-        })}`
+          ...(debugBoxEnabled ? { debug: 'true' } : null),
+        })}`,
       });
-    }, [assetIds, searchParams, debugBoxEnabled]);
-  
-    return [assetIds, setAssetIds];
-  }
+  }, [assetIds, searchParams, debugBoxEnabled]);
+
+  return [assetIds, setAssetIds];
+};
