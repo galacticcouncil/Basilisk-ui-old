@@ -471,17 +471,11 @@ export const TradeForm = ({
         assetOut: assetIds.assetIn,
       });
 
-      if (tradeType === TradeType.Buy) {
-        const assetOutAmount = getValues('assetOutAmount');
-        setValue('assetInAmount', assetOutAmount);
-        setTradeType(TradeType.Sell);
-        setValue('assetOutAmount', null);
-      } else {
-        const assetInAmount = getValues('assetInAmount');
-        setValue('assetOutAmount', assetInAmount);
-        setTradeType(TradeType.Buy);
-        setValue('assetInAmount', null);
-      }
+      const assetOutAmount = getValues('assetOutAmount');
+      const assetInAmount = getValues('assetInAmount');
+
+      setValue('assetInAmount', assetOutAmount);
+      setValue('assetOutAmount', assetInAmount);
     },
     [assetIds, tradeType, setValue, getValues, setTradeType]
   );
