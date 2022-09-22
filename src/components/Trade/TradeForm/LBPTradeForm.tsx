@@ -313,17 +313,29 @@ export const TradeForm = ({
 
     if (!assetOutAmount) return setValue('assetInAmount', null);
 
-    const amount = math.lbp.calculate_in_given_out(
+    console.log(
+      'ASSOUTAMTCHANGED',
       assetInLiquidity,
       assetInWeight,
       assetOutLiquidity,
       assetOutWeight,
       assetOutAmount
     );
+
+    const amount = math.lbp.calculate_in_given_out(
+      assetInLiquidity,
+      assetOutLiquidity,
+      assetInWeight,
+      assetOutWeight,
+      assetOutAmount
+    );
+
+    console.log('amountincalced', amount);
     // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
     if (amount === '0' && assetOutAmount !== '0') return;
     setValue('assetInAmount', amount || null);
   }, [
+    pool,
     tradeType,
     assetOutLiquidity,
     assetInLiquidity,
@@ -349,8 +361,8 @@ export const TradeForm = ({
 
     const amount = math.lbp.calculate_out_given_in(
       assetInLiquidity,
-      assetInWeight,
       assetOutLiquidity,
+      assetInWeight,
       assetOutWeight,
       assetInAmount
     );
@@ -359,6 +371,7 @@ export const TradeForm = ({
     setValue('assetOutAmount', amount || null);
   }, [
     tradeType,
+    pool,
     assetOutLiquidity,
     assetInLiquidity,
     assetInWeight,

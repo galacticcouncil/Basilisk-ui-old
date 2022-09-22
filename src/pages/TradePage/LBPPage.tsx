@@ -385,15 +385,15 @@ export const LBPPage = () => {
     return {
       outIn: math.lbp.get_spot_price(
         assetOutLiquidity,
-        assetOutWeight.current,
         assetInLiquidity,
+        assetOutWeight.current,
         assetInWeight.current,
         '1000000000000'
       ),
       inOut: math.lbp.get_spot_price(
         assetInLiquidity,
-        assetInWeight.current,
         assetOutLiquidity,
+        assetInWeight.current,
         assetOutWeight.current,
         '1000000000000'
       ),
