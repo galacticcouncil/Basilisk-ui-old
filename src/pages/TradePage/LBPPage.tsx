@@ -291,8 +291,6 @@ export const LBPPage = () => {
     networkStatus: poolsNetworkStatus,
   } = useGetPoolsQueryProvider();
 
-  console.log('LBPPage:mapPoolData', poolsData);
-
   const assets = useMemo(() => {
     const assets = poolsData?.pools
       ?.map((pool) => {
@@ -363,17 +361,40 @@ export const LBPPage = () => {
     return find<Balance | null>(pool?.balances, { assetId })?.balance;
   }, [pool, assetIds]);
 
+  const assetOutWeight = useMemo(() => {
+    return poolData?.pool?.assetOutId === pool?.assetInId
+      ? pool?.assetAWeights
+      : pool?.assetBWeights;
+  }, [pool, poolData]);
+
+  const assetInWeight = useMemo(() => {
+    return poolData?.pool?.assetInId === pool?.assetInId
+      ? pool?.assetAWeights
+      : pool?.assetBWeights;
+  }, [pool, poolData]);
+
   const spotPrice = useMemo(() => {
-    if (!assetOutLiquidity || !assetInLiquidity || !math) return;
+    if (
+      !assetOutLiquidity ||
+      !assetOutWeight ||
+      !assetInLiquidity ||
+      !assetInWeight ||
+      !math
+    )
+      return;
     return {
-      outIn: math.xyk.get_spot_price(
+      outIn: math.lbp.get_spot_price(
         assetOutLiquidity,
+        assetOutWeight.current,
         assetInLiquidity,
+        assetInWeight.current,
         '1000000000000'
       ),
-      inOut: math.xyk.get_spot_price(
+      inOut: math.lbp.get_spot_price(
         assetInLiquidity,
+        assetInWeight.current,
         assetOutLiquidity,
+        assetOutWeight.current,
         '1000000000000'
       ),
     };
@@ -447,6 +468,9 @@ export const LBPPage = () => {
           }
           assetInLiquidity={assetInLiquidity}
           assetOutLiquidity={assetOutLiquidity}
+          assetInWeight={assetInWeight?.current}
+          assetOutWeight={assetOutWeight?.current}
+          repayTargetHit={false}
           spotPrice={spotPrice}
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}

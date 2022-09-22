@@ -84,8 +84,7 @@ export const useGetPoolsQueryResolver = () => {
 
         // if the poolId is specified, try resolving with a single pool
         if (poolIds.xykPoolId || poolIds.lbpPoolId) {
-          // let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
-          let lbpPool: any;
+          let lbpPool = await getLbpPool(context.client, poolIds.lbpPoolId);
           let xykPool = await getXykPool(poolIds.xykPoolId);
 
           log.debug(

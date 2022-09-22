@@ -75,8 +75,8 @@ export const mapToPool = (
       'assetBWeights' | 'assetAWeights' | 'repayTargetReached' | 'fee'
     > = {
       id,
-      assetInId: poolData.assets[0].toString(),
-      assetOutId: poolData.assets[1].toString(),
+      assetInId: poolData.assets[0].toString(), // Accumulated asset
+      assetOutId: poolData.assets[1].toString(), // Distributed asset
       startBlock: poolData.start.toString(),
       endBlock: poolData.end.toString(),
     };

@@ -36,8 +36,8 @@ import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
-import { estimateBuy } from '../../../hooks/pools/xyk/buy';
-import { estimateSell } from '../../../hooks/pools/xyk/sell';
+import { estimateBuy } from '../../../hooks/pools/lbp/buy';
+import { estimateSell } from '../../../hooks/pools/lbp/sell';
 import { payment } from '@polkadot/types/interfaces/definitions';
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider';
 
@@ -155,6 +155,9 @@ export interface TradeFormProps {
   pool?: LbpPool;
   assetInLiquidity?: string;
   assetOutLiquidity?: string;
+  assetInWeight?: string;
+  assetOutWeight?: string;
+  repayTargetHit?: boolean;
   spotPrice?: {
     outIn?: string;
     inOut?: string;
@@ -213,7 +216,9 @@ export const TradeForm = ({
   pool,
   isPoolLoading,
   assetInLiquidity,
+  assetInWeight,
   assetOutLiquidity,
+  assetOutWeight,
   spotPrice,
   onSubmitTrade,
   tradeLoading,
@@ -265,7 +270,9 @@ export const TradeForm = ({
     isPoolLoading,
     activeAccountTradeBalances,
     assetInLiquidity,
+    assetInWeight,
     assetOutLiquidity,
+    assetOutWeight,
     allowedSlippage,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
@@ -293,40 +300,71 @@ export const TradeForm = ({
 
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (
+      !pool ||
+      !math ||
+      !assetInLiquidity ||
+      !assetInWeight ||
+      !assetOutWeight ||
+      !assetOutLiquidity
+    )
+      return;
     if (tradeType !== TradeType.Buy) return;
 
     if (!assetOutAmount) return setValue('assetInAmount', null);
 
-    const amount = math.xyk.calculate_in_given_out(
-      // which combination is correct?
-      // assetOutLiquidity,
-      // assetInLiquidity,
+    const amount = math.lbp.calculate_in_given_out(
       assetInLiquidity,
+      assetInWeight,
       assetOutLiquidity,
+      assetOutWeight,
       assetOutAmount
     );
     // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
     if (amount === '0' && assetOutAmount !== '0') return;
     setValue('assetInAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
+  }, [
+    tradeType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutWeight,
+    assetInWeight,
+    watch('assetOutAmount'),
+  ]);
 
   useEffect(() => {
     const assetInAmount = getValues('assetInAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (
+      !pool ||
+      !math ||
+      !assetInWeight ||
+      !assetInLiquidity ||
+      !assetOutWeight ||
+      !assetOutLiquidity
+    )
+      return;
     if (tradeType !== TradeType.Sell) return;
 
     if (!assetInAmount) return setValue('assetOutAmount', null);
 
-    const amount = math.xyk.calculate_out_given_in(
+    const amount = math.lbp.calculate_out_given_in(
       assetInLiquidity,
+      assetInWeight,
       assetOutLiquidity,
+      assetOutWeight,
       assetInAmount
     );
     if (amount === '0' && assetInAmount !== '0')
       return setValue('assetOutAmount', null);
     setValue('assetOutAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
+  }, [
+    tradeType,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetInWeight,
+    assetOutWeight,
+    watch('assetInAmount'),
+  ]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
@@ -456,7 +494,7 @@ export const TradeForm = ({
         assetOutId: data.assetOut,
         assetInAmount: data.assetInAmount,
         assetOutAmount: data.assetOutAmount,
-        poolType: PoolType.XYK,
+        poolType: PoolType.LBP,
         tradeType: tradeType,
         amountWithSlippage: tradeLimit.balance,
       });
