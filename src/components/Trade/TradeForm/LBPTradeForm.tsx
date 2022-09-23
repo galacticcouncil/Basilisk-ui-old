@@ -153,15 +153,11 @@ export interface TradeFormProps {
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
   pool?: LbpPool;
-  assetInLiquidity?: string;
-  assetOutLiquidity?: string;
   assetInWeight?: string;
+  assetInLiquidity?: string;
   assetOutWeight?: string;
+  assetOutLiquidity?: string;
   repayTargetHit?: boolean;
-  spotPrice?: {
-    outIn?: string;
-    inOut?: string;
-  };
   isPoolLoading: boolean;
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
   tradeLoading: boolean;
@@ -215,11 +211,10 @@ export const TradeForm = ({
   isActiveAccountConnected,
   pool,
   isPoolLoading,
-  assetInLiquidity,
   assetInWeight,
-  assetOutLiquidity,
+  assetInLiquidity,
   assetOutWeight,
-  spotPrice,
+  assetOutLiquidity,
   onSubmitTrade,
   tradeLoading,
   assets,
@@ -270,10 +265,9 @@ export const TradeForm = ({
     isPoolLoading,
     activeAccountTradeBalances,
     assetInLiquidity,
-    assetInWeight,
     assetOutLiquidity,
-    assetOutWeight,
     allowedSlippage,
+    trigger,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
@@ -297,6 +291,39 @@ export const TradeForm = ({
 
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);
+
+  const spotPrice = useMemo(() => {
+    if (
+      !assetOutLiquidity ||
+      !assetOutWeight ||
+      !assetInLiquidity ||
+      !assetInWeight ||
+      !math
+    )
+      return;
+    return {
+      outIn: math.lbp.get_spot_price(
+        assetOutLiquidity,
+        assetInLiquidity,
+        assetOutWeight,
+        assetInWeight,
+        '1000000000000'
+      ),
+      inOut: math.lbp.get_spot_price(
+        assetInLiquidity,
+        assetOutLiquidity,
+        assetInWeight,
+        assetOutWeight,
+        '1000000000000'
+      ),
+    };
+  }, [
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutWeight,
+    assetInWeight,
+    math,
+  ]);
 
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount');
@@ -337,6 +364,7 @@ export const TradeForm = ({
   }, [
     pool,
     tradeType,
+    math,
     assetOutLiquidity,
     assetInLiquidity,
     assetOutWeight,
@@ -366,11 +394,13 @@ export const TradeForm = ({
       assetOutWeight,
       assetInAmount
     );
+
     if (amount === '0' && assetInAmount !== '0')
       return setValue('assetOutAmount', null);
     setValue('assetOutAmount', amount || null);
   }, [
     tradeType,
+    math,
     pool,
     assetOutLiquidity,
     assetInLiquidity,
@@ -687,7 +717,6 @@ export const TradeForm = ({
   useEffect(() => {
     debugComponent('TradeForm', {
       ...getValues(),
-      spotPrice,
       tradeLimit,
       assetInLiquidity,
       assetOutLiquidity,
@@ -835,7 +864,7 @@ export const TradeForm = ({
             <Icon name="Settings" />
           </div>
 
-          <div className="trade-form-heading">Trade Tokens</div>
+          <div className="trade-form-heading">Liquidity bootstrapping</div>
           <div className="balance-wrapper">
             <AssetBalanceInput
               balanceInputName="assetInAmount"
@@ -893,13 +922,6 @@ export const TradeForm = ({
                   const assetIn = getValues('assetIn');
                   switch (tradeType) {
                     case TradeType.Sell:
-                      // return `1 ${
-                      //   idToAsset(getValues('assetIn'))?.symbol ||
-                      //   getValues('assetIn')
-                      // } = ${fromPrecision12(spotPrice?.inOut)} ${
-                      //   idToAsset(getValues('assetOut'))?.symbol ||
-                      //   getValues('assetOut')
-                      // }`;
                       return spotPrice?.inOut && assetOut ? (
                         <>
                           <FormattedBalance
@@ -920,13 +942,6 @@ export const TradeForm = ({
                         <>-</>
                       );
                     case TradeType.Buy:
-                      // return `1 ${
-                      //   idToAsset(getValues('assetOut'))?.symbol ||
-                      //   getValues('assetOut')
-                      // } = ${fromPrecision12(spotPrice?.outIn)} ${
-                      //   idToAsset(getValues('assetIn'))?.symbol ||
-                      //   getValues('assetIn')
-                      // }`;
                       return spotPrice?.outIn && assetIn ? (
                         <>
                           <FormattedBalance

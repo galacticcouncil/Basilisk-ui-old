@@ -2,7 +2,7 @@ import KSM from './icons/assets/KSM.svg';
 import BSX from './icons/assets/BSX.svg';
 import AUSD from './icons/assets/AUSD.svg';
 import PHA from './icons/assets/PHA.svg';
-import TNKR from './icons/assets/TNKR.png';
+import TNKR from './icons/assets/TNKR.svg';
 import Unknown from './icons/assets/Unknown.svg';
 import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader';
 

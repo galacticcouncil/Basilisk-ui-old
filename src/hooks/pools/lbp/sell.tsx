@@ -47,6 +47,7 @@ export const sell = async (
   // await withGracefulErrors(
   await new Promise(
     async (resolve, reject) => {
+      console.log('LBP Sell:', assetBuy, assetSell, amountSell, minBought);
       const activeAccount = readActiveAccount(cache);
       const address = activeAccount?.id;
 

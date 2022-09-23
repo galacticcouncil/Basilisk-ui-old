@@ -44,6 +44,7 @@ export const buy = async (
   amountBuy: string,
   maxSold: string
 ) => {
+  console.log('LBP BUY:', assetBuy, assetSell, amountBuy, maxSold);
   await withGracefulErrors(
     async (resolve, reject) => {
       const activeAccount = readActiveAccount(cache);

@@ -274,14 +274,8 @@ export const LBPPage = () => {
     networkStatus: poolNetworkStatus,
   } = useGetPoolByAssetsQuery(
     {
-      assetInId:
-        (assetIds.assetIn! > assetIds.assetOut!
-          ? assetIds.assetIn
-          : assetIds.assetOut) || undefined,
-      assetOutId:
-        (assetIds.assetIn! > assetIds.assetOut!
-          ? assetIds.assetOut
-          : assetIds.assetIn) || undefined,
+      assetInId: assetIds.assetIn || undefined,
+      assetOutId: assetIds.assetOut || undefined,
     },
     depsLoading
   );
@@ -362,43 +356,18 @@ export const LBPPage = () => {
   }, [pool, assetIds]);
 
   const assetOutWeight = useMemo(() => {
-    return poolData?.pool?.assetOutId === pool?.assetInId
+    return assetIds.assetOut === pool?.assetOutId
       ? pool?.assetAWeights
       : pool?.assetBWeights;
-  }, [pool, poolData]);
+  }, [pool, assetIds]);
 
   const assetInWeight = useMemo(() => {
-    return poolData?.pool?.assetInId === pool?.assetInId
+    console.log('Weights', pool, assetInLiquidity, assetOutLiquidity, assetIds);
+
+    return assetIds.assetIn === pool?.assetOutId
       ? pool?.assetAWeights
       : pool?.assetBWeights;
-  }, [pool, poolData]);
-
-  const spotPrice = useMemo(() => {
-    if (
-      !assetOutLiquidity ||
-      !assetOutWeight ||
-      !assetInLiquidity ||
-      !assetInWeight ||
-      !math
-    )
-      return;
-    return {
-      outIn: math.lbp.get_spot_price(
-        assetOutLiquidity,
-        assetInLiquidity,
-        assetOutWeight.current,
-        assetInWeight.current,
-        '1000000000000'
-      ),
-      inOut: math.lbp.get_spot_price(
-        assetInLiquidity,
-        assetOutLiquidity,
-        assetInWeight.current,
-        assetOutWeight.current,
-        '1000000000000'
-      ),
-    };
-  }, [assetOutLiquidity, assetInLiquidity, math]);
+  }, [pool, assetIds]);
 
   const {
     data: activeAccountTradeBalancesData,
@@ -471,7 +440,6 @@ export const LBPPage = () => {
           assetInWeight={assetInWeight?.current}
           assetOutWeight={assetOutWeight?.current}
           repayTargetHit={false}
-          spotPrice={spotPrice}
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}
           assets={assets}
