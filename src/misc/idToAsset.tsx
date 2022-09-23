@@ -111,15 +111,21 @@ export const idToAsset = (id: string | null) => {
       },
       '4': {
         id: '4',
-        symbol: 'TNKR',
-        fullName: 'Tinkernet',
-        icon: TNKR,
+        symbol: 'BNKR',
+        fullName: 'Bankernet',
+        icon: Unknown,
       },
       '5': {
         id: '5',
         symbol: 'LP KSM/aUSD',
         fullName: 'KSM/aUSD Share token',
         icon: Unknown,
+      },
+      '8': {
+        id: '8',
+        symbol: 'TNKR',
+        fullName: 'Tinkernet',
+        icon: TNKR,
       },
     },
   };

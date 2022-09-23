@@ -30,7 +30,7 @@ export const FormattedBalance = ({
   let formattedBalance = fromPrecision12(balance.balance);
 
   const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0;
-  console.log('formattedBalance', decimalPlacesCount, formattedBalance);
+  //log.log('formattedBalance', decimalPlacesCount, formattedBalance);
 
   if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
     formattedBalance = new BigNumber(formattedBalance).toFixed(
