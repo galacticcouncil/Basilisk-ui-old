@@ -286,7 +286,7 @@ export const LBPPage = () => {
   } = useGetPoolsQueryProvider();
 
   const assets = useMemo(() => {
-    const assets = poolsData?.pools
+    let assets = poolsData?.pools
       ?.map((pool) => {
         if (pool.__typename === 'LBPPool') {
           return [pool.assetInId, pool.assetOutId];
@@ -304,6 +304,15 @@ export const LBPPage = () => {
     poolData?.pool && poolData.pool.__typename === 'LBPPool'
       ? poolData.pool
       : undefined;
+
+  if (!assetIds.assetIn || !assetIds.assetOut) {
+    const newPool = poolsData?.pools?.[0];
+    console.log('NEW POOL', newPool);
+    if (newPool) {
+      assetIds.assetIn = newPool.assetInId;
+      assetIds.assetOut = newPool.assetOutId;
+    }
+  }
 
   const pool = useMemo(() => lbpPool, [lbpPool]);
 
