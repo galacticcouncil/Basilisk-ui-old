@@ -14,6 +14,7 @@ import { Control, FormProvider, useForm } from 'react-hook-form';
 import {
   Account,
   Balance,
+  Fee,
   Maybe,
   Pool,
   TradeType,
@@ -666,6 +667,10 @@ export const TradeForm = ({
     slippage,
     formState.isDirty,
   ]);
+
+  const tradeFee: Fee | undefined = useMemo(() => {
+    return { numerator: '1000', denominator: '3' };
+  }, []);
 
   const minTradeLimitIn = useCallback(
     (assetInAmount?: Maybe<string>) => {

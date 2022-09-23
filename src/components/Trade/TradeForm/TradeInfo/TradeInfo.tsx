@@ -24,7 +24,7 @@ export const TradeInfo = ({
   expectedSlippage,
   tradeLimit,
   isDirty,
-  tradeFee = constants.xykFee,
+  tradeFee,
   paymentInfo,
 }: TradeInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
@@ -108,11 +108,12 @@ export const TradeInfo = ({
         <div className="data-piece">
           <span className="data-piece__label">Trade fee </span>
           <div className="data-piece__value">
-            {new BigNumber(tradeFee.numerator)
-              .dividedBy(tradeFee.denominator)
-              .multipliedBy(100)
-              .toFixed(1)}
-            %
+            {tradeFee
+              ? new BigNumber(tradeFee.numerator)
+                  .dividedBy(tradeFee.denominator)
+                  .multipliedBy(100)
+                  .toFixed(1) + '%'
+              : '0'}
           </div>
         </div>
       </div>

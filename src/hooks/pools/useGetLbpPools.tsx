@@ -9,6 +9,8 @@ import { HydraDxMath, useMathContext } from '../math/useMath';
 import { calculateCurrentAssetWeight } from './lbp/calculateCurrentAssetWeight';
 import { ApolloClient } from '@apollo/client';
 import { readLastBlock } from '../lastBlock/readLastBlock';
+import { BigNumber } from 'bignumber.js';
+import { getLockedBalanceByAddressAndLockId } from '../vesting/calculateClaimableAmount';
 
 export type AssetPair = number[];
 export interface PoolData {
@@ -64,10 +66,10 @@ export const mapToPool = (
 
     console.log('have LBP pool data', poolData);
 
-    // const feeCollector = poolData.feeCollector.toString();
-    // const repayTarget = apiInstance
-    //   .createType(balanceDataType, poolData.repayTarget.toString())
-    //   .toString();
+    const feeCollector = poolData.feeCollector.toString();
+    const repayTarget = apiInstance
+      .createType(balanceDataType, poolData.repayTarget.toString())
+      .toString();
 
     // construct the pool entity without weights
     const partialPool: Omit<
@@ -111,17 +113,29 @@ export const mapToPool = (
     // TODO: this function only works by finding the first lock with the given ID
     // TODO: this data fetching should be moved to a resolver, and this mapper
     // should be a plain function
-    // const feeCollectorBalanceLockAmount = (await getLockedBalanceByAddressAndLockId(
-    //     apiInstance,
-    //     feeCollector,
-    //     lbpRepayFeeLockId
-    // ))?.amount?.toString();
+    const feeCollectorBalanceLockAmount = (
+      await getLockedBalanceByAddressAndLockId(
+        apiInstance,
+        feeCollector,
+        lbpRepayFeeLockId
+      )
+    )?.amount?.toString();
 
-    // const repayTargetReached = repayTarget && feeCollectorBalanceLockAmount
-    //     // if collected fees are greater than the repay target, the repay target has been reached
-    //     // this means that we won't apply the repay fee down the line
-    //     ? new BigNumber(feeCollectorBalanceLockAmount).gt(new BigNumber(repayTarget))
-    //     : false
+    const repayTargetReached =
+      repayTarget && feeCollectorBalanceLockAmount
+        ? // if collected fees are greater than the repay target, the repay target has been reached
+          // this means that we won't apply the repay fee down the line
+          new BigNumber(feeCollectorBalanceLockAmount).gt(
+            new BigNumber(repayTarget)
+          )
+        : false;
+
+    console.log(
+      'REPAY TARGET REACHED:',
+      repayTargetReached,
+      repayTarget,
+      feeCollectorBalanceLockAmount
+    );
 
     const poolFee: Fee = {
       numerator: poolData.fee[0],
@@ -134,7 +148,7 @@ export const mapToPool = (
       ...partialPool,
       assetAWeights,
       assetBWeights,
-      repayTargetReached: false,
+      repayTargetReached,
       // if we've haven't reached the repay target, the pool will carry a larger fee
       fee: false ? poolFee : repayFee,
     };

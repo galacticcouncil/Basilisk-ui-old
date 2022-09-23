@@ -14,6 +14,7 @@ import { Control, FormProvider, useForm } from 'react-hook-form';
 import {
   Account,
   Balance,
+  Fee,
   LbpPool,
   Maybe,
   Pool,
@@ -488,6 +489,11 @@ export const TradeForm = ({
     getValues,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
+
+  const tradeFee: Fee | undefined = useMemo(() => {
+    if (assetIds.assetIn === pool?.assetInId) return undefined;
+    else return pool?.fee;
+  }, [pool, tradeType, assetIds]);
 
   const slippage = useMemo(() => {
     const assetInAmount = getValues('assetInAmount');
@@ -1007,6 +1013,7 @@ export const TradeForm = ({
 
           <TradeInfo
             tradeLimit={tradeLimit}
+            tradeFee={tradeFee}
             expectedSlippage={slippage}
             errors={errors}
             isDirty={isDirty}
