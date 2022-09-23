@@ -252,6 +252,28 @@ export const TradeForm = ({
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null);
   const assetInAmountInputRef = useRef<HTMLInputElement>(null);
 
+  const feeToPercentage = (tradeFee?: Fee) => {
+    if (!tradeFee) {
+      return '0';
+    } else {
+      return new BigNumber(tradeFee.numerator)
+        .dividedBy(tradeFee.denominator)
+        .multipliedBy(100)
+        .toFixed(2)
+        .toString();
+    }
+  };
+
+  const getFeeAmount = (amount: string, tradeFee: string) => {
+    console.log('TradeFee:', tradeFee);
+    return new BigNumber(amount).multipliedBy(tradeFee).dividedBy(100);
+  };
+
+  const tradeFee: string = useMemo(() => {
+    if (assetIds.assetIn === pool?.assetInId) return feeToPercentage();
+    else return feeToPercentage(pool?.fee);
+  }, [pool, tradeType, assetIds]);
+
   // trigger form field validation right away
   useEffect(() => {
     trigger('submit');
@@ -337,6 +359,8 @@ export const TradeForm = ({
       !assetOutLiquidity
     )
       return;
+
+    // TODO: FEES
     if (tradeType !== TradeType.Buy) return;
 
     if (!assetOutAmount) return setValue('assetInAmount', null);
@@ -358,10 +382,19 @@ export const TradeForm = ({
       assetOutAmount
     );
 
-    console.log('amountincalced', amount);
-    // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
     if (amount === '0' && assetOutAmount !== '0') return;
-    setValue('assetInAmount', amount || null);
+
+    const feeAmount = getFeeAmount(amount, tradeFee);
+    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString();
+
+    console.log(
+      'BUY: OUT|IN|FEE: ',
+      assetOutAmount,
+      amountWithFee,
+      feeAmount.toString()
+    );
+
+    setValue('assetInAmount', amountWithFee || null);
   }, [
     pool,
     tradeType,
@@ -384,6 +417,8 @@ export const TradeForm = ({
       !assetOutLiquidity
     )
       return;
+
+    // TODO: FEES
     if (tradeType !== TradeType.Sell) return;
 
     if (!assetInAmount) return setValue('assetOutAmount', null);
@@ -396,13 +431,24 @@ export const TradeForm = ({
       assetInAmount
     );
 
-    if (amount === '0' && assetInAmount !== '0')
-      return setValue('assetOutAmount', null);
-    setValue('assetOutAmount', amount || null);
+    if (amount === '0' && assetInAmount !== '0') return;
+
+    const feeAmount = getFeeAmount(amount, tradeFee);
+    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString();
+
+    console.log(
+      'SELL: IN|OUT|FEE: ',
+      assetInAmount,
+      amountWithFee,
+      feeAmount.toString()
+    );
+
+    setValue('assetOutAmount', amountWithFee || null);
   }, [
     tradeType,
     math,
     pool,
+    tradeFee,
     assetOutLiquidity,
     assetInLiquidity,
     assetInWeight,
@@ -464,6 +510,7 @@ export const TradeForm = ({
     )
       return;
 
+    // TODO change to 4 cases for LBP
     switch (tradeType) {
       case TradeType.Sell:
         return {
@@ -489,11 +536,6 @@ export const TradeForm = ({
     getValues,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
-
-  const tradeFee: Fee | undefined = useMemo(() => {
-    if (assetIds.assetIn === pool?.assetInId) return undefined;
-    else return pool?.fee;
-  }, [pool, tradeType, assetIds]);
 
   const slippage = useMemo(() => {
     const assetInAmount = getValues('assetInAmount');

@@ -11,7 +11,7 @@ import './TradeInfo.scss';
 
 export interface TradeInfoProps {
   transactionFee?: string;
-  tradeFee?: Fee;
+  tradeFee?: string;
   tradeLimit?: Balance;
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
@@ -107,14 +107,7 @@ export const TradeInfo = ({
         </div>
         <div className="data-piece">
           <span className="data-piece__label">Trade fee </span>
-          <div className="data-piece__value">
-            {tradeFee
-              ? new BigNumber(tradeFee.numerator)
-                  .dividedBy(tradeFee.denominator)
-                  .multipliedBy(100)
-                  .toFixed(1) + '%'
-              : '0'}
-          </div>
+          <div className="data-piece__value">{tradeFee + ' %'}</div>
         </div>
       </div>
       {/* TODO Error message */}
