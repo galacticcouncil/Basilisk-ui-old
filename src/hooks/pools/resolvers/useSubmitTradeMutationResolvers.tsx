@@ -113,7 +113,7 @@ export const useSubmitTradeMutationResolver = () => {
           apiInstance,
           args.assetInId,
           args.assetOutId,
-          args.assetOutAmount,
+          args.assetInAmount,
           args.amountWithSlippage
         );
       }
