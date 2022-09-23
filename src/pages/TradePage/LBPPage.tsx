@@ -356,15 +356,13 @@ export const LBPPage = () => {
   }, [pool, assetIds]);
 
   const assetOutWeight = useMemo(() => {
-    return assetIds.assetOut === pool?.assetOutId
+    return assetIds.assetIn === pool?.assetOutId
       ? pool?.assetAWeights
       : pool?.assetBWeights;
   }, [pool, assetIds]);
 
   const assetInWeight = useMemo(() => {
-    console.log('Weights', pool, assetInLiquidity, assetOutLiquidity, assetIds);
-
-    return assetIds.assetIn === pool?.assetOutId
+    return assetIds.assetOut === pool?.assetOutId
       ? pool?.assetAWeights
       : pool?.assetBWeights;
   }, [pool, assetIds]);
