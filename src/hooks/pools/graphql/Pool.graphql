@@ -40,7 +40,7 @@ type XYKPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
-  totalLiquidity: String!,
+  totalLiquidity: String!
   shareTokenId: String!
 }
 

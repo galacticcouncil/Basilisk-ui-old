@@ -11,13 +11,20 @@ import {
   useState,
 } from 'react';
 import { Control, FormProvider, useForm } from 'react-hook-form';
-import { Account, Balance, Maybe, Pool } from '../../generated/graphql';
+import {
+  Account,
+  Balance,
+  Maybe,
+  Pool,
+  XykPool,
+} from '../../generated/graphql';
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
 import { useMath } from '../../hooks/math/useMath';
 import { percentageChange } from '../../hooks/math/usePercentageChange';
 import { toPrecision12 } from '../../hooks/math/useToPrecision';
 import { SubmitTradeMutationVariables } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { idToAsset, TradeAssetIds } from '../../pages/TradePage/TradePage';
+import { TradeAssetIds } from '../../pages/TradePage/TradePage';
+import { idToAsset } from '../../misc/idToAsset';
 import { AssetBalanceInput } from '../Balance/AssetBalanceInput/AssetBalanceInput';
 import { PoolType } from '../Chart/shared';
 import { PoolsInfo } from './PoolsInfo/PoolsInfo';
@@ -55,13 +62,14 @@ export const PoolsFormSettings = ({
   onAllowedSlippageChange,
   closeModal,
 }: PoolsFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } =
-    useForm<PoolsFormSettingsFormFields>({
-      defaultValues: {
-        allowedSlippage,
-        autoSlippage: true,
-      },
-    });
+  const { register, watch, getValues, setValue, handleSubmit } = useForm<
+    PoolsFormSettingsFormFields
+  >({
+    defaultValues: {
+      allowedSlippage,
+      autoSlippage: true,
+    },
+  });
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -147,7 +155,7 @@ export interface PoolsFormProps {
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
-  pool?: Pool;
+  pool?: XykPool | undefined;
   assetInLiquidity?: string;
   assetOutLiquidity?: string;
   spotPrice?: {
@@ -281,10 +289,10 @@ export const PoolsForm = ({
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef);
   const shareAssetAmountInput = useListenForInput(shareAmountInputRef);
 
-  useEffect(
-    () => setValue('provisioningType', provisioningType),
-    [setValue, provisioningType]
-  );
+  useEffect(() => setValue('provisioningType', provisioningType), [
+    setValue,
+    provisioningType,
+  ]);
 
   const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
     string | null

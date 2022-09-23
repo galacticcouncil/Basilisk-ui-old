@@ -133,7 +133,7 @@ export type Mutation = {
   setActiveAccount?: Maybe<Account>;
 };
 
-export type Pool = XykPool;
+export type Pool = LbpPool | XykPool;
 
 export type Query = Balances & IVesting & {
   __typename?: 'Query';

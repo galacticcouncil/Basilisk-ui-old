@@ -11,7 +11,7 @@ import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUni
 import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit';
 import { useFormContext } from 'react-hook-form';
 import Icon from '../../Icon/Icon';
-import { idToAsset } from '../../../pages/TradePage/TradePage';
+import { idToAsset } from '../../../misc/idToAsset';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 
 export interface AssetBalanceInputProps {
@@ -26,7 +26,7 @@ export interface AssetBalanceInputProps {
   balanceInputRef?: MutableRefObject<HTMLInputElement | null>;
   required?: boolean;
   disabled?: boolean;
-  maxBalanceLoading?: boolean,
+  maxBalanceLoading?: boolean;
 }
 
 export const AssetBalanceInput = ({
@@ -62,47 +62,47 @@ export const AssetBalanceInput = ({
   const methods = useFormContext();
 
   return (
-    <div className={classNames('asset-balance-input', {
-      disabled: maxBalanceLoading
-    })}>
+    <div
+      className={classNames('asset-balance-input', {
+        disabled: maxBalanceLoading,
+      })}
+    >
       {/* This portal will be rendered at it's container ref as defined above */}
       {modalPortal}
-      {isAssetSelectable
-        ? (
+      {isAssetSelectable ? (
+        <div
+          className="asset-balance-input__asset-info"
+          onClick={(_) => handleAssetSelectorClick()}
+          data-modal-portal-toggle={toggleId}
+        >
           <div
-            className="asset-balance-input__asset-info"
-            onClick={(_) => handleAssetSelectorClick()}
-            data-modal-portal-toggle={toggleId}
-          >
-            <div
-              className="asset-icon"
-              style={{
-                backgroundImage: `url('${
-                  idToAsset(methods.getValues(assetInputName))?.icon
-                }')`,
-              }}
-            ></div>
-            <div className="asset-balance-input__asset-info__names">
-              <div className="asset-balance-input__asset-info__names__full-name">
-                {isAssetSelectable
-                  ? (idToAsset(methods.getValues(assetInputName))?.fullName ||
-                  'Select asset')
-                  : 'No asset'
-                }
-              </div>
-              <div className="asset-balance-input__asset-info__names__ticker">
-                {idToAsset(methods.getValues(assetInputName))?.symbol ||
-                  methods.getValues(assetInputName) ||
-                  '---'}
-                {isAssetSelectable && <Icon name="DropdownArrow" />}
-              </div>
+            className="asset-icon"
+            style={{
+              backgroundImage: `url('${
+                idToAsset(methods.getValues(assetInputName))?.icon
+              }')`,
+            }}
+          ></div>
+          <div className="asset-balance-input__asset-info__names">
+            <div className="asset-balance-input__asset-info__names__full-name">
+              {isAssetSelectable
+                ? idToAsset(methods.getValues(assetInputName))?.fullName ||
+                  'Select asset'
+                : 'No asset'}
+            </div>
+            <div className="asset-balance-input__asset-info__names__ticker">
+              {idToAsset(methods.getValues(assetInputName))?.symbol ||
+                methods.getValues(assetInputName) ||
+                '---'}
+              {isAssetSelectable && <Icon name="DropdownArrow" />}
             </div>
           </div>
-        )
-        : <></>
-      }
+        </div>
+      ) : (
+        <></>
+      )}
       <div className="asset-balance-input__input-wrapper">
-        <div className='asset-balance-input__input-wrapper__controls'>
+        <div className="asset-balance-input__input-wrapper__controls">
           <div className="asset-balance-input__input-wrapper__controls__unit-selector">
             <MetricUnitSelector unit={unit} onUnitSelected={setUnit}>
               <div

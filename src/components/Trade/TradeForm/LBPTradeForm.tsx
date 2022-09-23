@@ -15,10 +15,10 @@ import {
   Account,
   Balance,
   Fee,
+  LbpPool,
   Maybe,
   Pool,
   TradeType,
-  XykPool,
 } from '../../../generated/graphql';
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
 import { useMath } from '../../../hooks/math/useMath';
@@ -37,8 +37,8 @@ import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox';
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
 import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs';
 import { useApolloClient } from '@apollo/client';
-import { estimateBuy } from '../../../hooks/pools/xyk/buy';
-import { estimateSell } from '../../../hooks/pools/xyk/sell';
+import { estimateBuy } from '../../../hooks/pools/lbp/buy';
+import { estimateSell } from '../../../hooks/pools/lbp/sell';
 import { payment } from '@polkadot/types/interfaces/definitions';
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider';
 
@@ -153,13 +153,12 @@ export interface TradeFormProps {
   assetIds: TradeAssetIds;
   onAssetIdsChange: (assetIds: TradeAssetIds) => void;
   isActiveAccountConnected?: boolean;
-  pool?: XykPool;
+  pool?: LbpPool;
+  assetInWeight?: string;
   assetInLiquidity?: string;
+  assetOutWeight?: string;
   assetOutLiquidity?: string;
-  spotPrice?: {
-    outIn?: string;
-    inOut?: string;
-  };
+  repayTargetHit?: boolean;
   isPoolLoading: boolean;
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void;
   tradeLoading: boolean;
@@ -213,9 +212,10 @@ export const TradeForm = ({
   isActiveAccountConnected,
   pool,
   isPoolLoading,
+  assetInWeight,
   assetInLiquidity,
+  assetOutWeight,
   assetOutLiquidity,
-  spotPrice,
   onSubmitTrade,
   tradeLoading,
   assets,
@@ -252,6 +252,28 @@ export const TradeForm = ({
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null);
   const assetInAmountInputRef = useRef<HTMLInputElement>(null);
 
+  const feeToPercentage = (tradeFee?: Fee) => {
+    if (!tradeFee) {
+      return '0';
+    } else {
+      return new BigNumber(tradeFee.numerator)
+        .dividedBy(tradeFee.denominator)
+        .multipliedBy(100)
+        .toFixed(2)
+        .toString();
+    }
+  };
+
+  const getFeeAmount = (amount: string, tradeFee: string) => {
+    console.log('TradeFee:', tradeFee);
+    return new BigNumber(amount).multipliedBy(tradeFee).dividedBy(100);
+  };
+
+  const tradeFee: string = useMemo(() => {
+    if (assetIds.assetIn === pool?.assetInId) return feeToPercentage();
+    else return feeToPercentage(pool?.fee);
+  }, [pool, tradeType, assetIds]);
+
   // trigger form field validation right away
   useEffect(() => {
     trigger('submit');
@@ -268,6 +290,7 @@ export const TradeForm = ({
     assetInLiquidity,
     assetOutLiquidity,
     allowedSlippage,
+    trigger,
     ...watch(['assetInAmount', 'assetOutAmount']),
   ]);
 
@@ -292,42 +315,146 @@ export const TradeForm = ({
     setTradeType(TradeType.Buy);
   }, [assetOutAmountInput]);
 
+  const spotPrice = useMemo(() => {
+    if (
+      !assetOutLiquidity ||
+      !assetOutWeight ||
+      !assetInLiquidity ||
+      !assetInWeight ||
+      !math
+    )
+      return;
+    return {
+      outIn: math.lbp.get_spot_price(
+        assetOutLiquidity,
+        assetInLiquidity,
+        assetOutWeight,
+        assetInWeight,
+        '1000000000000'
+      ),
+      inOut: math.lbp.get_spot_price(
+        assetInLiquidity,
+        assetOutLiquidity,
+        assetInWeight,
+        assetOutWeight,
+        '1000000000000'
+      ),
+    };
+  }, [
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutWeight,
+    assetInWeight,
+    math,
+  ]);
+
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (
+      !pool ||
+      !math ||
+      !assetInLiquidity ||
+      !assetInWeight ||
+      !assetOutWeight ||
+      !assetOutLiquidity
+    )
+      return;
+
+    // TODO: FEES
     if (tradeType !== TradeType.Buy) return;
 
     if (!assetOutAmount) return setValue('assetInAmount', null);
 
-    const amount = math.xyk.calculate_in_given_out(
-      // which combination is correct?
-      // assetOutLiquidity,
-      // assetInLiquidity,
+    console.log(
+      'ASSOUTAMTCHANGED',
       assetInLiquidity,
+      assetInWeight,
       assetOutLiquidity,
+      assetOutWeight,
       assetOutAmount
     );
-    // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+
+    const amount = math.lbp.calculate_in_given_out(
+      assetInLiquidity,
+      assetOutLiquidity,
+      assetInWeight,
+      assetOutWeight,
+      assetOutAmount
+    );
+
     if (amount === '0' && assetOutAmount !== '0') return;
-    setValue('assetInAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')]);
+
+    const feeAmount = getFeeAmount(amount, tradeFee);
+    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString();
+
+    console.log(
+      'BUY: OUT|IN|FEE: ',
+      assetOutAmount,
+      amountWithFee,
+      feeAmount.toString()
+    );
+
+    setValue('assetInAmount', amountWithFee || null);
+  }, [
+    pool,
+    tradeType,
+    math,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetOutWeight,
+    assetInWeight,
+    watch('assetOutAmount'),
+  ]);
 
   useEffect(() => {
     const assetInAmount = getValues('assetInAmount');
-    if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return;
+    if (
+      !pool ||
+      !math ||
+      !assetInWeight ||
+      !assetInLiquidity ||
+      !assetOutWeight ||
+      !assetOutLiquidity
+    )
+      return;
+
+    // TODO: FEES
     if (tradeType !== TradeType.Sell) return;
 
     if (!assetInAmount) return setValue('assetOutAmount', null);
 
-    const amount = math.xyk.calculate_out_given_in(
+    const amount = math.lbp.calculate_out_given_in(
       assetInLiquidity,
       assetOutLiquidity,
+      assetInWeight,
+      assetOutWeight,
       assetInAmount
     );
-    if (amount === '0' && assetInAmount !== '0')
-      return setValue('assetOutAmount', null);
-    setValue('assetOutAmount', amount || null);
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')]);
+
+    if (amount === '0' && assetInAmount !== '0') return;
+
+    const feeAmount = getFeeAmount(amount, tradeFee);
+    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString();
+
+    console.log(
+      'SELL: IN|OUT|FEE: ',
+      assetInAmount,
+      amountWithFee,
+      feeAmount.toString()
+    );
+
+    setValue('assetOutAmount', amountWithFee || null);
+  }, [
+    tradeType,
+    math,
+    pool,
+    tradeFee,
+    assetOutLiquidity,
+    assetInLiquidity,
+    assetInWeight,
+    assetOutWeight,
+    watch('assetInAmount'),
+  ]);
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading';
@@ -383,6 +510,7 @@ export const TradeForm = ({
     )
       return;
 
+    // TODO change to 4 cases for LBP
     switch (tradeType) {
       case TradeType.Sell:
         return {
@@ -457,7 +585,7 @@ export const TradeForm = ({
         assetOutId: data.assetOut,
         assetInAmount: data.assetInAmount,
         assetOutAmount: data.assetOutAmount,
-        poolType: PoolType.XYK,
+        poolType: PoolType.LBP,
         tradeType: tradeType,
         amountWithSlippage: tradeLimit.balance,
       });
@@ -637,7 +765,6 @@ export const TradeForm = ({
   useEffect(() => {
     debugComponent('TradeForm', {
       ...getValues(),
-      spotPrice,
       tradeLimit,
       assetInLiquidity,
       assetOutLiquidity,
@@ -667,10 +794,6 @@ export const TradeForm = ({
     slippage,
     formState.isDirty,
   ]);
-
-  const tradeFee: Fee | undefined = useMemo(() => {
-    return { numerator: '1000', denominator: '3' };
-  }, []);
 
   const minTradeLimitIn = useCallback(
     (assetInAmount?: Maybe<string>) => {
@@ -789,7 +912,7 @@ export const TradeForm = ({
             <Icon name="Settings" />
           </div>
 
-          <div className="trade-form-heading">Trade Tokens</div>
+          <div className="trade-form-heading">Liquidity bootstrapping</div>
           <div className="balance-wrapper">
             <AssetBalanceInput
               balanceInputName="assetInAmount"
@@ -847,13 +970,6 @@ export const TradeForm = ({
                   const assetIn = getValues('assetIn');
                   switch (tradeType) {
                     case TradeType.Sell:
-                      // return `1 ${
-                      //   idToAsset(getValues('assetIn'))?.symbol ||
-                      //   getValues('assetIn')
-                      // } = ${fromPrecision12(spotPrice?.inOut)} ${
-                      //   idToAsset(getValues('assetOut'))?.symbol ||
-                      //   getValues('assetOut')
-                      // }`;
                       return spotPrice?.inOut && assetOut ? (
                         <>
                           <FormattedBalance
@@ -874,13 +990,6 @@ export const TradeForm = ({
                         <>-</>
                       );
                     case TradeType.Buy:
-                      // return `1 ${
-                      //   idToAsset(getValues('assetOut'))?.symbol ||
-                      //   getValues('assetOut')
-                      // } = ${fromPrecision12(spotPrice?.outIn)} ${
-                      //   idToAsset(getValues('assetIn'))?.symbol ||
-                      //   getValues('assetIn')
-                      // }`;
                       return spotPrice?.outIn && assetIn ? (
                         <>
                           <FormattedBalance
@@ -946,6 +1055,7 @@ export const TradeForm = ({
 
           <TradeInfo
             tradeLimit={tradeLimit}
+            tradeFee={tradeFee}
             expectedSlippage={slippage}
             errors={errors}
             isDirty={isDirty}

@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { debounce, delay, throttle } from 'lodash';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FieldErrors } from 'react-hook-form';
 import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider';
@@ -12,7 +11,7 @@ import './TradeInfo.scss';
 
 export interface TradeInfoProps {
   transactionFee?: string;
-  tradeFee?: Fee;
+  tradeFee?: string;
   tradeLimit?: Balance;
   isDirty?: boolean;
   expectedSlippage?: BigNumber;
@@ -25,7 +24,7 @@ export const TradeInfo = ({
   expectedSlippage,
   tradeLimit,
   isDirty,
-  tradeFee = constants.xykFee,
+  tradeFee,
   paymentInfo,
 }: TradeInfoProps) => {
   const [displayError, setDisplayError] = useState<string | undefined>();
@@ -108,13 +107,7 @@ export const TradeInfo = ({
         </div>
         <div className="data-piece">
           <span className="data-piece__label">Trade fee </span>
-          <div className="data-piece__value">
-            {new BigNumber(tradeFee.numerator)
-              .dividedBy(tradeFee.denominator)
-              .multipliedBy(100)
-              .toFixed(1)}
-            %
-          </div>
+          <div className="data-piece__value">{tradeFee + ' %'}</div>
         </div>
       </div>
       {/* TODO Error message */}

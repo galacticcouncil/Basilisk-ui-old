@@ -5,7 +5,10 @@ import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber
 import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs';
 import { MathProvider, useMath } from '../hooks/math/useMath';
 import constate from 'constate';
-import { GetActiveAccountQueryProvider, useGetActiveAccountQueryContext } from '../hooks/accounts/queries/useGetActiveAccountQuery';
+import {
+  GetActiveAccountQueryProvider,
+  useGetActiveAccountQueryContext,
+} from '../hooks/accounts/queries/useGetActiveAccountQuery';
 import { GetExtensionQueryProvider } from '../hooks/extension/queries/useGetExtensionQuery';
 import { useGetConfigQuery } from '../hooks/config/useGetConfigQuery';
 import { useLoading } from '../hooks/misc/useLoading';
@@ -34,19 +37,25 @@ export const useBodyContainerRef = () => {
   return useRef<HTMLDivElement>(null);
 };
 
-export const [BodyContainerRefProvider, useBodyContainerRefContext] = constate(useBodyContainerRef);
+export const [BodyContainerRefProvider, useBodyContainerRefContext] = constate(
+  useBodyContainerRef
+);
 
 export const BodyContainer = ({ children }: { children: React.ReactNode }) => {
-  const bodyContainerRef = useBodyContainerRefContext()
-  return <div className='body-container' ref={bodyContainerRef}>{children}</div>
+  const bodyContainerRef = useBodyContainerRefContext();
+  return (
+    <div className="body-container" ref={bodyContainerRef}>
+      {children}
+    </div>
+  );
 };
 
 // const [BodyContainerProvider, useBodyContainerContext] = constate(useBodyContainer);
 
 export const useMultiFeePaymentConversion = () => {
-  const { data: activeAccount } = useGetActiveAccountQueryContext()
+  const { data: activeAccount } = useGetActiveAccountQueryContext();
   const { data } = useGetConfigQuery({
-    skip: !activeAccount?.activeAccount?.id
+    skip: !activeAccount?.activeAccount?.id,
   });
 
   const feePaymentAsset = useMemo(() => data?.config.feePaymentAsset, [data]);
@@ -64,38 +73,46 @@ export const useMultiFeePaymentConversion = () => {
     !activeAccount?.activeAccount?.id
   );
 
-  const { math } = useMath()
+  const { math } = useMath();
 
-  const convertToFeePaymentAsset = useCallback((txFee?: string) => {
-    console.log('convertToFeePaymentAsset', txFee, feePaymentAsset);
-    if (!txFee || poolLoading || !math) return;
-    if (feePaymentAsset === '0') return txFee;
+  const convertToFeePaymentAsset = useCallback(
+    (txFee?: string) => {
+      console.log('convertToFeePaymentAsset', txFee, feePaymentAsset);
+      if (!txFee || poolLoading || !math) return;
+      if (feePaymentAsset === '0') return txFee;
 
-    const liquidityAssetIn = poolData?.pool.balances?.find(balance => balance.assetId == '0')?.balance
-    const liquidityAssetOut = poolData?.pool.balances?.find(balance => balance.assetId == feePaymentAsset)?.balance
+      const liquidityAssetIn = poolData?.pool.balances?.find(
+        (balance) => balance.assetId == '0'
+      )?.balance;
+      const liquidityAssetOut = poolData?.pool.balances?.find(
+        (balance) => balance.assetId == feePaymentAsset
+      )?.balance;
 
-    if (!liquidityAssetIn || !liquidityAssetOut) return;
+      if (!liquidityAssetIn || !liquidityAssetOut) return;
 
-    const spotPrice = math?.xyk.get_spot_price(
-      liquidityAssetIn,
-      liquidityAssetOut,
-      '1000000000000'
-    )
+      const spotPrice = math?.xyk.get_spot_price(
+        liquidityAssetIn,
+        liquidityAssetOut,
+        '1000000000000'
+      );
 
-    if (!spotPrice) return;
+      if (!spotPrice) return;
 
-    return new BigNumber(spotPrice)
-      .dividedBy(
-        new BigNumber(10).pow(12)
-      )
-      .multipliedBy(txFee)
-      .toFixed(2)
-  }, [poolData, poolLoading, feePaymentAsset, math]);
+      return new BigNumber(spotPrice)
+        .dividedBy(new BigNumber(10).pow(12))
+        .multipliedBy(txFee)
+        .toFixed(2);
+    },
+    [poolData, poolLoading, feePaymentAsset, math]
+  );
 
-  return { convertToFeePaymentAsset, feePaymentAsset }
-}
+  return { convertToFeePaymentAsset, feePaymentAsset };
+};
 
-export const [MultiFeePaymentConversionProvider, useMultiFeePaymentConversionContext] = constate(useMultiFeePaymentConversion);
+export const [
+  MultiFeePaymentConversionProvider,
+  useMultiFeePaymentConversionContext,
+] = constate(useMultiFeePaymentConversion);
 
 export const QueryProvider = ({ children }: { children: React.ReactNode }) => (
   <GetExtensionQueryProvider>

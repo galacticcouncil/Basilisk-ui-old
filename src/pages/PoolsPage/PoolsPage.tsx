@@ -1,67 +1,38 @@
-import { NetworkStatus, useApolloClient } from '@apollo/client';
-import classNames from 'classnames';
-import { find, uniq, last } from 'lodash';
-import moment from 'moment';
-import { usePageVisibility } from 'react-page-visibility';
-import {
-  Dispatch,
-  SetStateAction,
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from 'react';
-import { Control, useForm, UseFormReturn } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
-import { AssetIds, Balance, Pool, TradeType } from '../../generated/graphql';
+import { NetworkStatus } from '@apollo/client';
+
+import { find, uniq } from 'lodash';
+
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { AssetIds, Balance, Pool } from '../../generated/graphql';
 import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
-import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
+
 import { useMath } from '../../hooks/math/useMath';
-import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
+
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
-import { Line } from 'react-chartjs-2';
-import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
-import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart';
+
 import './PoolsPage.scss';
-import {
-  ChartGranularity,
-  ChartType,
-  PoolType,
-} from '../../components/Chart/shared';
-import BigNumber from 'bignumber.js';
+
 import { useLoading } from '../../hooks/misc/useLoading';
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery';
 
-import KSM from '../../misc/icons/assets/KSM.svg';
-import BSX from '../../misc/icons/assets/BSX.svg';
-import DAI from '../../misc/icons/assets/DAI.svg';
-import Unknown from '../../misc/icons/assets/Unknown.svg';
-
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
-// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
-import { horizontalBar } from '../../components/Chart/ChartHeader/ChartHeader';
-import { PoolsForm, PoolsFormFields, ProvisioningType } from '../../components/Pools/PoolsForm';
-import { idToAsset } from '../TradePage/TradePage';
+
+import {
+  PoolsForm,
+  PoolsFormFields,
+  ProvisioningType,
+} from '../../components/Pools/PoolsForm';
+import { idToAsset } from '../../misc/idToAsset';
 import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation';
 import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation';
 import Icon from '../../components/Icon/Icon';
+import { PoolType } from '../../components/Chart/shared';
 
 export interface TradeAssetIds {
   assetIn: string | null;
   assetOut: string | null;
-}
-
-export interface TradeChartProps {
-  pool?: Pool;
-  isPoolLoading?: boolean;
-  assetIds: TradeAssetIds;
-  spotPrice?: {
-    outIn?: string;
-    inOut?: string;
-  };
 }
 
 export const PoolsPage = () => {
@@ -105,7 +76,9 @@ export const PoolsPage = () => {
   const assets = useMemo(() => {
     const assets = poolsData?.pools
       ?.map((pool) => {
-        return [pool.assetInId, pool.assetOutId];
+        if (pool.__typename === 'XYKPool') {
+          return [pool.assetInId, pool.assetOutId];
+        } else return [];
       })
       .reduce((assets, poolAssets) => {
         return assets.concat(poolAssets);
@@ -115,7 +88,12 @@ export const PoolsPage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  const pool = useMemo(() => poolData?.pool, [poolData]);
+  const xykPool =
+    poolData?.pool && poolData.pool.__typename === 'XYKPool'
+      ? poolData.pool
+      : undefined;
+
+  const pool = useMemo(() => xykPool, [xykPool]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;
@@ -183,10 +161,11 @@ export const PoolsPage = () => {
     },
   });
 
-  console.log('removeLiquidityError', removeLiquidityError)
+  console.log('removeLiquidityError', removeLiquidityError);
 
   useEffect(() => {
-    if (removeLiquidityLoading || addLiquidityLoading) setNotification('pending');
+    if (removeLiquidityLoading || addLiquidityLoading)
+      setNotification('pending');
   }, [removeLiquidityLoading, addLiquidityLoading]);
 
   const handleSubmit = useCallback(
@@ -196,26 +175,37 @@ export const PoolsPage = () => {
       clearNotificationIntervalRef.current = null;
       if (variables.provisioningType === ProvisioningType.Remove) {
         console.log('removing liquidity', variables);
-        if (!variables.assetIn || !variables.assetOut || !variables.shareAssetAmount) return;
+        if (
+          !variables.assetIn ||
+          !variables.assetOut ||
+          !variables.shareAssetAmount
+        )
+          return;
         removeLiquidity({
           variables: {
             assetA: variables.assetIn,
             assetB: variables.assetOut,
-            amount: variables.shareAssetAmount
-          }
+            amount: variables.shareAssetAmount,
+          },
         });
       } else {
         console.log('adding liquidity', variables);
-        if (!variables.assetIn || !variables.assetOut || !variables.assetInAmount || !variables.amountBMaxLimit) return;
+        if (
+          !variables.assetIn ||
+          !variables.assetOut ||
+          !variables.assetInAmount ||
+          !variables.amountBMaxLimit
+        )
+          return;
 
         addLiquidity({
           variables: {
             assetA: variables.assetIn,
             assetB: variables.assetOut,
             amountA: variables.assetInAmount,
-            amountBMaxLimit: variables.amountBMaxLimit
-          }
-        })
+            amountBMaxLimit: variables.amountBMaxLimit,
+          },
+        });
       }
     },
     [removeLiquidity]
@@ -251,7 +241,7 @@ export const PoolsPage = () => {
     //   inOut: new BigNumber(spotPrice.inOut!).dividedBy(1000).toFixed(3)
     // }
 
-    console.log('limit spotPrice', spotPrice)
+    console.log('limit spotPrice', spotPrice);
 
     return spotPrice;
   }, [assetOutLiquidity, assetInLiquidity, math]);
@@ -269,7 +259,7 @@ export const PoolsPage = () => {
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
           : assetIds.assetIn) || undefined,
-      shareTokenId: pool?.shareTokenId || undefined
+      shareTokenId: pool?.shareTokenId || undefined,
     },
   });
 
@@ -308,16 +298,6 @@ export const PoolsPage = () => {
         </div>
       </div>
       <div className="pools-page">
-        {/* <TradeChart
-          pool={pool}
-          assetIds={assetIds}
-          spotPrice={spotPrice}
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-        /> */}
         <PoolsForm
           assetIds={assetIds}
           onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}

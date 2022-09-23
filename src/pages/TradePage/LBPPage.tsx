@@ -14,8 +14,8 @@ import {
 } from 'react';
 import { Control, useForm, UseFormReturn } from 'react-hook-form';
 import { useSearchParams } from 'react-router-dom';
-import { TradeForm } from '../../components/Trade/TradeForm/TradeForm';
-import { AssetIds, Balance, XykPool, TradeType } from '../../generated/graphql';
+import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm';
+import { AssetIds, Balance, LbpPool, TradeType } from '../../generated/graphql';
 import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
 import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
@@ -51,7 +51,7 @@ export interface TradeAssetIds {
 }
 
 export interface TradeChartProps {
-  pool?: XykPool;
+  pool?: LbpPool;
   isPoolLoading?: boolean;
   assetIds: TradeAssetIds;
   spotPrice?: {
@@ -245,7 +245,7 @@ export const TradeChart = ({
         assetB: idToAsset(assetIds.assetOut),
       }}
       isPoolLoading={_isPoolLoading}
-      poolType={PoolType.XYK}
+      poolType={PoolType.LBP}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
       primaryDataset={dataset as any}
@@ -255,7 +255,7 @@ export const TradeChart = ({
   );
 };
 
-export const TradePage = () => {
+export const LBPPage = () => {
   // taking assetIn/assetOut from search params / query url
   const [assetIds, setAssetIds] = useAssetIdsWithUrl();
   const { data: activeAccountData } = useGetActiveAccountQuery({
@@ -274,14 +274,8 @@ export const TradePage = () => {
     networkStatus: poolNetworkStatus,
   } = useGetPoolByAssetsQuery(
     {
-      assetInId:
-        (assetIds.assetIn! > assetIds.assetOut!
-          ? assetIds.assetIn
-          : assetIds.assetOut) || undefined,
-      assetOutId:
-        (assetIds.assetIn! > assetIds.assetOut!
-          ? assetIds.assetOut
-          : assetIds.assetIn) || undefined,
+      assetInId: assetIds.assetIn || undefined,
+      assetOutId: assetIds.assetOut || undefined,
     },
     depsLoading
   );
@@ -292,9 +286,9 @@ export const TradePage = () => {
   } = useGetPoolsQueryProvider();
 
   const assets = useMemo(() => {
-    const assets = poolsData?.pools
+    let assets = poolsData?.pools
       ?.map((pool) => {
-        if (pool.__typename === 'XYKPool') {
+        if (pool.__typename === 'LBPPool') {
           return [pool.assetInId, pool.assetOutId];
         } else return [];
       })
@@ -306,12 +300,21 @@ export const TradePage = () => {
     return uniq(assets).map((id) => ({ id }));
   }, [poolsData]);
 
-  const xykPool =
-    poolData?.pool && poolData.pool.__typename === 'XYKPool'
+  const lbpPool =
+    poolData?.pool && poolData.pool.__typename === 'LBPPool'
       ? poolData.pool
       : undefined;
 
-  const pool = useMemo(() => xykPool, [xykPool]);
+  if (!assetIds.assetIn || !assetIds.assetOut) {
+    const newPool = poolsData?.pools?.[0];
+    console.log('NEW POOL', newPool);
+    if (newPool) {
+      assetIds.assetIn = newPool.assetInId;
+      assetIds.assetOut = newPool.assetOutId;
+    }
+  }
+
+  const pool = useMemo(() => lbpPool, [lbpPool]);
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount;
@@ -361,21 +364,17 @@ export const TradePage = () => {
     return find<Balance | null>(pool?.balances, { assetId })?.balance;
   }, [pool, assetIds]);
 
-  const spotPrice = useMemo(() => {
-    if (!assetOutLiquidity || !assetInLiquidity || !math) return;
-    return {
-      outIn: math.xyk.get_spot_price(
-        assetOutLiquidity,
-        assetInLiquidity,
-        '1000000000000'
-      ),
-      inOut: math.xyk.get_spot_price(
-        assetInLiquidity,
-        assetOutLiquidity,
-        '1000000000000'
-      ),
-    };
-  }, [assetOutLiquidity, assetInLiquidity, math]);
+  const assetOutWeight = useMemo(() => {
+    return assetIds.assetIn === pool?.assetOutId
+      ? pool?.assetAWeights
+      : pool?.assetBWeights;
+  }, [pool, assetIds]);
+
+  const assetInWeight = useMemo(() => {
+    return assetIds.assetOut === pool?.assetOutId
+      ? pool?.assetAWeights
+      : pool?.assetBWeights;
+  }, [pool, assetIds]);
 
   const {
     data: activeAccountTradeBalancesData,
@@ -445,7 +444,9 @@ export const TradePage = () => {
           }
           assetInLiquidity={assetInLiquidity}
           assetOutLiquidity={assetOutLiquidity}
-          spotPrice={spotPrice}
+          assetInWeight={assetInWeight?.current}
+          assetOutWeight={assetOutWeight?.current}
+          repayTargetHit={false}
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}
           assets={assets}
