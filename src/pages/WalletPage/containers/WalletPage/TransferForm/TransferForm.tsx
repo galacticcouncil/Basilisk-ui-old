@@ -19,7 +19,6 @@ import { toPrecision12 } from '../../../../../hooks/math/useToPrecision';
 import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
 
-
 export const TransferForm = ({
   closeModal,
   assetId = '0',
@@ -35,10 +34,10 @@ export const TransferForm = ({
 }) => {
   const modalContainerRef = useRef<HTMLDivElement | null>(null);
   const form = useForm<{
-    to?: string,
-    amount?: string,
-    asset?: string,
-    submit: any
+    to?: string;
+    amount?: string;
+    asset?: string;
+    submit: any;
   }>({
     // mode: 'all',
     defaultValues: {
@@ -49,15 +48,8 @@ export const TransferForm = ({
     },
   });
 
-  const {
-    register,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-    control,
-    formState,
-  } = form;
+  const { register, watch, getValues, setValue, trigger, control, formState } =
+    form;
 
   const { isValid, isDirty, errors } = formState;
 
@@ -138,14 +130,17 @@ export const TransferForm = ({
   const [displayError, setDisplayError] = useState<string | undefined>();
   const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
   const formError = useMemo(() => {
-    console.log('form.formState.errors?.submit?.type', form.formState.errors?.submit?.type)
+    console.log(
+      'form.formState.errors?.submit?.type',
+      form.formState.errors?.submit?.type
+    );
     switch (form.formState.errors?.submit?.type) {
       case 'notEnoughBalance':
-        return 'Insufficient balance'
+        return 'Insufficient balance';
       case 'address':
-        return 'Incorrect address'
+        return 'Incorrect address';
       case 'amount':
-        return 'Amount must be more than zero'
+        return 'Amount must be more than zero';
     }
     return;
   }, [form.formState.errors.submit]);
@@ -165,7 +160,7 @@ export const TransferForm = ({
       <div className="transfer-form">
         <div className="modal-component-wrapper transfer-form-container">
           <div className="modal-component-heading">
-            <div className="modal-component-heading__main-text">Transfer</div>
+            <div className="modal-component-heading__main-text">Transfer funds within Basilisk</div>
             <div className="close-modal-btn" onClick={() => closeModal()}>
               <Icon name="Cancel" />
             </div>
@@ -209,8 +204,20 @@ export const TransferForm = ({
                   )}
                 </div>
               </div>
+              <div className={'warning'}>
+                <div>
+                  <Icon name="WarningIcon" />
+                </div>
+                <span>
+                  Transfer assets only within the Basilisk network (address
+                  starting with bX). Sending to an address on a different chain
+                  will lead to a loss of funds.
+                </span>
+              </div>
               <div
-                className={'validation error ' + (isError && isDirty ? 'visible' : '')}
+                className={
+                  'validation error ' + (isError && isDirty ? 'visible' : '')
+                }
               >
                 {displayError}
               </div>

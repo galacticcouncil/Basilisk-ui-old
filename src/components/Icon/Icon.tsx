@@ -9,6 +9,7 @@ import { ReactComponent as BasiliskLogoFull } from './assets/BasiliskLogoFull.sv
 import { ReactComponent as AssetSwitchIcon } from './assets/AssetSwitchIcon.svg';
 import { ReactComponent as SettingsIcon } from './assets/Settings.svg';
 import { ReactComponent as RightArrowIcon } from './assets/RightArrowIcon.svg';
+import { ReactComponent as WarningIcon } from './assets/Warning.svg';
 
 const Icons = {
   Help: () => <HelpIcon />,
@@ -21,6 +22,7 @@ const Icons = {
   AssetSwitch: () => <AssetSwitchIcon />,
   Settings: () => <SettingsIcon />,
   RightArrow: () => <RightArrowIcon />,
+  WarningIcon: () => <WarningIcon />,
 } as const;
 
 type IconNames = keyof typeof Icons;

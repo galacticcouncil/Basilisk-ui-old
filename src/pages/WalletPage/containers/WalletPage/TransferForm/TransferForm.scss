@@ -16,6 +16,20 @@
 
   z-index: 3;
 
+  .warning {
+    background: rgba(255, 184, 0, 0.5);
+    border-radius: 8px;
+    height: 100%;
+    line-height: 16px;
+    overflow: hidden;
+    padding: 16px;
+    margin-top: 4px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+  }
+
   .validation {
     opacity: 0;
     line-height: 16px;
