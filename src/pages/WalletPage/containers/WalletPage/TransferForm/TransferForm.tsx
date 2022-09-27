@@ -160,7 +160,9 @@ export const TransferForm = ({
       <div className="transfer-form">
         <div className="modal-component-wrapper transfer-form-container">
           <div className="modal-component-heading">
-            <div className="modal-component-heading__main-text">Transfer funds within Basilisk</div>
+            <div className="modal-component-heading__main-text">
+              Transfer funds within Basilisk
+            </div>
             <div className="close-modal-btn" onClick={() => closeModal()}>
               <Icon name="Cancel" />
             </div>
@@ -204,16 +206,18 @@ export const TransferForm = ({
                   )}
                 </div>
               </div>
-              <div className={'warning'}>
-                <div>
-                  <Icon name="WarningIcon" />
+              {assetId !== '0' && (form.getValues('to')?.length ?? 0) >= 2 && form.getValues('to')?.substring(0, 2) !== 'bX' &&(
+                <div className={'warning'}>
+                  <div>
+                    <Icon name="WarningIcon" />
+                  </div>
+                  <span>
+                    Transfer assets only within the Basilisk network (address
+                    starting with bX). Sending to an address on a different
+                    chain will lead to a loss of funds.
+                  </span>
                 </div>
-                <span>
-                  Transfer assets only within the Basilisk network (address
-                  starting with bX). Sending to an address on a different chain
-                  will lead to a loss of funds.
-                </span>
-              </div>
+              )}
               <div
                 className={
                   'validation error ' + (isError && isDirty ? 'visible' : '')
