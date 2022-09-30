@@ -898,7 +898,7 @@ export const TradeForm = ({
             <Icon name="Settings" />
           </div>
 
-          <div className="trade-form-heading">Liquidity bootstrapping</div>
+          <div className="trade-form-heading">Liquidity Bootstrapping</div>
           <div className="balance-wrapper">
             <AssetBalanceInput
               balanceInputName="assetInAmount"

@@ -49,6 +49,7 @@ export interface TradeChartProps {
   granularity: ChartGranularity
   chartType: ChartType
   primaryDataset: Dataset
+  secondaryDataset: Dataset
   onChartTypeChange: (chartType: ChartType) => void
   onGranularityChange: (granularity: ChartGranularity) => void
 }
@@ -61,7 +62,8 @@ export const TradeChart = ({
   chartType,
   onChartTypeChange,
   onGranularityChange,
-  primaryDataset
+  primaryDataset,
+  secondaryDataset
 }: TradeChartProps) => {
   const [displayData, setDisplayData] = useState<DisplayData>({
     balance: last(primaryDataset)?.yAsString,
@@ -212,13 +214,6 @@ export const TradeChart = ({
     []
   )
 
-  const { from, to } = useMemo(() => {
-    const from = moment().subtract(24, 'hours').valueOf()
-    const to = last(primaryDataset)?.x
-
-    return { from, to }
-  }, [granularity, primaryDataset])
-
   return (
     <div className="trade-chart">
       <ChartHeader
@@ -241,10 +236,8 @@ export const TradeChart = ({
           <div className="trade-chart__chart-wrapper__chart-jail">
             <LineChart
               primaryDataset={primaryDataset}
-              fill={true}
+              secondaryDataset={secondaryDataset}
               trend={dataTrend}
-              from={from}
-              to={to}
               onHandleTooltip={handleTooltip}
             />
             {tooltipData?.positionX ? (
@@ -276,7 +269,7 @@ export const TradeChart = ({
             )}
           </div>
 
-          <ChartTicks datasets={[primaryDataset]} granularity={granularity} />
+          {/* <ChartTicks datasets={[primaryDataset]} granularity={granularity} /> */}
         </div>
       ) : (
         <></>

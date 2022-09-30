@@ -12,7 +12,7 @@ import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTra
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
-import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart'
+import { TradeChart as LBPTradeChartComponent } from '../../components/Chart/TradeChart/TradeChart'
 import './TradePage.scss'
 import {
   ChartGranularity,
@@ -48,6 +48,13 @@ export interface TradeChartProps {
   }
 }
 
+export enum LbpStatus {
+  NOT_INITIALIZED,
+  NOT_STARTED,
+  IN_PROGRESS,
+  ENDED
+}
+
 export const TradeChart = ({
   pool,
   assetIds,
@@ -60,6 +67,13 @@ export const TradeChart = ({
   const startBlock = pool?.startBlock || 0
   const currentBlock = lastBlockData?.relaychainBlockNumber || 0
   const currentBlockTime = lastBlockData?.createdAt || new Date().getTime()
+  let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
+
+  if (!startBlock || !endBlock) lbpStatus = LbpStatus.NOT_INITIALIZED
+  if (startBlock < currentBlock && endBlock > currentBlock)
+    lbpStatus = LbpStatus.IN_PROGRESS
+  if (startBlock > currentBlock) lbpStatus = LbpStatus.NOT_STARTED
+  if (endBlock < currentBlock) lbpStatus = LbpStatus.ENDED
 
   const endOrNow = endBlock < currentBlock ? endBlock : currentBlock
 
@@ -105,7 +119,7 @@ export const TradeChart = ({
     console.log('LOADED:', historicalBalancesData?.historicalBalances?.length)
     const filteredDataset = historicalBalancesData?.historicalBalances?.filter(
       (_b, i) => {
-        if (i % 100 === 0) return true
+        if (i % 200 === 0) return true
         return false
       }
     )
@@ -144,22 +158,12 @@ export const TradeChart = ({
               date: currentBlockTime
             }),
             ...(() => {
-              const assetOutLiquidity =
-                assetIds.assetOut === pool?.assetOutId
-                  ? assetABalance
-                  : assetBBalance
-
-              const assetInLiquidity =
-                assetIds.assetIn === pool?.assetInId
-                  ? assetABalance
-                  : assetBBalance
-
               const spotPrice = {
                 outIn: '0',
                 inOut: math.xyk.get_spot_price(
                   '1000000000000',
-                  assetInLiquidity,
-                  assetOutLiquidity
+                  assetABalance,
+                  assetBBalance
                 )
               }
 
@@ -169,8 +173,6 @@ export const TradeChart = ({
                 'spotPrice',
                 assetABalance,
                 assetBBalance,
-                assetInLiquidity,
-                assetOutLiquidity,
                 y.toNumber()
               )
 
@@ -185,16 +187,6 @@ export const TradeChart = ({
 
     const sortedDataset = orderBy(dataset, ['x'], ['asc'])
 
-    // dataset.push({
-    //   // TODO: pretending this is now, should use the time from the lastBlock instead
-    //   x: blockToTime(endOrNow, {
-    //     height: currentBlock,
-    //     date: currentBlockTime
-    //   }),
-    //   y: new BigNumber(fromPrecision12(spotPrice.inOut || '0')).toNumber(),
-    //   yAsString: fromPrecision12(spotPrice.inOut || '0')
-    // })
-
     console.log('finalDataset', sortedDataset)
 
     setDataset(sortedDataset)
@@ -208,10 +200,6 @@ export const TradeChart = ({
     endBlock,
     startBlock,
     historicalBalancesData,
-    historicalBalancesLoading,
-    math,
-    spotPrice,
-    assetIds,
     lastBlockData
   ])
 
@@ -258,6 +246,14 @@ export const TradeChart = ({
       if (!spotPrice || !dataset || !currentBlock || !currentBlockTime)
         return dataset
 
+      if (lbpStatus === LbpStatus.NOT_INITIALIZED) return []
+
+      // TODO: Secondary
+      if (lbpStatus === LbpStatus.NOT_STARTED) return []
+
+      // TODO: Ended
+      if (lbpStatus === LbpStatus.ENDED) return dataset
+
       return [
         ...dataset,
         {
@@ -265,11 +261,11 @@ export const TradeChart = ({
             height: currentBlock,
             date: currentBlockTime
           }),
-          y: fromPrecision12(spotPrice.outIn || '0')
+          y: new BigNumber(fromPrecision12(spotPrice.outIn || '0')).toNumber()
         }
       ]
     })
-  }, [pool, spotPrice])
+  }, [pool, currentBlock, currentBlockTime, endOrNow, lbpStatus])
 
   const _isPoolLoading = useMemo(() => {
     if (!isPoolLoading || datasetRefreshing) return false
@@ -283,7 +279,7 @@ export const TradeChart = ({
   ])
 
   return (
-    <TradeChartComponent
+    <LBPTradeChartComponent
       assetPair={{
         assetA: idToAsset(assetIds.assetIn),
         assetB: idToAsset(assetIds.assetOut)
@@ -293,6 +289,7 @@ export const TradeChart = ({
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
       primaryDataset={dataset as any}
+      secondaryDataset={[]}
       onChartTypeChange={() => {}}
       onGranularityChange={() => {}}
     />

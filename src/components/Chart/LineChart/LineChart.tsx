@@ -109,6 +109,7 @@ export const useFormatDataset = ({
 }) =>
   useCallback(
     ({ dataset, label }): ChartDataset<'line', DataPoint[]> => {
+      console.log('formatting', dataset)
       return {
         label,
         fill,
@@ -165,9 +166,7 @@ export const useTooltipHandler = (
 export const LineChart = ({
   primaryDataset,
   secondaryDataset = [],
-  fill = false,
-  from,
-  to,
+  fill,
   trend,
   onHandleTooltip
 }: LineChartProps) => {
@@ -178,6 +177,8 @@ export const LineChart = ({
   const tooltipHandler = useTooltipHandler(tooltipData, setTooltipData)
 
   useEffect(() => onHandleTooltip(tooltipData), [tooltipData])
+
+  fill = !secondaryDataset?.length
 
   const formatDataset = useFormatDataset({ fill, trend, chartCtx })
 
@@ -235,15 +236,18 @@ export const LineChart = ({
     const xAxisMin = primaryDataset[0].x
     const xAxisMax = primaryDataset[primaryDataset.length - 1].x
     return { xAxisMin, xAxisMax }
-  }, [from, to])
+  }, [primaryDataset])
 
   const chartOptions = useMemo<ChartOptions>(() => {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      borderCapStyle: 'round',
+      cubicInterpolationMode: 'monotone',
+      spanGaps: true,
       scales: {
         xAxis: {
-          display: false,
+          display: true,
           type: 'time',
           min: xAxisBounds.xAxisMin,
           to: xAxisBounds.xAxisMax
@@ -274,7 +278,7 @@ export const LineChart = ({
         }
       }
     }
-  }, [from, to, tooltipHandler, yAxisBounds])
+  }, [tooltipHandler, yAxisBounds])
 
   return (
     <div className="line-chart">
