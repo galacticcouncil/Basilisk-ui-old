@@ -29,9 +29,11 @@ import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountT
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 
 import Icon from '../../components/Icon/Icon'
-import { calculateSpotPrice } from '../../hooks/pools/xyk/calculateSpotPrice'
+import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
 import { useLastBlockContext } from '../../hooks/lastBlock/useSubscribeNewBlockNumber'
 import { blockToTime, timeToBlock } from '../../misc/utils/blockTime'
+import { calculateSpotPriceFromPool } from '../../hooks/pools/lbp/calculateSpotPrice'
+import { calculateCurrentAssetWeight } from '../../hooks/pools/lbp/calculateCurrentAssetWeight'
 
 export interface TradeAssetIds {
   assetIn: string | null
@@ -143,7 +145,8 @@ export const TradeChart = ({
       (!historicalBalancesLoading &&
         !historicalBalancesData?.historicalBalances?.length) ||
       !math ||
-      !spotPrice
+      !spotPrice ||
+      !pool
     ) {
       setDataset([])
       setDatasetLoading(false)
@@ -158,12 +161,26 @@ export const TradeChart = ({
               date: currentBlockTime
             }),
             ...(() => {
+              const currentAssetAWeight = calculateCurrentAssetWeight(
+                math,
+                { startBlock, endBlock },
+                pool.assetAWeights,
+                relayChainBlockHeight.toString()
+              )
+              const currentAssetBWeight = calculateCurrentAssetWeight(
+                math,
+                { startBlock, endBlock },
+                pool.assetBWeights,
+                relayChainBlockHeight.toString()
+              )
               const spotPrice = {
                 outIn: '0',
-                inOut: math.xyk.get_spot_price(
-                  '1000000000000',
+                inOut: calculateSpotPrice(
+                  math,
+                  assetBBalance,
                   assetABalance,
-                  assetBBalance
+                  currentAssetBWeight.toString(),
+                  currentAssetAWeight.toString()
                 )
               }
 
