@@ -19,18 +19,9 @@ export const mapToPoolId = ([storageKey, codec]: [
 export const mapToPool = (apiInstance: ApiPromise) => ([
   id,
   codec,
-  shareTokenId,
   totalLiquidity,
 ]: [string, Codec, Codec, Codec]) => {
   const poolAssets = codec.toHuman() as PoolAssets;
-
-  console.log(
-    'mapToPool',
-    id,
-    codec.toHuman(),
-    shareTokenId.toHuman(),
-    totalLiquidity.toHuman()
-  );
 
   if (!poolAssets) return;
 
@@ -39,7 +30,6 @@ export const mapToPool = (apiInstance: ApiPromise) => ([
     assetInId: poolAssets[0],
     assetOutId: poolAssets[1],
     totalLiquidity: totalLiquidity.toString(),
-    shareTokenId: shareTokenId.toString(),
   } as XykPool;
 };
 
@@ -49,7 +39,7 @@ export const useGetXykPools = () => {
   return useCallback(
     async (poolId?: string, assetIds?: string[]) => {
       if (!apiInstance || loading) return [];
-      console.log('getting XYK pools');
+
       const pools =
         (await apiInstance.query.xyk.poolAssets.entries())
           .map(async (data) => {

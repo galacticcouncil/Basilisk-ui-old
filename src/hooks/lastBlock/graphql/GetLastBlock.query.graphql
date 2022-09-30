@@ -1,6 +1,7 @@
 query GetLastBlock {
-    lastBlock @client {
-        parachainBlockNumber,
-        relaychainBlockNumber
-    }
+  lastBlock @client {
+    parachainBlockNumber
+    relaychainBlockNumber
+    createdAt
+  }
 }

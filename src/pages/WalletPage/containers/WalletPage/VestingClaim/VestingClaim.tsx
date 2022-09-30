@@ -1,71 +1,73 @@
-import { useApolloClient } from '@apollo/client';
-import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
-import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider';
-import { Maybe, Vesting } from '../../../../../generated/graphql';
-import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
-import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
-import { useClaimVestedAmountMutation } from '../../../../../hooks/vesting/useClaimVestedAmountMutation';
-import { estimateClaimVesting } from '../../../../../hooks/vesting/useVestingMutationResolvers';
-import { Notification } from '../../../WalletPage';
-import './VestingClaim.scss';
+import { useApolloClient } from '@apollo/client'
+import BigNumber from 'bignumber.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance'
+import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider'
+import { Maybe, Vesting } from '../../../../../generated/graphql'
+import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision'
+import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs'
+import { useClaimVestedAmountMutation } from '../../../../../hooks/vesting/useClaimVestedAmountMutation'
+import { estimateClaimVesting } from '../../../../../hooks/vesting/useVestingMutationResolvers'
+import { Notification } from '../../../WalletPage'
+import './VestingClaim.scss'
 
 export const VestingClaim = ({
   vesting,
-  setNotification,
+  setNotification
 }: {
-  vesting?: Maybe<Vesting | undefined>;
-  setNotification: (notification: Notification) => void;
+  vesting?: Maybe<Vesting | undefined>
+  setNotification: (notification: Notification) => void
 }) => {
   const isVestingAvailable = useMemo(() => {
     return (
       vesting?.originalLockBalance &&
       new BigNumber(vesting?.originalLockBalance).gt('0')
-    );
-  }, [vesting]);
-  const clearNotificationIntervalRef = useRef<any>();
+    )
+  }, [vesting])
+  const clearNotificationIntervalRef = useRef<any>()
   const [claimVestedAmount] = useClaimVestedAmountMutation({
     onCompleted: () => {
-      setNotification('success');
+      setNotification('success')
       clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
+        setNotification('standby')
+      }, 4000)
     },
     onError: () => {
-      setNotification('failed');
+      setNotification('failed')
       clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+        setNotification('standby')
+      }, 4000)
+    }
+  })
 
   // TODO: run mutation with confirmation
   const handleClaimClick = useCallback(() => {
-    setNotification('pending');
-    claimVestedAmount();
-  }, []);
+    setNotification('pending')
+    claimVestedAmount()
+  }, [])
 
-  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
-  const client = useApolloClient();
-  const { feePaymentAsset, convertToFeePaymentAsset } =
-    useMultiFeePaymentConversionContext();
+  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
+  const client = useApolloClient()
+  const {
+    feePaymentAsset,
+    convertToFeePaymentAsset
+  } = useMultiFeePaymentConversionContext()
 
-  const [txFee, setTxFee] = useState<string>();
+  const [txFee, setTxFee] = useState<string>()
   useEffect(() => {
-    if (!apiInstance || apiInstanceLoading) return;
-    (async () => {
+    if (!apiInstance || apiInstanceLoading) return
+    ;(async () => {
       const txFee = await estimateClaimVesting(
         client.cache as any,
         apiInstance,
         {}
-      );
+      )
       console.log(
         'claim tx fee',
         convertToFeePaymentAsset(txFee.partialFee.toString())
-      );
-      setTxFee(convertToFeePaymentAsset(txFee.partialFee.toString()));
-    })();
+      )
+      setTxFee(convertToFeePaymentAsset(txFee.partialFee.toString()))
+    })()
   }, [
     apiInstance,
     apiInstanceLoading,
@@ -73,7 +75,7 @@ export const VestingClaim = ({
     client,
     convertToFeePaymentAsset,
     feePaymentAsset
-  ]);
+  ])
 
   return (
     <div className="vesting-claim">
@@ -88,20 +90,20 @@ export const VestingClaim = ({
       {isVestingAvailable ? (
         <div className="vesting-claim-wrapper">
           <div className="item">
-            {fromPrecision12(vesting?.claimableAmount)} BSX
+            {fromPrecision12(vesting?.claimableAmount || '0')} BSX
           </div>
           <div className="item">
-            {fromPrecision12(vesting?.originalLockBalance)} BSX
+            {fromPrecision12(vesting?.originalLockBalance || '0')} BSX
           </div>
           <div className="item">
-            {fromPrecision12(vesting?.lockedVestingBalance)} BSX
+            {fromPrecision12(vesting?.lockedVestingBalance || '0')} BSX
           </div>
           <div className="vesting-claim__fee">
             {txFee ? (
               <FormattedBalance
                 balance={{
                   assetId: feePaymentAsset || '0',
-                  balance: txFee,
+                  balance: txFee
                 }}
               />
             ) : (
@@ -123,5 +125,5 @@ export const VestingClaim = ({
         </div>
       )}
     </div>
-  );
-};
+  )
+}

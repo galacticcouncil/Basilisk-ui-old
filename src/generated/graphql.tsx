@@ -93,9 +93,9 @@ export type IVesting = {
 
 export type LbpAssetWeights = {
   __typename?: 'LBPAssetWeights';
-  current: Scalars['String'];
-  final: Scalars['String'];
-  initial: Scalars['String'];
+  current: Scalars['Int'];
+  final: Scalars['Int'];
+  initial: Scalars['Int'];
 };
 
 export type LbpPool = {
@@ -105,18 +105,20 @@ export type LbpPool = {
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
-  endBlock: Scalars['String'];
+  endBlock: Scalars['Int'];
   fee: Fee;
   id: Scalars['String'];
-  repayTargetReached: Scalars['Boolean'];
-  startBlock: Scalars['String'];
+  repayTarget?: Maybe<Scalars['String']>;
+  repayTargetReached?: Maybe<Scalars['Boolean']>;
+  startBlock: Scalars['Int'];
 };
 
 export type LastBlock = {
   __typename?: 'LastBlock';
+  createdAt: Scalars['Int'];
   id: Scalars['String'];
-  parachainBlockNumber?: Maybe<Scalars['String']>;
-  relaychainBlockNumber?: Maybe<Scalars['String']>;
+  parachainBlockNumber: Scalars['Int'];
+  relaychainBlockNumber: Scalars['Int'];
 };
 
 export type LockedBalance = {

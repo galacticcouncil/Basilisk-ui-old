@@ -68,8 +68,8 @@ export const TradeChart = ({
 }: TradeChartProps) => {
   const isVisible = usePageVisibility();
   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
-    from: moment().subtract(1, 'days').toISOString(),
-    to: moment().toISOString(),
+    from: 10000,
+    to: 20000,
   });
   const { math } = useMath();
   const {
@@ -123,53 +123,53 @@ export const TradeChart = ({
       setDatasetLoading(false);
       return;
     }
-    const dataset =
-      historicalBalancesData?.historicalBalances.map(
-        ({ createdAt, assetABalance, assetBBalance }) => {
-          return {
-            // x: `${moment(createdAt).getTime()}`,
-            x: new Date(createdAt).getTime(),
-            ...(() => {
-              const assetOutLiquidity =
-                assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
-                  ? assetABalance
-                  : assetBBalance;
+    // const dataset =
+    //   historicalBalancesData?.historicalBalances.map(
+    //     ({ createdAt, assetABalance, assetBBalance }) => {
+    //       return {
+    //         // x: `${moment(createdAt).getTime()}`,
+    //         x: new Date(createdAt).getTime(),
+    //         ...(() => {
+    //           const assetOutLiquidity =
+    //             assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
+    //               ? assetABalance
+    //               : assetBBalance;
 
-              const assetInLiquidity =
-                assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
-                  ? assetABalance
-                  : assetBBalance;
+    //           const assetInLiquidity =
+    //             assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
+    //               ? assetABalance
+    //               : assetBBalance;
 
-              const spotPrice = {
-                outIn: math.xyk.get_spot_price(
-                  assetOutLiquidity,
-                  assetInLiquidity,
-                  '1000000000000'
-                ),
-                inOut: math.xyk.get_spot_price(
-                  assetInLiquidity,
-                  assetOutLiquidity,
-                  '1000000000000'
-                ),
-              };
+    //           const spotPrice = {
+    //             outIn: math.xyk.get_spot_price(
+    //               assetOutLiquidity,
+    //               assetInLiquidity,
+    //               '1000000000000'
+    //             ),
+    //             inOut: math.xyk.get_spot_price(
+    //               assetInLiquidity,
+    //               assetOutLiquidity,
+    //               '1000000000000'
+    //             ),
+    //           };
 
-              const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
+    //           const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
 
-              return {
-                y: y.toNumber(),
-                yAsString: fromPrecision12(spotPrice.inOut),
-              };
-            })(),
-          };
-        }
-      ) || [];
+    //           return {
+    //             y: y.toNumber(),
+    //             yAsString: fromPrecision12(spotPrice.inOut),
+    //           };
+    //         })(),
+    //       };
+    //     }
+    //   ) || [];
 
-    dataset.push({
-      // TODO: pretending this is now, should use the time from the lastBlock instead
-      x: new Date().getTime(),
-      y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
-      yAsString: fromPrecision12(spotPrice.inOut),
-    });
+    // dataset.push({
+    //   // TODO: pretending this is now, should use the time from the lastBlock instead
+    //   x: new Date().getTime(),
+    //   y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
+    //   yAsString: fromPrecision12(spotPrice.inOut),
+    // });
 
     setDataset(dataset);
     setDatasetRefreshing(false);
@@ -197,8 +197,8 @@ export const TradeChart = ({
       ) {
         setDatasetRefreshing(true);
         setHistoricalBalancesRange({
-          from: moment().subtract(1, 'days').toISOString(),
-          to: moment().toISOString(),
+          from: 10000,
+          to: 20000,
         });
       }
     };

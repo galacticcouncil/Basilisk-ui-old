@@ -3,15 +3,18 @@
 
 .trade-page-wrapper {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 .trade-page {
   display: flex;
   flex-wrap: wrap-reverse;
-
-  width: 100%;
-
-  border-radius: $border-radius;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  border-radius: 16px;
+  overflow: hidden;
 }
 
 .notifications-bar {

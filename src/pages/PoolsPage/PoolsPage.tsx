@@ -259,7 +259,6 @@ export const PoolsPage = () => {
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
           : assetIds.assetIn) || undefined,
-      shareTokenId: pool?.shareTokenId || undefined,
     },
   });
 
@@ -275,7 +274,7 @@ export const PoolsPage = () => {
     }) as Balance | undefined;
 
     const shareBalance = find(balances, {
-      assetId: pool?.shareTokenId,
+      assetId: pool?.id,
     }) as Balance | undefined;
 
     console.log('share balance', balances, shareBalance);

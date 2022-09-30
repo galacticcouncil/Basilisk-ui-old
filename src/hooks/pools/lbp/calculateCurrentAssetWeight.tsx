@@ -1,5 +1,5 @@
-import { LbpAssetWeights, LbpPool, Pool } from '../../../generated/graphql';
-import { HydraDxMath } from '../../math/useMath';
+import { LbpAssetWeights, LbpPool, Pool } from '../../../generated/graphql'
+import { HydraDxMath } from '../../math/useMath'
 
 /**
  * Used to determine the current asset weight, given the initial/final weights
@@ -16,14 +16,16 @@ export const calculateCurrentAssetWeight = (
   pool: Pick<LbpPool, 'startBlock' | 'endBlock'>,
   weights: Pick<LbpAssetWeights, 'initial' | 'final'>,
   relaychainBlockNumber: string
-): string => {
+): number => {
   if (pool.startBlock && pool.endBlock) {
-    return math.lbp.calculate_linear_weights(
-      pool.startBlock,
-      pool.endBlock,
-      weights.initial,
-      weights.final,
-      relaychainBlockNumber
-    );
-  } else return '';
-};
+    return parseInt(
+      math.lbp.calculate_linear_weights(
+        pool.startBlock.toString(),
+        pool.endBlock.toString(),
+        weights.initial.toString(),
+        weights.final.toString(),
+        relaychainBlockNumber
+      )
+    )
+  } else return 0
+}

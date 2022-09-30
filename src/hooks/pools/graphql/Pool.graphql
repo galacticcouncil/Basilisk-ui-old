@@ -11,9 +11,9 @@ enum TradeType {
 }
 
 type LBPAssetWeights {
-  initial: String!
-  final: String!
-  current: String!
+  initial: Int!
+  final: Int!
+  current: Int!
 }
 
 type Fee {
@@ -28,11 +28,12 @@ type LBPPool {
   assetOutId: String!
   balances: [Balance!]
   fee: Fee!
-  repayTargetReached: Boolean!
+  repayTarget: String
+  repayTargetReached: Boolean
   assetAWeights: LBPAssetWeights!
   assetBWeights: LBPAssetWeights!
-  startBlock: String!
-  endBlock: String!
+  startBlock: Int!
+  endBlock: Int!
 }
 
 type XYKPool {

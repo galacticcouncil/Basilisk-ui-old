@@ -45,7 +45,7 @@ export const getVestingByAddressFactory =
 
     const totalLocks = calculateTotalLocks(
       vestingSchedules,
-      currentBlockNumber!
+      currentBlockNumber.toString()
     );
 
     // 'ormlvest' is being fetched
