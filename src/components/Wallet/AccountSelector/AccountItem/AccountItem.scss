@@ -100,7 +100,7 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        min-width: 0;
+        min-width: fit-content;
       }
 
       &__source {
