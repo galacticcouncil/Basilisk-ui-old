@@ -275,7 +275,25 @@ export const TradeChart = ({
             )}
           </div>
 
-          {/* <ChartTicks datasets={[primaryDataset]} granularity={granularity} /> */}
+          <ChartTicks
+            datasets={[primaryDataset]}
+            granularity={ChartGranularity.H1}
+          />
+          <ChartTicks
+            datasets={[primaryDataset]}
+            granularity={ChartGranularity.H24}
+          />
+          <hr className="divider"></hr>
+          <div className="legend">
+            <div className="legend__item ">
+              <div className="line history"></div>
+              <div className="label">Price History</div>
+            </div>
+            <div className="legend__item ">
+              <div className="line prediction"></div>
+              <div className="label">Future Price Without Trades</div>
+            </div>
+          </div>
         </div>
       ) : (
         <></>

@@ -102,7 +102,7 @@
 
     .pools-form-heading {
       width: fit-content;
-      padding-top: 4px;
+      padding: 4px 0;
       color: $l-gray3;
       font-size: 22px;
       font-weight: 500;
@@ -142,11 +142,9 @@
       flex-direction: column-reverse;
       align-items: end;
       background: rgba(162, 176, 187, 0.1);
-      padding: 12px;
-      padding-top: 24px;
-      border-radius: 10px;
-      gap: 6px;
-      padding-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      gap: 10px;
     }
 
     @media only screen and (max-width: 500px) {
@@ -180,49 +178,7 @@
   }
 }
 
-// SHOULD BE EXTRACTED TO COMPONENTS
 
-.balance-info {
-  display: flex;
-  align-items: center;
-  justify-content: right;
-  width: 100%;
-  gap: 4px;
-
-  height: 16px;
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 12px;
-  position: relative;
-
-  .balance-info-type {
-    position: absolute;
-    left: 0;
-    top: -7px;
-    font-weight: 600;
-    font-size: 16px;
-    color: $green1;
-    padding: 6px;
-  }
-  .balance-info-balance {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: right;
-    gap: 8px;
-  }
-
-  @media only screen and (max-width: 500px) {
-    .balance-info-balance {
-      position: absolute;
-      bottom: -90px;
-      display: flex;
-      align-items: center;
-      justify-content: right;
-      gap: 8px;
-    }
-  }
-}
 
 .asset-switch {
   display: flex;

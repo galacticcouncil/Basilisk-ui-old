@@ -6,6 +6,7 @@ $disabledOpacity: 0.3;
 .chart-header {
   height: auto;
   color: white;
+  flex-basis: 100px;
 
   &__timer {
     padding-top: 10px;

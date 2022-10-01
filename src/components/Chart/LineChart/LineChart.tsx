@@ -303,7 +303,7 @@ export const LineChart = ({
       },
       scales: {
         xAxis: {
-          display: true,
+          display: false,
           stacked: false,
           grid: { display: false },
           type: 'time',
@@ -311,15 +311,7 @@ export const LineChart = ({
             tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
             displayFormats: { hour: 'HH:mm', day: 'HH:mm', minute: 'HH:mm' }
           },
-          ticks: {
-            align: 'center',
-            crossAlign: 'near',
-            includeBounds: true,
-            color: '#eee',
-            maxRotation: 0,
-            maxTicksLimit: 10,
-            font: { size: 10 }
-          },
+
           min: xAxisBounds.xAxisMin,
           to: xAxisBounds.xAxisMax
         },
@@ -333,7 +325,7 @@ export const LineChart = ({
             maxTicksLimit: 8,
             align: 'end',
             crossAlign: 'center',
-            font: { size: 12 }
+            font: { size: 14 }
           },
           stacked: false,
           min: yAxisBounds.yAxisMin,
