@@ -76,6 +76,9 @@ export const TradeChart = ({
     startBlock,
     endBlock
   }
+
+  const keepRecords = 200
+
   let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
 
   if (
@@ -159,16 +162,23 @@ export const TradeChart = ({
 
     if (historicalBalancesLoading) return
 
+    const historicalBalanceData =
+      historicalBalancesData?.historicalBalances || []
+
+    const divisionMultiplier =
+      historicalBalanceData.length < keepRecords
+        ? 1
+        : Math.ceil(historicalBalanceData.length / keepRecords)
+
+    const filteredDataset = historicalBalanceData.filter((_b, i) => {
+      if (i % divisionMultiplier === 0) return true
+      return false
+    })
+
     console.log(
       'historicalBalancesLength:',
-      historicalBalancesData?.historicalBalances?.length
-    )
-
-    const filteredDataset = historicalBalancesData?.historicalBalances?.filter(
-      (_b, i) => {
-        if (i % 5 === 0) return true
-        return true
-      }
+      historicalBalanceData.length,
+      filteredDataset.length
     )
 
     if (
@@ -225,9 +235,9 @@ export const TradeChart = ({
         }
       ) || []
 
-    const sortedDataset = orderBy(dataset, ['x'], ['asc'])
-
-    console.debug('finalDataset', sortedDataset)
+    // We're sorting in query (what is faster?)
+    const sortedDataset = dataset //orderBy(dataset, ['x'], ['asc'])
+    //console.debug('finalDataset', sortedDataset, dataset)
 
     setDataset(sortedDataset)
     setDatasetRefreshing(false)
