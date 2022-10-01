@@ -46,3 +46,18 @@ input {
     background-color: transparent;
   }
 }
+
+.primary-text {
+  background: linear-gradient(
+    90deg,
+    #4fffb0 1.27%,
+    #b3ff8f 48.96%,
+    #ff984e 104.14%
+  ),
+  linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
+  linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}

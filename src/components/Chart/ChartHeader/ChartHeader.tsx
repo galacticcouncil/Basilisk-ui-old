@@ -100,6 +100,9 @@ export const ChartHeader = ({
               ? `${assetPair.assetB.fullName}`
               : horizontalBar}
           </div>
+          <div className="chart-header__timer">
+            <span className="primary-text">Bootstrapping Ended</span>
+          </div>
         </div>
 
         <div className="chart-header__data">
@@ -148,13 +151,14 @@ export const ChartHeader = ({
           </div>
         </div>
       </div>
-      <div className="chart-header__controls">
-        {/* graph selector */}
 
-        {/* <div className="chart-header__controls__graph-type text-gray-4 text-start"> */}
-        {/* TODO: add translations & granularity enums & on graph type handler */}
-        {/* for now only price chart is available */}
-        {/* {availableChartTypes.map((chartTypeEntry, i) => (
+      {/* <div className="chart-header__controls"> */}
+      {/* graph selector */}
+
+      {/* <div className="chart-header__controls__graph-type text-gray-4 text-start"> */}
+      {/* TODO: add translations & granularity enums & on graph type handler */}
+      {/* for now only price chart is available */}
+      {/* {availableChartTypes.map((chartTypeEntry, i) => (
             <span
               className={classNames({
                 'chart-header__controls__graph-type__individual': true,
@@ -171,12 +175,12 @@ export const ChartHeader = ({
               />
             </span>
           ))} */}
-        {/* </div> */}
+      {/* </div> */}
 
-        {/* granularity selector */}
+      {/* granularity selector */}
 
-        {/* <div className="chart-header__controls__granularity text-end text-gray-4"> */}
-        {/* {availableGranularity.map((granularityEntry, i) => {
+      {/* <div className="chart-header__controls__granularity text-end text-gray-4"> */}
+      {/* {availableGranularity.map((granularityEntry, i) => {
             return (
               <span
                 className={classNames({
@@ -190,8 +194,8 @@ export const ChartHeader = ({
               </span>
             );
           })} */}
-        {/* </div> */}
-      </div>
+      {/* </div> */}
+      {/* </div> */}
     </div>
   )
 }
