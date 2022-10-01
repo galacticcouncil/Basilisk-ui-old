@@ -5,24 +5,63 @@
   flex-direction: column;
   flex-grow: 10000;
   flex-shrink: 1;
-
   min-width: 320px;
   flex-basis: 320px;
+  background: #121416;
+  padding: 16px 16px 12px 16px;
+  height: 100%;
+  width: 600px;
+  max-height: 100%;
+  color: $l-gray3;
 
-  background: $gray2;
-  padding: 20px 16px 12px 16px;
-  position: relative;
+  .divider {
+    margin: 24px 12px 12px 10px;
+  }
+
+  .legend {
+    font-size: 12px;
+    padding: 0 12px 10px 12px;
+    display: flex;
+    justify-content: space-between;
+
+    &__item {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .line {
+        width: 50px;
+      }
+
+      .history {
+        height: 2px;
+        background: $snek-gradient-reverse;
+      }
+
+      .prediction {
+        border-top: 2px dashed $green1;
+      }
+    }
+  }
 
   &__chart-wrapper {
+    position: relative;
     display: flex;
+    flex-shrink: 1;
     flex-grow: 1;
+    flex-basis: 100px;
 
     flex-direction: column;
 
     &__chart-jail {
+      height: 300px;
       position: relative;
       flex-grow: 1;
-      padding: 80px 0 0 0;
+      padding: 30px 0 0 0;
+      flex-shrink: 1;
+      flex-basis: 100px;
+  
     }
   }
 
@@ -32,31 +71,30 @@
   }
 
   &__tooltip {
-    $tooltipColor: $gray1;
+    $tooltipColor: #DAFFEE;
 
-    height: 90%;
-    width: 0.0625rem;
-    border-right: 0.0625rem $pink1 dashed;
+    height: 100%;
+    width: 1px;
+    border-right: 1px $tooltipColor dashed;
     position: absolute;
-    top: 10%;
     z-index: 0;
+    top:0;
     opacity: 1;
     pointer-events: none;
     transition: opacity ease-in 100ms;
 
     &__label {
       background: $tooltipColor;
-      border: 0.063rem solid $pink1;
-      color: $pink1;
+      color: $black;
       position: absolute;
-      top: 10%;
-      min-width: 240px;
+      top: 0;
       text-align: center;
-      padding: 0.5rem 0.75rem;
+      padding: 0.325rem 0.5rem;
       font-size: 0.75rem;
       font-weight: 500;
       transition: opacity ease-in 100ms;
       z-index: 1;
+      border-radius: 4px;
     }
   }
 }

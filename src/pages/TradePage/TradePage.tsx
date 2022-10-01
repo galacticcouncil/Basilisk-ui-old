@@ -1,8 +1,8 @@
-import { NetworkStatus, useApolloClient } from '@apollo/client';
-import classNames from 'classnames';
-import { find, uniq, last } from 'lodash';
-import moment from 'moment';
-import { usePageVisibility } from 'react-page-visibility';
+import { NetworkStatus, useApolloClient } from '@apollo/client'
+import classNames from 'classnames'
+import { find, uniq, last } from 'lodash'
+import moment from 'moment'
+import { usePageVisibility } from 'react-page-visibility'
 import {
   Dispatch,
   SetStateAction,
@@ -10,108 +10,108 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
-} from 'react';
-import { Control, useForm, UseFormReturn } from 'react-hook-form';
-import { useSearchParams } from 'react-router-dom';
-import { TradeForm } from '../../components/Trade/TradeForm/TradeForm';
-import { AssetIds, Balance, XykPool, TradeType } from '../../generated/graphql';
-import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount';
-import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery';
-import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery';
-import { useMath } from '../../hooks/math/useMath';
-import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery';
-import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl';
-import { Line } from 'react-chartjs-2';
-import { fromPrecision12 } from '../../hooks/math/useFromPrecision';
-import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart';
-import './TradePage.scss';
+  useRef
+} from 'react'
+import { Control, useForm, UseFormReturn } from 'react-hook-form'
+import { useSearchParams } from 'react-router-dom'
+import { TradeForm } from '../../components/Trade/TradeForm/TradeForm'
+import { AssetIds, Balance, XykPool, TradeType } from '../../generated/graphql'
+import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount'
+import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
+import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
+import { useMath } from '../../hooks/math/useMath'
+import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
+import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
+import { Line } from 'react-chartjs-2'
+import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
+import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart'
+import './TradePage.scss'
 import {
   ChartGranularity,
   ChartType,
-  PoolType,
-} from '../../components/Chart/shared';
-import BigNumber from 'bignumber.js';
-import { useLoading } from '../../hooks/misc/useLoading';
+  PoolType
+} from '../../components/Chart/shared'
+import BigNumber from 'bignumber.js'
+import { useLoading } from '../../hooks/misc/useLoading'
 import {
   useGetPoolsQuery,
-  useGetPoolsQueryProvider,
-} from '../../hooks/pools/queries/useGetPoolsQuery';
-import { idToAsset } from '../../misc/idToAsset';
+  useGetPoolsQueryProvider
+} from '../../hooks/pools/queries/useGetPoolsQuery'
+import { idToAsset } from '../../misc/idToAsset'
 
-import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances';
+import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 
-import Icon from '../../components/Icon/Icon';
+import Icon from '../../components/Icon/Icon'
 
 export interface TradeAssetIds {
-  assetIn: string | null;
-  assetOut: string | null;
+  assetIn: string | null
+  assetOut: string | null
 }
 
 export interface TradeChartProps {
-  pool?: XykPool;
-  isPoolLoading?: boolean;
-  assetIds: TradeAssetIds;
+  pool?: XykPool
+  isPoolLoading?: boolean
+  assetIds: TradeAssetIds
   spotPrice?: {
-    outIn?: string;
-    inOut?: string;
-  };
+    outIn?: string
+    inOut?: string
+  }
 }
 
 export const TradeChart = ({
   pool,
   assetIds,
   spotPrice,
-  isPoolLoading,
+  isPoolLoading
 }: TradeChartProps) => {
-  const isVisible = usePageVisibility();
+  const isVisible = usePageVisibility()
   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
-    from: moment().subtract(1, 'days').toISOString(),
-    to: moment().toISOString(),
-  });
-  const { math } = useMath();
+    from: 10000,
+    to: 20000
+  })
+  const { math } = useMath()
   const {
     data: historicalBalancesData,
-    networkStatus: historicalBalancesNetworkStatus,
+    networkStatus: historicalBalancesNetworkStatus
   } = useGetHistoricalBalancesQuery(
     {
       ...historicalBalancesRange,
       quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
-      poolId: pool?.id || '',
+      poolId: pool?.id || ''
     },
     {
-      skip: !pool?.id,
+      skip: !pool?.id
     }
-  );
+  )
 
   const historicalBalancesLoading = useMemo(
     () =>
       historicalBalancesNetworkStatus === NetworkStatus.loading ||
       historicalBalancesNetworkStatus === NetworkStatus.setVariables,
     [historicalBalancesNetworkStatus]
-  );
+  )
 
-  const [dataset, setDataset] = useState<Array<any>>();
-  const [datasetLoading, setDatasetLoading] = useState(true);
-  const [datasetRefreshing, setDatasetRefreshing] = useState(false);
+  const [dataset, setDataset] = useState<Array<any>>()
+  const [datasetLoading, setDatasetLoading] = useState(true)
+  const [datasetRefreshing, setDatasetRefreshing] = useState(false)
 
   const assetOutLiquidity = useMemo(() => {
-    const assetId = assetIds.assetOut || undefined;
-    return find<Balance | null>(pool?.balances, { assetId })?.balance;
-  }, [pool, assetIds]);
+    const assetId = assetIds.assetOut || undefined
+    return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds])
 
   const assetInLiquidity = useMemo(() => {
-    const assetId = assetIds.assetIn || undefined;
-    return find<Balance | null>(pool?.balances, { assetId })?.balance;
-  }, [pool, assetIds]);
+    const assetId = assetIds.assetIn || undefined
+    return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds])
 
   useEffect(() => {
-    setDatasetLoading(true);
+    setDatasetLoading(true)
 
-    if (historicalBalancesLoading) return;
+    if (historicalBalancesLoading) return
 
     if (
       (!historicalBalancesLoading &&
@@ -119,73 +119,73 @@ export const TradeChart = ({
       !math ||
       !spotPrice
     ) {
-      setDataset([]);
-      setDatasetLoading(false);
-      return;
+      setDataset([])
+      setDatasetLoading(false)
+      return
     }
-    const dataset =
-      historicalBalancesData?.historicalBalances.map(
-        ({ createdAt, assetABalance, assetBBalance }) => {
-          return {
-            // x: `${moment(createdAt).getTime()}`,
-            x: new Date(createdAt).getTime(),
-            ...(() => {
-              const assetOutLiquidity =
-                assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
-                  ? assetABalance
-                  : assetBBalance;
+    // const dataset =
+    //   historicalBalancesData?.historicalBalances.map(
+    //     ({ createdAt, assetABalance, assetBBalance }) => {
+    //       return {
+    //         // x: `${moment(createdAt).getTime()}`,
+    //         x: new Date(createdAt).getTime(),
+    //         ...(() => {
+    //           const assetOutLiquidity =
+    //             assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
+    //               ? assetABalance
+    //               : assetBBalance;
 
-              const assetInLiquidity =
-                assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
-                  ? assetABalance
-                  : assetBBalance;
+    //           const assetInLiquidity =
+    //             assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
+    //               ? assetABalance
+    //               : assetBBalance;
 
-              const spotPrice = {
-                outIn: math.xyk.get_spot_price(
-                  assetOutLiquidity,
-                  assetInLiquidity,
-                  '1000000000000'
-                ),
-                inOut: math.xyk.get_spot_price(
-                  assetInLiquidity,
-                  assetOutLiquidity,
-                  '1000000000000'
-                ),
-              };
+    //           const spotPrice = {
+    //             outIn: math.xyk.get_spot_price(
+    //               assetOutLiquidity,
+    //               assetInLiquidity,
+    //               '1000000000000'
+    //             ),
+    //             inOut: math.xyk.get_spot_price(
+    //               assetInLiquidity,
+    //               assetOutLiquidity,
+    //               '1000000000000'
+    //             ),
+    //           };
 
-              const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
+    //           const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
 
-              return {
-                y: y.toNumber(),
-                yAsString: fromPrecision12(spotPrice.inOut),
-              };
-            })(),
-          };
-        }
-      ) || [];
+    //           return {
+    //             y: y.toNumber(),
+    //             yAsString: fromPrecision12(spotPrice.inOut),
+    //           };
+    //         })(),
+    //       };
+    //     }
+    //   ) || [];
 
-    dataset.push({
-      // TODO: pretending this is now, should use the time from the lastBlock instead
-      x: new Date().getTime(),
-      y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
-      yAsString: fromPrecision12(spotPrice.inOut),
-    });
+    // dataset.push({
+    //   // TODO: pretending this is now, should use the time from the lastBlock instead
+    //   x: new Date().getTime(),
+    //   y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
+    //   yAsString: fromPrecision12(spotPrice.inOut),
+    // });
 
-    setDataset(dataset);
-    setDatasetRefreshing(false);
-    setDatasetLoading(false);
+    setDataset(dataset)
+    setDatasetRefreshing(false)
+    setDatasetLoading(false)
   }, [
     historicalBalancesData?.historicalBalances,
     historicalBalancesLoading,
     math,
     spotPrice,
-    assetIds,
-  ]);
+    assetIds
+  ])
 
   useEffect(() => {
-    const lastRecordOutdatedBy = 60000;
+    const lastRecordOutdatedBy = 60000
 
-    if (!isVisible || historicalBalancesLoading || datasetRefreshing) return;
+    if (!isVisible || historicalBalancesLoading || datasetRefreshing) return
 
     const refetchHistoricalBalancesData = () => {
       if (
@@ -195,22 +195,22 @@ export const TradeChart = ({
         (!dataset?.length ||
           last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
       ) {
-        setDatasetRefreshing(true);
+        setDatasetRefreshing(true)
         setHistoricalBalancesRange({
-          from: moment().subtract(1, 'days').toISOString(),
-          to: moment().toISOString(),
-        });
+          from: 10000,
+          to: 20000
+        })
       }
-    };
+    }
 
-    refetchHistoricalBalancesData();
+    refetchHistoricalBalancesData()
 
     const refetchData = setInterval(() => {
-      refetchHistoricalBalancesData();
-    }, lastRecordOutdatedBy);
+      refetchHistoricalBalancesData()
+    }, lastRecordOutdatedBy)
 
-    return () => clearInterval(refetchData);
-  }, [dataset, isVisible, historicalBalancesLoading, datasetRefreshing]);
+    return () => clearInterval(refetchData)
+  }, [dataset, isVisible, historicalBalancesLoading, datasetRefreshing])
 
   // useEffect(() => {
   //   setDataset(dataset => {
@@ -228,50 +228,51 @@ export const TradeChart = ({
   // }, [pool, spotPrice,])
 
   const _isPoolLoading = useMemo(() => {
-    if (!isPoolLoading || datasetRefreshing) return false;
+    if (!isPoolLoading || datasetRefreshing) return false
 
-    return isPoolLoading || historicalBalancesLoading || datasetLoading;
+    return isPoolLoading || historicalBalancesLoading || datasetLoading
   }, [
     datasetRefreshing,
     datasetLoading,
     isPoolLoading,
-    historicalBalancesLoading,
-  ]);
+    historicalBalancesLoading
+  ])
 
   return (
     <TradeChartComponent
       assetPair={{
         assetA: idToAsset(assetIds.assetIn),
-        assetB: idToAsset(assetIds.assetOut),
+        assetB: idToAsset(assetIds.assetOut)
       }}
       isPoolLoading={_isPoolLoading}
       poolType={PoolType.XYK}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
       primaryDataset={dataset as any}
+      secondaryDataset={[]}
       onChartTypeChange={() => {}}
       onGranularityChange={() => {}}
     />
-  );
-};
+  )
+}
 
 export const TradePage = () => {
   // taking assetIn/assetOut from search params / query url
-  const [assetIds, setAssetIds] = useAssetIdsWithUrl();
+  const [assetIds, setAssetIds] = useAssetIdsWithUrl()
   const { data: activeAccountData } = useGetActiveAccountQuery({
-    fetchPolicy: 'cache-only',
-  });
-  const { math } = useMath();
+    fetchPolicy: 'cache-only'
+  })
+  const { math } = useMath()
   // progress, not broadcast because we dont wait for broadcast to happen here
   const [notification, setNotification] = useState<
     'standby' | 'pending' | 'success' | 'failed'
-  >('standby');
+  >('standby')
 
-  const depsLoading = useLoading();
+  const depsLoading = useLoading()
   const {
     data: poolData,
     loading: poolLoading,
-    networkStatus: poolNetworkStatus,
+    networkStatus: poolNetworkStatus
   } = useGetPoolByAssetsQuery(
     {
       assetInId:
@@ -281,88 +282,88 @@ export const TradePage = () => {
       assetOutId:
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
-          : assetIds.assetIn) || undefined,
+          : assetIds.assetIn) || undefined
     },
     depsLoading
-  );
+  )
 
   const {
     data: poolsData,
-    networkStatus: poolsNetworkStatus,
-  } = useGetPoolsQueryProvider();
+    networkStatus: poolsNetworkStatus
+  } = useGetPoolsQueryProvider()
 
   const assets = useMemo(() => {
     const assets = poolsData?.pools
       ?.map((pool) => {
         if (pool.__typename === 'XYKPool') {
-          return [pool.assetInId, pool.assetOutId];
-        } else return [];
+          return [pool.assetInId, pool.assetOutId]
+        } else return []
       })
       .reduce((assets, poolAssets) => {
-        return assets.concat(poolAssets);
+        return assets.concat(poolAssets)
       }, [])
-      .map((id) => id);
+      .map((id) => id)
 
-    return uniq(assets).map((id) => ({ id }));
-  }, [poolsData]);
+    return uniq(assets).map((id) => ({ id }))
+  }, [poolsData])
 
   const xykPool =
     poolData?.pool && poolData.pool.__typename === 'XYKPool'
       ? poolData.pool
-      : undefined;
+      : undefined
 
-  const pool = useMemo(() => xykPool, [xykPool]);
+  const pool = useMemo(() => xykPool, [xykPool])
 
   const isActiveAccountConnected = useMemo(() => {
-    return !!activeAccountData?.activeAccount;
-  }, [activeAccountData]);
+    return !!activeAccountData?.activeAccount
+  }, [activeAccountData])
 
-  const clearNotificationIntervalRef = useRef<any>();
+  const clearNotificationIntervalRef = useRef<any>()
 
   const [
     submitTrade,
-    { loading: tradeLoading, error: tradeError },
+    { loading: tradeLoading, error: tradeError }
   ] = useSubmitTradeMutation({
     onCompleted: () => {
-      setNotification('success');
+      setNotification('success')
       clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
+        setNotification('standby')
+      }, 4000)
     },
     onError: () => {
-      setNotification('failed');
+      setNotification('failed')
       clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby');
-      }, 4000);
-    },
-  });
+        setNotification('standby')
+      }, 4000)
+    }
+  })
 
   useEffect(() => {
-    if (tradeLoading) setNotification('pending');
-  }, [tradeLoading]);
+    if (tradeLoading) setNotification('pending')
+  }, [tradeLoading])
 
   const handleSubmitTrade = useCallback(
     (variables) => {
       clearNotificationIntervalRef.current &&
-        clearTimeout(clearNotificationIntervalRef.current);
-      clearNotificationIntervalRef.current = null;
-      submitTrade({ variables });
+        clearTimeout(clearNotificationIntervalRef.current)
+      clearNotificationIntervalRef.current = null
+      submitTrade({ variables })
     },
     [submitTrade]
-  );
+  )
 
   const assetOutLiquidity = useMemo(() => {
-    const assetId = assetIds.assetOut || undefined;
-    return find<Balance | null>(pool?.balances, { assetId })?.balance;
-  }, [pool, assetIds]);
+    const assetId = assetIds.assetOut || undefined
+    return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds])
 
   const assetInLiquidity = useMemo(() => {
-    const assetId = assetIds.assetIn || undefined;
-    return find<Balance | null>(pool?.balances, { assetId })?.balance;
-  }, [pool, assetIds]);
+    const assetId = assetIds.assetIn || undefined
+    return find<Balance | null>(pool?.balances, { assetId })?.balance
+  }, [pool, assetIds])
 
   const spotPrice = useMemo(() => {
-    if (!assetOutLiquidity || !assetInLiquidity || !math) return;
+    if (!assetOutLiquidity || !assetInLiquidity || !math) return
     return {
       outIn: math.xyk.get_spot_price(
         assetOutLiquidity,
@@ -373,13 +374,13 @@ export const TradePage = () => {
         assetInLiquidity,
         assetOutLiquidity,
         '1000000000000'
-      ),
-    };
-  }, [assetOutLiquidity, assetInLiquidity, math]);
+      )
+    }
+  }, [assetOutLiquidity, assetInLiquidity, math])
 
   const {
     data: activeAccountTradeBalancesData,
-    networkStatus: activeAccountTradeBalancesNetworkStatus,
+    networkStatus: activeAccountTradeBalancesNetworkStatus
   } = useGetActiveAccountTradeBalances({
     variables: {
       assetInId:
@@ -389,28 +390,30 @@ export const TradePage = () => {
       assetOutId:
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
-          : assetIds.assetIn) || undefined,
-    },
-  });
+          : assetIds.assetIn) || undefined
+    }
+  })
 
   const tradeBalances = useMemo(() => {
-    const balances = activeAccountTradeBalancesData?.activeAccount?.balances;
+    const balances = activeAccountTradeBalancesData?.activeAccount?.balances
 
     const outBalance = find(balances, {
-      assetId: assetIds.assetOut,
-    }) as Balance | undefined;
+      assetId: assetIds.assetOut
+    }) as Balance | undefined
 
     const inBalance = find(balances, {
-      assetId: assetIds.assetIn,
-    }) as Balance | undefined;
+      assetId: assetIds.assetIn
+    }) as Balance | undefined
 
-    return { outBalance, inBalance };
-  }, [activeAccountTradeBalancesData, assetIds]);
+    return { outBalance, inBalance }
+  }, [activeAccountTradeBalancesData, assetIds])
 
   return (
     <div className="trade-page-wrapper">
       {/* {confirmationScreen} */}
+      {/*NOTIF*/}
       <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification-icon"></div>
         <div className="notification">Transaction {notification}</div>
         <div className="notification-cancel-wrapper">
           <button
@@ -421,6 +424,7 @@ export const TradePage = () => {
           </button>
         </div>
       </div>
+      {/*NOTIF*/}
       <div className="trade-page">
         {/* <TradeChart
           pool={pool}
@@ -465,5 +469,5 @@ export const TradePage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

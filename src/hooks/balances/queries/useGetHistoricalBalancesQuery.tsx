@@ -1,36 +1,35 @@
-import { QueryHookOptions, useQuery } from "@apollo/client";
-import { loader } from "graphql.macro";
+import { QueryHookOptions, useQuery } from '@apollo/client'
+import { loader } from 'graphql.macro'
 
-export const GET_HISTORICAL_BALANCES = loader('./../graphql/GetHistoricalBalances.query.graphql');
+export const GET_HISTORICAL_BALANCES = loader(
+  './../graphql/GetHistoricalBalances.query.graphql'
+)
 
 export interface HistoricalBalance {
-    assetABalance: string,
-    assetBBalance: string,
-    createdAt: string
+  assetABalance: string
+  assetBBalance: string
+  relayChainBlockHeight: number
 }
 
 export interface GetHistoricalBalancesQueryResponse {
-    historicalBalances: HistoricalBalance[]
-    XYKPool: {
-        assetAId: string,
-        assetBId: string
-    }
+  historicalBalances: HistoricalBalance[]
 }
 
 export interface GetHistoricalBalancesQueryVariables {
-    from: string,
-    to: string,
-    quantity: number,
-    poolId: string
+  from: number
+  to: number
+  quantity: number
+  poolId: string
 }
 
-export const useGetHistoricalBalancesQuery = (variables: GetHistoricalBalancesQueryVariables, options?: QueryHookOptions) => useQuery<GetHistoricalBalancesQueryResponse>(
-    GET_HISTORICAL_BALANCES,
-    {
-        variables: {
-            ...variables,
-            poolIdID: variables.poolId
-        },
-        ...options
+export const useGetHistoricalBalancesQuery = (
+  variables: GetHistoricalBalancesQueryVariables,
+  options?: QueryHookOptions
+) => {
+  console.log('useGetHistoricalBalancesQuery', variables, options)
+  return useQuery<GetHistoricalBalancesQueryResponse>(GET_HISTORICAL_BALANCES, {
+    variables: {
+      ...variables
     }
-)
+  })
+}

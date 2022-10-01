@@ -1,10 +1,11 @@
 type LastBlock {
-    id: String!
-    # yes, this is correct
-    parachainBlockNumber: String,
-    relaychainBlockNumber: String,
+  id: String!
+  # yes, this is correct
+  parachainBlockNumber: Int!
+  relaychainBlockNumber: Int!
+  createdAt: Int!
 }
 
 extend type Query {
-    lastBlock: LastBlock
+  lastBlock: LastBlock
 }

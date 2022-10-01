@@ -1,11 +1,17 @@
-query GetHistoricalBalances($from: String!, $to: String!, $quantity: Float!, $poolId: String!, $poolIdID: ID!) {
-  historicalBalances: historicalBalancesXykGrouped(from: $from, quantity: $quantity, to: $to, pool_id: $poolId) {
-    assetABalance: asset_a_balance
-    assetBBalance: asset_b_balance
-    createdAt: created_at
-  }
-  XYKPool: xYKPoolById(id: $poolIdID) {
-      assetAId,
-      assetBId
+query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!) {
+  historicalBalances: historicalPoolPriceData(
+    where: {
+      id_contains: $poolId,
+      relayChainBlockHeight_gte: $from,
+      relayChainBlockHeight_lte: $to
+    },
+    orderBy: relayChainBlockHeight_ASC
+  ) {
+    assetABalance
+    assetBBalance
+    relayChainBlockHeight
   }
 }
+
+
+ 

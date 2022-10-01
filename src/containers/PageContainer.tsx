@@ -1,38 +1,39 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery';
-import { Wallet } from './Wallet/Wallet';
-import Icon from '../components/Icon/Icon';
-import './PageContainer.scss';
-import moment from 'moment';
-import classNames from 'classnames';
-import { NetworkStatus } from '@apollo/client';
-import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader';
-import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react'
+import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery'
+import { Wallet } from './Wallet/Wallet'
+import Icon from '../components/Icon/Icon'
+import './PageContainer.scss'
+import moment from 'moment'
+import classNames from 'classnames'
+import { NetworkStatus } from '@apollo/client'
+import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader'
+import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox'
+import { Link } from 'react-router-dom'
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
-  const { data: lastBlockData } = useLastBlockQuery();
+  const { data: lastBlockData } = useLastBlockQuery()
 
-  const [lastBlockUpdate, setLastBlockUpdate] = useState(moment().valueOf());
-  const [sinceLastBlockUpdate, setSinceLastBlockUpdate] = useState(0);
+  const [lastBlockUpdate, setLastBlockUpdate] = useState(moment().valueOf())
+  const [sinceLastBlockUpdate, setSinceLastBlockUpdate] = useState(0)
 
-  useEffect(() => {
-    setLastBlockUpdate(moment().valueOf());
-  }, [lastBlockData?.lastBlock?.parachainBlockNumber]);
+  useMemo(() => {
+    setLastBlockUpdate(moment().valueOf())
+    console.log('lastBlockData', lastBlockData)
+  }, [lastBlockData?.lastBlock?.parachainBlockNumber])
 
   useEffect(() => {
     const intervalId = setInterval(() => {
       const duration = moment
         .duration(moment().diff(moment(lastBlockUpdate)))
-        .asSeconds();
+        .asSeconds()
 
-      setSinceLastBlockUpdate(duration);
-    }, 500);
+      setSinceLastBlockUpdate(duration)
+    }, 500)
 
-    return () => clearInterval(intervalId);
-  }, [lastBlockUpdate]);
+    return () => clearInterval(intervalId)
+  }, [lastBlockUpdate])
 
-  const { debugBox } = useDebugBoxContext();
+  const { debugBox } = useDebugBoxContext()
 
   return (
     <>
@@ -84,15 +85,23 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
                 green: sinceLastBlockUpdate <= 30,
                 orange: sinceLastBlockUpdate > 30,
                 red: sinceLastBlockUpdate >= 60,
-                gray: !lastBlockData?.lastBlock?.parachainBlockNumber,
+                gray: !lastBlockData?.lastBlock?.parachainBlockNumber
               })}
             ></div>
-            <span>
-              Latest block:
-              {lastBlockData?.lastBlock?.parachainBlockNumber
-                ? ` ${lastBlockData.lastBlock.parachainBlockNumber}`
-                : ` ${horizontalBar}`}
-            </span>
+            <div className="blockInfo">
+              <div>
+                Latest Basilisk block:
+                {lastBlockData?.lastBlock?.parachainBlockNumber
+                  ? ` ${lastBlockData.lastBlock.parachainBlockNumber}`
+                  : ` ${horizontalBar}`}
+              </div>
+              <div>
+                Latest Kusama block:
+                {lastBlockData?.lastBlock?.relaychainBlockNumber
+                  ? ` ${lastBlockData.lastBlock.relaychainBlockNumber}`
+                  : ` ${horizontalBar}`}
+              </div>
+            </div>
           </div>
           <div>
             Version:{' '}
@@ -104,5 +113,5 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
       </div>
       {debugBox}
     </>
-  );
-};
+  )
+}

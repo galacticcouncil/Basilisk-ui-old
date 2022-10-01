@@ -1,56 +1,67 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ChartTicks } from '../ChartTicks/ChartTicks';
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ChartTicks } from '../ChartTicks/ChartTicks'
 import {
   LineChart,
   Trend,
   Dataset,
   primaryDatasetLabel,
   TooltipData,
-} from '../LineChart/LineChart';
+  TradeChartType
+} from '../LineChart/LineChart'
 import {
   AssetPair,
   ChartGranularity,
   PoolType,
   ChartType,
-  DisplayData,
-} from '../shared';
-import { ChartHeader } from './../ChartHeader/ChartHeader';
-import './TradeChart.scss';
-import moment from 'moment';
-import { TradeChartError, TradeChartErrorType } from './TradeChartError';
-import { find, first, last, random, times } from 'lodash';
+  DisplayData
+} from '../shared'
+import { ChartHeader } from './../ChartHeader/ChartHeader'
+import './TradeChart.scss'
+import moment from 'moment'
+import { TradeChartError, TradeChartErrorType } from './TradeChartError'
+import { find, first, last, random, times } from 'lodash'
+import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 
 // this function is absolutely hacky
 export const _getTooltipPositionCss = (tooltipPosition: number) => {
   // TODO: use a more specific selector
-  const tooltipWidth = 120;
+  const tooltipWidth = 120
   const canvasWidth = document
     .getElementsByTagName('canvas')[0]
-    ?.getBoundingClientRect().width;
+    ?.getBoundingClientRect().width
   if (tooltipPosition < tooltipWidth)
     return {
-      left: 0,
-    };
+      left: 0
+    }
 
   if (canvasWidth && tooltipPosition > canvasWidth - tooltipWidth)
     return {
-      right: 0,
-    };
+      right: 0
+    }
 
   return {
-    left: tooltipPosition - tooltipWidth,
-  };
-};
+    left: tooltipPosition - tooltipWidth
+  }
+}
+
+export interface LbpChartProps {
+  startBlock: number
+  endBlock: number
+  timeToNextPhase?: string
+}
 
 export interface TradeChartProps {
-  assetPair: AssetPair;
-  poolType: PoolType;
-  isPoolLoading?: boolean;
-  granularity: ChartGranularity;
-  chartType: ChartType;
-  primaryDataset: Dataset;
-  onChartTypeChange: (chartType: ChartType) => void;
-  onGranularityChange: (granularity: ChartGranularity) => void;
+  assetPair: AssetPair
+  poolType: PoolType
+  isPoolLoading?: boolean
+  granularity: ChartGranularity
+  chartType: ChartType
+  lbpStatus?: LbpStatus
+  lbpChartProps?: LbpChartProps
+  primaryDataset: Dataset
+  secondaryDataset: Dataset
+  onChartTypeChange: (chartType: ChartType) => void
+  onGranularityChange: (granularity: ChartGranularity) => void
 }
 
 export const TradeChart = ({
@@ -59,9 +70,12 @@ export const TradeChart = ({
   granularity,
   isPoolLoading,
   chartType,
+  lbpStatus,
+  lbpChartProps,
   onChartTypeChange,
   onGranularityChange,
   primaryDataset,
+  secondaryDataset
 }: TradeChartProps) => {
   const [displayData, setDisplayData] = useState<DisplayData>({
     balance: last(primaryDataset)?.yAsString,
@@ -74,8 +88,8 @@ export const TradeChart = ({
       symbol: assetPair.assetB?.symbol,
       fullName: assetPair.assetB?.fullName,
       id: assetPair.assetB?.id
-    },
-  });
+    }
+  })
 
   const resetDisplayData = useCallback(() => {
     setDisplayData({
@@ -89,8 +103,8 @@ export const TradeChart = ({
         symbol: assetPair.assetB?.symbol,
         fullName: assetPair.assetB?.fullName,
         id: assetPair.assetB?.id
-      },
-    });
+      }
+    })
     setReferenceData({
       balance: first(primaryDataset)?.yAsString,
       // TODO; usd value of the balance needs to be determined separately
@@ -102,14 +116,14 @@ export const TradeChart = ({
         symbol: assetPair.assetB?.symbol,
         fullName: assetPair.assetB?.fullName,
         id: assetPair.assetB?.id
-      },
-    });
-  }, [primaryDataset]);
+      }
+    })
+  }, [primaryDataset])
 
   // TODO: temporary
   useEffect(() => {
-    resetDisplayData();
-  }, [assetPair]);
+    resetDisplayData()
+  }, [assetPair])
 
   // TODO: set reference data based on if the user is interacting with the graph
   // if the user is not interacting with the graph, reference data should be
@@ -122,22 +136,22 @@ export const TradeChart = ({
     // TODO: display data will be in USD for volume chart, this needs to be implemented specifically
     asset: {
       symbol: assetPair.assetB?.symbol,
-      fullName: assetPair.assetB?.fullName,
-    },
-  });
+      fullName: assetPair.assetB?.fullName
+    }
+  })
 
-  const getTooltipPositionCss = useCallback(_getTooltipPositionCss, []);
+  const getTooltipPositionCss = useCallback(_getTooltipPositionCss, [])
   const [tooltipData, setTooltipData] = useState<TooltipData | undefined>(
     undefined
-  );
+  )
 
   // TODO: rewrite
   const dataTrend = useMemo(() => {
-    if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral;
+    if (displayData?.balance! == referenceData?.balance!) return Trend.Neutral
     return displayData?.balance! >= referenceData?.balance!
       ? Trend.Positive
-      : Trend.Negative;
-  }, [displayData, referenceData]);
+      : Trend.Negative
+  }, [displayData, referenceData])
 
   // TODO: set trend based on tooltip data
   // useEffect(() => {
@@ -155,69 +169,62 @@ export const TradeChart = ({
   // }, [tooltipData, displayData]);
 
   useEffect(() => {
-    if (tooltipData) return;
+    if (tooltipData) return
     setReferenceData({
       ...referenceData!,
       balance: first(primaryDataset)?.yAsString,
-      usdBalance: first(primaryDataset)?.yAsString,
-    });
-  }, [primaryDataset]);
+      usdBalance: first(primaryDataset)?.yAsString
+    })
+  }, [primaryDataset])
 
   const handleTooltip = useCallback(
     (tooltipData: TooltipData | undefined) => {
-      setTooltipData(tooltipData);
+      setTooltipData(tooltipData)
 
       if (tooltipData?.visible) {
-        const datasets = [primaryDataset];
+        const datasets = [primaryDataset]
         const allData = datasets.reduce(
           (allData, dataset) => allData.concat(dataset),
           []
-        );
+        )
 
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
-          y: tooltipData?.data.y,
-        });
+          y: tooltipData?.data.y
+        })
 
         if (displayDataTooltip)
           setDisplayData((displayData) => ({
             ...displayData!,
-            balance: displayDataTooltip?.yAsString,
-          }));
+            balance: displayDataTooltip?.yAsString
+          }))
         setReferenceData((referenceData) => {
           return {
             ...referenceData!,
-            balance: last(primaryDataset)?.yAsString,
-          };
-        });
+            balance: last(primaryDataset)?.yAsString
+          }
+        })
       } else {
-        resetDisplayData();
+        resetDisplayData()
       }
     },
     [setTooltipData, primaryDataset, displayData, referenceData]
-  );
+  )
 
   const availableChartTypes = useMemo(
     () => [ChartType.PRICE, ChartType.VOLUME, ChartType.WEIGHTS],
     []
-  );
+  )
 
   const availableGranularity = useMemo(
     () => [
       ChartGranularity.D30,
       ChartGranularity.D7,
       ChartGranularity.H24,
-      ChartGranularity.H1,
+      ChartGranularity.H1
     ],
     []
-  );
-
-  const { from, to } = useMemo(() => {
-    const from = moment().subtract(24, 'hours').valueOf();
-    const to = last(primaryDataset)?.x;
-
-    return { from, to };
-  }, [granularity, primaryDataset]);
+  )
 
   return (
     <div className="trade-chart">
@@ -226,6 +233,8 @@ export const TradeChart = ({
         poolType={poolType}
         granularity={granularity}
         chartType={chartType}
+        lbpStatus={lbpStatus}
+        lbpChartProps={lbpChartProps}
         onChartTypeChange={onChartTypeChange}
         onGranularityChange={onGranularityChange}
         displayData={displayData}
@@ -241,10 +250,13 @@ export const TradeChart = ({
           <div className="trade-chart__chart-wrapper__chart-jail">
             <LineChart
               primaryDataset={primaryDataset}
-              fill={true}
+              secondaryDataset={secondaryDataset}
+              tradeChartType={
+                poolType === PoolType.XYK
+                  ? TradeChartType.XYK
+                  : TradeChartType.LBP
+              }
               trend={dataTrend}
-              from={from}
-              to={to}
               onHandleTooltip={handleTooltip}
             />
             {tooltipData?.positionX ? (
@@ -253,14 +265,14 @@ export const TradeChart = ({
                   className="trade-chart__tooltip"
                   style={{
                     left: `${tooltipData.positionX}px`,
-                    opacity: tooltipData.visible ? 1 : 0,
+                    opacity: tooltipData.visible ? 1 : 0
                   }}
                 ></div>
                 <div
                   className="trade-chart__tooltip__label"
                   style={{
                     ...getTooltipPositionCss(tooltipData.positionX!),
-                    opacity: tooltipData.visible ? 1 : 0,
+                    opacity: tooltipData.visible ? 1 : 0
                   }}
                 >
                   {tooltipData.data?.x ? (
@@ -276,37 +288,50 @@ export const TradeChart = ({
             )}
           </div>
 
-          <ChartTicks datasets={[primaryDataset]} granularity={granularity} />
+          <ChartTicks
+            datasets={[primaryDataset]}
+            granularity={ChartGranularity.H1}
+          />
+          <ChartTicks
+            datasets={[primaryDataset]}
+            granularity={ChartGranularity.H24}
+          />
+          <hr className="divider"></hr>
+          <div className="legend">
+            <div className="legend__item ">
+              <div className="line history"></div>
+              <div className="label">Price History</div>
+            </div>
+            <div className="legend__item ">
+              <div className="line prediction"></div>
+              <div className="label">Future Price Without Trades</div>
+            </div>
+          </div>
         </div>
       ) : (
         <></>
       )}
 
       {console.log('graph loading', isPoolLoading, primaryDataset?.length)}
-      {isPoolLoading
-          ? (
-            <div className="trade-chart__error-wrapper">
-              <TradeChartError type={TradeChartErrorType.Loading} />
-            </div>
-          )
-          : (
-            !primaryDataset?.length
-            ? (
-              <div className="trade-chart__error-wrapper">
-                <TradeChartError type={TradeChartErrorType.InvalidPair} />
-              </div>
-            ) : (
-              <></>
-            )
-          )}
-
-      {/* {!primaryDataset?.length ? (
+      {isPoolLoading ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.Loading} />
+        </div>
+      ) : lbpStatus === LbpStatus.NOT_INITIALIZED ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotInitialized} />
+        </div>
+      ) : lbpStatus === LbpStatus.NOT_STARTED ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotStarted} />
+        </div>
+      ) : !primaryDataset?.length ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.InvalidPair} />
         </div>
       ) : (
         <></>
-      )} */}
+      )}
     </div>
-  );
-};
+  )
+}

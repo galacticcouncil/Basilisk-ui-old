@@ -1,22 +1,20 @@
-import { useMemo } from 'react'
-import { FormattedMessage, FormattedNumber } from 'react-intl'
-import { DataPoint, Trend } from '../LineChart/LineChart'
+import { useMemo } from 'react';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { DataPoint, Trend } from '../LineChart/LineChart';
 import {
   AssetPair,
   ChartGranularity,
   ChartType,
   DisplayData,
-  PoolType
-} from '../shared'
-import './ChartHeader.scss'
-import classNames from 'classnames'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { percentageChange } from '../../../hooks/math/usePercentageChange'
-import { LbpStatus } from '../../../pages/TradePage/LBPPage'
-import { LbpChartProps } from '../TradeChart/TradeChart'
+  PoolType,
+} from '../shared';
+import './ChartHeader.scss';
+import classNames from 'classnames';
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { percentageChange } from '../../../hooks/math/usePercentageChange';
 
-export const horizontalBar = '―'
+export const horizontalBar = '―';
 
 const formatGranularity = (granularity: ChartGranularity) => (
   <FormattedMessage
@@ -24,7 +22,7 @@ const formatGranularity = (granularity: ChartGranularity) => (
     defaultMessage={`{granularity, select, ALL {ALL} D30 {30D} D7 {7D} D3 {3D} H24 {24H} H12 {12H} H1 {1H} other {${horizontalBar}}}`}
     values={{ granularity }}
   />
-)
+);
 
 export const ChartHeader = ({
   assetPair,
@@ -33,40 +31,34 @@ export const ChartHeader = ({
   referenceData,
   chartType,
   granularity,
-  lbpStatus,
-  lbpChartProps,
   isUserBrowsingGraph,
   availableChartTypes,
   onChartTypeChange,
   availableGranularity,
   onGranularityChange,
-  dataTrend
+  dataTrend,
 }: {
-  assetPair: AssetPair
-  poolType: PoolType
-  displayData: DisplayData
-  referenceData: DisplayData | undefined
-  dataTrend: Trend
-  lbpStatus?: LbpStatus
-  lbpChartProps?: LbpChartProps
-  granularity: ChartGranularity
-  isUserBrowsingGraph: boolean | undefined
-  chartType: ChartType
-  availableChartTypes: ChartType[]
-  availableGranularity: ChartGranularity[]
-  onChartTypeChange: (chartType: ChartType) => void
-  onGranularityChange: (granularity: ChartGranularity) => void
+  assetPair: AssetPair;
+  poolType: PoolType;
+  displayData: DisplayData;
+  referenceData: DisplayData | undefined;
+  dataTrend: Trend;
+  granularity: ChartGranularity;
+  isUserBrowsingGraph: boolean | undefined;
+  chartType: ChartType;
+  availableChartTypes: ChartType[];
+  availableGranularity: ChartGranularity[];
+  onChartTypeChange: (chartType: ChartType) => void;
+  onGranularityChange: (granularity: ChartGranularity) => void;
 }) => {
   const referenceDataPercentageChange = useMemo(() => {
     // console.log('referenceDataPercentageChange', referenceData?.balance, displayData.balance);
-    if (!referenceData?.balance) return 0
+    if (!referenceData?.balance) return 0;
     return parseFloat(
-      percentageChange(referenceData.balance, displayData.balance)?.toFixed(
-        3
-      ) || '0'
-    )
+      percentageChange(referenceData.balance, displayData.balance)?.toFixed(3) || '0'
+    );
     // return percentageChange(displayData.balance, referenceData.balance);
-  }, [displayData, referenceData])
+  }, [displayData, referenceData]);
 
   return (
     <div className="chart-header">
@@ -106,29 +98,6 @@ export const ChartHeader = ({
               ? `${assetPair.assetB.fullName}`
               : horizontalBar}
           </div>
-          <div className="chart-header__timer">
-            {lbpStatus === LbpStatus.ENDED ? (
-              <span className="primary-text">Bootstrapping Ended</span>
-            ) : lbpStatus === LbpStatus.NOT_INITIALIZED ? (
-              <span className="primary-text">Coming soon</span>
-            ) : lbpStatus === LbpStatus.NOT_STARTED ? (
-              <>
-                <span>Starting in </span>
-                <span className="primary-text">
-                  {lbpChartProps?.timeToNextPhase}
-                </span>
-              </>
-            ) : lbpStatus === LbpStatus.IN_PROGRESS ? (
-              <>
-                <span>Ending in </span>
-                <span className="primary-text">
-                  {lbpChartProps?.timeToNextPhase}
-                </span>
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
         </div>
 
         <div className="chart-header__data">
@@ -163,28 +132,48 @@ export const ChartHeader = ({
                 `$ ${horizontalBar}`
               )}
             </div> */}
+
+            <div
+              className={classNames({
+                'text-green-1': dataTrend === Trend.Positive,
+                'text-gray-1': dataTrend === Trend.Neutral,
+                'text-red-1': dataTrend === Trend.Negative,
+              })}
+            >
+              ({referenceDataPercentageChange >= 0 ? '+' : ''}
+              <FormattedNumber
+                style="percent"
+                minimumFractionDigits={2}
+                maximumFractionDigits={2}
+                value={referenceDataPercentageChange}
+              />
+              )
+            </div>
+
             <div
               className={
                 'chart-header__data__breakdown__granularity ' +
                 classNames({
-                  disabled: isUserBrowsingGraph
+                  disabled: isUserBrowsingGraph,
                 })
               }
             >
-              Current
+              <FormattedMessage
+                id="ChartHeader.granularity.pastIndicator"
+                defaultMessage="Past"
+              />{' '}
+              {formatGranularity(granularity)}
             </div>
-            Price
           </div>
         </div>
       </div>
+      <div className="chart-header__controls">
+        {/* graph selector */}
 
-      {/* <div className="chart-header__controls"> */}
-      {/* graph selector */}
-
-      {/* <div className="chart-header__controls__graph-type text-gray-4 text-start"> */}
-      {/* TODO: add translations & granularity enums & on graph type handler */}
-      {/* for now only price chart is available */}
-      {/* {availableChartTypes.map((chartTypeEntry, i) => (
+        {/* <div className="chart-header__controls__graph-type text-gray-4 text-start"> */}
+        {/* TODO: add translations & granularity enums & on graph type handler */}
+        {/* for now only price chart is available */}
+        {/* {availableChartTypes.map((chartTypeEntry, i) => (
             <span
               className={classNames({
                 'chart-header__controls__graph-type__individual': true,
@@ -201,12 +190,12 @@ export const ChartHeader = ({
               />
             </span>
           ))} */}
-      {/* </div> */}
+        {/* </div> */}
 
-      {/* granularity selector */}
+        {/* granularity selector */}
 
-      {/* <div className="chart-header__controls__granularity text-end text-gray-4"> */}
-      {/* {availableGranularity.map((granularityEntry, i) => {
+        {/* <div className="chart-header__controls__granularity text-end text-gray-4"> */}
+        {/* {availableGranularity.map((granularityEntry, i) => {
             return (
               <span
                 className={classNames({
@@ -220,8 +209,8 @@ export const ChartHeader = ({
               </span>
             );
           })} */}
-      {/* </div> */}
-      {/* </div> */}
+        {/* </div> */}
+      </div>
     </div>
-  )
-}
+  );
+};

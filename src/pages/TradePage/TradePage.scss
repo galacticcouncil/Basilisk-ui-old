@@ -3,51 +3,66 @@
 
 .trade-page-wrapper {
   position: relative;
+  display: flex;
+  justify-content: center;
 }
 
 .trade-page {
   display: flex;
   flex-wrap: wrap-reverse;
-
-  width: 100%;
-
-  border-radius: $border-radius;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  border-radius: 16px;
+  flex-shrink: 1;
+  overflow: hidden;
+  position: relative;
 }
 
 .notifications-bar {
+  top: 16px;
+  right: 40px;
+  position: fixed;
+  color: white;
+
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 
-  font-size: 16px;
+  box-shadow: 3px 3px 6px 0 rgba(0, 0, 0, 0.9);
+  text-transform: capitalize;
+
+  font-size: 12px;
   line-height: 16px;
-  font-weight: 500;
-  // height: 64px;
-  padding: 24px 24px;
-  padding-left: 29px;
-  width: 330px;
-  z-index: 10;
-  color: $l-gray2;
-  // color: $white1;
+  font-weight: 600;
+  padding: 16px;
+  width: 150px;
+  z-index: 100;
 
-  margin: 0 auto;
 
-  background-color: $d-gray5;
-  border-radius: 7px;
-  // border-top-left-radius: 0px;
-  // border-bottom-left-radius: 0px;;
 
-  transition: right 200ms ease, background-color, 200ms ease;
+  background-color: #121416;
+  border-radius: 10px;
 
-  top: 90px;
-  right: 20px;
-  position: fixed;
+  transition: right 300ms ease;
 
   .notification-cancel-wrapper {
-    width: fit-content;
+    right: -8px;
+    top: -8px;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 12px;
+    background-color: $d-gray4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     .notification-cancel-button {
+      width: 100%;
+      height: 100%;
       border: none;
       outline: none;
       padding: 0;
@@ -58,17 +73,19 @@
       align-items: center;
       justify-content: center;
 
-      svg {
-        // fill: $gray5;
-        path {
-          fill: $gray1;
-        }
+      path {
+        fill: $white;
+      }
 
-        &:hover {
-          path {
-            fill: $gray4;
-          }
-        }
+      &:hover {
+        svg{
+        path {
+          fill: $gray4;
+        }}
+      }
+
+      svg {
+    
         width: 10px;
         height: 10px;
       }
@@ -78,105 +95,48 @@
   opacity: 1;
   visibility: visible;
 
-  &.transaction-standby {
-    top: 0;
-    background-color: transparent;
-    opacity: 0;
-    visibility: hidden;
-    transition: none;
+  .notification-icon {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 24px;
+  }
 
-    // .notification {
-    //   visibility: hidden;
-    // }
-    // .notification-cancel-wrapper {
-    //   visibility: hidden;
-    // }
+  &.transaction-standby {
+    right: -300px;
   }
 
   &.transaction-success {
-    // color: $green2;
-    &:before {
-      position: absolute;
-      content: '';
-      left: 0px;
-      top: 0;
-      width: 7px;
-      height: 100%;
-      background: $green1;
-      border-top-left-radius: 7px;
-      border-bottom-left-radius: 7px;
-      opacity: 0.9;
-    }   
+    .notification-icon {
+      background-image: url('../../misc/images/Success.svg');
+    }
   }
 
   &.transaction-failed {
-    // color: $red1;
-
-    &:before {
-      position: absolute;
-      content: '';
-      left: 0px;
-      top: 0;
-      width: 7px;
-      height: 100%;
-      background: $red1;
-      border-top-left-radius: 7px;
-      border-bottom-left-radius: 7px;
-      opacity: 0.9;
-    }   
+    .notification-icon {
+      background-image: url('../../misc/images/Error.svg');
+    }
   }
 
   &.transaction-pending {
-    display: flex;
-    // color: $orange1;
+    .notification-icon {
+      background-image: url('../../misc/images/Spinner.png');
 
-    &:before {
-      position: absolute;
-      content: '';
-      left: 0px;
-      top: 0;
-      width: 7px;
-      height: 100%;
-      background: $orange1;
-      border-top-left-radius: 7px;
-      border-bottom-left-radius: 7px;
-      opacity: 0.9;
-
-      background: linear-gradient(
-          0deg,
-          #4fffb0 1.27%,
-          #b3ff8f 48.96%,
-          #ff984e 104.14%
-        ),
-        linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
-        linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
+      animation-name: spin;
+      animation-duration: 2000ms;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+  
     }
 
-    // .notification {
-    //   display: flex;
-    //   flex-direction: row;
-    //   justify-content: center;
-    //   align-items: center;
-
-    //   &:before {
-    //     content: ' ';
-    //     display: block;
-    //     width: 14px;
-    //     height: 14px;
-    //     margin: 4px 4px 0 0;
-    //     border-radius: 50%;
-    //     border: 2px solid $black;
-    //     border-color: $orange1 transparent $orange1 transparent;
-    //     animation: loader 1.2s linear infinite;
-    //   }
-    //   @keyframes loader {
-    //     0% {
-    //       transform: rotate(0deg);
-    //     }
-    //     100% {
-    //       transform: rotate(360deg);
-    //     }
-    //   }
-    // }
+    @keyframes spin { 
+      from { 
+          transform: rotate(0deg); 
+      } to { 
+          transform: rotate(360deg); 
+      }
+    }
   }
 }

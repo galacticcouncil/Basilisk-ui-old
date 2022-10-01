@@ -13,12 +13,14 @@
     "@gapit/format-si": "^0.0.1",
     "@open-web3/orml-type-definitions": "^1.0.1",
     "@open-web3/orml-types": "^1.0.1",
-    "@polkadot/api": "^7.9.1",
-    "@polkadot/extension-dapp": "^0.42.7",
+    "@polkadot/api": "^9.4.2",
+    "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/networks": "^8.5.1",
     "@polkadot/react-identicon": "^1.1.1",
-    "@polkadot/types": "^7.9.1",
+    "@polkadot/types": "^9.4.2",
+    "@polkadot/types-codec": "^9.4.2",
     "@substrate/ss58-registry": "^1.16.0",
+    "@talismn/connect-wallets": "^1.2.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -37,7 +39,7 @@
     "bootstrap": "^5.1.1",
     "bootstrap-icons": "^1.6.0",
     "caniuse-lite": "^1.0.30001287",
-    "chart.js": "^3.5.1",
+    "chart.js": "^3.9.1",
     "chartjs-adapter-moment": "^1.0.0",
     "chartjs-plugin-annotation": "^1.0.2",
     "classnames": "^2.3.1",
@@ -64,7 +66,7 @@
     "promise-retry": "^2.0.1",
     "react": "^17.0.2",
     "react-apollo-network-status": "^5.1.0",
-    "react-chartjs-2": "^4.0.1",
+    "react-chartjs-2": "^4.3.1",
     "react-countup": "^6.0.0",
     "react-currency-input-field": "^3.6.0",
     "react-dom": "^17.0.2",
@@ -84,7 +86,7 @@
     "text-mask-addons": "^3.8.0",
     "ts-jest": "^27.1.2",
     "typeface-roboto": "^1.1.13",
-    "typescript": "^4.1.2",
+    "typescript": "^4.8.4",
     "use-count-up": "^3.0.1",
     "use-hooks": "^2.0.0-rc.5",
     "use-persisted-state": "^0.3.3",
@@ -128,7 +130,11 @@
     "node": ">=17"
   },
   "prettier": {
-    "singleQuote": true
+    "filepath": ".prettierrc",
+    "singleQuote": true,
+    "trailingComma": "none",
+    "semi": false,
+    "parser": "typescript"
   },
   "eslintConfig": {
     "extends": [

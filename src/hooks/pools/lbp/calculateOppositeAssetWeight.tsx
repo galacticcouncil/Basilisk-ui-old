@@ -1,8 +1,8 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from 'bignumber.js'
 
 export const hundredWithPrecision6 = new BigNumber('100').multipliedBy(
   new BigNumber('10').pow('6')
-);
+)
 
 /**
  * LBP pools specify weights only for the first asset in the pool,
@@ -10,8 +10,9 @@ export const hundredWithPrecision6 = new BigNumber('100').multipliedBy(
  * @param weight
  * @returns Calculated oppostite weight as `100 000 000 - weight`
  */
-export const calculateOppositeAssetWeight = (weight: string): string => {
+export const calculateOppositeAssetWeight = (weight: number): number => {
   return new BigNumber(hundredWithPrecision6)
     .minus(new BigNumber(weight))
-    .toFixed(0);
-};
+    .integerValue(0)
+    .toNumber()
+}
