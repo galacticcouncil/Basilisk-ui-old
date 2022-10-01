@@ -20,6 +20,7 @@ import './TradeChart.scss'
 import moment from 'moment'
 import { TradeChartError, TradeChartErrorType } from './TradeChartError'
 import { find, first, last, random, times } from 'lodash'
+import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 
 // this function is absolutely hacky
 export const _getTooltipPositionCss = (tooltipPosition: number) => {
@@ -43,12 +44,20 @@ export const _getTooltipPositionCss = (tooltipPosition: number) => {
   }
 }
 
+export interface LbpChartProps {
+  startBlock: number
+  endBlock: number
+  timeToNextPhase?: string
+}
+
 export interface TradeChartProps {
   assetPair: AssetPair
   poolType: PoolType
   isPoolLoading?: boolean
   granularity: ChartGranularity
   chartType: ChartType
+  lbpStatus?: LbpStatus
+  lbpChartProps?: LbpChartProps
   primaryDataset: Dataset
   secondaryDataset: Dataset
   onChartTypeChange: (chartType: ChartType) => void
@@ -61,6 +70,8 @@ export const TradeChart = ({
   granularity,
   isPoolLoading,
   chartType,
+  lbpStatus,
+  lbpChartProps,
   onChartTypeChange,
   onGranularityChange,
   primaryDataset,
@@ -222,6 +233,8 @@ export const TradeChart = ({
         poolType={poolType}
         granularity={granularity}
         chartType={chartType}
+        lbpStatus={lbpStatus}
+        lbpChartProps={lbpChartProps}
         onChartTypeChange={onChartTypeChange}
         onGranularityChange={onGranularityChange}
         displayData={displayData}
@@ -304,6 +317,14 @@ export const TradeChart = ({
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.Loading} />
         </div>
+      ) : lbpStatus === LbpStatus.NOT_INITIALIZED ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotInitialized} />
+        </div>
+      ) : lbpStatus === LbpStatus.NOT_STARTED ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotStarted} />
+        </div>
       ) : !primaryDataset?.length ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.InvalidPair} />
@@ -311,14 +332,6 @@ export const TradeChart = ({
       ) : (
         <></>
       )}
-
-      {/* {!primaryDataset?.length ? (
-        <div className="trade-chart__error-wrapper">
-          <TradeChartError type={TradeChartErrorType.InvalidPair} />
-        </div>
-      ) : (
-        <></>
-      )} */}
     </div>
   )
 }

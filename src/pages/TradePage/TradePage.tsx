@@ -411,7 +411,9 @@ export const TradePage = () => {
   return (
     <div className="trade-page-wrapper">
       {/* {confirmationScreen} */}
+      {/*NOTIF*/}
       <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification-icon"></div>
         <div className="notification">Transaction {notification}</div>
         <div className="notification-cancel-wrapper">
           <button
@@ -422,6 +424,7 @@ export const TradePage = () => {
           </button>
         </div>
       </div>
+      {/*NOTIF*/}
       <div className="trade-page">
         {/* <TradeChart
           pool={pool}

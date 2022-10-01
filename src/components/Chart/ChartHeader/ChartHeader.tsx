@@ -13,6 +13,8 @@ import classNames from 'classnames'
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision'
 import { percentageChange } from '../../../hooks/math/usePercentageChange'
+import { LbpStatus } from '../../../pages/TradePage/LBPPage'
+import { LbpChartProps } from '../TradeChart/TradeChart'
 
 export const horizontalBar = '―'
 
@@ -31,6 +33,8 @@ export const ChartHeader = ({
   referenceData,
   chartType,
   granularity,
+  lbpStatus,
+  lbpChartProps,
   isUserBrowsingGraph,
   availableChartTypes,
   onChartTypeChange,
@@ -43,6 +47,8 @@ export const ChartHeader = ({
   displayData: DisplayData
   referenceData: DisplayData | undefined
   dataTrend: Trend
+  lbpStatus?: LbpStatus
+  lbpChartProps?: LbpChartProps
   granularity: ChartGranularity
   isUserBrowsingGraph: boolean | undefined
   chartType: ChartType
@@ -101,7 +107,27 @@ export const ChartHeader = ({
               : horizontalBar}
           </div>
           <div className="chart-header__timer">
-            <span className="primary-text">Bootstrapping Ended</span>
+            {lbpStatus === LbpStatus.ENDED ? (
+              <span className="primary-text">Bootstrapping Ended</span>
+            ) : lbpStatus === LbpStatus.NOT_INITIALIZED ? (
+              <span className="primary-text">Coming soon</span>
+            ) : lbpStatus === LbpStatus.NOT_STARTED ? (
+              <>
+                <span>Starting in </span>
+                <span className="primary-text">
+                  {lbpChartProps?.timeToNextPhase}
+                </span>
+              </>
+            ) : lbpStatus === LbpStatus.IN_PROGRESS ? (
+              <>
+                <span>Ending in </span>
+                <span className="primary-text">
+                  {lbpChartProps?.timeToNextPhase}
+                </span>
+              </>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
 

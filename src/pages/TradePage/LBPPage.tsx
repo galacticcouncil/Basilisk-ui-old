@@ -12,7 +12,10 @@ import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTra
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
 import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
-import { TradeChart as LBPTradeChartComponent } from '../../components/Chart/TradeChart/TradeChart'
+import {
+  LbpChartProps,
+  TradeChart as LBPTradeChartComponent
+} from '../../components/Chart/TradeChart/TradeChart'
 import './TradePage.scss'
 import {
   ChartGranularity,
@@ -69,13 +72,57 @@ export const TradeChart = ({
   const startBlock = pool?.startBlock || 0
   const currentBlock = lastBlockData?.relaychainBlockNumber || 0
   const currentBlockTime = lastBlockData?.createdAt || new Date().getTime()
+  const lbpChartProps: LbpChartProps = {
+    startBlock,
+    endBlock
+  }
   let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
 
-  if (!startBlock || !endBlock) lbpStatus = LbpStatus.NOT_INITIALIZED
-  if (startBlock < currentBlock && endBlock > currentBlock)
-    lbpStatus = LbpStatus.IN_PROGRESS
-  if (startBlock > currentBlock) lbpStatus = LbpStatus.NOT_STARTED
-  if (endBlock < currentBlock) lbpStatus = LbpStatus.ENDED
+  if (
+    !pool?.startBlock ||
+    !pool?.endBlock ||
+    !lastBlockData?.relaychainBlockNumber
+  ) {
+    lbpStatus = LbpStatus.NOT_INITIALIZED
+  } else {
+    if (startBlock < currentBlock && endBlock > currentBlock) {
+      lbpStatus = LbpStatus.IN_PROGRESS
+      lbpChartProps.timeToNextPhase = moment
+        .duration(
+          moment(currentBlockTime).diff(
+            blockToTime(endBlock, {
+              height: currentBlock,
+              date: currentBlockTime
+            })
+          )
+        )
+        .humanize()
+    }
+    if (startBlock > currentBlock) {
+      lbpStatus = LbpStatus.NOT_STARTED
+      lbpChartProps.timeToNextPhase = moment
+        .duration(
+          moment(currentBlockTime).diff(
+            blockToTime(startBlock, {
+              height: currentBlock,
+              date: currentBlockTime
+            })
+          )
+        )
+        .humanize()
+    }
+
+    if (endBlock < currentBlock) lbpStatus = LbpStatus.ENDED
+  }
+
+  console.log(
+    'LBP STATUS',
+    lbpStatus,
+    LbpStatus.ENDED,
+    LbpStatus.IN_PROGRESS,
+    LbpStatus.NOT_STARTED,
+    LbpStatus.NOT_INITIALIZED
+  )
 
   const endOrNow = endBlock < currentBlock ? endBlock : currentBlock
 
@@ -116,8 +163,8 @@ export const TradeChart = ({
     console.log('LOADED:', historicalBalancesData?.historicalBalances?.length)
     const filteredDataset = historicalBalancesData?.historicalBalances?.filter(
       (_b, i) => {
-        if (i % 200 === 0) return true
-        return false
+        if (i % 5 === 0) return true
+        return true
       }
     )
 
@@ -211,6 +258,7 @@ export const TradeChart = ({
     endOrNow,
     endBlock,
     startBlock,
+    historicalBalancesLoading,
     historicalBalancesData,
     lastBlockData
   ])
@@ -269,7 +317,8 @@ export const TradeChart = ({
             height: currentBlock,
             date: currentBlockTime
           }),
-          y: new BigNumber(fromPrecision12(spotPrice.outIn || '0')).toNumber()
+          y: new BigNumber(fromPrecision12(spotPrice.inOut || '0')).toNumber(),
+          yAsString: fromPrecision12(spotPrice.inOut || '0')
         }
       ]
     })
@@ -292,6 +341,8 @@ export const TradeChart = ({
         assetA: idToAsset(assetIds.assetIn),
         assetB: idToAsset(assetIds.assetOut)
       }}
+      lbpStatus={lbpStatus}
+      lbpChartProps={lbpChartProps}
       isPoolLoading={_isPoolLoading}
       poolType={PoolType.LBP}
       granularity={ChartGranularity.H24}
@@ -461,8 +512,9 @@ export const LBPPage = () => {
 
   return (
     <div className="trade-page-wrapper">
-      {/* {confirmationScreen} */}
+      {/*NOTIF*/}
       <div className={'notifications-bar transaction-' + notification}>
+        <div className="notification-icon"></div>
         <div className="notification">Transaction {notification}</div>
         <div className="notification-cancel-wrapper">
           <button
@@ -473,6 +525,7 @@ export const LBPPage = () => {
           </button>
         </div>
       </div>
+      {/*NOTIF*/}
       <div className="trade-page">
         <TradeChart
           pool={pool}
@@ -481,17 +534,29 @@ export const LBPPage = () => {
             outIn:
               assetOutLiquidity &&
               assetInLiquidity &&
-              math?.xyk.get_spot_price(
+              math &&
+              assetOutWeight &&
+              assetInWeight &&
+              calculateSpotPrice(
+                math,
                 assetInLiquidity,
                 assetOutLiquidity,
+                assetInWeight.current.toString(),
+                assetOutWeight.current.toString(),
                 '1000000000000'
               ),
             inOut:
               assetOutLiquidity &&
               assetInLiquidity &&
-              math?.xyk.get_spot_price(
+              math &&
+              assetOutWeight &&
+              assetInWeight &&
+              calculateSpotPrice(
+                math,
                 assetOutLiquidity,
                 assetInLiquidity,
+                assetOutWeight?.current.toString(),
+                assetInWeight?.current.toString(),
                 '1000000000000'
               )
           }}

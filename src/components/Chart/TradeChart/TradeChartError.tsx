@@ -1,9 +1,11 @@
-import './TradeChartError.scss';
+import './TradeChartError.scss'
 
 export enum TradeChartErrorType {
-  InvalidPair = 'InvalidPair',
-  Loading = 'Loading',
-  Unexpected = 'Unexpected',
+  InvalidPair,
+  Loading,
+  NotInitialized,
+  NotStarted,
+  Unexpected
 }
 export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
   return (
@@ -14,27 +16,42 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
             return (
               <div className="row">
                 <div className="large">
-                  Graph unavailable, please select <br /> a valid asset pair
+                  Chart unavailable, please select <br /> a valid asset pair
                 </div>
                 <div className="small">
-                  You can read our FAQ to learn more about valid asset pairs.
+                  Please select different asset combination.
                 </div>
               </div>
-            );
-            case TradeChartErrorType.Loading:
-              return (
-                <div className="row">
-                  <div className="large">
-                    Loading chart data,
-                    <br/> this shouldn't take too long.
-                  </div>
-
-                  <div className="small">
-                    Thanks for being a patient snek.
-                  </div>
-
+            )
+          case TradeChartErrorType.NotStarted:
+            return (
+              <div className="row">
+                <div className="large">Prepare</div>
+                <div className="small">
+                  Bootstrapping event will start shortly
                 </div>
-              );
+              </div>
+            )
+          case TradeChartErrorType.NotInitialized:
+            return (
+              <div className="row">
+                <div className="large">You're early</div>
+                <div className="small">
+                  Please wait for the Bootstrapping event to start
+                </div>
+              </div>
+            )
+          case TradeChartErrorType.Loading:
+            return (
+              <div className="row">
+                <div className="large">
+                  Loading chart data,
+                  <br /> this shouldn't take too long.
+                </div>
+
+                <div className="small">Thanks for being a patient snek.</div>
+              </div>
+            )
           default:
             return (
               <div className="row">
@@ -48,9 +65,9 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
                   our support team.
                 </div>
               </div>
-            );
+            )
         }
       })()}
     </div>
-  );
-};
+  )
+}

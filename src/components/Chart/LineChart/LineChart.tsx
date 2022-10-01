@@ -45,7 +45,6 @@ export type TooltipHandler = ({
 export interface LineChartProps {
   primaryDataset: Dataset
   secondaryDataset?: Dataset
-  fill?: boolean
   trend: Trend
   tradeChartType: TradeChartType
   onHandleTooltip: OnHandleTooltip
@@ -114,22 +113,21 @@ export const backgroundGradients = (chart: ChartJS) => {
 
 // transforms the given simple dataset into a format accepted by chartjs
 export const useFormatDataset = ({
-  fill,
   trend,
   chart,
   tradeChartType
 }: {
-  fill: boolean
   trend: Trend
   chart: ChartJS | null
   tradeChartType: TradeChartType
 }) =>
   useCallback(
     ({ dataset, label }): ChartDataset<'line', DataPoint[]> => {
+      console.log('okay', dataset)
+
       if (!chart) return { data: dataset }
       return {
         label,
-        fill,
         data: dataset,
         pointRadius: 0,
         borderWidth: 2,
@@ -171,7 +169,7 @@ export const useFormatDataset = ({
         })()
       }
     },
-    [fill, trend, chart]
+    [trend, chart, tradeChartType]
   )
 
 export const useTooltipHandler = (
@@ -199,7 +197,6 @@ export const LineChart = ({
   primaryDataset,
   secondaryDataset = [],
   tradeChartType,
-  fill,
   trend,
   onHandleTooltip
 }: LineChartProps) => {
@@ -214,10 +211,7 @@ export const LineChart = ({
 
   const chart = chartContainer.current
 
-  fill = !secondaryDataset?.length
-
   const formatDataset = useFormatDataset({
-    fill,
     trend,
     chart,
     tradeChartType
