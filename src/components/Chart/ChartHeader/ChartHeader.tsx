@@ -39,6 +39,8 @@ export const ChartHeader = ({
   isUserBrowsingGraph,
   availableChartTypes,
   onChartTypeChange,
+  onChartPredictionChange,
+  predictionToggled,
   availableGranularity,
   onGranularityChange,
   dataTrend
@@ -55,6 +57,8 @@ export const ChartHeader = ({
   chartType: ChartType
   availableChartTypes: ChartType[]
   availableGranularity: ChartGranularity[]
+  predictionToggled: boolean
+  onChartPredictionChange: (prediction: boolean) => void
   onChartTypeChange: (chartType: ChartType) => void
   onGranularityChange: (granularity: ChartGranularity) => void
 }) => {
@@ -173,6 +177,16 @@ export const ChartHeader = ({
               Current
             </div>
             Price
+          </div>
+
+          <div
+            className={classNames({
+              'chart-header__data__prediction-toggle': true,
+              hidden: poolType !== PoolType.LBP
+            })}
+            onClick={(_) => onChartPredictionChange(!predictionToggled)}
+          >
+            {predictionToggled ? <>Disable</> : <>Enable</>} Prediction
           </div>
         </div>
       </div>

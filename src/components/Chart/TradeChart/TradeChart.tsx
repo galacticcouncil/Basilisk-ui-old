@@ -91,6 +91,8 @@ export const TradeChart = ({
     }
   })
 
+  const [predictionToggled, setPrediction] = useState(true)
+
   const resetDisplayData = useCallback(() => {
     setDisplayData({
       balance: last(primaryDataset)?.yAsString,
@@ -175,14 +177,14 @@ export const TradeChart = ({
       balance: first(primaryDataset)?.yAsString,
       usdBalance: first(primaryDataset)?.yAsString
     })
-  }, [primaryDataset])
+  }, [primaryDataset, secondaryDataset])
 
   const handleTooltip = useCallback(
     (tooltipData: TooltipData | undefined) => {
       setTooltipData(tooltipData)
 
       if (tooltipData?.visible) {
-        const datasets = [primaryDataset]
+        const datasets = [primaryDataset, secondaryDataset]
         const allData = datasets.reduce(
           (allData, dataset) => allData.concat(dataset),
           []
@@ -208,7 +210,13 @@ export const TradeChart = ({
         resetDisplayData()
       }
     },
-    [setTooltipData, primaryDataset, displayData, referenceData]
+    [
+      setTooltipData,
+      primaryDataset,
+      secondaryDataset,
+      displayData,
+      referenceData
+    ]
   )
 
   const availableChartTypes = useMemo(
@@ -233,8 +241,10 @@ export const TradeChart = ({
         poolType={poolType}
         granularity={granularity}
         chartType={chartType}
+        predictionToggled={predictionToggled}
         lbpStatus={lbpStatus}
         lbpChartProps={lbpChartProps}
+        onChartPredictionChange={setPrediction}
         onChartTypeChange={onChartTypeChange}
         onGranularityChange={onGranularityChange}
         displayData={displayData}
@@ -250,7 +260,7 @@ export const TradeChart = ({
           <div className="trade-chart__chart-wrapper__chart-jail">
             <LineChart
               primaryDataset={primaryDataset}
-              secondaryDataset={secondaryDataset}
+              secondaryDataset={predictionToggled ? secondaryDataset : []}
               tradeChartType={
                 poolType === PoolType.XYK
                   ? TradeChartType.XYK
@@ -289,11 +299,19 @@ export const TradeChart = ({
           </div>
 
           <ChartTicks
-            datasets={[primaryDataset]}
+            datasets={
+              predictionToggled
+                ? [primaryDataset, secondaryDataset]
+                : [primaryDataset]
+            }
             granularity={ChartGranularity.H1}
           />
           <ChartTicks
-            datasets={[primaryDataset]}
+            datasets={
+              predictionToggled
+                ? [primaryDataset, secondaryDataset]
+                : [primaryDataset]
+            }
             granularity={ChartGranularity.H24}
           />
           <hr className="divider"></hr>

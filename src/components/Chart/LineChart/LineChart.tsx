@@ -7,7 +7,7 @@ import {
   TooltipModel
 } from 'chart.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Line, Chart } from 'react-chartjs-2'
+import { Chart } from 'react-chartjs-2'
 import 'chartjs-adapter-moment'
 import cssColors from './../../../misc/colors.module.scss'
 import './LineChart.scss'
@@ -21,6 +21,7 @@ export type DataPoint = {
 }
 
 export type Dataset = DataPoint[]
+
 export enum Trend {
   Positive = 'Positive',
   Negative = 'Negative',
@@ -129,9 +130,13 @@ export const useFormatDataset = ({
         data: dataset,
         pointRadius: 0,
         borderWidth: 2,
+        borderDash: () => {
+          if (!isPrimaryDataset(label)) return [3, 4]
+          else return []
+        },
         borderColor: (() => {
           // secondary dataset is always orange
-          if (!isPrimaryDataset(label)) return cssColors.orange1
+          if (!isPrimaryDataset(label)) return cssColors.green1
 
           if (tradeChartType === TradeChartType.XYK) {
             // border color of the primary dataset depends on the data trend
@@ -295,7 +300,7 @@ export const LineChart = ({
       },
       scales: {
         xAxis: {
-          display: false,
+          display: true,
           stacked: false,
           grid: { display: false },
           type: 'time',
