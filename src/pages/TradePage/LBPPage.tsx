@@ -260,7 +260,8 @@ export const TradeChart = ({
     startBlock,
     historicalBalancesLoading,
     historicalBalancesData,
-    lastBlockData
+    lastBlockData,
+    assetIds
   ])
 
   useEffect(() => {
@@ -310,6 +311,8 @@ export const TradeChart = ({
       // TODO: Ended
       if (lbpStatus === LbpStatus.ENDED) return dataset
 
+      const accumulating = assetIds.assetIn === pool?.assetInId
+
       return [
         ...dataset,
         {
@@ -317,8 +320,14 @@ export const TradeChart = ({
             height: currentBlock,
             date: currentBlockTime
           }),
-          y: new BigNumber(fromPrecision12(spotPrice.inOut || '0')).toNumber(),
-          yAsString: fromPrecision12(spotPrice.inOut || '0')
+          y: new BigNumber(
+            fromPrecision12(
+              (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+            )
+          ).toNumber(),
+          yAsString: fromPrecision12(
+            (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+          )
         }
       ]
     })

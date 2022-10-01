@@ -15,6 +15,7 @@ import { toPrecision12 } from '../../../hooks/math/useToPrecision'
 import { percentageChange } from '../../../hooks/math/usePercentageChange'
 import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 import { LbpChartProps } from '../TradeChart/TradeChart'
+import BigNumber from 'bignumber.js'
 
 export const horizontalBar = '―'
 
@@ -136,14 +137,12 @@ export const ChartHeader = ({
             {/* TODO: add guards for symbol length */}
             {/* TODO: add abbreviations for spot price */}
             {displayData.balance ? (
-              <>
-                <FormattedBalance
-                  balance={{
-                    balance: `${toPrecision12(`${displayData.balance}`)}`,
-                    assetId: displayData.asset.id || ''
-                  }}
-                />{' '}
-              </>
+              <FormattedBalance
+                balance={{
+                  balance: `${toPrecision12(displayData.balance)}`,
+                  assetId: displayData.asset.id || ''
+                }}
+              />
             ) : (
               `${horizontalBar} `
             )}
