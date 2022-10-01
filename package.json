@@ -75,6 +75,7 @@
     "react-page-visibility": "^6.4.0",
     "react-router-dom": "^6.0.2",
     "react-scripts": "5.0.0",
+    "react-super-responsive-table": "^5.2.1",
     "react-text-mask": "^5.4.3",
     "react-tooltip": "^4.2.21",
     "react-use": "^17.3.1",

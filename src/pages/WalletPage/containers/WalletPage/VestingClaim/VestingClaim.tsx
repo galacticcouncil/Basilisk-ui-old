@@ -9,6 +9,7 @@ import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkado
 import { useClaimVestedAmountMutation } from '../../../../../hooks/vesting/useClaimVestedAmountMutation';
 import { estimateClaimVesting } from '../../../../../hooks/vesting/useVestingMutationResolvers';
 import { Notification } from '../../../WalletPage';
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import './VestingClaim.scss';
 
 export const VestingClaim = ({
@@ -72,56 +73,64 @@ export const VestingClaim = ({
     estimateClaimVesting,
     client,
     convertToFeePaymentAsset,
-    feePaymentAsset
+    feePaymentAsset,
   ]);
 
   return (
-    <div className="vesting-claim">
-      <h2 className="vesting-claim__title">Vesting</h2>
-      <div className="vesting-claim-wrapper">
-        <div className="item">Claimable</div>
-        <div className="item">Original vesting</div>
-        <div className="item">Remaining vesting</div>
-        <div className="vesting-claim__fee">Tx fee</div>
-        <div className="item"></div>
+    <Table>
+      <div className="vesting-claim">
+        <h2 className="vesting-claim__title">Vesting</h2>
+        <Thead>
+          <Tr className="vesting-claim-wrapper active-account-wrapper-header">
+            <Th className="item">Claimable</Th>
+            <Th className="item">Original vesting</Th>
+            <Th className="item">Remaining vesting</Th>
+            <Th className="vesting-claim__fee">Tx fee</Th>
+            <Th className="item"></Th>
+          </Tr>
+        </Thead>
+        {isVestingAvailable ? (
+          <Tbody>
+            <Tr className="vesting-claim-wrapper">
+              <Td className="item">
+                {fromPrecision12(vesting?.claimableAmount)} BSX
+              </Td>
+              <Td className="item">
+                {fromPrecision12(vesting?.originalLockBalance)} BSX
+              </Td>
+              <Td className="item">
+                {fromPrecision12(vesting?.lockedVestingBalance)} BSX
+              </Td>
+              <Td className="vesting-claim__fee">
+                {txFee ? (
+                  <FormattedBalance
+                    balance={{
+                      assetId: feePaymentAsset || '0',
+                      balance: txFee,
+                    }}
+                  />
+                ) : (
+                  <>-</>
+                )}
+              </Td>
+              <Td className="item">
+                <button
+                  className="vesting-claim-button"
+                  onClick={() => handleClaimClick()}
+                >
+                  <div className="vesting-claim-button__label">Claim</div>
+                </button>
+              </Td>
+            </Tr>
+          </Tbody>
+        ) : (
+          <Tbody>
+            <Tr className="vesting-claim-wrapper vesting-claim-no-vesting">
+              <>No vesting available</>
+            </Tr>
+          </Tbody>
+        )}
       </div>
-      {isVestingAvailable ? (
-        <div className="vesting-claim-wrapper">
-          <div className="item">
-            {fromPrecision12(vesting?.claimableAmount)} BSX
-          </div>
-          <div className="item">
-            {fromPrecision12(vesting?.originalLockBalance)} BSX
-          </div>
-          <div className="item">
-            {fromPrecision12(vesting?.lockedVestingBalance)} BSX
-          </div>
-          <div className="vesting-claim__fee">
-            {txFee ? (
-              <FormattedBalance
-                balance={{
-                  assetId: feePaymentAsset || '0',
-                  balance: txFee,
-                }}
-              />
-            ) : (
-              <>-</>
-            )}
-          </div>
-          <div className="item">
-            <button
-              className="vesting-claim-button"
-              onClick={() => handleClaimClick()}
-            >
-              <div className="vesting-claim-button__label">Claim</div>
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="vesting-claim-wrapper">
-          <>No vesting available</>
-        </div>
-      )}
-    </div>
+    </Table>
   );
 };
