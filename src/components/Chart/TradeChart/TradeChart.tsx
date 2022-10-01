@@ -5,7 +5,8 @@ import {
   Trend,
   Dataset,
   primaryDatasetLabel,
-  TooltipData
+  TooltipData,
+  TradeChartType
 } from '../LineChart/LineChart'
 import {
   AssetPair,
@@ -237,6 +238,11 @@ export const TradeChart = ({
             <LineChart
               primaryDataset={primaryDataset}
               secondaryDataset={secondaryDataset}
+              tradeChartType={
+                poolType === PoolType.XYK
+                  ? TradeChartType.XYK
+                  : TradeChartType.LBP
+              }
               trend={dataTrend}
               onHandleTooltip={handleTooltip}
             />

@@ -81,11 +81,6 @@ export const TradeChart = ({
 
   console.log('fetching lbp chart data', startBlock, endOrNow)
 
-  const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
-    from: startBlock,
-    to: endOrNow
-  })
-
   const { math } = useMath()
   const {
     data: historicalBalancesData,
@@ -234,10 +229,6 @@ export const TradeChart = ({
           last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
       ) {
         setDatasetRefreshing(true)
-        setHistoricalBalancesRange({
-          from: startBlock,
-          to: endOrNow
-        })
       }
     }
 

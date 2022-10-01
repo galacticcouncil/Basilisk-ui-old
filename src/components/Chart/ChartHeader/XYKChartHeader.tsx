@@ -1,20 +1,20 @@
-import { useMemo } from 'react'
-import { FormattedMessage, FormattedNumber } from 'react-intl'
-import { DataPoint, Trend } from '../LineChart/LineChart'
+import { useMemo } from 'react';
+import { FormattedMessage, FormattedNumber } from 'react-intl';
+import { DataPoint, Trend } from '../LineChart/LineChart';
 import {
   AssetPair,
   ChartGranularity,
   ChartType,
   DisplayData,
-  PoolType
-} from '../shared'
-import './ChartHeader.scss'
-import classNames from 'classnames'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { percentageChange } from '../../../hooks/math/usePercentageChange'
+  PoolType,
+} from '../shared';
+import './ChartHeader.scss';
+import classNames from 'classnames';
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance';
+import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import { percentageChange } from '../../../hooks/math/usePercentageChange';
 
-export const horizontalBar = '―'
+export const horizontalBar = '―';
 
 const formatGranularity = (granularity: ChartGranularity) => (
   <FormattedMessage
@@ -22,7 +22,7 @@ const formatGranularity = (granularity: ChartGranularity) => (
     defaultMessage={`{granularity, select, ALL {ALL} D30 {30D} D7 {7D} D3 {3D} H24 {24H} H12 {12H} H1 {1H} other {${horizontalBar}}}`}
     values={{ granularity }}
   />
-)
+);
 
 export const ChartHeader = ({
   assetPair,
@@ -36,31 +36,29 @@ export const ChartHeader = ({
   onChartTypeChange,
   availableGranularity,
   onGranularityChange,
-  dataTrend
+  dataTrend,
 }: {
-  assetPair: AssetPair
-  poolType: PoolType
-  displayData: DisplayData
-  referenceData: DisplayData | undefined
-  dataTrend: Trend
-  granularity: ChartGranularity
-  isUserBrowsingGraph: boolean | undefined
-  chartType: ChartType
-  availableChartTypes: ChartType[]
-  availableGranularity: ChartGranularity[]
-  onChartTypeChange: (chartType: ChartType) => void
-  onGranularityChange: (granularity: ChartGranularity) => void
+  assetPair: AssetPair;
+  poolType: PoolType;
+  displayData: DisplayData;
+  referenceData: DisplayData | undefined;
+  dataTrend: Trend;
+  granularity: ChartGranularity;
+  isUserBrowsingGraph: boolean | undefined;
+  chartType: ChartType;
+  availableChartTypes: ChartType[];
+  availableGranularity: ChartGranularity[];
+  onChartTypeChange: (chartType: ChartType) => void;
+  onGranularityChange: (granularity: ChartGranularity) => void;
 }) => {
   const referenceDataPercentageChange = useMemo(() => {
     // console.log('referenceDataPercentageChange', referenceData?.balance, displayData.balance);
-    if (!referenceData?.balance) return 0
+    if (!referenceData?.balance) return 0;
     return parseFloat(
-      percentageChange(referenceData.balance, displayData.balance)?.toFixed(
-        3
-      ) || '0'
-    )
+      percentageChange(referenceData.balance, displayData.balance)?.toFixed(3) || '0'
+    );
     // return percentageChange(displayData.balance, referenceData.balance);
-  }, [displayData, referenceData])
+  }, [displayData, referenceData]);
 
   return (
     <div className="chart-header">
@@ -134,17 +132,38 @@ export const ChartHeader = ({
                 `$ ${horizontalBar}`
               )}
             </div> */}
+
+            <div
+              className={classNames({
+                'text-green-1': dataTrend === Trend.Positive,
+                'text-gray-1': dataTrend === Trend.Neutral,
+                'text-red-1': dataTrend === Trend.Negative,
+              })}
+            >
+              ({referenceDataPercentageChange >= 0 ? '+' : ''}
+              <FormattedNumber
+                style="percent"
+                minimumFractionDigits={2}
+                maximumFractionDigits={2}
+                value={referenceDataPercentageChange}
+              />
+              )
+            </div>
+
             <div
               className={
                 'chart-header__data__breakdown__granularity ' +
                 classNames({
-                  disabled: isUserBrowsingGraph
+                  disabled: isUserBrowsingGraph,
                 })
               }
             >
-              Current
+              <FormattedMessage
+                id="ChartHeader.granularity.pastIndicator"
+                defaultMessage="Past"
+              />{' '}
+              {formatGranularity(granularity)}
             </div>
-            Price
           </div>
         </div>
       </div>
@@ -193,5 +212,5 @@ export const ChartHeader = ({
         {/* </div> */}
       </div>
     </div>
-  )
-}
+  );
+};
