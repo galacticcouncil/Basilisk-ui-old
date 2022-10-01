@@ -1,16 +1,16 @@
-import { useApolloClient } from '@apollo/client';
-import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
-import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider';
-import { Maybe, Vesting } from '../../../../../generated/graphql';
-import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
-import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
-import { useClaimVestedAmountMutation } from '../../../../../hooks/vesting/useClaimVestedAmountMutation';
-import { estimateClaimVesting } from '../../../../../hooks/vesting/useVestingMutationResolvers';
-import { Notification } from '../../../WalletPage';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
-import './VestingClaim.scss';
+import { useApolloClient } from '@apollo/client'
+import BigNumber from 'bignumber.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance'
+import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider'
+import { Maybe, Vesting } from '../../../../../generated/graphql'
+import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision'
+import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs'
+import { useClaimVestedAmountMutation } from '../../../../../hooks/vesting/useClaimVestedAmountMutation'
+import { estimateClaimVesting } from '../../../../../hooks/vesting/useVestingMutationResolvers'
+import { Notification } from '../../../WalletPage'
+import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
+import './VestingClaim.scss'
 
 export const VestingClaim = ({
   vesting,
@@ -95,20 +95,20 @@ export const VestingClaim = ({
           <Tbody>
             <Tr className="vesting-claim-wrapper">
               <Td className="item">
-                {fromPrecision12(vesting?.claimableAmount)} BSX
+                {fromPrecision12(vesting?.claimableAmount || '0')} BSX
               </Td>
               <Td className="item">
-                {fromPrecision12(vesting?.originalLockBalance)} BSX
+                {fromPrecision12(vesting?.originalLockBalance || '0')} BSX
               </Td>
               <Td className="item">
-                {fromPrecision12(vesting?.lockedVestingBalance)} BSX
+                {fromPrecision12(vesting?.lockedVestingBalance || '0')} BSX
               </Td>
               <Td className="vesting-claim__fee">
                 {txFee ? (
                   <FormattedBalance
                     balance={{
                       assetId: feePaymentAsset || '0',
-                      balance: txFee,
+                      balance: txFee
                     }}
                   />
                 ) : (
@@ -134,5 +134,5 @@ export const VestingClaim = ({
         )}
       </div>
     </Table>
-  );
-};
+  )
+}
