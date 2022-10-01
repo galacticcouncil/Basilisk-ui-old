@@ -123,8 +123,6 @@ export const useFormatDataset = ({
 }) =>
   useCallback(
     ({ dataset, label }): ChartDataset<'line', DataPoint[]> => {
-      console.log('okay', dataset)
-
       if (!chart) return { data: dataset }
       return {
         label,

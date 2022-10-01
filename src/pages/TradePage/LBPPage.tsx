@@ -136,7 +136,6 @@ export const TradeChart = ({
     {
       from: startBlock,
       to: endOrNow,
-      quantity: 10000,
       poolId: pool?.id || ''
     },
     {
@@ -160,27 +159,16 @@ export const TradeChart = ({
 
     if (historicalBalancesLoading) return
 
-    console.log('LOADED:', historicalBalancesData?.historicalBalances?.length)
+    console.log(
+      'historicalBalancesLength:',
+      historicalBalancesData?.historicalBalances?.length
+    )
+
     const filteredDataset = historicalBalancesData?.historicalBalances?.filter(
       (_b, i) => {
         if (i % 5 === 0) return true
         return true
       }
-    )
-
-    console.log('filtered', filteredDataset)
-
-    console.log(
-      'DEBUG:currentBlock-currentBlockTime-startBlock-endOrNow-endBlock-calcBlock',
-      currentBlock,
-      currentBlockTime,
-      startBlock,
-      endOrNow,
-      endBlock,
-      blockToTime(startBlock, {
-        height: currentBlock,
-        date: currentBlockTime
-      })
     )
 
     if (
@@ -228,13 +216,6 @@ export const TradeChart = ({
 
               const y = new BigNumber(fromPrecision12(spotPrice.inOut || '0'))
 
-              console.log(
-                'spotPrice',
-                assetABalance,
-                assetBBalance,
-                y.toNumber()
-              )
-
               return {
                 y: y.toNumber(),
                 yAsString: fromPrecision12(spotPrice.inOut || '0')
@@ -246,23 +227,12 @@ export const TradeChart = ({
 
     const sortedDataset = orderBy(dataset, ['x'], ['asc'])
 
-    console.log('finalDataset', sortedDataset)
+    console.debug('finalDataset', sortedDataset)
 
     setDataset(sortedDataset)
     setDatasetRefreshing(false)
     setDatasetLoading(false)
-  }, [
-    pool,
-    currentBlock,
-    currentBlockTime,
-    endOrNow,
-    endBlock,
-    startBlock,
-    historicalBalancesLoading,
-    historicalBalancesData,
-    lastBlockData,
-    assetIds
-  ])
+  }, [historicalBalancesLoading, historicalBalancesData, assetIds])
 
   useEffect(() => {
     const lastRecordOutdatedBy = 60000

@@ -103,16 +103,12 @@ export const mapToPool = (
       )
     }
 
-    console.log('have A weights', assetAWeights)
-
     // determine weights for asset B
     const assetBWeights: LbpAssetWeights = {
       initial: calculateOppositeAssetWeight(assetAWeights.initial),
       final: calculateOppositeAssetWeight(assetAWeights.final),
       current: calculateOppositeAssetWeight(assetAWeights.current)
     }
-
-    console.log('have B weights', assetBWeights)
 
     // TODO: this function only works by finding the first lock with the given ID
     // TODO: this data fetching should be moved to a resolver, and this mapper
@@ -189,10 +185,8 @@ export const useGetLbpPools = () => {
   return useCallback(
     async (client: ApolloClient<object>) => {
       // return an empty array by default
-      console.log('getting LBP pools')
       if (!apiInstance || loading || !math) return []
 
-      console.log('getting LBP pools')
       return getLbpPools(apiInstance, math, client)
     },
     [apiInstance, loading, math]

@@ -78,7 +78,6 @@ export const TradeChart = ({
   } = useGetHistoricalBalancesQuery(
     {
       ...historicalBalancesRange,
-      quantity: 100,
       // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
       poolId: pool?.id || ''
     },

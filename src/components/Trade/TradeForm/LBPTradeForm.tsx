@@ -357,15 +357,6 @@ export const TradeForm = ({
 
     if (!assetOutAmount) return setValue('assetInAmount', null)
 
-    console.log(
-      'ASSOUTAMTCHANGED',
-      assetInLiquidity,
-      assetInWeight,
-      assetOutLiquidity,
-      assetOutWeight,
-      assetOutAmount
-    )
-
     const amount = math.lbp.calculate_in_given_out(
       assetInLiquidity,
       assetOutLiquidity,
