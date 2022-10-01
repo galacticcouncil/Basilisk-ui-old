@@ -39,3 +39,41 @@
     justify-content: right;
   }
 }
+
+@media screen and (max-width: 45em) {
+  .balance-list {
+    @extend .active-account;
+
+    &__title {
+      @extend .active-account__title;
+    }
+
+    &-wrapper {
+      @extend .active-account-wrapper;
+
+      .item {
+        padding: 10px;
+        width: 100% !important;
+
+        &:first-child {
+          padding: 20px 32px ;
+          border-top: 0px;
+          border-radius: $border-radius $border-radius 0px 0px;
+        }
+
+        &:nth-child(even) {
+          background: rgba(255, 255, 255, 0.06);
+        }
+
+        &:last-child {
+          padding: 20px 32px;
+          border-radius: 0px 0px $border-radius $border-radius;
+        }
+      }
+    }
+
+    &-button:last-child {
+      margin-left: auto;
+    }
+  }
+}

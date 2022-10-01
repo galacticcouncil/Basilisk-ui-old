@@ -3,7 +3,7 @@
 @import '../TradePage/TradePage.scss';
 
 .wallet-page {
-  min-width: 800px;
+  min-width: 450px;
   max-width: 1200px;
   padding: 32px;
   color: white;
@@ -18,5 +18,96 @@
 
   .notifications-bar {
     @extend .notifications-bar;
+  }
+}
+
+.responsiveTable {
+  width: 100%;
+}
+
+.responsiveTable td .tdBefore {
+  display: none;
+}
+
+.responsiveTable tbody {
+  &:nth-of-type(1) {
+    border-top: 1px solid rgb(41, 41, 45);
+  }
+
+  &:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.06);
+  }
+  &:last-child {
+    border-radius: 0px 0px $border-radius $border-radius;
+  }
+}
+
+@media screen and (max-width: 45em) {
+  .wallet-page { 
+    padding: 0px;
+  }
+  /*
+    Force table elements to not behave like tables anymore
+    Hide table headers (but not display: none;, for accessibility)
+  */
+
+  .responsiveTable table,
+  .responsiveTable thead,
+  .responsiveTable tbody,
+  .responsiveTable th,
+  .responsiveTable td,
+  .responsiveTable tr {
+    display: block;
+  }
+
+  .responsiveTable tbody {
+    padding-bottom: 20px;
+    &:nth-of-type(1) {
+      border-top: 0px;
+    }
+
+    &:nth-child(odd) {
+      background: transparent;
+    }
+    &:last-child {
+      border-radius: 0px 0px $border-radius $border-radius;
+    }
+  }
+
+  .responsiveTable th {
+    overflow-wrap: normal;
+  }
+
+  .responsiveTable thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    border-radius: $border-radius;
+  }
+
+  .responsiveTable td.pivoted {
+    /* Behave like a "row" */
+    border: none !important;
+    position: relative;
+    text-align: left !important;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    &:not(:last-child) {
+      padding: 20px 10px 20px calc(39% + 10px) !important;
+    }
+  }
+
+  .responsiveTable td .tdBefore {
+    /* Now like a table header */
+    position: absolute;
+    display: block;
+
+    /* Top/left values mimic padding */
+    left: 1rem;
+    width: calc(100% - 20px);
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    text-align: left !important;
+    font-weight: 600;
   }
 }
