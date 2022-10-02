@@ -659,8 +659,13 @@ export const TradeForm = ({
     formState.isDirty
   ])
 
-  const tradeFee: Fee | undefined = useMemo(() => {
-    return { numerator: '1000', denominator: '3' }
+  const tradeFee: string = useMemo(() => {
+    const fee = { numerator: '3', denominator: '1000' }
+    return new BigNumber(fee.numerator)
+      .dividedBy(fee.denominator)
+      .multipliedBy(100)
+      .toFixed(2)
+      .toString()
   }, [])
 
   const minTradeLimitIn = useCallback(
@@ -940,6 +945,7 @@ export const TradeForm = ({
             expectedSlippage={slippage}
             errors={errors}
             isDirty={isDirty}
+            tradeFee={tradeFee}
             paymentInfo={paymentInfo}
           />
           <input

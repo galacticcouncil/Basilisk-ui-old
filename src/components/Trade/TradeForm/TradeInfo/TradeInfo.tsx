@@ -16,7 +16,7 @@ export enum Warning {
 
 export interface TradeInfoProps {
   transactionFee?: string
-  tradeFee?: string
+  tradeFee: string
   tradeLimit?: Balance
   isDirty?: boolean
   expectedSlippage?: BigNumber

@@ -358,7 +358,6 @@ export const TradeForm = ({
     )
       return
 
-    // TODO: FEES
     if (tradeType !== TradeType.Buy) return
 
     if (!assetOutAmount) return setValue('assetInAmount', null)
@@ -396,7 +395,8 @@ export const TradeForm = ({
   ])
 
   useEffect(() => {
-    const assetInAmount = getValues('assetInAmount')
+    if (tradeType !== TradeType.Sell) return
+
     if (
       !pool ||
       !math ||
@@ -407,8 +407,7 @@ export const TradeForm = ({
     )
       return
 
-    // TODO: FEES
-    if (tradeType !== TradeType.Sell) return
+    const assetInAmount = getValues('assetInAmount')
 
     if (!assetInAmount) return setValue('assetOutAmount', null)
 
