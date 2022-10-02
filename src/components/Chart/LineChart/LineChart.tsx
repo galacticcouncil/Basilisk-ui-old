@@ -4,6 +4,7 @@ import {
   ChartData,
   ChartDataset,
   ChartOptions,
+  Tooltip,
   TooltipModel
 } from 'chart.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -333,7 +334,9 @@ export const LineChart = ({
         }
       },
       animations: {
-        colors: false
+        colors: false,
+        x: { duration: 0 },
+        y: { duration: 0 }
       },
       hover: {
         intersect: true
@@ -346,8 +349,8 @@ export const LineChart = ({
           enabled: false,
           mode: 'nearest',
           intersect: false,
-
-          position: 'average',
+          axis: 'x',
+          position: 'nearest',
           external: tooltipHandler as any
         }
       }
