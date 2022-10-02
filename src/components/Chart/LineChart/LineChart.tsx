@@ -299,6 +299,15 @@ export const LineChart = ({
           pointRadius: 0
         }
       },
+
+      layout: {
+        padding: {
+          left: 12
+        }
+      },
+
+      backgroundColor: 'transparent',
+
       scales: {
         xAxis: {
           display: false,
@@ -310,8 +319,7 @@ export const LineChart = ({
             tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
             displayFormats: { hour: 'HH:mm', day: 'HH:mm', minute: 'HH:mm' }
           },
-          offset: true,
-
+          //offset: true,
           min: xAxisBounds.xAxisMin,
           to: xAxisBounds.xAxisMax
         },
@@ -326,7 +334,10 @@ export const LineChart = ({
             maxTicksLimit: 8,
             align: 'end',
             crossAlign: 'center',
-            font: { size: 14 }
+            font: {
+              family: 'Satoshi',
+              size: 12
+            }
           },
           stacked: false,
           min: yAxisBounds.yAxisMin,
@@ -334,9 +345,7 @@ export const LineChart = ({
         }
       },
       animations: {
-        colors: false,
-        x: { duration: 0 },
-        y: { duration: 0 }
+        colors: false
       },
       hover: {
         intersect: true

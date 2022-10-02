@@ -177,7 +177,6 @@ export interface TradeFormFields {
   assetInAmount: string | null
   assetOutAmount: string | null
   submit: void
-  warnings: any
 }
 
 /**

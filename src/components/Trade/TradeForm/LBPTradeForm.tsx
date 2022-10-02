@@ -28,7 +28,7 @@ import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/use
 import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
 import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
 import { PoolType } from '../../Chart/shared'
-import { TradeInfo } from './TradeInfo/TradeInfo'
+import { TradeInfo, Warning } from './TradeInfo/TradeInfo'
 import './TradeForm.scss'
 import Icon from '../../Icon/Icon'
 import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
@@ -158,7 +158,7 @@ export interface TradeFormProps {
   assetInLiquidity?: string
   assetOutWeight?: number
   assetOutLiquidity?: string
-  repayTargetHit?: boolean
+  repayTargetReached?: boolean | undefined
   isPoolLoading: boolean
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void
   tradeLoading: boolean
@@ -176,7 +176,6 @@ export interface TradeFormFields {
   assetInAmount: string | null
   assetOutAmount: string | null
   submit: void
-  warnings: any
 }
 
 /**
@@ -216,6 +215,7 @@ export const TradeForm = ({
   assetInLiquidity,
   assetOutWeight,
   assetOutLiquidity,
+  repayTargetReached,
   onSubmitTrade,
   tradeLoading,
   assets,
@@ -227,6 +227,7 @@ export const TradeForm = ({
   const { math, loading: mathLoading } = useMath()
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell)
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null)
+  const [warning, setWarning] = useState<Warning | null>(null)
 
   const form = useForm<TradeFormFields>({
     reValidateMode: 'onChange',
@@ -270,8 +271,13 @@ export const TradeForm = ({
   }
 
   const tradeFee: string = useMemo(() => {
-    if (assetIds.assetIn === pool?.assetInId) return feeToPercentage()
-    else return feeToPercentage(pool?.fee)
+    if (assetIds.assetIn === pool?.assetInId) {
+      setWarning(null)
+      return feeToPercentage()
+    } else {
+      if (!repayTargetReached) setWarning(Warning.RepayFee)
+      return feeToPercentage(pool?.fee)
+    }
   }, [pool, tradeType, assetIds])
 
   // trigger form field validation right away
@@ -1035,6 +1041,7 @@ export const TradeForm = ({
             tradeFee={tradeFee}
             expectedSlippage={slippage}
             errors={errors}
+            warning={warning}
             isDirty={isDirty}
             paymentInfo={paymentInfo}
           />

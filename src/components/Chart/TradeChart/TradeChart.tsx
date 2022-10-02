@@ -184,11 +184,6 @@ export const TradeChart = ({
       setTooltipData(tooltipData)
 
       if (tooltipData?.visible) {
-        const datasets = [primaryDataset, secondaryDataset]
-        // const allData = datasets.reduce(
-        //   (allData, dataset) => datasets.concat(dataset),
-        //   []
-        // )
         const allData = primaryDataset.concat(secondaryDataset)
 
         const displayDataTooltip = find(allData, {
@@ -234,6 +229,8 @@ export const TradeChart = ({
     ],
     []
   )
+
+  const allData = primaryDataset.concat(secondaryDataset)
 
   return (
     <div className="trade-chart">
@@ -300,21 +297,15 @@ export const TradeChart = ({
           </div>
 
           <ChartTicks
-            datasets={
-              predictionToggled
-                ? [primaryDataset, secondaryDataset]
-                : [primaryDataset]
-            }
+            dataset={predictionToggled ? allData : primaryDataset}
             granularity={ChartGranularity.H1}
           />
+
           <ChartTicks
-            datasets={
-              predictionToggled
-                ? [primaryDataset, secondaryDataset]
-                : [primaryDataset]
-            }
+            dataset={predictionToggled ? allData : primaryDataset}
             granularity={ChartGranularity.H24}
           />
+
           <hr className="divider"></hr>
           <div className="legend">
             <div className="legend__item ">

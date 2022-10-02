@@ -15,8 +15,19 @@ export const generateMiddleTicks = (
   const middleTicks =
     granularity === ChartGranularity.H1 ? middleTicksHour : middleTicksDay
   const dateRange = lastTick - firstTick
-  const distance = dateRange / middleTicks + 1
+  const distance = dateRange / (middleTicks + 1)
   return times(middleTicks).map((_, i) => {
+    console.log(
+      'firstTick',
+      new Date(firstTick),
+      'lastTick',
+      new Date(lastTick),
+      'distance',
+      distance,
+      'i',
+      i,
+      new Date(firstTick + distance)
+    )
     return firstTick + distance * (i + 1)
   })
 }
@@ -44,22 +55,16 @@ export const formatTick = (tick: number, granularity: ChartGranularity) => {
 }
 
 export const ChartTicks = ({
-  datasets,
+  dataset,
   granularity
 }: {
-  datasets: Dataset[]
+  dataset: Dataset
   granularity: ChartGranularity
 }) => {
   const ticks = useMemo(() => {
-    // compose all datasets into one
-    let allData = datasets[0].concat(datasets[1])
-
-    // order the datasets by time
-    allData = orderBy(allData, ['x'], ['asc'])
-
     // find the first/last datapoints from the dataset
-    const firstTick = first(allData)?.x
-    const lastTick = last(allData)?.x
+    const firstTick = first(dataset)?.x
+    const lastTick = last(dataset)?.x
 
     // if we don't have a stard and an end, show nothing
     if (!firstTick || !lastTick) return
@@ -71,7 +76,7 @@ export const ChartTicks = ({
     ticks.push(lastTick)
 
     return ticks
-  }, [datasets])
+  }, [dataset])
 
   const formattedTicks = useMemo(
     () => ticks?.map((tick) => formatTick(tick, granularity)),

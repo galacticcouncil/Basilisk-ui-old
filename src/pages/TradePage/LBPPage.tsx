@@ -609,6 +609,10 @@ export const LBPPage = () => {
     }
   })
 
+  const repayTargetReached = useMemo(() => {
+    return pool ? (pool.repayTargetReached as boolean) : undefined
+  }, [pool])
+
   const tradeBalances = useMemo(() => {
     const balances = activeAccountTradeBalancesData?.activeAccount?.balances
 
@@ -694,7 +698,7 @@ export const LBPPage = () => {
           assetOutLiquidity={assetOutLiquidity}
           assetInWeight={assetInWeight?.current}
           assetOutWeight={assetOutWeight?.current}
-          repayTargetHit={false}
+          repayTargetReached={repayTargetReached}
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}
           assets={assets}

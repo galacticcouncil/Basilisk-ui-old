@@ -152,7 +152,7 @@ export const mapToPool = (
       repayTargetReached,
       repayTarget,
       // if we've haven't reached the repay target, the pool will carry a larger fee
-      fee: false ? poolFee : repayFee
+      fee: repayTargetReached ? poolFee : repayFee
     }
 
     console.log('returning pool', pool)
