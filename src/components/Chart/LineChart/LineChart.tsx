@@ -300,14 +300,16 @@ export const LineChart = ({
       },
       scales: {
         xAxis: {
-          display: true,
+          display: false,
           stacked: false,
           grid: { display: false },
+
           type: 'time',
           time: {
             tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
             displayFormats: { hour: 'HH:mm', day: 'HH:mm', minute: 'HH:mm' }
           },
+          offset: true,
 
           min: xAxisBounds.xAxisMin,
           to: xAxisBounds.xAxisMax
@@ -317,6 +319,7 @@ export const LineChart = ({
           display: true,
           type: 'linear',
           grid: { display: false },
+          offset: true,
           ticks: {
             color: 'white',
             maxTicksLimit: 8,
@@ -341,9 +344,10 @@ export const LineChart = ({
         },
         tooltip: {
           enabled: false,
-          mode: 'index',
+          mode: 'nearest',
           intersect: false,
-          position: 'nearest',
+
+          position: 'average',
           external: tooltipHandler as any
         }
       }

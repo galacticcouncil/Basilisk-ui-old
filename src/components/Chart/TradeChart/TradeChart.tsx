@@ -185,10 +185,11 @@ export const TradeChart = ({
 
       if (tooltipData?.visible) {
         const datasets = [primaryDataset, secondaryDataset]
-        const allData = datasets.reduce(
-          (allData, dataset) => allData.concat(dataset),
-          []
-        )
+        // const allData = datasets.reduce(
+        //   (allData, dataset) => datasets.concat(dataset),
+        //   []
+        // )
+        const allData = primaryDataset.concat(secondaryDataset)
 
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,

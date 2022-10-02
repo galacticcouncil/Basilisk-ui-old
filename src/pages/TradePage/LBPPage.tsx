@@ -81,7 +81,7 @@ export const EnhancedTradeChartProps = ({
     endBlock
   }
 
-  const keepRecords = 200
+  const keepRecords = 150
 
   const { math } = useMath()
 
@@ -92,8 +92,13 @@ export const EnhancedTradeChartProps = ({
     assetBBalance: string
   ): HistoricalBalance[] => {
     const missingBlocksAmount = endBlock - startBlock
+    const divisionMultiplier =
+      missingBlocksAmount < keepRecords
+        ? 1
+        : Math.floor(missingBlocksAmount / keepRecords)
+
     const missingBlocks: HistoricalBalance[] = []
-    const divisionMultiplier = Math.floor(missingBlocksAmount / keepRecords)
+
     for (let i = startBlock; i <= endBlock; i++) {
       if (i % divisionMultiplier === 0) {
         missingBlocks.push({

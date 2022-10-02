@@ -52,10 +52,8 @@ export const ChartTicks = ({
 }) => {
   const ticks = useMemo(() => {
     // compose all datasets into one
-    let allData = datasets.reduce(
-      (allData, dataset) => allData.concat(dataset),
-      []
-    )
+    let allData = datasets[0].concat(datasets[1])
+
     // order the datasets by time
     allData = orderBy(allData, ['x'], ['asc'])
 
