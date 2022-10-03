@@ -4,7 +4,6 @@
 .wallet {
   width: auto;
   max-width: 550px;
-  min-width: 350px;
   gap: 12px;
   border-radius: 8px;
   padding: 8px 0;
@@ -65,9 +64,5 @@
       color: $green1;
       cursor: pointer;
     }
-  }
-
-  @media only screen and (max-width: 500px) {
-    display: none;
   }
 }

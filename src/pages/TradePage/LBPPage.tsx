@@ -59,6 +59,7 @@ export interface EnhancedTradeChartProps {
 }
 
 export enum LbpStatus {
+  NOT_EXISTS,
   NOT_INITIALIZED,
   NOT_STARTED,
   IN_PROGRESS,
@@ -169,7 +170,9 @@ export const EnhancedTradeChartProps = ({
 
   let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
 
-  if (
+  if (!pool?.id) {
+    lbpStatus = LbpStatus.NOT_EXISTS
+  } else if (
     !pool?.startBlock ||
     !pool?.endBlock ||
     !lastBlockData?.relaychainBlockNumber
@@ -379,12 +382,15 @@ export const EnhancedTradeChartProps = ({
       if (!spotPrice || !primaryDataset || !currentBlock || !currentBlockTime)
         return { primaryDataset, secondaryDataset }
 
-      if (lbpStatus === LbpStatus.NOT_INITIALIZED)
+      if (
+        lbpStatus === LbpStatus.NOT_INITIALIZED ||
+        lbpStatus === LbpStatus.NOT_EXISTS
+      )
         return { primaryDataset: [], secondaryDataset: [] }
 
       // TODO: Secondary
       if (lbpStatus === LbpStatus.NOT_STARTED)
-        return { primaryDataset: [], secondaryDataset: [] }
+        return { primaryDataset: [], secondaryDataset: secondaryDataset }
 
       // TODO: Ended
       if (lbpStatus === LbpStatus.ENDED)

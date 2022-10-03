@@ -8,6 +8,10 @@
 
 .pools-page {
   @extend .pools-page;
+
+  display: flex;
+  flex-basis: 450px;
+
 }
 
 .notifications-bar {

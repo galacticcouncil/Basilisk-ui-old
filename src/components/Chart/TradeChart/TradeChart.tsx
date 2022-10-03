@@ -335,6 +335,10 @@ export const TradeChart = ({
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.NotStarted} />
         </div>
+      ) : lbpStatus === LbpStatus.NOT_EXISTS ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotExists} />
+        </div>
       ) : !primaryDataset?.length ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.InvalidPair} />

@@ -50,7 +50,7 @@ export const TradeInfo = ({
       case 'maxTradeLimitIn':
         return 'Maximal pool trade limit is reached, please split your trade'
       case 'slippageHigherThanTolerance':
-        return 'The trade price is higher than your price tolerance'
+        return 'The trade price is higher than your price tolerance, please split your trade or increase your trade limit in settings'
       case 'notEnoughBalanceIn':
         return 'Your trade is bigger than your balance'
       case 'notEnoughFeeBalance':

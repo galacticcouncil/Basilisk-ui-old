@@ -83,7 +83,8 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
             <Wallet />
           </div>
         </div>
-        <div className="">{children}</div>
+
+        <div className="page-content-wrapper">{children}</div>
 
         <div className="footer">
           <div className="liveliness-wrapper">
