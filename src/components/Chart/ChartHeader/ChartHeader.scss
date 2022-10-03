@@ -44,17 +44,14 @@ $disabledOpacity: 0.3;
 
     &__prediction-toggle {
       color: $l-gray3;
-      padding: 4px 8px;
-      background-color: rgba(200,200,200,0.1);
-      margin-top: 8px;
+      margin-top: 12px;
       font-size: 12px;
-      border-radius: 4px;
+      border-bottom: 2px dashed $green1;
       font-weight: 500;
 
       &:hover {
         cursor: pointer;
         color: $green2;
-        background-color: rgba(80,80,80,0.2);
       }
     }
 
