@@ -97,19 +97,11 @@ export const TradeInfo = ({
     <div className="trade-info">
       <div className="trade-info__data">
         <div className="data-piece">
-          <span className="data-piece__label">Price impact </span>
-          <div className="data-piece__value">
-            {!expectedSlippage || expectedSlippage?.isNaN()
-              ? horizontalBar
-              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`}
-          </div>
-        </div>
-        <div className="data-piece">
           <span className="data-piece__label">
             {tradeType === TradeType.Buy ? (
-              <>Maximum sold</>
+              <>Maximum sold limit</>
             ) : (
-              <>Minimum received</>
+              <>Minimum received limit</>
             )}
           </span>
           <div className="data-piece__value">
@@ -126,6 +118,19 @@ export const TradeInfo = ({
           </div>
         </div>
         <div className="data-piece">
+          <span className="data-piece__label">Price impact </span>
+          <div className="data-piece__value">
+            {!expectedSlippage || expectedSlippage?.isNaN()
+              ? horizontalBar
+              : `${expectedSlippage?.multipliedBy(100).toFixed(2)}%`}
+          </div>
+        </div>
+        <div className="data-piece">
+          <span className="data-piece__label">Pool fee </span>
+          <div className="data-piece__value">{tradeFee + ' %'}</div>
+        </div>
+
+        <div className="data-piece">
           <span className="data-piece__label">Transaction fee </span>
           <div className="data-piece__value">
             {paymentInfo ? (
@@ -139,10 +144,6 @@ export const TradeInfo = ({
               <>{horizontalBar}</>
             )}
           </div>
-        </div>
-        <div className="data-piece">
-          <span className="data-piece__label">Trade fee </span>
-          <div className="data-piece__value">{tradeFee + ' %'}</div>
         </div>
       </div>
       {/* TODO Error message */}

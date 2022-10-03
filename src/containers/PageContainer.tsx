@@ -39,7 +39,15 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className="page-container">
         <div className="page-header">
-          <Icon name="BasiliskLogoFull" />
+          <div className="page-header__logo">
+            <div className="page-header__logo__small">
+              <Icon name="BasiliskLogoSmall" />
+            </div>
+
+            <div className="page-header__logo__full">
+              <Icon name="BasiliskLogoFull" />
+            </div>
+          </div>
           <div className="page-header__menu-wrapper">
             <div className="page-header__menu-wrapper__menu-item">
               <Link to="lbp">LBP</Link>
@@ -70,7 +78,6 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
               rel="noreferrer"
               target="_blank"
             >
-              Help
               <Icon name="Help" />
             </a>
             <Wallet />

@@ -506,7 +506,6 @@ export const TradeForm = ({
     )
       return
 
-    // TODO change to 4 cases for LBP
     switch (tradeType) {
       case TradeType.Sell:
         return {
@@ -1101,14 +1100,29 @@ export const TradeForm = ({
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount')
+                  const assetInAmount = getValues('assetInAmount')
                   if (!assetOutAmount || assetOutAmount === '0') return false
-                  return new BigNumber(assetOutLiquidity || '0')
-                    .dividedBy(3)
-                    .gte(assetOutAmount)
+                  return (
+                    new BigNumber(assetOutLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetOutAmount) &&
+                    new BigNumber(assetInLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetInAmount || '0')
+                  )
                 },
                 maxTradeLimitIn: () => {
+                  const assetOutAmount = getValues('assetOutAmount')
                   const assetInAmount = getValues('assetInAmount')
-                  return minTradeLimitIn(assetInAmount)
+                  if (!assetOutAmount || assetOutAmount === '0') return false
+                  return (
+                    new BigNumber(assetOutLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetOutAmount) &&
+                    new BigNumber(assetInLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetInAmount || '0')
+                  )
                 },
                 slippageHigherThanTolerance: () => {
                   if (!allowedSlippage) return false

@@ -16,11 +16,10 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
             return (
               <div className="row">
                 <div className="large">
-                  Chart unavailable, please select <br /> a valid asset pair
+                  Chart is not available <br />
+                  for this pair
                 </div>
-                <div className="small">
-                  Please select different asset combination.
-                </div>
+                <div className="small">Sssory</div>
               </div>
             )
           case TradeChartErrorType.NotStarted:
