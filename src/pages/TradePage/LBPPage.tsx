@@ -41,6 +41,7 @@ import { blockToTime, timeToBlock } from '../../misc/utils/blockTime'
 import { calculateSpotPriceFromPool } from '../../hooks/pools/lbp/calculateSpotPrice'
 import { calculateCurrentAssetWeight } from '../../hooks/pools/lbp/calculateCurrentAssetWeight'
 import { DataPoint, Dataset } from '../../components/Chart/LineChart/LineChart'
+import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
 
 export interface TradeAssetIds {
   assetIn: string | null
@@ -502,20 +503,10 @@ export const LBPPage = () => {
     networkStatus: poolsNetworkStatus
   } = useGetPoolsQueryProvider()
 
-  const assets = useMemo(() => {
-    let assets = poolsData?.pools
-      ?.map((pool) => {
-        if (pool.__typename === 'LBPPool') {
-          return [pool.assetInId, pool.assetOutId]
-        } else return []
-      })
-      .reduce((assets, poolAssets) => {
-        return assets.concat(poolAssets)
-      }, [])
-      .map((id) => id)
-
-    return uniq(assets).map((id) => ({ id }))
-  }, [poolsData])
+  const { assets, poolAssetMap } = useMemo(
+    () => getAssetMapsFromPools(poolsData?.pools || [], PoolType.LBP),
+    [poolsData]
+  )
 
   const lbpPool =
     poolData?.pool && poolData.pool.__typename === 'LBPPool'
@@ -694,6 +685,7 @@ export const LBPPage = () => {
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
+          assetMap={poolAssetMap}
           assetInLiquidity={assetInLiquidity}
           assetOutLiquidity={assetOutLiquidity}
           assetInWeight={assetInWeight?.current}

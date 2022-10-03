@@ -19,12 +19,17 @@
 
     &__asset-item {
       border: 1px solid transparent;
-      border-radius: $border-radius;
+      border-radius: 8px;
 
-      background-color: $gray3;
+      background-color: rgba(0,0,0,0.3);
+
+      padding: 16px;
+
+      cursor: pointer;
 
       &:hover {
         border-color: $green1;
+        color: $green1;
       }
 
       &.active {
@@ -35,13 +40,20 @@
         width: 100%;
         box-shadow: none;
       }
+    }
 
-      cursor: pointer;
-      padding: 16px;
+    &__asset-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-      &:hover {
-        color: $green1;
-      }
+    &__secondary-assets {
+      opacity: 0.5;
     }
   }
+
+
+
+
 }

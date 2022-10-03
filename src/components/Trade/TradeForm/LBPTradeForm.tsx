@@ -41,6 +41,11 @@ import { estimateBuy } from '../../../hooks/pools/lbp/buy'
 import { estimateSell } from '../../../hooks/pools/lbp/sell'
 import { payment } from '@polkadot/types/interfaces/definitions'
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
+import {
+  AssetList,
+  AssetMap,
+  getSecondaryAssets
+} from '../../../misc/utils/getAssetMap'
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null
@@ -149,11 +154,12 @@ export const useModalPortalElement = ({
 }
 
 export interface TradeFormProps {
-  assets?: { id: string }[]
+  assets: AssetList
   assetIds: TradeAssetIds
   onAssetIdsChange: (assetIds: TradeAssetIds) => void
   isActiveAccountConnected?: boolean
   pool?: LbpPool
+  assetMap: AssetMap
   assetInWeight?: number
   assetInLiquidity?: string
   assetOutWeight?: number
@@ -219,6 +225,7 @@ export const TradeForm = ({
   onSubmitTrade,
   tradeLoading,
   assets,
+  assetMap,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
   activeAccount
@@ -270,15 +277,20 @@ export const TradeForm = ({
     return new BigNumber(amount).multipliedBy(tradeFee).dividedBy(100)
   }
 
+  console.warn('REPAY TARGET REACHED', repayTargetReached)
   const tradeFee: string = useMemo(() => {
     if (assetIds.assetIn === pool?.assetInId) {
       setWarning(null)
       return feeToPercentage()
     } else {
-      if (!repayTargetReached) setWarning(Warning.RepayFee)
+      if (
+        repayTargetReached === false &&
+        typeof repayTargetReached !== 'undefined'
+      )
+        setWarning(Warning.RepayFee)
       return feeToPercentage(pool?.fee)
     }
-  }, [pool, tradeType, assetIds])
+  }, [pool, tradeType, assetIds, tradeLoading])
 
   // trigger form field validation right away
   useEffect(() => {
@@ -901,7 +913,14 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetOut') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetOut') || '',
+                assetMap || [],
+                assets
+              )}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
@@ -1004,7 +1023,14 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetIn') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetIn') || '',
+                assetMap || [],
+                assets
+              )}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">You get</div>
@@ -1040,6 +1066,7 @@ export const TradeForm = ({
             tradeFee={tradeFee}
             expectedSlippage={slippage}
             errors={errors}
+            tradeType={tradeType}
             warning={warning}
             isDirty={isDirty}
             paymentInfo={paymentInfo}

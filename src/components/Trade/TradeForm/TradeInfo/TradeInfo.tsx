@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { FieldErrors } from 'react-hook-form'
 import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider'
-import { Balance, Fee } from '../../../../generated/graphql'
+import { Balance, Fee, TradeType } from '../../../../generated/graphql'
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance'
 import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader'
 import { TradeFormFields } from '../TradeForm'
@@ -22,6 +22,7 @@ export interface TradeInfoProps {
   expectedSlippage?: BigNumber
   errors?: FieldErrors<TradeFormFields>
   paymentInfo?: string
+  tradeType?: TradeType
   warning?: Warning | null
 }
 
@@ -31,6 +32,7 @@ export const TradeInfo = ({
   tradeLimit,
   isDirty,
   tradeFee,
+  tradeType,
   warning,
   paymentInfo
 }: TradeInfoProps) => {
@@ -103,7 +105,13 @@ export const TradeInfo = ({
           </div>
         </div>
         <div className="data-piece">
-          <span className="data-piece__label">Trade limit </span>
+          <span className="data-piece__label">
+            {tradeType === TradeType.Buy ? (
+              <>Maximum sold</>
+            ) : (
+              <>Minimum received</>
+            )}
+          </span>
           <div className="data-piece__value">
             {tradeLimit?.balance ? (
               <FormattedBalance

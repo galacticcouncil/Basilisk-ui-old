@@ -1,48 +1,40 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { useEffect, useRef } from 'react';
-import { useForm, FormProvider } from 'react-hook-form';
-import { MetricUnit } from '../metricUnit';
-import { AssetBalanceInput } from './AssetBalanceInput';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useEffect, useRef } from 'react'
+import { useForm, FormProvider } from 'react-hook-form'
+import { MetricUnit } from '../metricUnit'
+import { AssetBalanceInput } from './AssetBalanceInput'
 
-import cssColors from './../../../misc/colors.module.scss';
-import { StorybookWrapper } from '../../../misc/StorybookWrapper';
+import cssColors from './../../../misc/colors.module.scss'
+import { StorybookWrapper } from '../../../misc/StorybookWrapper'
 
 export default {
   title: 'components/Balance/AssetBalanceInput',
   component: AssetBalanceInput,
   args: {
-    defaultAsset: {
-      id: 'BSX',
-    },
-    assets: [
-      {
-        id: 'BSX',
-      },
-      {
-        id: 'kUSD',
-      },
-    ],
+    defaultAsset: 'BSX',
+
+    assets: ['BSX', 'kUSD'],
     defaultUnit: MetricUnit.k,
     balanceInputName: 'test-input',
-    assetInputName: 'test-input-asset',
-  },
-} as ComponentMeta<typeof AssetBalanceInput>;
+    assetInputName: 'test-input-asset'
+  }
+} as ComponentMeta<typeof AssetBalanceInput>
 
 const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
-  const modalContainerRef = useRef<HTMLDivElement | null>(null);
-  const methods = useForm();
-  const balanceInputRef = useRef(null);
+  const modalContainerRef = useRef<HTMLDivElement | null>(null)
+  const methods = useForm()
+  const balanceInputRef = useRef(null)
 
   useEffect(() => {
-    console.log('form', methods.getValues());
-    console.log('balanceInputRef', balanceInputRef.current);
-  }, [methods.watch()]);
+    console.log('form', methods.getValues())
+    console.log('balanceInputRef', balanceInputRef.current)
+  }, [methods.watch()])
 
   return (
     <StorybookWrapper>
       <div
         style={{
-          backgroundColor: cssColors.gray2,
+          backgroundColor: cssColors.gray2
         }}
       >
         {/* This is where the underlying modal should be rendered */}
@@ -89,7 +81,7 @@ const Template: ComponentStory<typeof AssetBalanceInput> = (args) => {
         </FormProvider>
       </div>
     </StorybookWrapper>
-  );
-};
+  )
+}
 
-export const Default = Template.bind({});
+export const Default = Template.bind({})

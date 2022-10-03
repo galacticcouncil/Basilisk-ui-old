@@ -1,57 +1,60 @@
-import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { Asset } from '../../../../generated/graphql';
-import { AssetBalanceInputProps } from '../AssetBalanceInput';
-import { AssetSelector } from '../AssetSelector/AssetSelector';
+import { useCallback } from 'react'
+import { useFormContext } from 'react-hook-form'
+import { Asset } from '../../../../generated/graphql'
+import { AssetBalanceInputProps } from '../AssetBalanceInput'
+import { AssetSelector } from '../AssetSelector/AssetSelector'
 import {
   ModalPortalElementFactory,
-  ModalPortalElementFactoryArgs,
-} from './useModalPortal';
+  ModalPortalElementFactoryArgs
+} from './useModalPortal'
 
 export type ModalPortalElement = ({
-  assets,
+  primaryAssets,
+  secondaryAssets,
   defaultAsset,
-  assetInputName,
+  assetInputName
 }: Pick<
   AssetBalanceInputProps,
-  'assets' | 'defaultAsset' | 'assetInputName'
->) => ModalPortalElementFactory;
-export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal'];
+  'primaryAssets' | 'secondaryAssets' | 'defaultAsset' | 'assetInputName'
+>) => ModalPortalElementFactory
+export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal']
 
 export const useModalPortalElement: ModalPortalElement = ({
-  assets,
+  primaryAssets,
+  secondaryAssets,
   defaultAsset,
-  assetInputName,
+  assetInputName
 }) => {
-  const { register, setValue } = useFormContext();
+  const { register, setValue } = useFormContext()
 
   register(assetInputName, {
-    value: defaultAsset?.id,
-  });
+    value: defaultAsset
+  })
 
   const handleAssetSelected = useCallback(
-    (closeModal: CloseModal) => (asset: Asset) => {
-      closeModal();
+    (closeModal: CloseModal) => (asset: string) => {
+      closeModal()
       // onAssetSelected(asset);
-      setValue(assetInputName, asset.id);
+      setValue(assetInputName, asset)
     },
     [setValue]
-  );
+  )
 
   return useCallback(
     ({ closeModal, elementRef, isModalOpen }) => {
       return isModalOpen ? (
         <AssetSelector
           innerRef={elementRef}
-          assets={assets}
+          primaryAssets={primaryAssets}
+          secondaryAssets={secondaryAssets}
           asset={defaultAsset}
           closeModal={closeModal}
           onAssetSelected={handleAssetSelected(closeModal)}
         />
       ) : (
         <></>
-      );
+      )
     },
-    [assets, defaultAsset, handleAssetSelected]
-  );
-};
+    [primaryAssets, secondaryAssets, defaultAsset, handleAssetSelected]
+  )
+}

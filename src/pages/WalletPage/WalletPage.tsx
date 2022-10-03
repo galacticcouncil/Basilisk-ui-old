@@ -62,7 +62,7 @@ export const WalletPage = () => {
   })
 
   const assets = useMemo(() => {
-    return activeAccount?.balances.map((balance) => ({ id: balance.assetId }))
+    return activeAccount?.balances.map((balance) => balance.assetId)
   }, [activeAccount])
 
   const {

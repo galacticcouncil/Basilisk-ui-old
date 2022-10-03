@@ -34,6 +34,11 @@ import { estimateBuy } from '../../hooks/pools/xyk/buy'
 import { estimateSell } from '../../hooks/pools/xyk/sell'
 import { payment } from '@polkadot/types/interfaces/definitions'
 import { useMultiFeePaymentConversionContext } from '../../containers/MultiProvider'
+import {
+  AssetList,
+  AssetMap,
+  getSecondaryAssets
+} from '../../misc/utils/getAssetMap'
 
 export interface PoolsFormSettingsProps {
   allowedSlippage: string | null
@@ -145,7 +150,8 @@ export const useModalPortalElement = ({
 }
 
 export interface PoolsFormProps {
-  assets?: { id: string }[]
+  assets?: AssetList
+  assetMap: AssetMap
   assetIds: TradeAssetIds
   onAssetIdsChange: (assetIds: TradeAssetIds) => void
   isActiveAccountConnected?: boolean
@@ -218,6 +224,7 @@ export const PoolsForm = ({
   onSubmit,
   tradeLoading,
   assets,
+  assetMap,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
   activeAccount
@@ -1004,8 +1011,13 @@ export const PoolsForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets?.filter(
-                (asset) => !Object.values(assetIds).includes(asset.id)
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetOut') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetOut') || '',
+                assetMap || [],
+                assets || []
               )}
               disabled={provisioningType === ProvisioningType.Remove}
               maxBalanceLoading={maxAmountInLoading}
@@ -1124,8 +1136,13 @@ export const PoolsForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets?.filter(
-                (asset) => !Object.values(assetIds).includes(asset.id)
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetIn') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetIn') || '',
+                assetMap || [],
+                assets || []
               )}
               disabled={provisioningType === ProvisioningType.Remove}
             />{' '}
@@ -1166,8 +1183,8 @@ export const PoolsForm = ({
               modalContainerRef={modalContainerRef}
               balanceInputRef={shareAmountInputRef}
               // disabled={provisioningType === ProvisioningType.Add}
-              assets={assets?.filter(
-                (asset) => !Object.values(assetIds).includes(asset.id)
+              primaryAssets={assets?.filter(
+                (asset) => !Object.values(assetIds).includes(asset)
               )}
               disabled={provisioningType === ProvisioningType.Add}
             />{' '}

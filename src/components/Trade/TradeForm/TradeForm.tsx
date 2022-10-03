@@ -41,6 +41,11 @@ import { estimateBuy } from '../../../hooks/pools/xyk/buy'
 import { estimateSell } from '../../../hooks/pools/xyk/sell'
 import { payment } from '@polkadot/types/interfaces/definitions'
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
+import {
+  AssetList,
+  AssetMap,
+  getSecondaryAssets
+} from '../../../misc/utils/getAssetMap'
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null
@@ -149,13 +154,14 @@ export const useModalPortalElement = ({
 }
 
 export interface TradeFormProps {
-  assets?: { id: string }[]
+  assets: AssetList
   assetIds: TradeAssetIds
   onAssetIdsChange: (assetIds: TradeAssetIds) => void
   isActiveAccountConnected?: boolean
   pool?: XykPool
   assetInLiquidity?: string
   assetOutLiquidity?: string
+  assetMap: AssetMap
   spotPrice?: {
     outIn?: string
     inOut?: string
@@ -215,6 +221,7 @@ export const TradeForm = ({
   assetInLiquidity,
   assetOutLiquidity,
   spotPrice,
+  assetMap,
   onSubmitTrade,
   tradeLoading,
   assets,
@@ -792,7 +799,14 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetOut') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetOut') || '',
+                assetMap || [],
+                assets
+              )}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
@@ -909,7 +923,14 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetIn') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetIn') || '',
+                assetMap || [],
+                assets
+              )}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">You get</div>
@@ -944,6 +965,7 @@ export const TradeForm = ({
             tradeLimit={tradeLimit}
             expectedSlippage={slippage}
             errors={errors}
+            tradeType={tradeType}
             isDirty={isDirty}
             tradeFee={tradeFee}
             paymentInfo={paymentInfo}
