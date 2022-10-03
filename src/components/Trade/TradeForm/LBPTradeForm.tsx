@@ -277,7 +277,6 @@ export const TradeForm = ({
     return new BigNumber(amount).multipliedBy(tradeFee).dividedBy(100)
   }
 
-  console.warn('REPAY TARGET REACHED', repayTargetReached)
   const tradeFee: string = useMemo(() => {
     if (assetIds.assetIn === pool?.assetInId) {
       setWarning(null)

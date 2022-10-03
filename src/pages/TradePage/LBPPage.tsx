@@ -246,7 +246,16 @@ export const EnhancedTradeChartProps = ({
   const [{ primaryDataset, secondaryDataset }, setDataset] = useState<{
     primaryDataset: Dataset
     secondaryDataset: Dataset
-  }>({ primaryDataset: [], secondaryDataset: [] })
+    lastRelayBlock: HistoricalBalance
+  }>({
+    primaryDataset: [],
+    secondaryDataset: [],
+    lastRelayBlock: {
+      assetABalance: '0',
+      assetBBalance: '0',
+      relayChainBlockHeight: 0
+    }
+  })
   const [datasetLoading, setDatasetLoading] = useState(true)
   const [datasetRefreshing, setDatasetRefreshing] = useState(false)
 
@@ -268,13 +277,6 @@ export const EnhancedTradeChartProps = ({
       return false
     })
 
-    const lastRelayBlock = (filteredDataset.length &&
-      filteredDataset[filteredDataset.length - 1]) || {
-      assetABalance: '0',
-      assetBBalance: '0',
-      relayChainBlockHeight: 0
-    }
-
     console.log(
       'historicalBalancesLength:',
       historicalBalanceData.length,
@@ -288,17 +290,18 @@ export const EnhancedTradeChartProps = ({
       !spotPrice ||
       !pool
     ) {
-      setDataset({ primaryDataset: [], secondaryDataset: [] })
+      setDataset({
+        primaryDataset: [],
+        secondaryDataset: [],
+        lastRelayBlock: {
+          assetABalance: '0',
+          assetBBalance: '0',
+          relayChainBlockHeight: 0
+        }
+      })
       setDatasetLoading(false)
       return
     }
-
-    const missingBlocks = getMissingBlocks(
-      lastRelayBlock.relayChainBlockHeight,
-      endBlock,
-      lastRelayBlock.assetABalance,
-      lastRelayBlock.assetBBalance
-    )
 
     const newPrimaryDataset =
       filteredDataset?.map(
@@ -312,6 +315,20 @@ export const EnhancedTradeChartProps = ({
           )
         }
       ) || []
+
+    const lastRelayBlock = (filteredDataset.length &&
+      filteredDataset[filteredDataset.length - 1]) || {
+      assetABalance: '0',
+      assetBBalance: '0',
+      relayChainBlockHeight: 0
+    }
+
+    const missingBlocks = getMissingBlocks(
+      lastRelayBlock.relayChainBlockHeight,
+      endBlock,
+      lastRelayBlock.assetABalance,
+      lastRelayBlock.assetBBalance
+    )
 
     const secondaryDataset =
       missingBlocks.map(
@@ -336,7 +353,11 @@ export const EnhancedTradeChartProps = ({
       secondaryDataset
     )
 
-    setDataset({ primaryDataset: newPrimaryDataset, secondaryDataset })
+    setDataset({
+      primaryDataset: newPrimaryDataset,
+      secondaryDataset,
+      lastRelayBlock
+    })
     setDatasetRefreshing(false)
     setDatasetLoading(false)
   }, [historicalBalancesLoading, historicalBalancesData, assetIds])
@@ -378,27 +399,32 @@ export const EnhancedTradeChartProps = ({
   ])
 
   useEffect(() => {
-    setDataset(({ primaryDataset, secondaryDataset }) => {
-      if (!spotPrice || !primaryDataset || !currentBlock || !currentBlockTime)
-        return { primaryDataset, secondaryDataset }
+    setDataset(({ primaryDataset, secondaryDataset, lastRelayBlock }) => {
+      if (
+        !spotPrice ||
+        !primaryDataset ||
+        !currentBlock ||
+        !currentBlockTime ||
+        !math ||
+        !pool
+      )
+        return { primaryDataset, secondaryDataset, lastRelayBlock }
 
       if (
         lbpStatus === LbpStatus.NOT_INITIALIZED ||
         lbpStatus === LbpStatus.NOT_EXISTS
       )
-        return { primaryDataset: [], secondaryDataset: [] }
+        return { primaryDataset: [], secondaryDataset: [], lastRelayBlock }
 
       // TODO: Secondary
       if (lbpStatus === LbpStatus.NOT_STARTED)
-        return { primaryDataset: [], secondaryDataset: secondaryDataset }
+        return { primaryDataset: [], secondaryDataset, lastRelayBlock }
 
       // TODO: Ended
       if (lbpStatus === LbpStatus.ENDED)
-        return { primaryDataset, secondaryDataset: [] }
+        return { primaryDataset, secondaryDataset: [], lastRelayBlock }
 
       const accumulating = assetIds.assetIn === pool?.assetInId
-
-      console.warn('DATASETS', primaryDataset, secondaryDataset)
 
       const newDataPoint: DataPoint = {
         x: blockToTime(endOrNow, {
@@ -415,34 +441,32 @@ export const EnhancedTradeChartProps = ({
         )
       }
 
-      if (secondaryDataset.length)
-        while (newDataPoint.x > secondaryDataset[0].x) {
-          secondaryDataset.shift()
-          console.log('Shifting secondary dataset')
+      const missingBlocks = getMissingBlocks(
+        lastRelayBlock.relayChainBlockHeight,
+        endBlock,
+        lastRelayBlock.assetABalance,
+        lastRelayBlock.assetBBalance
+      )
+
+      const newSecondaryDataset = missingBlocks.map(
+        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+          return getPriceForBlocks(
+            math,
+            pool,
+            relayChainBlockHeight,
+            assetABalance,
+            assetBBalance
+          )
         }
+      )
 
       return {
-        primaryDataset: [
-          ...primaryDataset,
-          {
-            x: blockToTime(endOrNow, {
-              height: currentBlock,
-              date: currentBlockTime
-            }),
-            y: new BigNumber(
-              fromPrecision12(
-                (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
-              )
-            ).toNumber(),
-            yAsString: fromPrecision12(
-              (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
-            )
-          }
-        ],
-        secondaryDataset
+        primaryDataset: [...primaryDataset, newDataPoint],
+        secondaryDataset: newSecondaryDataset,
+        lastRelayBlock
       }
     })
-  }, [pool, currentBlock, currentBlockTime, endOrNow, lbpStatus, assetIds])
+  }, [currentBlock, lbpStatus, assetIds])
 
   const _isPoolLoading = useMemo(() => {
     if (!isPoolLoading || datasetRefreshing) return false
@@ -557,6 +581,10 @@ export const LBPPage = () => {
   useEffect(() => {
     if (tradeLoading) setNotification('pending')
   }, [tradeLoading])
+
+  useEffect(() => {
+    if (tradeError) setNotification('failed')
+  }, [tradeError])
 
   const handleSubmitTrade = useCallback(
     (variables) => {

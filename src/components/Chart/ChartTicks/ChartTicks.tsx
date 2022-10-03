@@ -17,17 +17,6 @@ export const generateMiddleTicks = (
   const dateRange = lastTick - firstTick
   const distance = dateRange / (middleTicks + 1)
   return times(middleTicks).map((_, i) => {
-    console.log(
-      'firstTick',
-      new Date(firstTick),
-      'lastTick',
-      new Date(lastTick),
-      'distance',
-      distance,
-      'i',
-      i,
-      new Date(firstTick + distance)
-    )
     return firstTick + distance * (i + 1)
   })
 }
