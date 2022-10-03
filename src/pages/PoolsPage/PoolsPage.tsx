@@ -29,6 +29,7 @@ import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemov
 import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation'
 import Icon from '../../components/Icon/Icon'
 import { PoolType } from '../../components/Chart/shared'
+import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
 
 export interface TradeAssetIds {
   assetIn: string | null
@@ -73,19 +74,8 @@ export const PoolsPage = () => {
     skip: depsLoading
   })
 
-  const assets = useMemo(() => {
-    const assets = poolsData?.pools
-      ?.map((pool) => {
-        if (pool.__typename === 'XYKPool') {
-          return [pool.assetInId, pool.assetOutId]
-        } else return []
-      })
-      .reduce((assets, poolAssets) => {
-        return assets.concat(poolAssets)
-      }, [])
-      .map((id) => id)
-
-    return uniq(assets).map((id) => ({ id }))
+  const { assets, poolAssetMap } = useMemo(() => {
+    return getAssetMapsFromPools(poolsData?.pools || [])
   }, [poolsData])
 
   const xykPool =
@@ -317,6 +307,7 @@ export const PoolsPage = () => {
           onSubmit={handleSubmit}
           tradeLoading={removeLiquidityLoading || addLiquidityLoading}
           assets={assets}
+          assetMap={poolAssetMap}
           activeAccount={activeAccountData?.activeAccount}
           activeAccountTradeBalances={tradeBalances}
           activeAccountTradeBalancesLoading={

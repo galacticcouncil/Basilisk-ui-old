@@ -1,22 +1,29 @@
-import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { FieldErrors } from 'react-hook-form';
-import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider';
-import { Balance, Fee } from '../../../../generated/graphql';
-import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance';
-import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader';
-import { TradeFormFields } from '../TradeForm';
-import constants from './../../../../constants';
-import './TradeInfo.scss';
+import BigNumber from 'bignumber.js'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FieldErrors } from 'react-hook-form'
+import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider'
+import { Balance, Fee, TradeType } from '../../../../generated/graphql'
+import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance'
+import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader'
+import { TradeFormFields } from '../TradeForm'
+import constants from './../../../../constants'
+import './TradeInfo.scss'
+
+export enum Warning {
+  RepayFee,
+  LBPFee
+}
 
 export interface TradeInfoProps {
-  transactionFee?: string;
-  tradeFee?: string;
-  tradeLimit?: Balance;
-  isDirty?: boolean;
-  expectedSlippage?: BigNumber;
-  errors?: FieldErrors<TradeFormFields>;
-  paymentInfo?: string;
+  transactionFee?: string
+  tradeFee: string
+  tradeLimit?: Balance
+  isDirty?: boolean
+  expectedSlippage?: BigNumber
+  errors?: FieldErrors<TradeFormFields>
+  paymentInfo?: string
+  tradeType?: TradeType
+  warning?: Warning | null
 }
 
 export const TradeInfo = ({
@@ -25,48 +32,91 @@ export const TradeInfo = ({
   tradeLimit,
   isDirty,
   tradeFee,
-  paymentInfo,
+  tradeType,
+  warning,
+  paymentInfo
 }: TradeInfoProps) => {
-  const [displayError, setDisplayError] = useState<string | undefined>();
-  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
+  const [displayError, setDisplayError] = useState<string | undefined>()
+  const [displayWarning, setDisplayWarning] = useState<string | undefined>()
+  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit])
   const formError = useMemo(() => {
     switch (errors?.submit?.type) {
       case 'minTradeLimitOut':
-        return 'Min trade limit not reached';
+        return 'Minimal trade limit is not reached'
       case 'minTradeLimitIn':
-        return 'Min trade limit not reached';
+        return 'Minimal trade limit is not reached'
       case 'maxTradeLimitOut':
-        return 'Max trade limit reached';
+        return 'Maximal pool trade limit is reached, please split your trade'
       case 'maxTradeLimitIn':
-        return 'Max trade limit reached';
+        return 'Maximal pool trade limit is reached, please split your trade'
       case 'slippageHigherThanTolerance':
-        return 'Slippage higher than tolerance';
+        return 'The trade price is higher than your price tolerance, please split your trade or increase your trade limit in settings'
       case 'notEnoughBalanceIn':
-        return 'Insufficient balance';
+        return 'Your trade is bigger than your balance'
       case 'notEnoughFeeBalance':
-        return 'Insufficient fee balance';
+        return 'Not enough balance to pay fees'
       case 'poolDoesNotExist':
-        return 'Please select valid pool';
+        return 'This pool does not exist'
       case 'activeAccount':
-        return 'Please connect a wallet to continue';
+        return 'Please connect a wallet to continue'
     }
-    return;
-  }, [errors?.submit]);
+    return
+  }, [errors?.submit])
+
+  const formWarning = useMemo(() => {
+    switch (warning) {
+      case Warning.RepayFee:
+        return '20% Repay fee will be deducted from distributed asset until repay target is reached'
+      case Warning.LBPFee:
+        return 'LBP fee will be deducted from distributed asset'
+    }
+    return
+  }, [warning])
 
   useEffect(() => {
     if (formError) {
-      const timeoutId = setTimeout(() => setDisplayError(formError), 50);
-      return () => timeoutId && clearTimeout(timeoutId);
+      const timeoutId = setTimeout(() => setDisplayError(formError), 50)
+      return () => timeoutId && clearTimeout(timeoutId)
     }
-    const timeoutId = setTimeout(() => setDisplayError(formError), 300);
-    return () => timeoutId && clearTimeout(timeoutId);
-  }, [formError]);
+    const timeoutId = setTimeout(() => setDisplayError(formError), 300)
+    return () => timeoutId && clearTimeout(timeoutId)
+  }, [formError])
 
-  const { feePaymentAsset } = useMultiFeePaymentConversionContext();
+  useEffect(() => {
+    if (formWarning) {
+      const timeoutId = setTimeout(() => setDisplayWarning(formWarning), 50)
+      return () => timeoutId && clearTimeout(timeoutId)
+    }
+    const timeoutId = setTimeout(() => setDisplayWarning(formWarning), 300)
+    return () => timeoutId && clearTimeout(timeoutId)
+  }, [formWarning])
+
+  const { feePaymentAsset } = useMultiFeePaymentConversionContext()
 
   return (
     <div className="trade-info">
       <div className="trade-info__data">
+        <div className="data-piece">
+          <span className="data-piece__label">
+            {tradeType === TradeType.Buy ? (
+              <>Maximum sold limit</>
+            ) : (
+              <>Minimum received limit</>
+            )}
+          </span>
+          <div className="data-piece__value">
+            {tradeLimit?.balance ? (
+              <FormattedBalance
+                balance={{
+                  balance: tradeLimit?.balance,
+                  assetId: tradeLimit?.assetId
+                }}
+              />
+            ) : (
+              <>{horizontalBar}</>
+            )}
+          </div>
+        </div>
         <div className="data-piece">
           <span className="data-piece__label">Price impact </span>
           <div className="data-piece__value">
@@ -76,20 +126,10 @@ export const TradeInfo = ({
           </div>
         </div>
         <div className="data-piece">
-          <span className="data-piece__label">Trade limit </span>
-          <div className="data-piece__value">
-            {tradeLimit?.balance ? (
-              <FormattedBalance
-                balance={{
-                  balance: tradeLimit?.balance,
-                  assetId: tradeLimit?.assetId,
-                }}
-              />
-            ) : (
-              <>{horizontalBar}</>
-            )}
-          </div>
+          <span className="data-piece__label">Pool fee </span>
+          <div className="data-piece__value">{tradeFee + ' %'}</div>
         </div>
+
         <div className="data-piece">
           <span className="data-piece__label">Transaction fee </span>
           <div className="data-piece__value">
@@ -97,17 +137,13 @@ export const TradeInfo = ({
               <FormattedBalance
                 balance={{
                   balance: paymentInfo,
-                  assetId: feePaymentAsset || '0',
+                  assetId: feePaymentAsset || '0'
                 }}
               />
             ) : (
               <>{horizontalBar}</>
             )}
           </div>
-        </div>
-        <div className="data-piece">
-          <span className="data-piece__label">Trade fee </span>
-          <div className="data-piece__value">{tradeFee + ' %'}</div>
         </div>
       </div>
       {/* TODO Error message */}
@@ -117,6 +153,13 @@ export const TradeInfo = ({
       >
         {displayError}
       </div>
+      <div
+        className={
+          'validation warning ' + (displayWarning && isDirty ? 'visible' : '')
+        }
+      >
+        {displayWarning}
+      </div>
     </div>
-  );
-};
+  )
+}

@@ -28,7 +28,7 @@ import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/use
 import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
 import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
 import { PoolType } from '../../Chart/shared'
-import { TradeInfo } from './TradeInfo/TradeInfo'
+import { TradeInfo, Warning } from './TradeInfo/TradeInfo'
 import './TradeForm.scss'
 import Icon from '../../Icon/Icon'
 import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
@@ -41,6 +41,11 @@ import { estimateBuy } from '../../../hooks/pools/lbp/buy'
 import { estimateSell } from '../../../hooks/pools/lbp/sell'
 import { payment } from '@polkadot/types/interfaces/definitions'
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
+import {
+  AssetList,
+  AssetMap,
+  getSecondaryAssets
+} from '../../../misc/utils/getAssetMap'
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null
@@ -149,16 +154,17 @@ export const useModalPortalElement = ({
 }
 
 export interface TradeFormProps {
-  assets?: { id: string }[]
+  assets: AssetList
   assetIds: TradeAssetIds
   onAssetIdsChange: (assetIds: TradeAssetIds) => void
   isActiveAccountConnected?: boolean
   pool?: LbpPool
+  assetMap: AssetMap
   assetInWeight?: number
   assetInLiquidity?: string
   assetOutWeight?: number
   assetOutLiquidity?: string
-  repayTargetHit?: boolean
+  repayTargetReached?: boolean | undefined
   isPoolLoading: boolean
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void
   tradeLoading: boolean
@@ -176,7 +182,6 @@ export interface TradeFormFields {
   assetInAmount: string | null
   assetOutAmount: string | null
   submit: void
-  warnings: any
 }
 
 /**
@@ -216,9 +221,11 @@ export const TradeForm = ({
   assetInLiquidity,
   assetOutWeight,
   assetOutLiquidity,
+  repayTargetReached,
   onSubmitTrade,
   tradeLoading,
   assets,
+  assetMap,
   activeAccountTradeBalances,
   activeAccountTradeBalancesLoading,
   activeAccount
@@ -227,6 +234,7 @@ export const TradeForm = ({
   const { math, loading: mathLoading } = useMath()
   const [tradeType, setTradeType] = useState<TradeType>(TradeType.Sell)
   const [allowedSlippage, setAllowedSlippage] = useState<string | null>(null)
+  const [warning, setWarning] = useState<Warning | null>(null)
 
   const form = useForm<TradeFormFields>({
     reValidateMode: 'onChange',
@@ -270,9 +278,18 @@ export const TradeForm = ({
   }
 
   const tradeFee: string = useMemo(() => {
-    if (assetIds.assetIn === pool?.assetInId) return feeToPercentage()
-    else return feeToPercentage(pool?.fee)
-  }, [pool, tradeType, assetIds])
+    if (assetIds.assetIn === pool?.assetInId) {
+      setWarning(null)
+      return feeToPercentage()
+    } else {
+      if (
+        repayTargetReached === false &&
+        typeof repayTargetReached !== 'undefined'
+      )
+        setWarning(Warning.RepayFee)
+      return feeToPercentage(pool?.fee)
+    }
+  }, [pool, tradeType, assetIds, tradeLoading])
 
   // trigger form field validation right away
   useEffect(() => {
@@ -352,19 +369,9 @@ export const TradeForm = ({
     )
       return
 
-    // TODO: FEES
     if (tradeType !== TradeType.Buy) return
 
     if (!assetOutAmount) return setValue('assetInAmount', null)
-
-    console.log(
-      'ASSOUTAMTCHANGED',
-      assetInLiquidity,
-      assetInWeight,
-      assetOutLiquidity,
-      assetOutWeight,
-      assetOutAmount
-    )
 
     const amount = math.lbp.calculate_in_given_out(
       assetInLiquidity,
@@ -399,7 +406,8 @@ export const TradeForm = ({
   ])
 
   useEffect(() => {
-    const assetInAmount = getValues('assetInAmount')
+    if (tradeType !== TradeType.Sell) return
+
     if (
       !pool ||
       !math ||
@@ -410,8 +418,7 @@ export const TradeForm = ({
     )
       return
 
-    // TODO: FEES
-    if (tradeType !== TradeType.Sell) return
+    const assetInAmount = getValues('assetInAmount')
 
     if (!assetInAmount) return setValue('assetOutAmount', null)
 
@@ -498,7 +505,6 @@ export const TradeForm = ({
     )
       return
 
-    // TODO change to 4 cases for LBP
     switch (tradeType) {
       case TradeType.Sell:
         return {
@@ -905,7 +911,14 @@ export const TradeForm = ({
               assetInputName="assetIn"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetInAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetOut') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetOut') || '',
+                assetMap || [],
+                assets
+              )}
               maxBalanceLoading={maxAmountInLoading}
             />
             <div className="balance-info balance-out-info">
@@ -1008,7 +1021,14 @@ export const TradeForm = ({
               assetInputName="assetOut"
               modalContainerRef={modalContainerRef}
               balanceInputRef={assetOutAmountInputRef}
-              assets={assets}
+              primaryAssets={
+                assetMap ? assetMap[getValues('assetIn') || ''] : []
+              }
+              secondaryAssets={getSecondaryAssets(
+                getValues('assetIn') || '',
+                assetMap || [],
+                assets
+              )}
             />{' '}
             <div className="balance-info balance-out-info">
               <div className="balance-info-type">You get</div>
@@ -1044,6 +1064,8 @@ export const TradeForm = ({
             tradeFee={tradeFee}
             expectedSlippage={slippage}
             errors={errors}
+            tradeType={tradeType}
+            warning={warning}
             isDirty={isDirty}
             paymentInfo={paymentInfo}
           />
@@ -1077,14 +1099,29 @@ export const TradeForm = ({
                 },
                 maxTradeLimitOut: () => {
                   const assetOutAmount = getValues('assetOutAmount')
+                  const assetInAmount = getValues('assetInAmount')
                   if (!assetOutAmount || assetOutAmount === '0') return false
-                  return new BigNumber(assetOutLiquidity || '0')
-                    .dividedBy(3)
-                    .gte(assetOutAmount)
+                  return (
+                    new BigNumber(assetOutLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetOutAmount) &&
+                    new BigNumber(assetInLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetInAmount || '0')
+                  )
                 },
                 maxTradeLimitIn: () => {
+                  const assetOutAmount = getValues('assetOutAmount')
                   const assetInAmount = getValues('assetInAmount')
-                  return minTradeLimitIn(assetInAmount)
+                  if (!assetOutAmount || assetOutAmount === '0') return false
+                  return (
+                    new BigNumber(assetOutLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetOutAmount) &&
+                    new BigNumber(assetInLiquidity || '0')
+                      .dividedBy(3)
+                      .gte(assetInAmount || '0')
+                  )
                 },
                 slippageHigherThanTolerance: () => {
                   if (!allowedSlippage) return false

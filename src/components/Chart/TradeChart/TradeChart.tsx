@@ -91,6 +91,8 @@ export const TradeChart = ({
     }
   })
 
+  const [predictionToggled, setPrediction] = useState(true)
+
   const resetDisplayData = useCallback(() => {
     setDisplayData({
       balance: last(primaryDataset)?.yAsString,
@@ -175,18 +177,14 @@ export const TradeChart = ({
       balance: first(primaryDataset)?.yAsString,
       usdBalance: first(primaryDataset)?.yAsString
     })
-  }, [primaryDataset])
+  }, [primaryDataset, secondaryDataset])
 
   const handleTooltip = useCallback(
     (tooltipData: TooltipData | undefined) => {
       setTooltipData(tooltipData)
 
       if (tooltipData?.visible) {
-        const datasets = [primaryDataset]
-        const allData = datasets.reduce(
-          (allData, dataset) => allData.concat(dataset),
-          []
-        )
+        const allData = primaryDataset.concat(secondaryDataset)
 
         const displayDataTooltip = find(allData, {
           x: tooltipData?.data.x,
@@ -208,7 +206,13 @@ export const TradeChart = ({
         resetDisplayData()
       }
     },
-    [setTooltipData, primaryDataset, displayData, referenceData]
+    [
+      setTooltipData,
+      primaryDataset,
+      secondaryDataset,
+      displayData,
+      referenceData
+    ]
   )
 
   const availableChartTypes = useMemo(
@@ -226,6 +230,8 @@ export const TradeChart = ({
     []
   )
 
+  const allData = primaryDataset.concat(secondaryDataset)
+
   return (
     <div className="trade-chart">
       <ChartHeader
@@ -233,8 +239,10 @@ export const TradeChart = ({
         poolType={poolType}
         granularity={granularity}
         chartType={chartType}
+        predictionToggled={predictionToggled}
         lbpStatus={lbpStatus}
         lbpChartProps={lbpChartProps}
+        onChartPredictionChange={setPrediction}
         onChartTypeChange={onChartTypeChange}
         onGranularityChange={onGranularityChange}
         displayData={displayData}
@@ -250,7 +258,7 @@ export const TradeChart = ({
           <div className="trade-chart__chart-wrapper__chart-jail">
             <LineChart
               primaryDataset={primaryDataset}
-              secondaryDataset={secondaryDataset}
+              secondaryDataset={predictionToggled ? secondaryDataset : []}
               tradeChartType={
                 poolType === PoolType.XYK
                   ? TradeChartType.XYK
@@ -289,13 +297,15 @@ export const TradeChart = ({
           </div>
 
           <ChartTicks
-            datasets={[primaryDataset]}
+            dataset={predictionToggled ? allData : primaryDataset}
             granularity={ChartGranularity.H1}
           />
+
           <ChartTicks
-            datasets={[primaryDataset]}
+            dataset={predictionToggled ? allData : primaryDataset}
             granularity={ChartGranularity.H24}
           />
+
           <hr className="divider"></hr>
           <div className="legend">
             <div className="legend__item ">
@@ -324,6 +334,10 @@ export const TradeChart = ({
       ) : lbpStatus === LbpStatus.NOT_STARTED ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.NotStarted} />
+        </div>
+      ) : lbpStatus === LbpStatus.NOT_EXISTS ? (
+        <div className="trade-chart__error-wrapper">
+          <TradeChartError type={TradeChartErrorType.NotExists} />
         </div>
       ) : !primaryDataset?.length ? (
         <div className="trade-chart__error-wrapper">

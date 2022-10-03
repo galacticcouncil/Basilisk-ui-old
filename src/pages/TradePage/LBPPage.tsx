@@ -4,10 +4,13 @@ import moment from 'moment'
 import { usePageVisibility } from 'react-page-visibility'
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm'
-import { Balance, LbpPool } from '../../generated/graphql'
+import { Balance, LbpAssetWeights, LbpPool } from '../../generated/graphql'
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
-import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
-import { useMath } from '../../hooks/math/useMath'
+import {
+  HistoricalBalance,
+  useGetHistoricalBalancesQuery
+} from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
+import { HydraDxMath, useMath } from '../../hooks/math/useMath'
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
@@ -37,13 +40,15 @@ import { useLastBlockContext } from '../../hooks/lastBlock/useSubscribeNewBlockN
 import { blockToTime, timeToBlock } from '../../misc/utils/blockTime'
 import { calculateSpotPriceFromPool } from '../../hooks/pools/lbp/calculateSpotPrice'
 import { calculateCurrentAssetWeight } from '../../hooks/pools/lbp/calculateCurrentAssetWeight'
+import { DataPoint, Dataset } from '../../components/Chart/LineChart/LineChart'
+import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
 
 export interface TradeAssetIds {
   assetIn: string | null
   assetOut: string | null
 }
 
-export interface TradeChartProps {
+export interface EnhancedTradeChartProps {
   pool?: LbpPool
   isPoolLoading?: boolean
   assetIds: TradeAssetIds
@@ -54,18 +59,19 @@ export interface TradeChartProps {
 }
 
 export enum LbpStatus {
+  NOT_EXISTS,
   NOT_INITIALIZED,
   NOT_STARTED,
   IN_PROGRESS,
   ENDED
 }
 
-export const TradeChart = ({
+export const EnhancedTradeChartProps = ({
   pool,
   assetIds,
   spotPrice,
   isPoolLoading
-}: TradeChartProps) => {
+}: EnhancedTradeChartProps) => {
   const isVisible = usePageVisibility()
   const lastBlockData = useLastBlockContext()
   const endBlock = pool?.endBlock || 0
@@ -76,9 +82,97 @@ export const TradeChart = ({
     startBlock,
     endBlock
   }
+
+  const keepRecords = 150
+
+  const { math } = useMath()
+
+  const getMissingBlocks = (
+    startBlock: number,
+    endBlock: number,
+    assetABalance: string,
+    assetBBalance: string
+  ): HistoricalBalance[] => {
+    const missingBlocksAmount = endBlock - startBlock
+    const divisionMultiplier =
+      missingBlocksAmount < keepRecords
+        ? 1
+        : Math.floor(missingBlocksAmount / keepRecords)
+
+    const missingBlocks: HistoricalBalance[] = []
+
+    for (let i = startBlock; i <= endBlock; i++) {
+      if (i % divisionMultiplier === 0) {
+        missingBlocks.push({
+          assetABalance,
+          assetBBalance,
+          relayChainBlockHeight: i
+        })
+      }
+    }
+    console.log(
+      'Calculating missing blocks from',
+      startBlock,
+      'to',
+      endBlock,
+      'amount',
+      missingBlocksAmount,
+      missingBlocks
+    )
+    return missingBlocks
+  }
+
+  const getPriceForBlocks = (
+    math: HydraDxMath,
+    pool: LbpPool,
+    relayChainBlockHeight: number,
+    assetABalance: string,
+    assetBBalance: string
+  ) => {
+    return {
+      x: blockToTime(relayChainBlockHeight, {
+        height: currentBlock,
+        date: currentBlockTime
+      }),
+      ...(() => {
+        const currentAssetAWeight = calculateCurrentAssetWeight(
+          math,
+          { startBlock, endBlock },
+          pool.assetAWeights,
+          relayChainBlockHeight.toString()
+        )
+        const currentAssetBWeight = calculateCurrentAssetWeight(
+          math,
+          { startBlock, endBlock },
+          pool.assetBWeights,
+          relayChainBlockHeight.toString()
+        )
+        const spotPrice = {
+          outIn: '0',
+          inOut: calculateSpotPrice(
+            math,
+            assetBBalance,
+            assetABalance,
+            currentAssetBWeight.toString(),
+            currentAssetAWeight.toString()
+          )
+        }
+
+        const y = new BigNumber(fromPrecision12(spotPrice.inOut || '0'))
+
+        return {
+          y: y.toNumber(),
+          yAsString: fromPrecision12(spotPrice.inOut || '0')
+        }
+      })()
+    }
+  }
+
   let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
 
-  if (
+  if (!pool?.id) {
+    lbpStatus = LbpStatus.NOT_EXISTS
+  } else if (
     !pool?.startBlock ||
     !pool?.endBlock ||
     !lastBlockData?.relaychainBlockNumber
@@ -128,7 +222,6 @@ export const TradeChart = ({
 
   console.log('fetching lbp chart data', startBlock, endOrNow)
 
-  const { math } = useMath()
   const {
     data: historicalBalancesData,
     networkStatus: historicalBalancesNetworkStatus
@@ -136,7 +229,6 @@ export const TradeChart = ({
     {
       from: startBlock,
       to: endOrNow,
-      quantity: 10000,
       poolId: pool?.id || ''
     },
     {
@@ -151,7 +243,19 @@ export const TradeChart = ({
     [historicalBalancesNetworkStatus]
   )
 
-  const [dataset, setDataset] = useState<Array<any>>()
+  const [{ primaryDataset, secondaryDataset }, setDataset] = useState<{
+    primaryDataset: Dataset
+    secondaryDataset: Dataset
+    lastRelayBlock: HistoricalBalance
+  }>({
+    primaryDataset: [],
+    secondaryDataset: [],
+    lastRelayBlock: {
+      assetABalance: '0',
+      assetBBalance: '0',
+      relayChainBlockHeight: 0
+    }
+  })
   const [datasetLoading, setDatasetLoading] = useState(true)
   const [datasetRefreshing, setDatasetRefreshing] = useState(false)
 
@@ -160,27 +264,23 @@ export const TradeChart = ({
 
     if (historicalBalancesLoading) return
 
-    console.log('LOADED:', historicalBalancesData?.historicalBalances?.length)
-    const filteredDataset = historicalBalancesData?.historicalBalances?.filter(
-      (_b, i) => {
-        if (i % 5 === 0) return true
-        return true
-      }
-    )
+    const historicalBalanceData =
+      historicalBalancesData?.historicalBalances || []
 
-    console.log('filtered', filteredDataset)
+    const divisionMultiplier =
+      historicalBalanceData.length < keepRecords
+        ? 1
+        : Math.ceil(historicalBalanceData.length / keepRecords)
+
+    const filteredDataset = historicalBalanceData.filter((_b, i) => {
+      if (i % divisionMultiplier === 0) return true
+      return false
+    })
 
     console.log(
-      'DEBUG:currentBlock-currentBlockTime-startBlock-endOrNow-endBlock-calcBlock',
-      currentBlock,
-      currentBlockTime,
-      startBlock,
-      endOrNow,
-      endBlock,
-      blockToTime(startBlock, {
-        height: currentBlock,
-        date: currentBlockTime
-      })
+      'historicalBalancesLength:',
+      historicalBalanceData.length,
+      filteredDataset.length
     )
 
     if (
@@ -190,78 +290,77 @@ export const TradeChart = ({
       !spotPrice ||
       !pool
     ) {
-      setDataset([])
+      setDataset({
+        primaryDataset: [],
+        secondaryDataset: [],
+        lastRelayBlock: {
+          assetABalance: '0',
+          assetBBalance: '0',
+          relayChainBlockHeight: 0
+        }
+      })
       setDatasetLoading(false)
       return
     }
-    const dataset =
+
+    const newPrimaryDataset =
       filteredDataset?.map(
-        ({ relayChainBlockHeight, assetABalance, assetBBalance }) => {
-          return {
-            x: blockToTime(relayChainBlockHeight, {
-              height: currentBlock,
-              date: currentBlockTime
-            }),
-            ...(() => {
-              const currentAssetAWeight = calculateCurrentAssetWeight(
-                math,
-                { startBlock, endBlock },
-                pool.assetAWeights,
-                relayChainBlockHeight.toString()
-              )
-              const currentAssetBWeight = calculateCurrentAssetWeight(
-                math,
-                { startBlock, endBlock },
-                pool.assetBWeights,
-                relayChainBlockHeight.toString()
-              )
-              const spotPrice = {
-                outIn: '0',
-                inOut: calculateSpotPrice(
-                  math,
-                  assetBBalance,
-                  assetABalance,
-                  currentAssetBWeight.toString(),
-                  currentAssetAWeight.toString()
-                )
-              }
-
-              const y = new BigNumber(fromPrecision12(spotPrice.inOut || '0'))
-
-              console.log(
-                'spotPrice',
-                assetABalance,
-                assetBBalance,
-                y.toNumber()
-              )
-
-              return {
-                y: y.toNumber(),
-                yAsString: fromPrecision12(spotPrice.inOut || '0')
-              }
-            })()
-          }
+        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+          return getPriceForBlocks(
+            math,
+            pool,
+            relayChainBlockHeight,
+            assetABalance,
+            assetBBalance
+          )
         }
       ) || []
 
-    const sortedDataset = orderBy(dataset, ['x'], ['asc'])
+    const lastRelayBlock = (filteredDataset.length &&
+      filteredDataset[filteredDataset.length - 1]) || {
+      assetABalance: '0',
+      assetBBalance: '0',
+      relayChainBlockHeight: 0
+    }
 
-    console.log('finalDataset', sortedDataset)
+    const missingBlocks = getMissingBlocks(
+      lastRelayBlock.relayChainBlockHeight,
+      endBlock,
+      lastRelayBlock.assetABalance,
+      lastRelayBlock.assetBBalance
+    )
 
-    setDataset(sortedDataset)
+    const secondaryDataset =
+      missingBlocks.map(
+        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+          return getPriceForBlocks(
+            math,
+            pool,
+            relayChainBlockHeight,
+            assetABalance,
+            assetBBalance
+          )
+        }
+      ) || []
+
+    // We're sorting in query (what is faster?)
+    const sortedDataset = primaryDataset.concat(secondaryDataset)
+
+    console.debug(
+      'finalDataset',
+      sortedDataset,
+      newPrimaryDataset,
+      secondaryDataset
+    )
+
+    setDataset({
+      primaryDataset: newPrimaryDataset,
+      secondaryDataset,
+      lastRelayBlock
+    })
     setDatasetRefreshing(false)
     setDatasetLoading(false)
-  }, [
-    pool,
-    currentBlock,
-    currentBlockTime,
-    endOrNow,
-    endBlock,
-    startBlock,
-    historicalBalancesLoading,
-    historicalBalancesData,
-    lastBlockData
-  ])
+  }, [historicalBalancesLoading, historicalBalancesData, assetIds])
 
   useEffect(() => {
     const lastRecordOutdatedBy = 60000
@@ -273,8 +372,10 @@ export const TradeChart = ({
         isVisible &&
         !historicalBalancesLoading &&
         !datasetRefreshing &&
-        (!dataset?.length ||
-          last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
+        primaryDataset &&
+        primaryDataset.length &&
+        primaryDataset[primaryDataset.length - 1].x <=
+          new Date().getTime() - lastRecordOutdatedBy
       ) {
         setDatasetRefreshing(true)
       }
@@ -288,7 +389,7 @@ export const TradeChart = ({
 
     return () => clearInterval(refetchData)
   }, [
-    dataset,
+    primaryDataset,
     isVisible,
     startBlock,
     endOrNow,
@@ -298,31 +399,74 @@ export const TradeChart = ({
   ])
 
   useEffect(() => {
-    setDataset((dataset) => {
-      if (!spotPrice || !dataset || !currentBlock || !currentBlockTime)
-        return dataset
+    setDataset(({ primaryDataset, secondaryDataset, lastRelayBlock }) => {
+      if (
+        !spotPrice ||
+        !primaryDataset ||
+        !currentBlock ||
+        !currentBlockTime ||
+        !math ||
+        !pool
+      )
+        return { primaryDataset, secondaryDataset, lastRelayBlock }
 
-      if (lbpStatus === LbpStatus.NOT_INITIALIZED) return []
+      if (
+        lbpStatus === LbpStatus.NOT_INITIALIZED ||
+        lbpStatus === LbpStatus.NOT_EXISTS
+      )
+        return { primaryDataset: [], secondaryDataset: [], lastRelayBlock }
 
       // TODO: Secondary
-      if (lbpStatus === LbpStatus.NOT_STARTED) return []
+      if (lbpStatus === LbpStatus.NOT_STARTED)
+        return { primaryDataset: [], secondaryDataset, lastRelayBlock }
 
       // TODO: Ended
-      if (lbpStatus === LbpStatus.ENDED) return dataset
+      if (lbpStatus === LbpStatus.ENDED)
+        return { primaryDataset, secondaryDataset: [], lastRelayBlock }
 
-      return [
-        ...dataset,
-        {
-          x: blockToTime(endOrNow, {
-            height: currentBlock,
-            date: currentBlockTime
-          }),
-          y: new BigNumber(fromPrecision12(spotPrice.inOut || '0')).toNumber(),
-          yAsString: fromPrecision12(spotPrice.inOut || '0')
+      const accumulating = assetIds.assetIn === pool?.assetInId
+
+      const newDataPoint: DataPoint = {
+        x: blockToTime(endOrNow, {
+          height: currentBlock,
+          date: currentBlockTime
+        }),
+        y: new BigNumber(
+          fromPrecision12(
+            (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+          )
+        ).toNumber(),
+        yAsString: fromPrecision12(
+          (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+        )
+      }
+
+      const missingBlocks = getMissingBlocks(
+        lastRelayBlock.relayChainBlockHeight,
+        endBlock,
+        lastRelayBlock.assetABalance,
+        lastRelayBlock.assetBBalance
+      )
+
+      const newSecondaryDataset = missingBlocks.map(
+        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+          return getPriceForBlocks(
+            math,
+            pool,
+            relayChainBlockHeight,
+            assetABalance,
+            assetBBalance
+          )
         }
-      ]
+      )
+
+      return {
+        primaryDataset: [...primaryDataset, newDataPoint],
+        secondaryDataset: newSecondaryDataset,
+        lastRelayBlock
+      }
     })
-  }, [pool, currentBlock, currentBlockTime, endOrNow, lbpStatus])
+  }, [currentBlock, lbpStatus, assetIds])
 
   const _isPoolLoading = useMemo(() => {
     if (!isPoolLoading || datasetRefreshing) return false
@@ -347,8 +491,8 @@ export const TradeChart = ({
       poolType={PoolType.LBP}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
-      primaryDataset={dataset as any}
-      secondaryDataset={[]}
+      primaryDataset={primaryDataset}
+      secondaryDataset={secondaryDataset}
       onChartTypeChange={() => {}}
       onGranularityChange={() => {}}
     />
@@ -389,20 +533,10 @@ export const LBPPage = () => {
     networkStatus: poolsNetworkStatus
   } = useGetPoolsQueryProvider()
 
-  const assets = useMemo(() => {
-    let assets = poolsData?.pools
-      ?.map((pool) => {
-        if (pool.__typename === 'LBPPool') {
-          return [pool.assetInId, pool.assetOutId]
-        } else return []
-      })
-      .reduce((assets, poolAssets) => {
-        return assets.concat(poolAssets)
-      }, [])
-      .map((id) => id)
-
-    return uniq(assets).map((id) => ({ id }))
-  }, [poolsData])
+  const { assets, poolAssetMap } = useMemo(
+    () => getAssetMapsFromPools(poolsData?.pools || [], PoolType.LBP),
+    [poolsData]
+  )
 
   const lbpPool =
     poolData?.pool && poolData.pool.__typename === 'LBPPool'
@@ -447,6 +581,10 @@ export const LBPPage = () => {
   useEffect(() => {
     if (tradeLoading) setNotification('pending')
   }, [tradeLoading])
+
+  useEffect(() => {
+    if (tradeError) setNotification('failed')
+  }, [tradeError])
 
   const handleSubmitTrade = useCallback(
     (variables) => {
@@ -496,6 +634,10 @@ export const LBPPage = () => {
     }
   })
 
+  const repayTargetReached = useMemo(() => {
+    return pool ? (pool.repayTargetReached as boolean) : undefined
+  }, [pool])
+
   const tradeBalances = useMemo(() => {
     const balances = activeAccountTradeBalancesData?.activeAccount?.balances
 
@@ -527,7 +669,7 @@ export const LBPPage = () => {
       </div>
       {/*NOTIF*/}
       <div className="trade-page">
-        <TradeChart
+        <EnhancedTradeChartProps
           pool={pool}
           assetIds={assetIds}
           spotPrice={{
@@ -577,11 +719,12 @@ export const LBPPage = () => {
             poolNetworkStatus === NetworkStatus.setVariables ||
             depsLoading
           }
+          assetMap={poolAssetMap}
           assetInLiquidity={assetInLiquidity}
           assetOutLiquidity={assetOutLiquidity}
           assetInWeight={assetInWeight?.current}
           assetOutWeight={assetOutWeight?.current}
-          repayTargetHit={false}
+          repayTargetReached={repayTargetReached}
           onSubmitTrade={handleSubmitTrade}
           tradeLoading={tradeLoading}
           assets={assets}

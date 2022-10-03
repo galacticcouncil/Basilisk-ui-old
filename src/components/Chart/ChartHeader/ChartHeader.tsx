@@ -15,6 +15,7 @@ import { toPrecision12 } from '../../../hooks/math/useToPrecision'
 import { percentageChange } from '../../../hooks/math/usePercentageChange'
 import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 import { LbpChartProps } from '../TradeChart/TradeChart'
+import BigNumber from 'bignumber.js'
 
 export const horizontalBar = '―'
 
@@ -38,6 +39,8 @@ export const ChartHeader = ({
   isUserBrowsingGraph,
   availableChartTypes,
   onChartTypeChange,
+  onChartPredictionChange,
+  predictionToggled,
   availableGranularity,
   onGranularityChange,
   dataTrend
@@ -54,6 +57,8 @@ export const ChartHeader = ({
   chartType: ChartType
   availableChartTypes: ChartType[]
   availableGranularity: ChartGranularity[]
+  predictionToggled: boolean
+  onChartPredictionChange: (prediction: boolean) => void
   onChartTypeChange: (chartType: ChartType) => void
   onGranularityChange: (granularity: ChartGranularity) => void
 }) => {
@@ -136,14 +141,12 @@ export const ChartHeader = ({
             {/* TODO: add guards for symbol length */}
             {/* TODO: add abbreviations for spot price */}
             {displayData.balance ? (
-              <>
-                <FormattedBalance
-                  balance={{
-                    balance: `${toPrecision12(`${displayData.balance}`)}`,
-                    assetId: displayData.asset.id || ''
-                  }}
-                />{' '}
-              </>
+              <FormattedBalance
+                balance={{
+                  balance: `${toPrecision12(displayData.balance)}`,
+                  assetId: displayData.asset.id || ''
+                }}
+              />
             ) : (
               `${horizontalBar} `
             )}
@@ -174,6 +177,16 @@ export const ChartHeader = ({
               Current
             </div>
             Price
+          </div>
+
+          <div
+            className={classNames({
+              'chart-header__data__prediction-toggle': true,
+              hidden: poolType !== PoolType.LBP
+            })}
+            onClick={(_) => onChartPredictionChange(!predictionToggled)}
+          >
+            {predictionToggled ? <>Disable</> : <>Enable</>} Prediction
           </div>
         </div>
       </div>

@@ -5,22 +5,32 @@ export enum TradeChartErrorType {
   Loading,
   NotInitialized,
   NotStarted,
-  Unexpected
+  Unexpected,
+  NotExists
 }
 export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
   return (
     <div className="trade-chart-error">
       {(() => {
         switch (type) {
+          case TradeChartErrorType.NotExists:
+            return (
+              <div className="row">
+                <div className="large">
+                  This pool doesn't exist <br />
+                  please select different one
+                </div>
+                <div className="small">Sssory</div>
+              </div>
+            )
           case TradeChartErrorType.InvalidPair:
             return (
               <div className="row">
                 <div className="large">
-                  Chart unavailable, please select <br /> a valid asset pair
+                  Chart is not available <br />
+                  for this pair
                 </div>
-                <div className="small">
-                  Please select different asset combination.
-                </div>
+                <div className="small">Sssory</div>
               </div>
             )
           case TradeChartErrorType.NotStarted:
@@ -46,10 +56,10 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
               <div className="row">
                 <div className="large">
                   Loading chart data,
-                  <br /> this shouldn't take too long.
+                  <br /> this shouldn't take too long
                 </div>
 
-                <div className="small">Thanks for being a patient snek.</div>
+                <div className="small">Thanks for being a patient snek</div>
               </div>
             )
           default:

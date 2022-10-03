@@ -9,6 +9,9 @@
 
 .trade-page {
   display: flex;
+  flex-basis: 450px;
+  max-width: 1050px;
+  flex-grow: 1;
   flex-wrap: wrap-reverse;
   justify-content: center;
   align-items: center;

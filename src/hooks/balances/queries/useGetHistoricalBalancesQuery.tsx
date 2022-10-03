@@ -18,7 +18,6 @@ export interface GetHistoricalBalancesQueryResponse {
 export interface GetHistoricalBalancesQueryVariables {
   from: number
   to: number
-  quantity: number
   poolId: string
 }
 

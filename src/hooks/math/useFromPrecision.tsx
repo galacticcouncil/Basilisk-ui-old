@@ -8,7 +8,7 @@ export const precision18 = new BigNumber(10).pow(PRECISION_18)
 
 export const fromPrecision12 = (amount: string | BigNumber) =>
   parseFloat(
-    new BigNumber(amount).dividedBy(precision12).toFixed(PRECISION_12)
+    new BigNumber(amount).dividedBy(precision12).toFixed(12)
   ).toString()
 export const useFromPrecision12 = (amount: string | BigNumber) =>
   useMemo(() => fromPrecision12(amount), [amount])
