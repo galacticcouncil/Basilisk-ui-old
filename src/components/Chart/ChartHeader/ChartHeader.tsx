@@ -186,7 +186,7 @@ export const ChartHeader = ({
             })}
             onClick={(_) => onChartPredictionChange(!predictionToggled)}
           >
-            {predictionToggled ? <>Disable</> : <>Enable</>} Prediction
+            {predictionToggled ? <>Hide</> : <>Show</>} Future
           </div>
         </div>
       </div>

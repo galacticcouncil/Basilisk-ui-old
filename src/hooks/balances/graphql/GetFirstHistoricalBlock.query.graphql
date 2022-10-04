@@ -1,0 +1,8 @@
+query GetFirstHistoricalBlock($blockHeight: Int!, $poolId: String!) {
+  firstHistoricalParachainBlock :historicalPoolPriceData(where: {
+    relayChainBlockHeight_gte: $blockHeight, id_contains:$poolId
+  }, orderBy: relayChainBlockHeight_ASC, limit: 1) {
+    relayChainBlockHeight
+    paraChainBlockHeight
+  }
+}

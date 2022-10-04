@@ -46,8 +46,6 @@ export const getAssetMapsFromPools = (
 
   const uniqueAssets = uniq(assets)
 
-  console.warn('poolAssetMap', poolAssetMap, 'assets', uniqueAssets)
-
   return { assets: uniqueAssets, poolAssetMap }
 }
 

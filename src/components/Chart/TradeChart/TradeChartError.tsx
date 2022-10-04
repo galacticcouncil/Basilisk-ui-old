@@ -27,7 +27,7 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
             return (
               <div className="row">
                 <div className="large">
-                  Chart is not available <br />
+                  Historical data is not available <br />
                   for this pair
                 </div>
                 <div className="small">Sssory</div>

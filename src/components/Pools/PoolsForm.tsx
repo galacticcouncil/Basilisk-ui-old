@@ -353,7 +353,7 @@ export const PoolsForm = ({
           assetInLiquidity,
           assetOutLiquidity,
           shareAssetAmount,
-          pool.totalLiquidity
+          pool.totalLiquidity || '0'
         )
 
         console.log('calculateAssetIn1', {
@@ -434,7 +434,7 @@ export const PoolsForm = ({
           assetInLiquidity,
           assetOutLiquidity,
           shareAssetAmount,
-          pool.totalLiquidity
+          pool.totalLiquidity || '0'
         )
 
         // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
@@ -477,7 +477,7 @@ export const PoolsForm = ({
     const shareAmount = math?.xyk.calculate_shares(
       assetInLiquidity,
       assetInAmount,
-      pool?.totalLiquidity
+      pool?.totalLiquidity || '0'
     )
     shareAmount && setValue('shareAssetAmount', shareAmount)
     // assetIn > assetOut

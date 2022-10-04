@@ -226,13 +226,6 @@ export const PoolsPage = () => {
       )
     }
 
-    // spotPrice = {
-    //   outIn: new BigNumber(spotPrice.outIn!).dividedBy(1000).toFixed(3),
-    //   inOut: new BigNumber(spotPrice.inOut!).dividedBy(1000).toFixed(3)
-    // }
-
-    console.log('limit spotPrice', spotPrice)
-
     return spotPrice
   }, [assetOutLiquidity, assetInLiquidity, math])
 

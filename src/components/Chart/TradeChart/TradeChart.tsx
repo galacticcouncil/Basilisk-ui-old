@@ -322,7 +322,6 @@ export const TradeChart = ({
         <></>
       )}
 
-      {console.log('graph loading', isPoolLoading, primaryDataset?.length)}
       {isPoolLoading ? (
         <div className="trade-chart__error-wrapper">
           <TradeChartError type={TradeChartErrorType.Loading} />

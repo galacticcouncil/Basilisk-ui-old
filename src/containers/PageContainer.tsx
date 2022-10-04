@@ -18,7 +18,6 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
 
   useMemo(() => {
     setLastBlockUpdate(moment().valueOf())
-    console.log('lastBlockData', lastBlockData)
   }, [lastBlockData?.lastBlock?.parachainBlockNumber])
 
   useEffect(() => {

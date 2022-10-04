@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 
 export const blockTimeKusama = 6000 // 6s
+export const blockTimeParachain = 12000 // 12s
 export const genesisKusama = new Date('2019-11-28 17:27:48 UTC')
 
 /**

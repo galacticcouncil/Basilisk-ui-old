@@ -194,5 +194,5 @@ export type XykPool = {
   balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
   shareTokenId: Scalars['String'];
-  totalLiquidity: Scalars['String'];
+  totalLiquidity?: Maybe<Scalars['String']>;
 };
