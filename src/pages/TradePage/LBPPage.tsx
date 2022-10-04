@@ -231,8 +231,8 @@ export const EnhancedTradeChart = ({
         console.log('got first and last historical blocks', firstBlockData)
 
         if (
-          !firstBlockData?.firstHistoricalParachainBlock ||
-          !lastBlockData?.lastHistoricalParachainBlock
+          !firstBlockData?.firstHistoricalParachainBlock[0] ||
+          !lastBlockData?.lastHistoricalParachainBlock[0]
         ) {
           setLastHistoricalDataRefetch(Date.now())
           setHistoricalBalancesLoading(false)
@@ -467,7 +467,11 @@ export const EnhancedTradeChart = ({
       )
     }
 
-    if (newDataPoint.x === primaryDataset[primaryDataset.length - 1].x) return
+    if (
+      primaryDataset.length &&
+      newDataPoint.x === primaryDataset[primaryDataset.length - 1].x
+    )
+      return
 
     const missingBlocks = getMissingBlocks(
       lastRelayBlock.relayChainBlockHeight,
@@ -537,8 +541,6 @@ export const LBPPage = () => {
   const [notification, setNotification] = useState<
     'standby' | 'pending' | 'success' | 'failed'
   >('standby')
-
-  const lastBlockData = useLastBlockContext()
 
   const depsLoading = useLoading()
   const {

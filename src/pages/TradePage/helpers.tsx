@@ -22,10 +22,15 @@ export const getMissingIndexes = (
       : Math.floor(missingBlocksAmount / keepRecords)
 
   for (let i = startBlock; i < endBlock; i++) {
-    if (i % divisionMultiplier === 0 || i === startBlock) {
+    if (
+      i % divisionMultiplier === 0 ||
+      (i === startBlock && i % divisionMultiplier !== 0) ||
+      (i === endBlock && i % divisionMultiplier !== 0)
+    ) {
       missingIndexes.push(poolId + '-' + i)
     }
   }
+
   console.log('missingIndexes', missingIndexes)
   return missingIndexes
 }
