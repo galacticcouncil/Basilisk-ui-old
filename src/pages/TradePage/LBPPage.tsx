@@ -467,6 +467,8 @@ export const EnhancedTradeChart = ({
       )
     }
 
+    if (newDataPoint.x === primaryDataset[primaryDataset.length - 1].x) return
+
     const missingBlocks = getMissingBlocks(
       lastRelayBlock.relayChainBlockHeight,
       endBlock,
