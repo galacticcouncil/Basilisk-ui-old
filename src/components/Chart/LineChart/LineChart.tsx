@@ -4,7 +4,6 @@ import {
   ChartData,
   ChartDataset,
   ChartOptions,
-  Tooltip,
   TooltipModel
 } from 'chart.js'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -131,6 +130,7 @@ export const useFormatDataset = ({
         data: dataset,
         pointRadius: 0,
         borderWidth: 2,
+
         borderDash: () => {
           if (!isPrimaryDataset(label)) return [3, 4]
           else return []
@@ -221,21 +221,34 @@ export const LineChart = ({
     tradeChartType
   })
 
-  const formattedPrimaryDataset = formatDataset({
-    dataset: primaryDataset,
-    label: primaryDatasetLabel
-  })
+  const formattedPrimaryDataset = useMemo(
+    () =>
+      formatDataset({
+        dataset: primaryDataset,
+        label: primaryDatasetLabel
+      }),
+    [primaryDataset]
+  )
 
-  const formattedSecondaryDataset = formatDataset({
-    dataset: secondaryDataset,
-    label: secondaryDatasetLabel
-  })
+  const formattedSecondaryDataset = useMemo(
+    () =>
+      formatDataset({
+        dataset: secondaryDataset,
+        label: secondaryDatasetLabel
+      }),
+    [secondaryDataset]
+  )
 
   const chartData = useMemo<ChartData<'line', DataPoint[]>>(() => {
     const datasets = formattedSecondaryDataset
       ? [formattedPrimaryDataset, formattedSecondaryDataset]
       : [formattedPrimaryDataset]
 
+    console.log(
+      'updating chartData',
+      formattedPrimaryDataset,
+      formattedSecondaryDataset
+    )
     return {
       labels: [],
       datasets
@@ -268,20 +281,14 @@ export const LineChart = ({
       yAxisBounds.yAxisMax = largestDatapoint + dataScale * 0.01
     }
     return yAxisBounds
-  }, [primaryDataset, secondaryDataset])
-
-  const xAxisBounds = useMemo(() => {
-    const xAxisMin = primaryDataset[0].x
-    const xAxisMax = primaryDataset[primaryDataset.length - 1].x
-    return { xAxisMin, xAxisMax }
-  }, [primaryDataset])
+  }, [formattedPrimaryDataset, formattedSecondaryDataset])
 
   const chartOptions = useMemo<ChartOptions>(() => {
     return {
       responsive: true,
       maintainAspectRatio: false,
       borderCapStyle: 'round',
-      cubicInterpolationMode: 'monotone',
+      cubicInterpolationMode: 'default',
       spanGaps: true,
       borderColor: function (context) {
         const chart = context.chart
@@ -296,6 +303,9 @@ export const LineChart = ({
       //bezierCurve: true,
       datasets: {
         line: {
+          tension: 0.1,
+          fill: true,
+          cubicInterpolationMode: 'default',
           pointRadius: 0
         }
       },
@@ -318,10 +328,7 @@ export const LineChart = ({
           time: {
             tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
             displayFormats: { hour: 'HH:mm', day: 'HH:mm', minute: 'HH:mm' }
-          },
-          //offset: true,
-          min: xAxisBounds.xAxisMin,
-          to: xAxisBounds.xAxisMax
+          }
         },
         yAxis: {
           position: 'right',

@@ -1,16 +1,18 @@
-import { NetworkStatus, ApolloClient, useQuery } from '@apollo/client'
-import { find, uniq, last, orderBy } from 'lodash'
+import { NetworkStatus } from '@apollo/client'
+import { find } from 'lodash'
 import moment from 'moment'
-import { usePageVisibility } from 'react-page-visibility'
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm'
-import { Balance, LbpAssetWeights, LbpPool } from '../../generated/graphql'
+import { Balance, LbpPool } from '../../generated/graphql'
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
 import {
+  GetHistoricalBalancesQueryResponse,
   HistoricalBalance,
-  useGetHistoricalBalancesQuery
+  useGetFirstHistoricalBlockQuery,
+  useGetLastHistoricalBlockQuery,
+  useGetHistoricalBalancesExactQuery
 } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
-import { HydraDxMath, useMath } from '../../hooks/math/useMath'
+import { useMath } from '../../hooks/math/useMath'
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
@@ -29,7 +31,6 @@ import BigNumber from 'bignumber.js'
 import { useLoading } from '../../hooks/misc/useLoading'
 import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
 import { idToAsset } from '../../misc/idToAsset'
-import { readLastBlock } from '../../hooks/lastBlock/readLastBlock'
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
@@ -37,11 +38,15 @@ import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountT
 import Icon from '../../components/Icon/Icon'
 import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
 import { useLastBlockContext } from '../../hooks/lastBlock/useSubscribeNewBlockNumber'
-import { blockToTime, timeToBlock } from '../../misc/utils/blockTime'
-import { calculateSpotPriceFromPool } from '../../hooks/pools/lbp/calculateSpotPrice'
-import { calculateCurrentAssetWeight } from '../../hooks/pools/lbp/calculateCurrentAssetWeight'
+import { blockToTime } from '../../misc/utils/blockTime'
 import { DataPoint, Dataset } from '../../components/Chart/LineChart/LineChart'
 import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
+import {
+  keepRecords,
+  getMissingBlocks,
+  getPriceForBlocks,
+  getMissingIndexes
+} from './helpers'
 
 export interface TradeAssetIds {
   assetIn: string | null
@@ -66,106 +71,29 @@ export enum LbpStatus {
   ENDED
 }
 
-export const EnhancedTradeChartProps = ({
+export const REFETCH_INTERVAL = 180000
+export const ERROR_REFETCH_INTERVAL = 3000
+
+export const EnhancedTradeChart = ({
   pool,
   assetIds,
   spotPrice,
   isPoolLoading
 }: EnhancedTradeChartProps) => {
-  const isVisible = usePageVisibility()
+  const { math } = useMath()
+  // const isVisible = usePageVisibility()
   const lastBlockData = useLastBlockContext()
-  const endBlock = pool?.endBlock || 0
+
   const startBlock = pool?.startBlock || 0
-  const currentBlock = lastBlockData?.relaychainBlockNumber || 0
+  const endBlock = pool?.endBlock || 0
+
+  const currentRelayBlock = lastBlockData?.relaychainBlockNumber || 0
+  const currentParaBlock = lastBlockData?.parachainBlockNumber || 0
   const currentBlockTime = lastBlockData?.createdAt || new Date().getTime()
+
   const lbpChartProps: LbpChartProps = {
     startBlock,
     endBlock
-  }
-
-  const keepRecords = 150
-
-  const { math } = useMath()
-
-  const getMissingBlocks = (
-    startBlock: number,
-    endBlock: number,
-    assetABalance: string,
-    assetBBalance: string
-  ): HistoricalBalance[] => {
-    const missingBlocksAmount = endBlock - startBlock
-    const divisionMultiplier =
-      missingBlocksAmount < keepRecords
-        ? 1
-        : Math.floor(missingBlocksAmount / keepRecords)
-
-    const missingBlocks: HistoricalBalance[] = []
-
-    for (let i = startBlock; i <= endBlock; i++) {
-      if (i % divisionMultiplier === 0) {
-        missingBlocks.push({
-          assetABalance,
-          assetBBalance,
-          relayChainBlockHeight: i
-        })
-      }
-    }
-    console.log(
-      'Calculating missing blocks from',
-      startBlock,
-      'to',
-      endBlock,
-      'amount',
-      missingBlocksAmount,
-      missingBlocks
-    )
-    return missingBlocks
-  }
-
-  const getPriceForBlocks = (
-    math: HydraDxMath,
-    pool: LbpPool,
-    relayChainBlockHeight: number,
-    assetABalance: string,
-    assetBBalance: string
-  ) => {
-    return {
-      x: blockToTime(relayChainBlockHeight, {
-        height: currentBlock,
-        date: currentBlockTime
-      }),
-      ...(() => {
-        const currentAssetAWeight = calculateCurrentAssetWeight(
-          math,
-          { startBlock, endBlock },
-          pool.assetAWeights,
-          relayChainBlockHeight.toString()
-        )
-        const currentAssetBWeight = calculateCurrentAssetWeight(
-          math,
-          { startBlock, endBlock },
-          pool.assetBWeights,
-          relayChainBlockHeight.toString()
-        )
-        const spotPrice = {
-          outIn: '0',
-          inOut: calculateSpotPrice(
-            math,
-            assetBBalance,
-            assetABalance,
-            currentAssetBWeight.toString(),
-            currentAssetAWeight.toString()
-          )
-        }
-
-        const y = new BigNumber(fromPrecision12(spotPrice.inOut || '0'))
-
-        return {
-          y: y.toNumber(),
-          yAsString: fromPrecision12(spotPrice.inOut || '0')
-        }
-      })()
-    }
   }
 
   let lbpStatus: LbpStatus = LbpStatus.NOT_INITIALIZED
@@ -179,26 +107,26 @@ export const EnhancedTradeChartProps = ({
   ) {
     lbpStatus = LbpStatus.NOT_INITIALIZED
   } else {
-    if (startBlock < currentBlock && endBlock > currentBlock) {
+    if (startBlock < currentRelayBlock && endBlock > currentRelayBlock) {
       lbpStatus = LbpStatus.IN_PROGRESS
       lbpChartProps.timeToNextPhase = moment
         .duration(
           moment(currentBlockTime).diff(
             blockToTime(endBlock, {
-              height: currentBlock,
+              height: currentRelayBlock,
               date: currentBlockTime
             })
           )
         )
         .humanize()
     }
-    if (startBlock > currentBlock) {
+    if (startBlock > currentRelayBlock) {
       lbpStatus = LbpStatus.NOT_STARTED
       lbpChartProps.timeToNextPhase = moment
         .duration(
           moment(currentBlockTime).diff(
             blockToTime(startBlock, {
-              height: currentBlock,
+              height: currentRelayBlock,
               date: currentBlockTime
             })
           )
@@ -206,41 +134,57 @@ export const EnhancedTradeChartProps = ({
         .humanize()
     }
 
-    if (endBlock < currentBlock) lbpStatus = LbpStatus.ENDED
+    if (endBlock < currentRelayBlock) lbpStatus = LbpStatus.ENDED
   }
 
-  console.log(
-    'LBP STATUS',
-    lbpStatus,
-    LbpStatus.ENDED,
-    LbpStatus.IN_PROGRESS,
-    LbpStatus.NOT_STARTED,
-    LbpStatus.NOT_INITIALIZED
-  )
+  const [lastHistoricalDataRefetch, setLastHistoricalDataRefetch] = useState(0)
 
-  const endOrNow = endBlock < currentBlock ? endBlock : currentBlock
+  const endOrNow = endBlock < currentRelayBlock ? endBlock : currentRelayBlock
 
-  console.log('fetching lbp chart data', startBlock, endOrNow)
-
-  const {
-    data: historicalBalancesData,
-    networkStatus: historicalBalancesNetworkStatus
-  } = useGetHistoricalBalancesQuery(
+  const [
+    getFirstHistoricalBlockQuery
+    // firstHistoricalBlockQueryNetworkStatus
+  ] = useGetFirstHistoricalBlockQuery(
     {
-      from: startBlock,
-      to: endOrNow,
+      blockHeight: startBlock,
       poolId: pool?.id || ''
     },
+    { skip: !pool?.id || !pool?.startBlock }
+  )
+
+  const [
+    getLastHistoricalBlockQuery
+    // firstHistoricalBlockQueryNetworkStatus
+  ] = useGetLastHistoricalBlockQuery(
     {
-      skip: !pool?.id
+      blockHeight: endBlock,
+      poolId: pool?.id || ''
+    },
+    { skip: !pool?.id || !pool?.endBlock }
+  )
+
+  const [
+    getHistoricalBalancesQuery,
+    historicalBalanceQueryNetworkStatus
+  ] = useGetHistoricalBalancesExactQuery(
+    {
+      recordIds: []
+    },
+    {
+      skip: !pool?.id || !pool?.startBlock
     }
   )
 
-  const historicalBalancesLoading = useMemo(
-    () =>
-      historicalBalancesNetworkStatus === NetworkStatus.loading ||
-      historicalBalancesNetworkStatus === NetworkStatus.setVariables,
-    [historicalBalancesNetworkStatus]
+  // const [firstHistoricalBlock, setFirstHistoricalBlock] = useState<
+  //   FirstHistoricalBlock
+  // >()
+
+  const [historicalBalancesData, setHistoricalBalanceData] = useState<
+    GetHistoricalBalancesQueryResponse
+  >()
+
+  const [historicalBalancesLoading, setHistoricalBalancesLoading] = useState(
+    historicalBalanceQueryNetworkStatus.loading
   )
 
   const [{ primaryDataset, secondaryDataset }, setDataset] = useState<{
@@ -256,39 +200,122 @@ export const EnhancedTradeChartProps = ({
       relayChainBlockHeight: 0
     }
   })
-  const [datasetLoading, setDatasetLoading] = useState(true)
-  const [datasetRefreshing, setDatasetRefreshing] = useState(false)
 
+  //
+  // Get historical balances:
+  // this is mainly used first time to get the initial data
+  //
+
+  const refetchHistoricalBalancesData = useCallback(() => {
+    if (historicalBalancesLoading || !pool?.id) return
+    if (Date.now() - lastHistoricalDataRefetch < REFETCH_INTERVAL) return
+    if (
+      lbpStatus === LbpStatus.NOT_INITIALIZED ||
+      lbpStatus === LbpStatus.NOT_EXISTS
+    )
+      return
+
+    setLastHistoricalDataRefetch(Date.now())
+    setHistoricalBalancesLoading(true)
+
+    Promise.all([
+      getFirstHistoricalBlockQuery({
+        variables: { poolId: pool.id, blockHeight: startBlock }
+      }),
+      getLastHistoricalBlockQuery({
+        variables: { poolId: pool.id, blockHeight: endBlock }
+      })
+    ])
+      .then(([{ data: firstBlockData }, { data: lastBlockData }]) => {
+        // Relay blocks are not reliable we need to poll by parablocks ()
+        console.log('got first and last historical blocks', firstBlockData)
+
+        if (
+          !firstBlockData?.firstHistoricalParachainBlock ||
+          !lastBlockData?.lastHistoricalParachainBlock
+        ) {
+          setLastHistoricalDataRefetch(Date.now())
+          setHistoricalBalancesLoading(false)
+          return
+        }
+
+        const parachainBlockStart =
+          firstBlockData.firstHistoricalParachainBlock[0].paraChainBlockHeight
+
+        const parachainBlockEnd =
+          lastBlockData.lastHistoricalParachainBlock[0].paraChainBlockHeight
+
+        const indexes = getMissingIndexes(
+          parachainBlockStart,
+          parachainBlockEnd,
+          pool.id
+        )
+
+        getHistoricalBalancesQuery({
+          variables: {
+            recordIds: indexes
+          }
+        })
+          .then((balancesResult) => {
+            console.log('setting historical data', balancesResult.data)
+            setHistoricalBalanceData(balancesResult.data)
+            setLastHistoricalDataRefetch(Date.now())
+          })
+          .catch((e) => {
+            console.log('err historical blocks')
+            console.error(e)
+            setLastHistoricalDataRefetch(
+              Date.now() + REFETCH_INTERVAL - ERROR_REFETCH_INTERVAL
+            )
+          })
+          .finally(() => {
+            setHistoricalBalancesLoading(false)
+          })
+      })
+      .catch((e) => {
+        console.log('err first block')
+        console.error(e)
+        setLastHistoricalDataRefetch(
+          Date.now() + REFETCH_INTERVAL - ERROR_REFETCH_INTERVAL
+        )
+      })
+      .finally(() => {
+        setHistoricalBalancesLoading(false)
+      })
+
+    return
+  }, [
+    historicalBalancesLoading,
+    pool?.id,
+    lastHistoricalDataRefetch,
+    getFirstHistoricalBlockQuery,
+    startBlock,
+    currentParaBlock,
+    getHistoricalBalancesQuery
+  ])
+
+  //
+  //  Set new historical data and update secondary dataset
+  //
   useEffect(() => {
-    setDatasetLoading(true)
-
-    if (historicalBalancesLoading) return
+    if (!historicalBalancesData) return
 
     const historicalBalanceData =
       historicalBalancesData?.historicalBalances || []
 
-    const divisionMultiplier =
-      historicalBalanceData.length < keepRecords
-        ? 1
-        : Math.ceil(historicalBalanceData.length / keepRecords)
-
-    const filteredDataset = historicalBalanceData.filter((_b, i) => {
-      if (i % divisionMultiplier === 0) return true
-      return false
-    })
-
-    console.log(
-      'historicalBalancesLength:',
-      historicalBalanceData.length,
-      filteredDataset.length
-    )
+    const lastRelayBlock = (historicalBalanceData.length &&
+      historicalBalanceData[historicalBalanceData.length - 1]) || {
+      assetABalance: '0',
+      assetBBalance: '0',
+      relayChainBlockHeight: 0
+    }
 
     if (
-      (!historicalBalancesLoading &&
-        !historicalBalancesData?.historicalBalances?.length) ||
+      !pool ||
+      !pool.balances ||
+      !historicalBalancesData?.historicalBalances?.length ||
       !math ||
-      !spotPrice ||
-      !pool
+      !spotPrice
     ) {
       setDataset({
         primaryDataset: [],
@@ -299,28 +326,145 @@ export const EnhancedTradeChartProps = ({
           relayChainBlockHeight: 0
         }
       })
-      setDatasetLoading(false)
       return
     }
 
     const newPrimaryDataset =
-      filteredDataset?.map(
+      historicalBalanceData?.map(
         ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
           return getPriceForBlocks(
             math,
             pool,
             relayChainBlockHeight,
             assetABalance,
-            assetBBalance
+            assetBBalance,
+            currentRelayBlock,
+            currentBlockTime
           )
         }
       ) || []
 
-    const lastRelayBlock = (filteredDataset.length &&
-      filteredDataset[filteredDataset.length - 1]) || {
-      assetABalance: '0',
-      assetBBalance: '0',
-      relayChainBlockHeight: 0
+    if (lbpStatus === LbpStatus.ENDED) {
+      setDataset({
+        primaryDataset: newPrimaryDataset,
+        secondaryDataset: [],
+        lastRelayBlock
+      })
+      return
+    }
+
+    const newLastRelayBlock = {
+      assetABalance: pool.balances[0].balance,
+      assetBBalance: pool.balances[1].balance,
+      relayChainBlockHeight: endOrNow
+    }
+
+    const missingBlocks = getMissingBlocks(
+      newLastRelayBlock.relayChainBlockHeight,
+      endBlock,
+      newLastRelayBlock.assetABalance,
+      newLastRelayBlock.assetBBalance
+    )
+
+    const accumulating = assetIds.assetIn === pool?.assetInId
+
+    const newSecondaryDataset = missingBlocks.map(
+      ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+        return getPriceForBlocks(
+          math,
+          pool,
+          relayChainBlockHeight,
+          accumulating ? assetABalance : assetBBalance,
+          accumulating ? assetBBalance : assetABalance,
+          currentRelayBlock,
+          currentBlockTime
+        )
+      }
+    )
+
+    const newDataPoint = {
+      x: blockToTime(endOrNow, {
+        height: currentRelayBlock,
+        date: currentBlockTime
+      }),
+      y: new BigNumber(
+        fromPrecision12(
+          (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+        )
+      ).toNumber(),
+      yAsString: fromPrecision12(
+        (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+      )
+    }
+
+    newPrimaryDataset.push(newDataPoint)
+
+    setDataset({
+      primaryDataset: newPrimaryDataset,
+      secondaryDataset: newSecondaryDataset,
+      lastRelayBlock
+    })
+  }, [
+    historicalBalancesData,
+    historicalBalancesLoading,
+    pool?.assetInId,
+    assetIds,
+    lbpStatus
+  ])
+
+  //
+  // Refetch last data point and update secondary dataset
+  //
+  useEffect(() => {
+    if (
+      !spotPrice ||
+      !primaryDataset ||
+      !currentRelayBlock ||
+      !currentBlockTime ||
+      !math ||
+      !pool ||
+      !pool.balances ||
+      historicalBalancesLoading
+    )
+      return
+
+    if (
+      lbpStatus === LbpStatus.NOT_INITIALIZED ||
+      lbpStatus === LbpStatus.NOT_EXISTS
+    )
+      return
+
+    const lastRelayBlock = {
+      assetABalance: pool.balances[0].balance,
+      assetBBalance: pool.balances[1].balance,
+      relayChainBlockHeight: endOrNow
+    }
+
+    if (lbpStatus === LbpStatus.NOT_STARTED) {
+      setDataset({ primaryDataset: [], secondaryDataset, lastRelayBlock })
+      return
+    }
+
+    if (lbpStatus === LbpStatus.ENDED) {
+      setDataset({ primaryDataset, secondaryDataset: [], lastRelayBlock })
+      return
+    }
+
+    const accumulating = assetIds.assetIn === pool?.assetInId
+
+    const newDataPoint: DataPoint = {
+      x: blockToTime(endOrNow, {
+        height: currentRelayBlock,
+        date: currentBlockTime
+      }),
+      y: new BigNumber(
+        fromPrecision12(
+          (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+        )
+      ).toNumber(),
+      yAsString: fromPrecision12(
+        (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+      )
     }
 
     const missingBlocks = getMissingBlocks(
@@ -330,154 +474,35 @@ export const EnhancedTradeChartProps = ({
       lastRelayBlock.assetBBalance
     )
 
-    const secondaryDataset =
-      missingBlocks.map(
-        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
-          return getPriceForBlocks(
-            math,
-            pool,
-            relayChainBlockHeight,
-            assetABalance,
-            assetBBalance
-          )
-        }
-      ) || []
-
-    // We're sorting in query (what is faster?)
-    const sortedDataset = primaryDataset.concat(secondaryDataset)
-
-    console.debug(
-      'finalDataset',
-      sortedDataset,
-      newPrimaryDataset,
-      secondaryDataset
-    )
-
-    setDataset({
-      primaryDataset: newPrimaryDataset,
-      secondaryDataset,
-      lastRelayBlock
-    })
-    setDatasetRefreshing(false)
-    setDatasetLoading(false)
-  }, [historicalBalancesLoading, historicalBalancesData, assetIds])
-
-  useEffect(() => {
-    const lastRecordOutdatedBy = 60000
-
-    if (!isVisible || historicalBalancesLoading || datasetRefreshing) return
-
-    const refetchHistoricalBalancesData = () => {
-      if (
-        isVisible &&
-        !historicalBalancesLoading &&
-        !datasetRefreshing &&
-        primaryDataset &&
-        primaryDataset.length &&
-        primaryDataset[primaryDataset.length - 1].x <=
-          new Date().getTime() - lastRecordOutdatedBy
-      ) {
-        setDatasetRefreshing(true)
-      }
-    }
-
-    refetchHistoricalBalancesData()
-
-    const refetchData = setInterval(() => {
-      refetchHistoricalBalancesData()
-    }, lastRecordOutdatedBy)
-
-    return () => clearInterval(refetchData)
-  }, [
-    primaryDataset,
-    isVisible,
-    startBlock,
-    endOrNow,
-    historicalBalancesLoading,
-    datasetRefreshing,
-    lastBlockData
-  ])
-
-  useEffect(() => {
-    setDataset(({ primaryDataset, secondaryDataset, lastRelayBlock }) => {
-      if (
-        !spotPrice ||
-        !primaryDataset ||
-        !currentBlock ||
-        !currentBlockTime ||
-        !math ||
-        !pool
-      )
-        return { primaryDataset, secondaryDataset, lastRelayBlock }
-
-      if (
-        lbpStatus === LbpStatus.NOT_INITIALIZED ||
-        lbpStatus === LbpStatus.NOT_EXISTS
-      )
-        return { primaryDataset: [], secondaryDataset: [], lastRelayBlock }
-
-      // TODO: Secondary
-      if (lbpStatus === LbpStatus.NOT_STARTED)
-        return { primaryDataset: [], secondaryDataset, lastRelayBlock }
-
-      // TODO: Ended
-      if (lbpStatus === LbpStatus.ENDED)
-        return { primaryDataset, secondaryDataset: [], lastRelayBlock }
-
-      const accumulating = assetIds.assetIn === pool?.assetInId
-
-      const newDataPoint: DataPoint = {
-        x: blockToTime(endOrNow, {
-          height: currentBlock,
-          date: currentBlockTime
-        }),
-        y: new BigNumber(
-          fromPrecision12(
-            (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
-          )
-        ).toNumber(),
-        yAsString: fromPrecision12(
-          (accumulating ? spotPrice.inOut : spotPrice.outIn) || '0'
+    const newSecondaryDataset = missingBlocks.map(
+      ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
+        return getPriceForBlocks(
+          math,
+          pool,
+          relayChainBlockHeight + 1,
+          accumulating ? assetABalance : assetBBalance,
+          accumulating ? assetBBalance : assetABalance,
+          currentRelayBlock,
+          currentBlockTime
         )
       }
+    )
 
-      const missingBlocks = getMissingBlocks(
-        lastRelayBlock.relayChainBlockHeight,
-        endBlock,
-        lastRelayBlock.assetABalance,
-        lastRelayBlock.assetBBalance
-      )
+    primaryDataset.push(newDataPoint)
 
-      const newSecondaryDataset = missingBlocks.map(
-        ({ assetABalance, assetBBalance, relayChainBlockHeight }) => {
-          return getPriceForBlocks(
-            math,
-            pool,
-            relayChainBlockHeight,
-            assetABalance,
-            assetBBalance
-          )
-        }
-      )
-
-      return {
-        primaryDataset: [...primaryDataset, newDataPoint],
-        secondaryDataset: newSecondaryDataset,
-        lastRelayBlock
-      }
+    setDataset({
+      primaryDataset: primaryDataset,
+      secondaryDataset: newSecondaryDataset,
+      lastRelayBlock: lastRelayBlock
     })
-  }, [currentBlock, lbpStatus, assetIds])
+  }, [currentParaBlock, lbpStatus, assetIds])
 
-  const _isPoolLoading = useMemo(() => {
-    if (!isPoolLoading || datasetRefreshing) return false
+  useEffect(() => {
+    setLastHistoricalDataRefetch(0)
+    setHistoricalBalancesLoading(false)
+  }, [pool?.id, pool?.assetInId, pool?.assetOutId])
 
-    return isPoolLoading || historicalBalancesLoading || datasetLoading
-  }, [
-    datasetRefreshing,
-    datasetLoading,
-    isPoolLoading,
-    historicalBalancesLoading
-  ])
+  refetchHistoricalBalancesData()
 
   return (
     <LBPTradeChartComponent
@@ -487,7 +512,7 @@ export const EnhancedTradeChartProps = ({
       }}
       lbpStatus={lbpStatus}
       lbpChartProps={lbpChartProps}
-      isPoolLoading={_isPoolLoading}
+      isPoolLoading={isPoolLoading}
       poolType={PoolType.LBP}
       granularity={ChartGranularity.H24}
       chartType={ChartType.PRICE}
@@ -513,8 +538,6 @@ export const LBPPage = () => {
 
   const lastBlockData = useLastBlockContext()
 
-  console.log('last block data', lastBlockData)
-
   const depsLoading = useLoading()
   const {
     data: poolData,
@@ -529,8 +552,8 @@ export const LBPPage = () => {
   )
 
   const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus
+    data: poolsData
+    // networkStatus: poolsNetworkStatus
   } = useGetPoolsQueryProvider()
 
   const { assets, poolAssetMap } = useMemo(
@@ -669,7 +692,7 @@ export const LBPPage = () => {
       </div>
       {/*NOTIF*/}
       <div className="trade-page">
-        <EnhancedTradeChartProps
+        <EnhancedTradeChart
           pool={pool}
           assetIds={assetIds}
           spotPrice={{

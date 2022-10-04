@@ -61,200 +61,214 @@ export interface TradeChartProps {
   }
 }
 
-export const TradeChart = ({
-  pool,
-  assetIds,
-  spotPrice,
-  isPoolLoading
-}: TradeChartProps) => {
-  const isVisible = usePageVisibility()
-  const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
-    from: 10000,
-    to: 20000
-  })
-  const { math } = useMath()
-  const {
-    data: historicalBalancesData,
-    networkStatus: historicalBalancesNetworkStatus
-  } = useGetHistoricalBalancesQuery(
-    {
-      ...historicalBalancesRange,
-      // defaulting to an empty string like this is bad, if we want to use skip we should type the variables differently
-      poolId: pool?.id || ''
-    },
-    {
-      skip: !pool?.id
-    }
-  )
+// export const TradeChart = ({
+//   pool,
+//   assetIds,
+//   spotPrice,
+//   isPoolLoading
+// }: TradeChartProps) => {
+//   const { math } = useMath()
+//   const isVisible = usePageVisibility()
+//   const [historicalBalancesRange, setHistoricalBalancesRange] = useState({
+//     from: 10000,
+//     to: 20000
+//   })
 
-  const historicalBalancesLoading = useMemo(
-    () =>
-      historicalBalancesNetworkStatus === NetworkStatus.loading ||
-      historicalBalancesNetworkStatus === NetworkStatus.setVariables,
-    [historicalBalancesNetworkStatus]
-  )
+//   const [
+//     getHistoricalBalancesQuery,
+//     networkStatus
+//   ] = useGetHistoricalBalancesQuery(
+//     {
+//       from: historicalBalancesRange.from,
+//       to: historicalBalancesRange.to,
+//       poolId: pool?.id || ''
+//     },
+//     {
+//       skip: !pool?.id
+//     }
+//   )
 
-  const [dataset, setDataset] = useState<Array<any>>()
-  const [datasetLoading, setDatasetLoading] = useState(true)
-  const [datasetRefreshing, setDatasetRefreshing] = useState(false)
+//   const [historicalBalancesData, setHistoricalBalanceData] = useState<
+//     GetHistoricalBalancesQueryResponse
+//   >()
 
-  const assetOutLiquidity = useMemo(() => {
-    const assetId = assetIds.assetOut || undefined
-    return find<Balance | null>(pool?.balances, { assetId })?.balance
-  }, [pool, assetIds])
+//   const historicalBalancesLoading = networkStatus.loading
 
-  const assetInLiquidity = useMemo(() => {
-    const assetId = assetIds.assetIn || undefined
-    return find<Balance | null>(pool?.balances, { assetId })?.balance
-  }, [pool, assetIds])
+//   const [{ primaryDataset, secondaryDataset }, setDataset] = useState<{
+//     primaryDataset: Dataset
+//     secondaryDataset: Dataset
+//     lastRelayBlock: HistoricalBalance
+//   }>({
+//     primaryDataset: [],
+//     secondaryDataset: [],
+//     lastRelayBlock: {
+//       assetABalance: '0',
+//       assetBBalance: '0',
+//       relayChainBlockHeight: 0
+//     }
+//   })
 
-  useEffect(() => {
-    setDatasetLoading(true)
+//   const [dataset, setDataset] = useState<Array<any>>()
+//   const [datasetLoading, setDatasetLoading] = useState(true)
+//   const [datasetRefreshing, setDatasetRefreshing] = useState(false)
 
-    if (historicalBalancesLoading) return
+//   const assetOutLiquidity = useMemo(() => {
+//     const assetId = assetIds.assetOut || undefined
+//     return find<Balance | null>(pool?.balances, { assetId })?.balance
+//   }, [pool, assetIds])
 
-    if (
-      (!historicalBalancesLoading &&
-        !historicalBalancesData?.historicalBalances?.length) ||
-      !math ||
-      !spotPrice
-    ) {
-      setDataset([])
-      setDatasetLoading(false)
-      return
-    }
-    // const dataset =
-    //   historicalBalancesData?.historicalBalances.map(
-    //     ({ createdAt, assetABalance, assetBBalance }) => {
-    //       return {
-    //         // x: `${moment(createdAt).getTime()}`,
-    //         x: new Date(createdAt).getTime(),
-    //         ...(() => {
-    //           const assetOutLiquidity =
-    //             assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
-    //               ? assetABalance
-    //               : assetBBalance;
+//   const assetInLiquidity = useMemo(() => {
+//     const assetId = assetIds.assetIn || undefined
+//     return find<Balance | null>(pool?.balances, { assetId })?.balance
+//   }, [pool, assetIds])
 
-    //           const assetInLiquidity =
-    //             assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
-    //               ? assetABalance
-    //               : assetBBalance;
+//   useEffect(() => {
+//     setDatasetLoading(true)
 
-    //           const spotPrice = {
-    //             outIn: math.xyk.get_spot_price(
-    //               assetOutLiquidity,
-    //               assetInLiquidity,
-    //               '1000000000000'
-    //             ),
-    //             inOut: math.xyk.get_spot_price(
-    //               assetInLiquidity,
-    //               assetOutLiquidity,
-    //               '1000000000000'
-    //             ),
-    //           };
+//     if (historicalBalancesLoading) return
 
-    //           const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
+//     if (
+//       (!historicalBalancesLoading &&
+//         !historicalBalancesData?.historicalBalances?.length) ||
+//       !math ||
+//       !spotPrice
+//     ) {
+//       setDataset([])
+//       setDatasetLoading(false)
+//       return
+//     }
+//     // const dataset =
+//     //   historicalBalancesData?.historicalBalances.map(
+//     //     ({ createdAt, assetABalance, assetBBalance }) => {
+//     //       return {
+//     //         // x: `${moment(createdAt).getTime()}`,
+//     //         x: new Date(createdAt).getTime(),
+//     //         ...(() => {
+//     //           const assetOutLiquidity =
+//     //             assetIds.assetOut === historicalBalancesData.XYKPool.assetAId
+//     //               ? assetABalance
+//     //               : assetBBalance;
 
-    //           return {
-    //             y: y.toNumber(),
-    //             yAsString: fromPrecision12(spotPrice.inOut),
-    //           };
-    //         })(),
-    //       };
-    //     }
-    //   ) || [];
+//     //           const assetInLiquidity =
+//     //             assetIds.assetIn === historicalBalancesData.XYKPool.assetAId
+//     //               ? assetABalance
+//     //               : assetBBalance;
 
-    // dataset.push({
-    //   // TODO: pretending this is now, should use the time from the lastBlock instead
-    //   x: new Date().getTime(),
-    //   y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
-    //   yAsString: fromPrecision12(spotPrice.inOut),
-    // });
+//     //           const spotPrice = {
+//     //             outIn: math.xyk.get_spot_price(
+//     //               assetOutLiquidity,
+//     //               assetInLiquidity,
+//     //               '1000000000000'
+//     //             ),
+//     //             inOut: math.xyk.get_spot_price(
+//     //               assetInLiquidity,
+//     //               assetOutLiquidity,
+//     //               '1000000000000'
+//     //             ),
+//     //           };
 
-    setDataset(dataset)
-    setDatasetRefreshing(false)
-    setDatasetLoading(false)
-  }, [
-    historicalBalancesData?.historicalBalances,
-    historicalBalancesLoading,
-    math,
-    spotPrice,
-    assetIds
-  ])
+//     //           const y = new BigNumber(fromPrecision12(spotPrice.inOut) || '');
 
-  useEffect(() => {
-    const lastRecordOutdatedBy = 60000
+//     //           return {
+//     //             y: y.toNumber(),
+//     //             yAsString: fromPrecision12(spotPrice.inOut),
+//     //           };
+//     //         })(),
+//     //       };
+//     //     }
+//     //   ) || [];
 
-    if (!isVisible || historicalBalancesLoading || datasetRefreshing) return
+//     // dataset.push({
+//     //   // TODO: pretending this is now, should use the time from the lastBlock instead
+//     //   x: new Date().getTime(),
+//     //   y: new BigNumber(fromPrecision12(spotPrice.inOut) || '').toNumber(),
+//     //   yAsString: fromPrecision12(spotPrice.inOut),
+//     // });
 
-    const refetchHistoricalBalancesData = () => {
-      if (
-        isVisible &&
-        !historicalBalancesLoading &&
-        !datasetRefreshing &&
-        (!dataset?.length ||
-          last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
-      ) {
-        setDatasetRefreshing(true)
-        setHistoricalBalancesRange({
-          from: 10000,
-          to: 20000
-        })
-      }
-    }
+//     setDataset(dataset)
+//     setDatasetRefreshing(false)
+//     setDatasetLoading(false)
+//   }, [
+//     historicalBalancesData?.historicalBalances,
+//     historicalBalancesLoading,
+//     math,
+//     spotPrice,
+//     assetIds
+//   ])
 
-    refetchHistoricalBalancesData()
+//   useEffect(() => {
+//     const lastRecordOutdatedBy = 60000
 
-    const refetchData = setInterval(() => {
-      refetchHistoricalBalancesData()
-    }, lastRecordOutdatedBy)
+//     if (!isVisible || historicalBalancesLoading || datasetRefreshing) return
 
-    return () => clearInterval(refetchData)
-  }, [dataset, isVisible, historicalBalancesLoading, datasetRefreshing])
+//     const refetchHistoricalBalancesData = () => {
+//       if (
+//         isVisible &&
+//         !historicalBalancesLoading &&
+//         !datasetRefreshing &&
+//         (!dataset?.length ||
+//           last(dataset).x <= new Date().getTime() - lastRecordOutdatedBy)
+//       ) {
+//         setDatasetRefreshing(true)
+//         setHistoricalBalancesRange({
+//           from: 10000,
+//           to: 20000
+//         })
+//       }
+//     }
 
-  // useEffect(() => {
-  //   setDataset(dataset => {
-  //     if (!spotPrice || !dataset) return dataset;
+//     refetchHistoricalBalancesData()
 
-  //     return [
-  //       ...dataset,
-  //       {
-  //         // TODO: pretending this is now, should use the time from the lastBlock instead
-  //         x: moment().toISOString(),
-  //         y: fromPrecision12(spotPrice.outIn)
-  //       }
-  //     ]
-  //   })
-  // }, [pool, spotPrice,])
+//     const refetchData = setInterval(() => {
+//       refetchHistoricalBalancesData()
+//     }, lastRecordOutdatedBy)
 
-  const _isPoolLoading = useMemo(() => {
-    if (!isPoolLoading || datasetRefreshing) return false
+//     return () => clearInterval(refetchData)
+//   }, [dataset, isVisible, historicalBalancesLoading, datasetRefreshing])
 
-    return isPoolLoading || historicalBalancesLoading || datasetLoading
-  }, [
-    datasetRefreshing,
-    datasetLoading,
-    isPoolLoading,
-    historicalBalancesLoading
-  ])
+//   // useEffect(() => {
+//   //   setDataset(dataset => {
+//   //     if (!spotPrice || !dataset) return dataset;
 
-  return (
-    <TradeChartComponent
-      assetPair={{
-        assetA: idToAsset(assetIds.assetIn),
-        assetB: idToAsset(assetIds.assetOut)
-      }}
-      isPoolLoading={_isPoolLoading}
-      poolType={PoolType.XYK}
-      granularity={ChartGranularity.H24}
-      chartType={ChartType.PRICE}
-      primaryDataset={dataset as any}
-      secondaryDataset={[]}
-      onChartTypeChange={() => {}}
-      onGranularityChange={() => {}}
-    />
-  )
-}
+//   //     return [
+//   //       ...dataset,
+//   //       {
+//   //         // TODO: pretending this is now, should use the time from the lastBlock instead
+//   //         x: moment().toISOString(),
+//   //         y: fromPrecision12(spotPrice.outIn)
+//   //       }
+//   //     ]
+//   //   })
+//   // }, [pool, spotPrice,])
+
+//   const _isPoolLoading = useMemo(() => {
+//     if (!isPoolLoading || datasetRefreshing) return false
+
+//     return isPoolLoading || historicalBalancesLoading || datasetLoading
+//   }, [
+//     datasetRefreshing,
+//     datasetLoading,
+//     isPoolLoading,
+//     historicalBalancesLoading
+//   ])
+
+//   return (
+//     <TradeChartComponent
+//       assetPair={{
+//         assetA: idToAsset(assetIds.assetIn),
+//         assetB: idToAsset(assetIds.assetOut)
+//       }}
+//       isPoolLoading={_isPoolLoading}
+//       poolType={PoolType.XYK}
+//       granularity={ChartGranularity.H24}
+//       chartType={ChartType.PRICE}
+//       primaryDataset={dataset as any}
+//       secondaryDataset={[]}
+//       onChartTypeChange={() => {}}
+//       onGranularityChange={() => {}}
+//     />
+//   )
+// }
 
 export const TradePage = () => {
   // taking assetIn/assetOut from search params / query url

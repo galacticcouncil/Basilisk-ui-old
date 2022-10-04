@@ -157,6 +157,7 @@
           "*"
         ],
         "rules": {
+          "react/exhaustive-deps": "off",
           "react/style-prop-object": [
             1,
             {

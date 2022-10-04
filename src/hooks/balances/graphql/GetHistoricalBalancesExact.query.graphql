@@ -1,9 +1,7 @@
-query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!)  {
+query GetHistoricalBalancesExact($recordIds: [String!]!)  {
   historicalBalances: historicalPoolPriceData(
     where: {
-      id_contains:  $poolId,
-      relayChainBlockHeight_gte: $from,
-      relayChainBlockHeight_lte: $to
+      id_in: $recordIds,
     },
     orderBy: relayChainBlockHeight_ASC
   ) {
@@ -13,5 +11,4 @@ query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!)  {
   }
 }
 
- 
  

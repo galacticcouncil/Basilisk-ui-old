@@ -21,7 +21,5 @@ query GetLBPPoolByAssets($assetInId: String!, $assetOutId: String!) {
       numerator
       denominator
     }
-
-    totalLiquidity
   }
 }
