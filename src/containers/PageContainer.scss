@@ -34,7 +34,7 @@
 
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 
     gap: 10px;
@@ -43,35 +43,12 @@
     padding: 0 36px;
     width: 100vw;
 
-
-    &__logo {
-      flex-grow: 1;
-
-      &__full {
-        @media screen and (max-width: 1000px) {
-
-
-          display: none;
-        }
-      }
-
-      &__small {
-        svg {
-          height: 32px;
-          width: 32px;
-        }
-
-        @media screen and (min-width: 1000px) {
-
-          display: none;
-        }
-      }
-    }
-
     &__wallet-wrapper {
       display: flex;
       align-items: center;
+      justify-content: end;
       gap: 10px;
+      flex-grow: 1;
 
       a {
         display: flex;
@@ -110,16 +87,30 @@
 
     &__menu-wrapper {
       display: flex;
-      flex-grow: 1.5;
       gap: 20px;
       justify-content: center;
+      align-items: center;
       padding: 10px 0;
 
-      @media screen and (max-width: 1000px) {
-
-
-        justify-content: left;
+      .page-header__logo {
+        &__full {
+          @media screen and (max-width: 1000px) {
+            display: none;
+          }
+        }
+  
+        &__small {
+          svg {
+            height: 32px;
+            width: 32px;
+          }
+  
+          @media screen and (min-width: 1000px) {
+            display: none;
+          }
+        }
       }
+
 
       &__menu-item {
         a {

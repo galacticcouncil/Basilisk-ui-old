@@ -108,6 +108,8 @@ export type LbpPool = {
   balances?: Maybe<Array<Balance>>;
   endBlock: Scalars['Int'];
   fee: Fee;
+  feeCollector?: Maybe<Scalars['String']>;
+  feeCollectorBalance?: Maybe<Scalars['String']>;
   id: Scalars['String'];
   repayTarget?: Maybe<Scalars['String']>;
   repayTargetReached?: Maybe<Scalars['Boolean']>;

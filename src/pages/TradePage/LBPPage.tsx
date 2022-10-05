@@ -14,6 +14,7 @@ import { PoolType } from '../../components/Chart/shared'
 import { useLoading } from '../../hooks/misc/useLoading'
 import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
 import { PolkadotApiPoolService, TradeRouter } from '@galacticcouncil/sdk'
+import { idToAsset } from '../../misc/idToAsset'
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
@@ -64,8 +65,12 @@ export const LBPPage = () => {
   const [usdPrice, setUsdPrice] = useState({
     assetIn: 0,
     assetOut: 0,
+    accumulated: 0,
+    accumulatedAtEnd: 0,
     assetInAsString: '-',
-    assetOutAsString: '-'
+    assetOutAsString: '-',
+    accumulatedAsString: '-',
+    accumulatedAtEndAsString: '-'
   })
 
   // taking assetIn/assetOut from search params / query url
@@ -121,6 +126,10 @@ export const LBPPage = () => {
   }
 
   const pool = useMemo(() => lbpPool, [lbpPool])
+
+  const assetInName = useMemo(() => {
+    return pool ? idToAsset(pool.assetOutId) : ''
+  }, [pool])
 
   const isActiveAccountConnected = useMemo(() => {
     return !!activeAccountData?.activeAccount
@@ -225,38 +234,63 @@ export const LBPPage = () => {
   }, [activeAccountTradeBalancesData, assetIds])
 
   useEffect(() => {
-    if (assetIds.assetIn && assetIds.assetOut) {
+    if (
+      (assetIds.assetIn && assetIds.assetOut,
+      pool?.assetInId,
+      pool?.assetAWeights)
+    ) {
       Promise.all([
         getBestSpotPrice(assetIds.assetOut, assetIds.assetIn),
         getBestSpotPrice(assetIds.assetIn, assetIds.assetOut),
         getBestSpotPrice(assetIds.assetIn, valueDisplayAsset),
-        getBestSpotPrice(assetIds.assetOut, valueDisplayAsset)
-      ]).then(([outIn, inOut, assetInValue, assetOutValue]) => {
-        if (outIn && inOut) {
-          setSpotPrice({
-            outIn: accumulating
-              ? outIn.amount.toNumber()
-              : inOut.amount.toNumber(),
-            inOut: accumulating
-              ? inOut.amount.toNumber()
-              : outIn.amount.toNumber()
-          })
+        getBestSpotPrice(assetIds.assetOut, valueDisplayAsset),
+        getBestSpotPrice(pool?.assetOutId, valueDisplayAsset)
+      ]).then(
+        ([
+          outIn,
+          inOut,
+          assetInValue,
+          assetOutValue,
+          accumulatedAssetValue
+        ]) => {
+          if (outIn && inOut) {
+            setSpotPrice({
+              outIn: accumulating
+                ? outIn.amount.toNumber()
+                : inOut.amount.toNumber(),
+              inOut: accumulating
+                ? inOut.amount.toNumber()
+                : outIn.amount.toNumber()
+            })
+          }
+          if (assetInValue && assetOutValue && accumulatedAssetValue) {
+            const weightRatio =
+              (pool.assetAWeights.current ||
+                pool.assetAWeights.final - pool.assetAWeights.initial) /
+              pool.assetAWeights.initial
+
+            console.log(weightRatio, 'weightRatio')
+            setUsdPrice({
+              assetIn: assetInValue.amount.toNumber(),
+              assetInAsString: assetInValue.amount
+                .dividedBy(10 ** assetInValue.decimals)
+                .toFixed(3),
+              assetOut: assetOutValue.amount.toNumber(),
+              assetOutAsString: assetOutValue.amount
+                .dividedBy(10 ** assetOutValue.decimals)
+                .toFixed(3),
+              accumulated: accumulatedAssetValue.amount.toNumber(),
+              accumulatedAsString: accumulatedAssetValue.amount
+                .dividedBy(10 ** accumulatedAssetValue.decimals)
+                .toFixed(3),
+              accumulatedAtEnd: 0,
+              accumulatedAtEndAsString: '-'
+            })
+          }
         }
-        if (assetInValue && assetOutValue) {
-          setUsdPrice({
-            assetIn: assetInValue.amount.toNumber(),
-            assetInAsString: assetInValue.amount
-              .dividedBy(10 ** assetInValue.decimals)
-              .toFixed(3),
-            assetOut: assetOutValue.amount.toNumber(),
-            assetOutAsString: assetOutValue.amount
-              .dividedBy(10 ** assetOutValue.decimals)
-              .toFixed(3)
-          })
-        }
-      })
+      )
     }
-  }, [accumulating, getBestSpotPrice, repayTargetReached])
+  }, [accumulating, getBestSpotPrice, repayTargetReached, pool])
 
   return (
     <div className="trade-page-wrapper lbp-page-wrapper">
@@ -348,10 +382,38 @@ export const LBPPage = () => {
         </div>
         <div className="lbp-info-wrapper">
           <div className="lbp-info-wrapper__lbp-info-item">
-            {/* {usdPrice.assetInAsString} */}
+            <div className="lbp-info-wrapper__lbp-info-item__group">
+              <div className="label">Last Price</div>
+              <div className="value">${usdPrice.accumulatedAsString}</div>
+            </div>
           </div>
-          <div className="lbp-info-wrapper__lbp-info-item"></div>
-          <div className="lbp-info-wrapper__lbp-info-item"></div>
+          {/* <div className="lbp-info-wrapper__lbp-info-item">
+            Ending Price {usdPrice.accumulatedAtEndAsString} $
+          </div> */}
+          <div className="lbp-info-wrapper__lbp-info-item">
+            <div className="lbp-info-wrapper__lbp-info-item__group">
+              <div className="label">Initial Weight</div>
+              <div className="value">
+                {pool ? (pool.assetAWeights.initial / 1000000).toFixed(2) : 0} %
+              </div>
+            </div>
+          </div>
+          <div className="lbp-info-wrapper__lbp-info-item">
+            <div className="lbp-info-wrapper__lbp-info-item__group">
+              <div className="label">Current Weight </div>
+              <div className="value">
+                {pool ? (pool.assetAWeights.current / 1000000).toFixed(2) : 0} %
+              </div>
+            </div>
+          </div>
+          <div className="lbp-info-wrapper__lbp-info-item">
+            <div className="lbp-info-wrapper__lbp-info-item__group">
+              <div className="label">Final Weight </div>
+              <div className="value">
+                {pool ? (pool.assetAWeights.final / 1000000).toFixed(2) : 0} %
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="debug">

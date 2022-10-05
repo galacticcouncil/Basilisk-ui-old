@@ -30,6 +30,8 @@ type LBPPool {
   fee: Fee!
   repayTarget: String
   repayTargetReached: Boolean
+  feeCollectorBalance: String
+  feeCollector: String
   assetAWeights: LBPAssetWeights!
   assetBWeights: LBPAssetWeights!
   startBlock: Int!

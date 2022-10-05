@@ -18,6 +18,7 @@ export interface PoolData {
   feeCollector: string
   fee: string[]
   repayTarget: number
+  repayTargetReached: string
   initialWeight: number
   finalWeight: number
   start: number
@@ -79,12 +80,14 @@ export const mapToPool = (
       | 'repayTargetReached'
       | 'repayTarget'
       | 'fee'
+      | 'feeCollectorBalance'
     > = {
       id,
       assetInId: poolData.assets[0].toString(), // Accumulated asset
       assetOutId: poolData.assets[1].toString(), // Distributed asset
       startBlock: poolData.start,
-      endBlock: poolData.end
+      endBlock: poolData.end,
+      feeCollector
     }
 
     // determine weights for asset A
@@ -130,6 +133,11 @@ export const mapToPool = (
           )
         : false
 
+    const poolFee: Fee = {
+      numerator: poolData.fee[0],
+      denominator: poolData.fee[1]
+    }
+
     console.log(
       'REPAY TARGET REACHED:',
       repayTargetReached,
@@ -138,11 +146,6 @@ export const mapToPool = (
       feeCollectorBalanceLockAmount
     )
 
-    const poolFee: Fee = {
-      numerator: poolData.fee[0],
-      denominator: poolData.fee[1]
-    }
-
     console.log('have fee', poolFee)
 
     const pool: LbpPool = {
@@ -150,6 +153,8 @@ export const mapToPool = (
       assetAWeights,
       assetBWeights,
       repayTargetReached,
+      feeCollector,
+      feeCollectorBalance: feeCollectorBalanceLockAmount,
       repayTarget,
       // if we've haven't reached the repay target, the pool will carry a larger fee
       fee: repayTargetReached ? poolFee : repayFee
