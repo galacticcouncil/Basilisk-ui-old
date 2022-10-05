@@ -1,0 +1,14 @@
+query GetHistoricalBalancesExact($recordIds: [String!]!)  {
+  historicalBalances: historicalPoolPriceData(
+    where: {
+      id_in: $recordIds,
+    },
+    orderBy: relayChainBlockHeight_ASC
+  ) {
+    assetABalance
+    assetBBalance
+    relayChainBlockHeight
+  }
+}
+
+ 

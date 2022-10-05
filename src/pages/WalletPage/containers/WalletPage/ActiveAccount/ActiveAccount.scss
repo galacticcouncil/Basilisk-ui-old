@@ -2,8 +2,8 @@
 @import '../../../../../misc/misc.module.scss';
 
 .active-account {
-  min-width: 800px;
-  max-width: 1200px;
+  min-width: 375px;
+  max-width: 1050px;
   border-radius: $border-radius;
   background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
   padding: 32px 0px 0px 0px;
@@ -41,31 +41,34 @@
     padding: 20px 32px;
     font-size: 18px;
     font-weight: 500;
-    &:nth-of-type(1) {
-      border-top: 1px solid rgb(41, 41, 45);
-    }
-
-    &:nth-child(odd) {
-      background: rgba(255, 255, 255, 0.06);
-    }
-    &:last-child {
-      border-radius: 0px 0px $border-radius $border-radius;
-    }
 
     .item {
-      width: 50%;
+      width: 52%;
       display: flex;
       flex-direction: row;
       justify-content: left;
       align-items: center;
+      word-break: break-all;
       gap: 10px;
 
       &:first-child {
-        width: 20%;
+        width: 18%;
+        word-break: normal;
       }
       &:last-child {
         width: 30%;
         justify-content: right;
+        word-break: normal;
+      }
+    }
+
+    &-header {
+      border-radius: 0px !important;
+      border-bottom: 1px solid rgb(41, 41, 45);
+      background: transparent !important;
+
+      .item { 
+        word-break: normal;
       }
     }
   }
@@ -77,11 +80,13 @@
     background-color: rgba(76, 243, 168, 0.12);
     color: #4fffb0;
     display: flex;
+    text-align: center;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     border: none;
     cursor: pointer;
+    word-break: normal;
 
     &:hover {
       background: rgba(76, 243, 168, 0.3);
@@ -96,6 +101,7 @@
       font-size: 16px;
       line-height: 16px;
       font-weight: 600;
+      word-break: normal;
     }
   }
 
@@ -105,5 +111,63 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
+  }
+}
+
+@media screen and (max-width: 45em) {
+  .active-account {
+    background: transparent;
+    margin: 0px;
+
+    &__title {
+      margin: 0px 0px 24px 24px;
+    }
+
+    &-wrapper {
+      width: fit-content;
+      padding: 0px;
+      background: linear-gradient(
+        180deg,
+        #1c2527 0%,
+        #14161a 80.73%,
+        #121316 100%
+      );
+
+      &:last-child {
+        background: linear-gradient(
+          180deg,
+          #1c2527 0%,
+          #14161a 80.73%,
+          #121316 100%
+        );
+        width: 100%;
+        border-top: 0px;
+        border-radius: $border-radius;
+      }
+
+      .item {
+        padding: 10px;
+        width: 100% !important;
+
+        &:first-child {
+          padding: 20px 32px;
+          border-top: 0px;
+          border-radius: $border-radius $border-radius 0px 0px;
+        }
+
+        &:nth-child(even) {
+          background: rgba(255, 255, 255, 0.06);
+        }
+
+        &:last-child {
+          padding: 20px 32px;
+          border-radius: 0px 0px $border-radius $border-radius;
+        }
+      }
+    }
+
+    &-button:last-child {
+      margin-left: auto;
+    }
   }
 }

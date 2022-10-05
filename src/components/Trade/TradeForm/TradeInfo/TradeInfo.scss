@@ -8,7 +8,7 @@
   gap: 4px;
 
   min-height: 100px;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 400;
 
   &__data {
@@ -66,11 +66,11 @@
     }
 
     &.error {
-      background: rgba(255, 104, 104, 0.3);
+      background: #e34a4a;
     }
 
     &.warning {
-      color: $orange1;
+      background: rgba(211, 130, 0, 0.903);
     }
   }
 }

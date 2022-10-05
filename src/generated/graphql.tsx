@@ -66,6 +66,7 @@ export type Config = {
   feePaymentAsset?: Maybe<Scalars['String']>;
   nodeUrl: Scalars['String'];
   processorUrl: Scalars['String'];
+  valueDisplayAsset: Scalars['String'];
 };
 
 export type Extension = {
@@ -93,9 +94,9 @@ export type IVesting = {
 
 export type LbpAssetWeights = {
   __typename?: 'LBPAssetWeights';
-  current: Scalars['String'];
-  final: Scalars['String'];
-  initial: Scalars['String'];
+  current: Scalars['Int'];
+  final: Scalars['Int'];
+  initial: Scalars['Int'];
 };
 
 export type LbpPool = {
@@ -105,18 +106,20 @@ export type LbpPool = {
   assetInId: Scalars['String'];
   assetOutId: Scalars['String'];
   balances?: Maybe<Array<Balance>>;
-  endBlock: Scalars['String'];
+  endBlock: Scalars['Int'];
   fee: Fee;
   id: Scalars['String'];
-  repayTargetReached: Scalars['Boolean'];
-  startBlock: Scalars['String'];
+  repayTarget?: Maybe<Scalars['String']>;
+  repayTargetReached?: Maybe<Scalars['Boolean']>;
+  startBlock: Scalars['Int'];
 };
 
 export type LastBlock = {
   __typename?: 'LastBlock';
+  createdAt: Scalars['Int'];
   id: Scalars['String'];
-  parachainBlockNumber?: Maybe<Scalars['String']>;
-  relaychainBlockNumber?: Maybe<Scalars['String']>;
+  parachainBlockNumber: Scalars['Int'];
+  relaychainBlockNumber: Scalars['Int'];
 };
 
 export type LockedBalance = {
@@ -133,7 +136,7 @@ export type Mutation = {
   setActiveAccount?: Maybe<Account>;
 };
 
-export type Pool = XykPool;
+export type Pool = LbpPool | XykPool;
 
 export type Query = Balances & IVesting & {
   __typename?: 'Query';
@@ -192,5 +195,5 @@ export type XykPool = {
   balances?: Maybe<Array<Balance>>;
   id: Scalars['String'];
   shareTokenId: Scalars['String'];
-  totalLiquidity: Scalars['String'];
+  totalLiquidity?: Maybe<Scalars['String']>;
 };

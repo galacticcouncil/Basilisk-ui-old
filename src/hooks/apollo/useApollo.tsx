@@ -22,8 +22,10 @@ import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
  * @returns Resolvers
  */
 export const useResolvers: () => Resolvers = () => {
-  const { Query: AccountsQueryResolvers, Mutation: AccountsMutationResolvers } =
-    useAccountsResolvers();
+  const {
+    Query: AccountsQueryResolvers,
+    Mutation: AccountsMutationResolvers,
+  } = useAccountsResolvers();
   const {
     Query: PoolsQueryResolver,
     XYKPool,
@@ -46,14 +48,14 @@ export const useResolvers: () => Resolvers = () => {
       ...useConfigMutationResolvers(),
       ...usePoolsMutationResolvers(),
       ...useFaucetResolvers().Mutation,
-      ...useBalanceMutationsResolvers()
+      ...useBalanceMutationsResolvers(),
     },
-    XYKPool,
     LBPPool,
+    XYKPool,
     Account: {
       ...useBalanceQueryResolvers(),
-      ...useVestingQueryResolvers()
-    }
+      ...useVestingQueryResolvers(),
+    },
   };
 };
 

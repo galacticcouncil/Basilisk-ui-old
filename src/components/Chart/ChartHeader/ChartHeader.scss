@@ -5,6 +5,13 @@ $disabledOpacity: 0.3;
 // TODO: break down css into multiple files
 .chart-header {
   height: auto;
+  color: white;
+  flex-basis: 100px;
+
+  &__timer {
+    padding-top: 10px;
+    font-weight: 700;
+  }
 
   &__pair-symbols {
     width: fit-content;
@@ -16,7 +23,6 @@ $disabledOpacity: 0.3;
   }
 
   &__type-label {
-    font-weight: 500;
     font-size: 0.875rem;
     margin-left: 0.75rem;
     align-self: center;
@@ -26,24 +32,39 @@ $disabledOpacity: 0.3;
     display: flex;
     align-items: end;
     flex-direction: column;
-    font-weight: 500;
 
     &__in-asset {
       display: flex;
       align-items: center;
 
-      font-size: 24px;
+      font-size: 20px;
       line-height: 24px;
       height: 24px;
     }
 
+    &__prediction-toggle {
+      color: $l-gray3;
+      margin-top: 12px;
+      font-size: 12px;
+      border-bottom: 2px dashed $green1;
+      font-weight: 500;
+
+      &:hover {
+        cursor: pointer;
+        color: $green2;
+      }
+    }
+
     &__breakdown {
+      font-weight: 400;
+      color: $green1;
       display: flex;
       gap: 4px;
 
       font-size: 14px;
 
       &__granularity {
+      
         opacity: 1;
         // TODO: revisit animations/transitions
         transition: opacity ease-in-out 80ms;
@@ -58,15 +79,16 @@ $disabledOpacity: 0.3;
   }
 
   &__pool-info {
+    padding: 0 16px;
     display: flex;
-    justify-content: start;
-    padding-top: 36px;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-top: 16px;
+    font-weight: 600;
 
     &__assets {
       display: flex;
       flex-direction: column;
-
-      font-weight: 500;
 
       &__symbols {
         font-size: 24px;
@@ -74,6 +96,7 @@ $disabledOpacity: 0.3;
       }
 
       &__full-name {
+        font-weight: 500;
         font-size: 14px;
       }
     }
@@ -94,7 +117,7 @@ $disabledOpacity: 0.3;
         padding-left: 0.5rem;
         border-left: 0.0625rem solid $gray1;
         font-size: 0.625rem;
-        font-weight: 500;
+        
         line-height: 0.625rem;
         text-align: center;
         color: $gray4;

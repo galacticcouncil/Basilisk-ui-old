@@ -56,71 +56,71 @@ export const useSubmitTradeMutationResolver = () => {
 
   // return withErrorHandler(
   return useCallback(
-      async (
-        _obj,
-        args: Maybe<SubmitTradeMutationVariables>,
-        { cache }: { cache: ApolloCache<NormalizedCacheObject> }
-      ) => {
-        if (!args || !apiInstance) return;
-        if (
-          args?.poolType === PoolType.XYK &&
-          args?.tradeType === TradeType.Buy
-        ) {
-          return await buyXyk(
-            cache,
-            apiInstance,
-            args.assetOutId,
-            args.assetInId,
-            args.assetOutAmount,
-            args.amountWithSlippage
-          );
-        }
+    async (
+      _obj,
+      args: Maybe<SubmitTradeMutationVariables>,
+      { cache }: { cache: ApolloCache<NormalizedCacheObject> }
+    ) => {
+      if (!args || !apiInstance) return;
+      if (
+        args?.poolType === PoolType.XYK &&
+        args?.tradeType === TradeType.Buy
+      ) {
+        return await buyXyk(
+          cache,
+          apiInstance,
+          args.assetOutId,
+          args.assetInId,
+          args.assetOutAmount,
+          args.amountWithSlippage
+        );
+      }
 
-        if (
-          args?.poolType === PoolType.XYK &&
-          args?.tradeType === TradeType.Sell
-        ) {
-          return await sellXyk(
-            cache,
-            apiInstance,
-            args.assetInId,
-            args.assetOutId,
-            args.assetInAmount,
-            args.amountWithSlippage
-          );
-        }
+      if (
+        args?.poolType === PoolType.XYK &&
+        args?.tradeType === TradeType.Sell
+      ) {
+        return await sellXyk(
+          cache,
+          apiInstance,
+          args.assetInId,
+          args.assetOutId,
+          args.assetInAmount,
+          args.amountWithSlippage
+        );
+      }
 
-        if (
-          args?.poolType === PoolType.LBP &&
-          args?.tradeType === TradeType.Buy
-        ) {
-          return await buyLbp(
-            cache,
-            apiInstance,
-            args.assetOutId,
-            args.assetInId,
-            args.assetOutAmount,
-            args.amountWithSlippage
-          );
-        }
+      if (
+        args?.poolType === PoolType.LBP &&
+        args?.tradeType === TradeType.Buy
+      ) {
+        return await buyLbp(
+          cache,
+          apiInstance,
+          args.assetOutId,
+          args.assetInId,
+          args.assetOutAmount,
+          args.amountWithSlippage
+        );
+      }
 
-        if (
-          args?.poolType === PoolType.LBP &&
-          args?.tradeType === TradeType.Sell
-        ) {
-          return await sellLbp(
-            cache,
-            apiInstance,
-            args.assetOutId,
-            args.assetInId,
-            args.assetOutAmount,
-            args.amountWithSlippage
-          );
-        }
+      if (
+        args?.poolType === PoolType.LBP &&
+        args?.tradeType === TradeType.Sell
+      ) {
+        return await sellLbp(
+          cache,
+          apiInstance,
+          args.assetInId,
+          args.assetOutId,
+          args.assetInAmount,
+          args.amountWithSlippage
+        );
+      }
 
-        throw new Error('We dont support this trade type yet');
-      },
-      [apiInstance]
-    )
+      throw new Error('We dont support this trade type yet');
+    },
+    [apiInstance]
+  );
   // );
 };

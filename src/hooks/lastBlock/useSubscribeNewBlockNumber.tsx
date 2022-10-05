@@ -1,60 +1,60 @@
-import constate from 'constate';
-import { useCallback, useEffect, useState } from 'react';
-import { LastBlock } from '../../generated/graphql';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
+import { createType } from '@polkadot/types'
+import constate from 'constate'
+import { useCallback, useEffect, useState } from 'react'
+import { LastBlock } from '../../generated/graphql'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { U32 } from '@polkadot/types/primitive'
+import { Codec } from '@polkadot/types-codec/types'
 
 export const validationDataDataType =
-  'Option<PolkadotPrimitivesV1PersistedValidationData>';
+  'Option<PolkadotPrimitivesV1PersistedValidationData>'
 export interface PolkadotPrimitivesV1PersistedValidationData {
-  relayParentNumber: number;
+  relayParentNumber: number
 }
-export type ValidationData = PolkadotPrimitivesV1PersistedValidationData;
 
 // TODO: lift up using constate
 export const useSubscribeNewBlock = () => {
-  const { apiInstance, loading } = usePolkadotJsContext();
-  const [lastBlock, setLastBlock] = useState<Partial<LastBlock> | undefined>(
-    undefined
-  );
-  const [unsubscribe, setUnsubscribe] = useState<() => void | undefined>();
+  const { apiInstance, loading } = usePolkadotJsContext()
+  const [lastBlock, setLastBlock] = useState<Omit<LastBlock, 'id'>>()
+  const [unsubscribe] = useState<() => void | undefined>()
 
   const subscribeNewBlocks = useCallback(async () => {
-    if (!apiInstance || loading) return;
-    // TODO: how to unsubscribe?
-     await apiInstance.derive.chain.bestNumber(
-      async (number) => {
-        const validationData =
-         await apiInstance.query.parachainSystem.validationData();
+    if (!apiInstance || loading) return
+    await apiInstance.queryMulti(
+      [
+        apiInstance.query.system.number,
+        apiInstance.query.parachainSystem.validationData,
+        apiInstance.query.timestamp.now
+      ],
+      ([number, validationData, time]) => {
+        const data = (validationData.toJSON() as unknown) as PolkadotPrimitivesV1PersistedValidationData
+        const blockNumber = createType(
+          apiInstance.registry,
+          'BlockNumber',
+          number
+        )
+        const timestamp = createType(apiInstance.registry, 'Moment', time)
 
-        const validationDataOption = apiInstance.createType(
-          validationDataDataType,
-          validationData
-        );
-
-        // TODO: this will only update the block if the relay chain block number is known
-        if (validationDataOption.isSome) {
-          const validationData =
-            validationDataOption.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData;
-          setLastBlock({
-            parachainBlockNumber: number.toString(),
-            relaychainBlockNumber: validationData.relayParentNumber.toString(),
-          });
-        }
+        setLastBlock({
+          parachainBlockNumber: blockNumber.toNumber(),
+          relaychainBlockNumber: data.relayParentNumber,
+          createdAt: timestamp.toNumber()
+        })
       }
-    );
-    //setUnsubscribe(unsubscribe);
-  }, [apiInstance, loading]);
+    )
+  }, [apiInstance, loading])
 
   useEffect(() => {
-    if (loading) return;
-    subscribeNewBlocks();
+    if (loading) return
+    subscribeNewBlocks()
     return () => {
-      unsubscribe && unsubscribe();
+      unsubscribe && unsubscribe()
     }
-  }, [loading, subscribeNewBlocks, unsubscribe]);
+  }, [loading, subscribeNewBlocks, unsubscribe])
 
-  return lastBlock;
-};
+  return lastBlock
+}
 
-export const [LastBlockProvider, useLastBlockContext] =
-  constate(useSubscribeNewBlock);
+export const [LastBlockProvider, useLastBlockContext] = constate(
+  useSubscribeNewBlock
+)

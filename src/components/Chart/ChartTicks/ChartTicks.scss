@@ -3,8 +3,20 @@
 .chart-ticks {
   display: flex;
   justify-content: space-between;
+  padding-right: 40px;
+  padding-left: 12px;
 
-  color: $l-gray3;
+  color: $white;
   font-size: 0.75rem;
   user-select: none;
+  font-weight: 500;
+}
+
+.hour {
+  font-size: 12px;
+  color: $l-gray2;
+} 
+
+.day {
+  font-size: 14px;
 }
