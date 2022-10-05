@@ -5,21 +5,97 @@
   position: relative;
   display: flex;
   justify-content: center;
+  flex-grow: 1;
+  flex-direction: column;
+
+  @media screen and(min-width: 850px) {
+    .trade-form-wrapper {
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
+
+    .trade-chart {
+      border-top-left-radius: 16px;
+      border-bottom-left-radius: 16px;
+    }
+
+    .trade-page-toggles {
+      display: none;
+    }
+  }
+
+  @media screen and(max-width: 850px) {
+    .trade-form-wrapper {
+      border-radius: 16px;
+    }
+
+    .trade-chart {
+      overflow: hidden;
+      border-radius: 16px;
+      flex-basis: 450px;
+      max-width: 450px;
+      max-height: 700px;
+      height: 550px;
+    }
+
+    .hidden {
+      overflow: hidden;
+      max-height: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    .trade-chart,
+    .trade-form-wrapper {
+      transition: max-height 0.3s linear, padding 0.3s;
+    }
+  }
+}
+
+.trade-page-toggles {
+  display: flex;
+  color: $l-gray5;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+
+
+
+  &__toggle {
+    cursor: pointer;
+
+    &.active {
+      color: $l-gray1;
+    }
+
+    padding: 0px 14px 8px 14px;
+
+    &:hover {
+      color: $green1;
+    }
+  }
 }
 
 .trade-page {
-  display: flex;
-  flex-basis: 450px;
-  max-width: 1050px;
-  flex-grow: 1;
-  flex-wrap: wrap-reverse;
-  justify-content: center;
-  align-items: center;
-  width: fit-content;
-  border-radius: 16px;
-  flex-shrink: 1;
-  overflow: hidden;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  flex-basis: 100px;
+
+  &__content {
+    display: flex;
+    flex-basis: 450px;
+    max-width: 100vw;
+    flex-grow: 1;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 1;
+    overflow: visible;
+    height: auto;
+    position: relative;
+  }
 }
 
 .notifications-bar {
@@ -81,14 +157,15 @@
       }
 
       &:hover {
-        svg{
-        path {
-          fill: $gray4;
-        }}
+        svg {
+          path {
+            fill: $gray4;
+          }
+        }
       }
 
       svg {
-    
+
         width: 10px;
         height: 10px;
       }
@@ -131,14 +208,16 @@
       animation-duration: 2000ms;
       animation-iteration-count: infinite;
       animation-timing-function: linear;
-  
+
     }
 
-    @keyframes spin { 
-      from { 
-          transform: rotate(0deg); 
-      } to { 
-          transform: rotate(360deg); 
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
       }
     }
   }

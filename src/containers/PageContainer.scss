@@ -14,10 +14,16 @@
   right: 0;
   margin: auto;
 
+  @media screen and(max-width: 850px) {
+    gap: 12px
+  }
+
   .page-content-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
   }
 
   .page-header {
@@ -40,24 +46,26 @@
 
     &__logo {
       flex-grow: 1;
-      &__full {
-      @media screen and (max-width: 1000px) {
 
- 
-        display: none;
+      &__full {
+        @media screen and (max-width: 1000px) {
+
+
+          display: none;
+        }
       }
-    }
 
       &__small {
         svg {
           height: 32px;
           width: 32px;
         }
-      @media screen and (min-width: 1000px) {
-   
-        display: none;
+
+        @media screen and (min-width: 1000px) {
+
+          display: none;
+        }
       }
-    }
     }
 
     &__wallet-wrapper {
@@ -105,22 +113,25 @@
       flex-grow: 1.5;
       gap: 20px;
       justify-content: center;
-      padding:10px 0;
+      padding: 10px 0;
 
       @media screen and (max-width: 1000px) {
 
- 
+
         justify-content: left;
       }
+
       &__menu-item {
         a {
           cursor: pointer;
           font-weight: 700;
           color: $l-gray2;
           text-decoration: none;
+
           &:visited {
             color: $l-gray2;
           }
+
           &:hover {
             color: $green1;
           }
@@ -152,15 +163,19 @@
         border-radius: 100%;
         margin-right: 6px;
         transition: background-color ease 200ms;
+
         &.green {
           background-color: $green2;
         }
+
         &.orange {
           background-color: $orange1;
         }
+
         &.red {
           background-color: $red1;
         }
+
         &.gray {
           background-color: $gray1;
         }

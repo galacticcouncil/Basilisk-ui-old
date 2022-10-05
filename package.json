@@ -6,19 +6,15 @@
   "dependencies": {
     "@apollo/client": "^3.5.9",
     "@craco/craco": "^7.0.0-alpha.7",
-    "@fortawesome/fontawesome-free": "^5.15.4",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
+    "@galacticcouncil/sdk": "^0.0.1-beta.12",
     "@gapit/format-si": "^0.0.1",
-    "@open-web3/orml-type-definitions": "^1.0.1",
-    "@open-web3/orml-types": "^1.0.1",
-    "@polkadot/api": "^9.4.2",
+    "@open-web3/orml-type-definitions": "^2.0.1",
+    "@open-web3/orml-types": "^2.0.1",
+    "@polkadot/api": "9.4.3",
     "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/networks": "^8.5.1",
     "@polkadot/react-identicon": "^1.1.1",
-    "@polkadot/types": "^9.4.2",
-    "@polkadot/types-codec": "^9.4.2",
+    "@polkadot/types": "9.4.3",
     "@substrate/ss58-registry": "^1.16.0",
     "@talismn/connect-wallets": "^1.2.1",
     "@testing-library/jest-dom": "^5.11.4",
@@ -157,7 +153,6 @@
           "*"
         ],
         "rules": {
-          "react/exhaustive-deps": "off",
           "react/style-prop-object": [
             1,
             {

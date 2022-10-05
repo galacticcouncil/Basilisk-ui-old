@@ -57,6 +57,7 @@ export interface TradeChartProps {
   granularity: ChartGranularity
   chartType: ChartType
   lbpStatus?: LbpStatus
+  visible: boolean
   lbpChartProps?: LbpChartProps
   primaryDataset: Dataset
   secondaryDataset: Dataset
@@ -69,6 +70,7 @@ export const TradeChart = ({
   poolType,
   granularity,
   isPoolLoading,
+  visible,
   chartType,
   lbpStatus,
   lbpChartProps,
@@ -233,7 +235,7 @@ export const TradeChart = ({
   const allData = primaryDataset.concat(secondaryDataset)
 
   return (
-    <div className="trade-chart">
+    <div className={'trade-chart' + (visible ? '' : ' hidden')}>
       <ChartHeader
         assetPair={assetPair}
         poolType={poolType}

@@ -164,6 +164,7 @@ export interface TradeFormProps {
   assetInLiquidity?: string
   assetOutWeight?: number
   assetOutLiquidity?: string
+  visible?: boolean
   repayTargetReached?: boolean | undefined
   isPoolLoading: boolean
   onSubmitTrade: (trade: SubmitTradeMutationVariables) => void
@@ -221,6 +222,7 @@ export const TradeForm = ({
   assetInLiquidity,
   assetOutWeight,
   assetOutLiquidity,
+  visible,
   repayTargetReached,
   onSubmitTrade,
   tradeLoading,
@@ -888,7 +890,7 @@ export const TradeForm = ({
   }, [apiInstance, apiInstanceLoading])
 
   return (
-    <div className="trade-form-wrapper">
+    <div className={'trade-form-wrapper' + (visible ? '' : ' hidden')}>
       <div ref={modalContainerRef}></div>
       {modalPortal}
 

@@ -1,17 +1,20 @@
 @import '../../../misc/colors.module.scss';
 
+//DONT TOUCH
 .trade-chart {
   display: flex;
   flex-direction: column;
-  flex-grow: 10000;
+  flex-grow: 100;
   flex-shrink: 1;
   min-width: 375px;
+  max-width: 700px;
   flex-basis: 375px;
   background: #121416;
   padding: 16px 16px 12px 16px;
   height: 100%;
-  width: 600px;
+  width: 700px;
   max-height: 100%;
+
   color: $l-gray3;
 
   .divider {
