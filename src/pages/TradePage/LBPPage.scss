@@ -70,21 +70,19 @@
             display: flex;
             justify-content: center;
 
-            &__group{
-                justify-content: center;
-                display: flex;
-                flex-direction: column;
+            &__group {
 
-            .value {
-                background: linear-gradient(90deg, #4FFFB0 0%, #B3FF8F 100%);
-                font-weight: 900;
-                display: inline;
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                text-fill-color: transparent;
-                font-size: 20px;
-            }}
+                .value {
+                    background: linear-gradient(90deg, #4FFFB0 0%, #B3FF8F 100%);
+                    font-weight: 900;
+                    display: inline;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    text-fill-color: transparent;
+                    font-size: 20px;
+                }
+            }
 
         }
     }
