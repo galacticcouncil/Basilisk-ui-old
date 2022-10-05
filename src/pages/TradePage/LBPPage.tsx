@@ -9,6 +9,7 @@ import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTra
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
 import './TradePage.scss'
+import './LBPPage.scss'
 import { PoolType } from '../../components/Chart/shared'
 import { useLoading } from '../../hooks/misc/useLoading'
 import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
@@ -258,7 +259,7 @@ export const LBPPage = () => {
   }, [accumulating, getBestSpotPrice, repayTargetReached])
 
   return (
-    <div className="trade-page-wrapper">
+    <div className="trade-page-wrapper lbp-page-wrapper">
       {/*NOTIF*/}
       <div className={'notifications-bar transaction-' + notification}>
         <div className="notification-icon"></div>
