@@ -1,0 +1,47 @@
+.lbp-page-wrapper.trade-page-wrapper {
+
+    @media screen and(min-width: 850px) {
+        .trade-form-wrapper {
+            border-top-right-radius: 16px;
+            border-bottom-right-radius: 16px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+
+        .trade-chart {
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .trade-page-toggles {
+            display: none;
+        }
+    }
+
+    @media screen and(max-width: 850px) {
+        .trade-form-wrapper {
+            border-radius: 16px;
+        }
+
+        .trade-chart {
+            overflow: hidden;
+            border-radius: 16px;
+            flex-basis: 450px;
+            max-width: 450px;
+            max-height: 700px;
+            height: 550px;
+        }
+
+        .hidden {
+            overflow: hidden;
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .trade-chart,
+        .trade-form-wrapper {
+            transition: max-height 0.3s linear, padding 0.3s;
+        }
+    }
+}
