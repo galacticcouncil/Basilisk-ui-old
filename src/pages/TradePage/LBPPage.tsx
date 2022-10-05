@@ -18,14 +18,13 @@ import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountT
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
 
 import Icon from '../../components/Icon/Icon'
-import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
+// import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
 
 import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
 
 import { EnhancedTradeChart } from './EnhancedTradeChart'
 import { usePolkadotJsContext } from '../../hooks/polkadotJs/usePolkadotJs'
-
-export const USD_TOKEN_ID = 9
+import { usePersistentConfig } from '../../hooks/config/usePersistentConfig'
 
 export enum LbpStatus {
   NOT_EXISTS,
@@ -38,6 +37,10 @@ export enum LbpStatus {
 export const LBPPage = () => {
   const { math } = useMath()
   const { apiInstance, loading: apiLoading } = usePolkadotJsContext()
+
+  const {
+    persistedConfig: { valueDisplayAsset }
+  } = usePersistentConfig()
 
   const poolService = useMemo(() => {
     return apiInstance && !apiLoading
@@ -225,8 +228,8 @@ export const LBPPage = () => {
       Promise.all([
         getBestSpotPrice(assetIds.assetOut, assetIds.assetIn),
         getBestSpotPrice(assetIds.assetIn, assetIds.assetOut),
-        getBestSpotPrice(assetIds.assetIn, USD_TOKEN_ID.toString()),
-        getBestSpotPrice(assetIds.assetOut, USD_TOKEN_ID.toString())
+        getBestSpotPrice(assetIds.assetIn, valueDisplayAsset),
+        getBestSpotPrice(assetIds.assetOut, valueDisplayAsset)
       ]).then(([outIn, inOut, assetInValue, assetOutValue]) => {
         if (outIn && inOut) {
           setSpotPrice({
