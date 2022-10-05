@@ -38,16 +38,16 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
     <>
       <div className="page-container">
         <div className="page-header">
-          <div className="page-header__logo">
-            <div className="page-header__logo__small">
-              <Icon name="BasiliskLogoSmall" />
-            </div>
-
-            <div className="page-header__logo__full">
-              <Icon name="BasiliskLogoFull" />
-            </div>
-          </div>
           <div className="page-header__menu-wrapper">
+            <div className="page-header__logo">
+              <div className="page-header__logo__small">
+                <Icon name="BasiliskLogoSmall" />
+              </div>
+
+              <div className="page-header__logo__full">
+                <Icon name="BasiliskLogoFull" />
+              </div>
+            </div>
             <div className="page-header__menu-wrapper__menu-item">
               <Link to="lbp">LBP</Link>
             </div>
