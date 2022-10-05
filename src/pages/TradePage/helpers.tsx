@@ -108,16 +108,6 @@ export const getPriceForBlocks = (
       }
 
       const y = new BigNumber(fromPrecision12(spotPrice.inOut || '0'))
-      console.log('')
-
-      console.log(
-        'getting price',
-        relayChainBlockHeight,
-        assetABalance,
-        assetBBalance,
-        currentAssetAWeight.toString(),
-        currentAssetBWeight.toString()
-      )
 
       return {
         y: y.toNumber(),

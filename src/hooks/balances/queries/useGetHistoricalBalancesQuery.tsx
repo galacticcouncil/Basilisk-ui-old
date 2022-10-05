@@ -65,7 +65,6 @@ export const useGetHistoricalBalancesQuery = (
   variables: GetHistoricalBalancesQueryVariables,
   options?: QueryHookOptions
 ) => {
-  console.log('useGetHistoricalBalancesQuery', variables, options)
   return useLazyQuery<GetHistoricalBalancesQueryResponse>(
     GET_HISTORICAL_BALANCES,
     {
@@ -80,7 +79,6 @@ export const useGetHistoricalBalancesExactQuery = (
   variables: GetHistoricalBalancesExactQueryVariables,
   options?: QueryHookOptions
 ) => {
-  console.log('useGetHistoricalBalancesExactQuery', variables, options)
   return useLazyQuery<GetHistoricalBalancesQueryResponse>(
     GET_HISTORICAL_BALANCES_EXACT,
     {
@@ -95,7 +93,6 @@ export const useGetFirstHistoricalBlockQuery = (
   variables: GetFirstHistoricalBlockQueryVariables,
   options?: QueryHookOptions
 ) => {
-  console.log('useGetFirstHistoricalBlockQuery', variables, options)
   return useLazyQuery<FirstHistoricalBlockQueryResponse>(
     GET_FIRST_HISTORICAL_BLOCK,
     {
@@ -110,7 +107,6 @@ export const useGetLastHistoricalBlockQuery = (
   variables: GetFirstHistoricalBlockQueryVariables,
   options?: QueryHookOptions
 ) => {
-  console.log('useGetLastHistoricalBlockQuery', variables, options)
   return useLazyQuery<LastHistoricalBlockQueryResponse>(
     GET_LAST_HISTORICAL_BLOCK,
     {
