@@ -55,6 +55,11 @@
         gap: 20px;
         align-items: center;
         justify-content: space-between;
+        flex-wrap: wrap;
+
+        @media screen and(max-width: 850px) {
+            display: none;
+        }
 
         &__lbp-info-item {
             color: white;
@@ -66,7 +71,7 @@
             flex-basis: 200px;
             max-width: 300px;
             flex-grow: 1;
-            min-width: 150px;
+            min-width: 130px;
             display: flex;
             justify-content: center;
 
