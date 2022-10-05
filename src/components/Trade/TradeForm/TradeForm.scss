@@ -5,6 +5,8 @@
   position: relative;
   flex-basis: 450px;
   flex-grow: 1;
+  max-height: 1000px;
+  width: 450px;
 
   padding: 22px;
   min-width: 375px;
@@ -12,8 +14,6 @@
 
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
-  overflow: hidden;
-
 
   position: relative;
 
@@ -35,12 +35,10 @@
       color: $l-gray3;
       font-size: 22px;
       font-weight: 500;
-      background: linear-gradient(
-          90deg,
+      background: linear-gradient(90deg,
           #4fffb0 1.27%,
           #b3ff8f 48.96%,
-          #ff984e 104.14%
-        ),
+          #ff984e 104.14%),
         linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
         linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
       -webkit-background-clip: text;
@@ -281,6 +279,7 @@
     font-size: 16px;
     color: $green1;
   }
+
   .balance-info-balance {
     display: flex;
     align-items: center;

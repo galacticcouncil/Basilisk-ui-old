@@ -31,7 +31,6 @@ export const getMissingIndexes = (
     }
   }
 
-  console.log('missingIndexes', missingIndexes)
   return missingIndexes
 }
 
@@ -63,7 +62,6 @@ export const getMissingBlocks = (
     }
   }
 
-  console.log('missingBlocks', missingBlocks)
   return missingBlocks
 }
 
@@ -111,7 +109,7 @@ export const getPriceForBlocks = (
 
       return {
         y: y.toNumber(),
-        yAsString: fromPrecision12(spotPrice.inOut || '0')
+        yAsString: new BigNumber(fromPrecision12(spotPrice.inOut)).toFixed(6)
       }
     })()
   }

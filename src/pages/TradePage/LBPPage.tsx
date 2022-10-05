@@ -57,7 +57,12 @@ export const LBPPage = () => {
   )
 
   const [spotPrice, setSpotPrice] = useState({ outIn: 0, inOut: 0 })
-  const [usdPrice, setUsdPrice] = useState({ assetIn: 0, assetOut: 0 })
+  const [usdPrice, setUsdPrice] = useState({
+    assetIn: 0,
+    assetOut: 0,
+    assetInAsString: '-',
+    assetOutAsString: '-'
+  })
 
   // taking assetIn/assetOut from search params / query url
   const [assetIds, setAssetIds] = useAssetIdsWithUrl()
@@ -69,6 +74,8 @@ export const LBPPage = () => {
   const [notification, setNotification] = useState<
     'standby' | 'pending' | 'success' | 'failed'
   >('standby')
+
+  const [chartVisible, setChartVisible] = useState(false)
 
   const depsLoading = useLoading()
 
@@ -215,7 +222,6 @@ export const LBPPage = () => {
 
   useEffect(() => {
     if (assetIds.assetIn && assetIds.assetOut) {
-      console.log('GETTING SPOT PRICE', assetIds)
       Promise.all([
         getBestSpotPrice(assetIds.assetOut, assetIds.assetIn),
         getBestSpotPrice(assetIds.assetIn, assetIds.assetOut),
@@ -223,13 +229,6 @@ export const LBPPage = () => {
         getBestSpotPrice(assetIds.assetOut, USD_TOKEN_ID.toString())
       ]).then(([outIn, inOut, assetInValue, assetOutValue]) => {
         if (outIn && inOut) {
-          console.log(
-            'price',
-            outIn.amount.toNumber(),
-            inOut.amount.toNumber(),
-            assetInValue,
-            assetOutValue
-          )
           setSpotPrice({
             outIn: accumulating
               ? outIn.amount.toNumber()
@@ -240,6 +239,16 @@ export const LBPPage = () => {
           })
         }
         if (assetInValue && assetOutValue) {
+          setUsdPrice({
+            assetIn: assetInValue.amount.toNumber(),
+            assetInAsString: assetInValue.amount
+              .dividedBy(10 ** assetInValue.decimals)
+              .toFixed(3),
+            assetOut: assetOutValue.amount.toNumber(),
+            assetOutAsString: assetOutValue.amount
+              .dividedBy(10 ** assetOutValue.decimals)
+              .toFixed(3)
+          })
         }
       })
     }
@@ -261,55 +270,82 @@ export const LBPPage = () => {
         </div>
       </div>
       {/*NOTIF*/}
+
+      <div className="trade-page-toggles">
+        <div
+          className={
+            'trade-page-toggles__toggle' + (!chartVisible ? ' active' : '')
+          }
+          onClick={() => setChartVisible(false)}
+        >
+          Swap
+        </div>
+        <div
+          className={
+            'trade-page-toggles__toggle' + (chartVisible ? ' active' : '')
+          }
+          onClick={() => setChartVisible(true)}
+        >
+          Chart
+        </div>
+      </div>
+
       <div className="trade-page">
-        <EnhancedTradeChart
-          pool={pool}
-          assetIds={assetIds}
-          spotPrice={{
-            outIn: !accumulating
-              ? spotPrice.inOut?.toString()
-              : spotPrice.outIn?.toString(),
-            inOut: accumulating
-              ? spotPrice.inOut?.toString()
-              : spotPrice.outIn?.toString()
-          }}
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
-        <TradeForm
-          assetIds={assetIds}
-          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-          isActiveAccountConnected={isActiveAccountConnected}
-          pool={pool}
-          // first load and each time the asset ids (variables) change
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-          assetMap={poolAssetMap}
-          assetInLiquidity={assetInLiquidity}
-          assetOutLiquidity={assetOutLiquidity}
-          assetInWeight={assetInWeight?.current}
-          assetOutWeight={assetOutWeight?.current}
-          repayTargetReached={repayTargetReached}
-          onSubmitTrade={handleSubmitTrade}
-          tradeLoading={tradeLoading}
-          assets={assets}
-          activeAccount={activeAccountData?.activeAccount}
-          activeAccountTradeBalances={tradeBalances}
-          activeAccountTradeBalancesLoading={
-            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus ===
-              NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
+        <div className="trade-page__content">
+          <EnhancedTradeChart
+            visible={chartVisible}
+            pool={pool}
+            assetIds={assetIds}
+            spotPrice={{
+              outIn: !accumulating
+                ? spotPrice.inOut?.toString()
+                : spotPrice.outIn?.toString(),
+              inOut: accumulating
+                ? spotPrice.inOut?.toString()
+                : spotPrice.outIn?.toString()
+            }}
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+          <TradeForm
+            visible={!chartVisible}
+            assetIds={assetIds}
+            onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+            isActiveAccountConnected={isActiveAccountConnected}
+            pool={pool}
+            // first load and each time the asset ids (variables) change
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+            assetMap={poolAssetMap}
+            assetInLiquidity={assetInLiquidity}
+            assetOutLiquidity={assetOutLiquidity}
+            assetInWeight={assetInWeight?.current}
+            assetOutWeight={assetOutWeight?.current}
+            repayTargetReached={repayTargetReached}
+            onSubmitTrade={handleSubmitTrade}
+            tradeLoading={tradeLoading}
+            assets={assets}
+            activeAccount={activeAccountData?.activeAccount}
+            activeAccountTradeBalances={tradeBalances}
+            activeAccountTradeBalancesLoading={
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.loading ||
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+        </div>
         <div className="lbp-info-wrapper">
-          <div className="lbp-info-wrapper__lbp-info-item"></div>
+          <div className="lbp-info-wrapper__lbp-info-item">
+            {/* {usdPrice.assetInAsString} */}
+          </div>
           <div className="lbp-info-wrapper__lbp-info-item"></div>
           <div className="lbp-info-wrapper__lbp-info-item"></div>
         </div>

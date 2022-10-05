@@ -40,6 +40,7 @@ export interface EnhancedTradeChartProps {
   pool?: LbpPool
   isPoolLoading?: boolean
   assetIds: TradeAssetIds
+  visible: boolean
   spotPrice?: {
     outIn?: string
     inOut?: string
@@ -54,13 +55,14 @@ export enum LbpStatus {
   ENDED
 }
 
-export const REFETCH_INTERVAL = 180000
+export const REFETCH_INTERVAL = 1000000000000
 export const ERROR_REFETCH_INTERVAL = 3000
 
 export const EnhancedTradeChart = ({
   pool,
   assetIds,
   spotPrice,
+  visible,
   isPoolLoading
 }: EnhancedTradeChartProps) => {
   const { math } = useMath()
@@ -156,7 +158,7 @@ export const EnhancedTradeChart = ({
 
   const accumulating = useMemo(() => {
     return assetIds.assetIn === pool?.assetInId
-  }, [assetIds, pool])
+  }, [assetIds, pool?.assetInId, pool?.assetOutId])
 
   // const [firstHistoricalBlock, setFirstHistoricalBlock] = useState<
   //   FirstHistoricalBlock
@@ -270,10 +272,9 @@ export const EnhancedTradeChart = ({
     historicalBalancesLoading,
     pool?.id,
     lastHistoricalDataRefetch,
-    getFirstHistoricalBlockQuery,
     startBlock,
-    currentParaBlock,
-    getHistoricalBalancesQuery
+    endBlock,
+    currentParaBlock
   ])
 
   ////
@@ -362,19 +363,6 @@ export const EnhancedTradeChart = ({
       }
     )
 
-    const newDataPoint = {
-      x: blockToTime(endOrNow, {
-        height: currentRelayBlock,
-        date: currentBlockTime
-      }),
-      y: new BigNumber(fromPrecision12(spotPrice.inOut || '0')).toNumber(),
-      yAsString: fromPrecision12(spotPrice.inOut || '0')
-    }
-
-    console.log('INITIAL', newDataPoint.y)
-
-    newPrimaryDataset.push(newDataPoint)
-
     setDataset({
       primaryDataset: newPrimaryDataset,
       secondaryDataset: newSecondaryDataset,
@@ -430,9 +418,11 @@ export const EnhancedTradeChart = ({
           (accumulating ? spotPrice.outIn : spotPrice.inOut) || '0'
         )
       ).toNumber(),
-      yAsString: fromPrecision12(
-        (accumulating ? spotPrice.outIn : spotPrice.inOut) || '0'
-      )
+      yAsString: new BigNumber(
+        fromPrecision12(
+          (accumulating ? spotPrice.outIn : spotPrice.inOut) || '0'
+        )
+      ).toFixed(6)
     }
 
     if (
@@ -469,10 +459,10 @@ export const EnhancedTradeChart = ({
       secondaryDataset: newSecondaryDataset,
       lastRelayBlock: lastRelayBlock
     })
-  }, [currentParaBlock, spotPrice])
+  }, [currentParaBlock])
 
   useEffect(() => {
-    setLastHistoricalDataRefetch(0)
+    setLastHistoricalDataRefetch(Date.now() - REFETCH_INTERVAL + 100)
     setHistoricalBalancesLoading(false)
   }, [pool?.id, pool?.assetInId, pool?.assetOutId])
 
@@ -480,6 +470,7 @@ export const EnhancedTradeChart = ({
 
   return (
     <LBPTradeChartComponent
+      visible={visible}
       assetPair={{
         assetA: idToAsset(accumulating ? assetIds.assetOut : assetIds.assetIn),
         assetB: idToAsset(accumulating ? assetIds.assetIn : assetIds.assetOut)
