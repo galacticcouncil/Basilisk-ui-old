@@ -37,10 +37,12 @@
       color: $l-gray3;
       font-size: 22px;
       font-weight: 500;
-      background: linear-gradient(90deg,
+      background: linear-gradient(
+          90deg,
           #4fffb0 1.27%,
           #b3ff8f 48.96%,
-          #ff984e 104.14%),
+          #ff984e 104.14%
+        ),
         linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
         linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
       -webkit-background-clip: text;
@@ -100,7 +102,6 @@
     }
   }
 }
-
 
 .asset-switch {
   display: flex;

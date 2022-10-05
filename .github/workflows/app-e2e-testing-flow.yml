@@ -74,11 +74,11 @@ jobs:
           name: app-build-files
           path: ./ui-app/build
 
-#      - name: Download artifact - Storybook build
-#        uses: actions/download-artifact@v2
-#        with:
-#          name: sb-build-files
-#          path: ./ui-app/storybook-static
+      #      - name: Download artifact - Storybook build
+      #        uses: actions/download-artifact@v2
+      #        with:
+      #          name: sb-build-files
+      #          path: ./ui-app/storybook-static
 
       # Prepare Basilisk-api ("develop" branch must be cloned)
       - name: Clone Basilisk-api

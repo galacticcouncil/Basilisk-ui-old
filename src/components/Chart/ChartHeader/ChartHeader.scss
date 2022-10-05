@@ -64,7 +64,6 @@ $disabledOpacity: 0.3;
       font-size: 14px;
 
       &__granularity {
-      
         opacity: 1;
         // TODO: revisit animations/transitions
         transition: opacity ease-in-out 80ms;
@@ -117,7 +116,7 @@ $disabledOpacity: 0.3;
         padding-left: 0.5rem;
         border-left: 0.0625rem solid $gray1;
         font-size: 0.625rem;
-        
+
         line-height: 0.625rem;
         text-align: center;
         color: $gray4;

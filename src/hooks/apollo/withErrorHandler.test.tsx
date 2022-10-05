@@ -1,88 +1,88 @@
-import TestRenderer, { act } from 'react-test-renderer';
-import { onError } from './onError';
-import { withErrorHandler } from './withErrorHandler';
+import TestRenderer, { act } from 'react-test-renderer'
+import { onError } from './onError'
+import { withErrorHandler } from './withErrorHandler'
 
 jest.mock('./onError', () => {
-  return { onError: jest.fn() };
-});
+  return { onError: jest.fn() }
+})
 
 describe('hooks/apollo/withErrorHandler', () => {
-  let resolverFromRef: any;
+  let resolverFromRef: any
 
   const Test = ({ resolver }: { resolver?: any }) => {
-    resolverFromRef = withErrorHandler(resolver);
+    resolverFromRef = withErrorHandler(resolver)
 
-    return <></>;
-  };
+    return <></>
+  }
 
-  let component: TestRenderer.ReactTestRenderer;
+  let component: TestRenderer.ReactTestRenderer
   const render = (resolver?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    component = TestRenderer.create(<Test resolver={resolver} />);
-  };
+    component = TestRenderer.create(<Test resolver={resolver} />)
+  }
 
   beforeEach(() => {
-    jest.resetModules();
-  });
+    jest.resetModules()
+  })
 
   it('resolver finished successfully', async () => {
-    const result = 'mocked-result';
-    const resolver = jest.fn().mockResolvedValue(result);
+    const result = 'mocked-result'
+    const resolver = jest.fn().mockResolvedValue(result)
 
-    render(resolver);
+    render(resolver)
 
-    await expect(resolverFromRef()).resolves.toEqual(result);
-  });
+    await expect(resolverFromRef()).resolves.toEqual(result)
+  })
 
   it('resolver finished with error, the error propagates, onError middleware is called', async () => {
-    const error = new Error('custom error');
-    const resolver = jest.fn();
+    const error = new Error('custom error')
+    const resolver = jest.fn()
     resolver.mockImplementationOnce(() => {
-      throw error;
-    });
+      throw error
+    })
 
-    render(resolver);
+    render(resolver)
 
-    await expect(resolverFromRef()).rejects.toEqual(error);
+    await expect(resolverFromRef()).rejects.toEqual(error)
 
     expect(onError).toBeCalledWith(
       expect.objectContaining({
-        error,
+        error
       })
-    );
-  });
+    )
+  })
 
   it('resolver rejected, the error propagates, onError middleware is called', async () => {
-    const error = new Error('custom rejected error');
-    const resolver = jest.fn();
-    resolver.mockRejectedValue(error);
+    const error = new Error('custom rejected error')
+    const resolver = jest.fn()
+    resolver.mockRejectedValue(error)
 
-    render(resolver);
+    render(resolver)
 
-    await expect(resolverFromRef()).rejects.toEqual(error);
+    await expect(resolverFromRef()).rejects.toEqual(error)
 
     expect(onError).toBeCalledWith(
       expect.objectContaining({
-        error,
+        error
       })
-    );
-  });
+    )
+  })
 
   it('updates resolver function', async () => {
-    const result = 'mocked-result';
-    const resolver = jest.fn().mockResolvedValue(result);
-    const updatedResult = 'updated-mocked-result';
-    const updatedResolver = jest.fn().mockResolvedValue(updatedResult);
+    const result = 'mocked-result'
+    const resolver = jest.fn().mockResolvedValue(result)
+    const updatedResult = 'updated-mocked-result'
+    const updatedResolver = jest.fn().mockResolvedValue(updatedResult)
 
-    render(resolver);
+    render(resolver)
 
-    await expect(resolverFromRef()).resolves.toEqual(result);
-    expect(resolver).toBeCalledTimes(1);
+    await expect(resolverFromRef()).resolves.toEqual(result)
+    expect(resolver).toBeCalledTimes(1)
 
     act(() => {
-      component.update(<Test resolver={updatedResolver} />);
-    });
-    await expect(resolverFromRef()).resolves.toEqual(updatedResult);
-    expect(updatedResolver).toBeCalledTimes(1);
-  });
-});
+      component.update(<Test resolver={updatedResolver} />)
+    })
+    await expect(resolverFromRef()).resolves.toEqual(updatedResult)
+    expect(updatedResolver).toBeCalledTimes(1)
+  })
+})

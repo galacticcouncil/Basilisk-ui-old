@@ -1,20 +1,20 @@
-import { MutableRefObject, useMemo } from 'react';
-import { Account, Maybe } from '../../../generated/graphql';
-import { AccountItem } from './AccountItem/AccountItem';
-import { Button, ButtonKind } from '../../Button/Button';
-import './AccountSelector.scss';
-import { FormattedMessage } from 'react-intl';
-import Icon from '../../Icon/Icon';
+import { MutableRefObject, useMemo } from 'react'
+import { Account, Maybe } from '../../../generated/graphql'
+import { AccountItem } from './AccountItem/AccountItem'
+import { Button, ButtonKind } from '../../Button/Button'
+import './AccountSelector.scss'
+import { FormattedMessage } from 'react-intl'
+import Icon from '../../Icon/Icon'
 
 export interface AccountSelectorProps {
-  accounts?: Account[];
-  accountsLoading: boolean;
-  account?: Maybe<Account>;
-  onAccountSelected: (account: Account) => void;
-  onAccountCleared: () => void;
-  innerRef: MutableRefObject<HTMLDivElement | null>;
-  closeModal: () => void;
-  isExtensionAvailable: boolean;
+  accounts?: Account[]
+  accountsLoading: boolean
+  account?: Maybe<Account>
+  onAccountSelected: (account: Account) => void
+  onAccountCleared: () => void
+  innerRef: MutableRefObject<HTMLDivElement | null>
+  closeModal: () => void
+  isExtensionAvailable: boolean
 }
 
 /**
@@ -28,9 +28,9 @@ export const AccountSelector = ({
   account,
   innerRef,
   closeModal,
-  isExtensionAvailable,
+  isExtensionAvailable
 }: AccountSelectorProps) => {
-  const activeAccount = useMemo(() => account, [account]);
+  const activeAccount = useMemo(() => account, [account])
 
   return (
     <div className="account-selector" ref={innerRef}>
@@ -85,12 +85,12 @@ export const AccountSelector = ({
                     ))}
                   </div>
                 ) : (
-                    //TODO update href param when we know where to send user
+                  //TODO update href param when we know where to send user
                   <div className="account-selector__message">
                     <FormattedMessage
                       id="Wallet.NoAccountsAvailable"
                       defaultMessage="No accounts available "
-                      />
+                    />
                     <FormattedMessage
                       id="Wallet.SelectAccountHelp"
                       values={{
@@ -104,7 +104,7 @@ export const AccountSelector = ({
                           >
                             <FormattedMessage id="Wallet.ClickHere" />
                           </a>
-                        ),
+                        )
                       }}
                       defaultMessage="Need help creating an account? {link}"
                     />
@@ -141,7 +141,7 @@ export const AccountSelector = ({
                   >
                     <FormattedMessage id="Wallet.InstallLinkText" />
                   </a>
-                ),
+                )
               }}
             />
             <FormattedMessage
@@ -152,8 +152,8 @@ export const AccountSelector = ({
                     href="/#"
                     className="account-selector__create-account-link"
                     onClick={(e) => {
-                      e.preventDefault();
-                      window.location.reload();
+                      e.preventDefault()
+                      window.location.reload()
                     }}
                   >
                     <FormattedMessage
@@ -161,12 +161,12 @@ export const AccountSelector = ({
                       defaultMessage="reload the page"
                     />
                   </a>
-                ),
+                )
               }}
             />
           </div>
         )}
       </div>
     </div>
-  );
-};
+  )
+}

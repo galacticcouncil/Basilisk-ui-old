@@ -1,21 +1,20 @@
-import { ConfirmationType } from '../../hooks/actionLog/useWithConfirmation';
-import { SubmitTradeMutationVariables } from '../../hooks/pools/mutations/useSubmitTradeMutation';
-import { ModalPortalElementFactoryArgs } from '../Balance/AssetBalanceInput/hooks/useModalPortal';
-import './Confirmation.scss';
+import { ConfirmationType } from '../../hooks/actionLog/useWithConfirmation'
+import { SubmitTradeMutationVariables } from '../../hooks/pools/mutations/useSubmitTradeMutation'
+import { ModalPortalElementFactoryArgs } from '../Balance/AssetBalanceInput/hooks/useModalPortal'
+import './Confirmation.scss'
 
 export const Confirmation = ({
   isModalOpen,
   options,
   resolve,
   reject,
-  confirmationType,
+  confirmationType
 }: ModalPortalElementFactoryArgs<any> & {
-  options?: SubmitTradeMutationVariables; // or any other type that might be handled through confirmations
-  confirmationType: ConfirmationType;
+  options?: SubmitTradeMutationVariables // or any other type that might be handled through confirmations
+  confirmationType: ConfirmationType
 }) => {
+  console.log('options', options)
 
-  console.log('options', options);
-  
   return isModalOpen ? (
     <div className="confirmation-screen">
       <div className="modal-component-wrapper">
@@ -46,5 +45,5 @@ export const Confirmation = ({
     </div>
   ) : (
     <></>
-  );
-};
+  )
+}

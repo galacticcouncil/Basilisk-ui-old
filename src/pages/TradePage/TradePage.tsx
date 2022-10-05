@@ -301,10 +301,8 @@ export const TradePage = () => {
     depsLoading
   )
 
-  const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus
-  } = useGetPoolsQueryProvider()
+  const { data: poolsData, networkStatus: poolsNetworkStatus } =
+    useGetPoolsQueryProvider()
 
   const { assets, poolAssetMap } = useMemo(() => {
     return getAssetMapsFromPools(poolsData?.pools || [])
@@ -323,23 +321,21 @@ export const TradePage = () => {
 
   const clearNotificationIntervalRef = useRef<any>()
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError }
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success')
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby')
-      }, 4000)
-    },
-    onError: () => {
-      setNotification('failed')
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby')
-      }, 4000)
-    }
-  })
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success')
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby')
+        }, 4000)
+      },
+      onError: () => {
+        setNotification('failed')
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby')
+        }, 4000)
+      }
+    })
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending')

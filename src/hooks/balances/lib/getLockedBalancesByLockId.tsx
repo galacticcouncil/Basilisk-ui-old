@@ -1,10 +1,10 @@
-import { ApiPromise } from '@polkadot/api';
-import constants from '../../../constants';
-import { StorageKey, Vec } from '@polkadot/types';
-import { OrmlBalanceLock } from '@open-web3/orml-types/interfaces';
-import { lockedBalanceStorageKey } from '../types';
-import { LockedBalance } from '../../../generated/graphql';
-import '@polkadot/api-augment';
+import { ApiPromise } from '@polkadot/api'
+import constants from '../../../constants'
+import { StorageKey, Vec } from '@polkadot/types'
+import { OrmlBalanceLock } from '@open-web3/orml-types/interfaces'
+import { lockedBalanceStorageKey } from '../types'
+import { LockedBalance } from '../../../generated/graphql'
+import '@polkadot/api-augment'
 
 /**
  * This function returns the assetId and balance for a given lockId.
@@ -26,18 +26,18 @@ export const getLockedBalancesByLockId = async (
     apiInstance,
     address,
     lockId
-  );
-  if (nativeBalanceForLockId.length) return nativeBalanceForLockId;
+  )
+  if (nativeBalanceForLockId.length) return nativeBalanceForLockId
 
   const nonNativeBalanceForLockId = await getNonNativeBalanceByLockId(
     apiInstance,
     address,
     lockId
-  );
-  if (nonNativeBalanceForLockId.length) return nonNativeBalanceForLockId;
+  )
+  if (nonNativeBalanceForLockId.length) return nonNativeBalanceForLockId
 
-  return [];
-};
+  return []
+}
 
 async function getNativeBalanceByLockId(
   apiInstance: ApiPromise,
@@ -47,14 +47,14 @@ async function getNativeBalanceByLockId(
   const nativeLockedBalances = await getNativeLockedBalances(
     apiInstance,
     address
-  );
+  )
 
   const nativeBalanceForLockId = filterBalancesByLockId(
     nativeLockedBalances,
     lockId
-  );
+  )
 
-  return nativeBalanceForLockId;
+  return nativeBalanceForLockId
 }
 
 export const getNativeLockedBalances = async (
@@ -62,16 +62,16 @@ export const getNativeLockedBalances = async (
   address: string
 ): Promise<LockedBalance[]> => {
   // query returns empty array if there is no locked balance for native token
-  const lockedBalances = await apiInstance.query.balances.locks(address);
+  const lockedBalances = await apiInstance.query.balances.locks(address)
 
   return lockedBalances.map((lockedBalance) => {
     return {
       lockId: lockedBalance.id.toString(),
       assetId: constants.nativeAssetId,
-      balance: lockedBalance.amount.toString(),
-    };
-  });
-};
+      balance: lockedBalance.amount.toString()
+    }
+  })
+}
 
 /**
  * This function is used to search for locked balances
@@ -88,8 +88,8 @@ export const filterBalancesByLockId = (
 ): LockedBalance[] => {
   return lockedBalances.filter(
     (lockedBalance) => lockedBalance.lockId === lockId
-  );
-};
+  )
+}
 
 async function getNonNativeBalanceByLockId(
   apiInstance: ApiPromise,
@@ -99,14 +99,14 @@ async function getNonNativeBalanceByLockId(
   const nonNativeLockedBalances = await getNonNativeLockedBalances(
     apiInstance,
     address
-  );
+  )
 
   const nonNativeBalanceForLockId = filterBalancesByLockId(
     nonNativeLockedBalances,
     lockId
-  );
+  )
 
-  return nonNativeBalanceForLockId;
+  return nonNativeBalanceForLockId
 }
 
 export const getNonNativeLockedBalances = async (
@@ -115,7 +115,7 @@ export const getNonNativeLockedBalances = async (
 ): Promise<LockedBalance[]> => {
   const nonNativeLockedBalances = await apiInstance.query.tokens.locks.entries<
     Vec<OrmlBalanceLock>
-  >(address);
+  >(address)
 
   return nonNativeLockedBalances.flatMap(
     ([storageKey, lockedBalances]: [
@@ -127,9 +127,9 @@ export const getNonNativeLockedBalances = async (
           // lockId is hex representation eg.: "0x6f726d6c76657374"; .toHuman() would be "ormlvest"
           lockId: lockedBalance.id.toString(),
           assetId: storageKey.args[1].toString(), // args = [address, assetId]
-          balance: lockedBalance.amount.toString(),
-        };
-      });
+          balance: lockedBalance.amount.toString()
+        }
+      })
     }
-  );
-};
+  )
+}

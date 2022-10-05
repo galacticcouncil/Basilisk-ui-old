@@ -1,11 +1,11 @@
 query GetAccountById($id: String!) {
-    account: accounts(id: $id) @client {
-        id,
-        name,
-        isActive,
-        balances {
-            assetId,
-            balance
-        }
+  account: accounts(id: $id) @client {
+    id
+    name
+    isActive
+    balances {
+      assetId
+      balance
     }
+  }
 }

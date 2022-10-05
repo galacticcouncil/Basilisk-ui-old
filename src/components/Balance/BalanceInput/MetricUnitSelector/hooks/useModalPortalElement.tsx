@@ -1,34 +1,34 @@
-import { useCallback, useMemo } from 'react';
-import { AssetBalanceInputProps } from '../../../AssetBalanceInput/AssetBalanceInput';
-import { ModalPortalElementFactory } from '../../../AssetBalanceInput/hooks/useModalPortal';
-import { CloseModal } from '../../../AssetBalanceInput/hooks/useModalPortalElement';
-import { MetricUnit } from '../../../metricUnit';
-import { MetricUnitItem } from '../MetricUnitItem/MetricUnitItem';
-import { MetricUnitSelectorProps } from '../MetricUnitSelector';
+import { useCallback, useMemo } from 'react'
+import { AssetBalanceInputProps } from '../../../AssetBalanceInput/AssetBalanceInput'
+import { ModalPortalElementFactory } from '../../../AssetBalanceInput/hooks/useModalPortal'
+import { CloseModal } from '../../../AssetBalanceInput/hooks/useModalPortalElement'
+import { MetricUnit } from '../../../metricUnit'
+import { MetricUnitItem } from '../MetricUnitItem/MetricUnitItem'
+import { MetricUnitSelectorProps } from '../MetricUnitSelector'
 
 export type ModalPortalElement = ({
   units,
   onUnitSelected,
-  unit,
+  unit
 }: Pick<
   MetricUnitSelectorProps,
   'units' | 'onUnitSelected' | 'unit'
->) => ModalPortalElementFactory;
+>) => ModalPortalElementFactory
 
 export const useModalPortalElement: ModalPortalElement = ({
   units,
   onUnitSelected,
-  unit,
+  unit
 }) => {
   const handleUnitSelected = useCallback(
     (closeModal: CloseModal) => (unit: MetricUnit) => {
-      closeModal();
-      onUnitSelected(unit);
+      closeModal()
+      onUnitSelected(unit)
     },
     [onUnitSelected]
-  );
+  )
 
-  const activeUnit = useMemo(() => unit, [unit]);
+  const activeUnit = useMemo(() => unit, [unit])
 
   return useCallback(
     ({ closeModal, elementRef, isModalOpen }) => {
@@ -49,9 +49,9 @@ export const useModalPortalElement: ModalPortalElement = ({
             <></>
           )}
         </div>
-      );
+      )
     },
     // TODO: figure out why `units` causes an ininite render loop
     [handleUnitSelected, activeUnit, unit]
-  );
-};
+  )
+}

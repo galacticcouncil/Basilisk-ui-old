@@ -144,17 +144,15 @@ export const EnhancedTradeChart = ({
     { skip: !pool?.id || !pool?.endBlock }
   )
 
-  const [
-    getHistoricalBalancesQuery,
-    historicalBalanceQueryNetworkStatus
-  ] = useGetHistoricalBalancesExactQuery(
-    {
-      recordIds: []
-    },
-    {
-      skip: !pool?.id || !pool?.startBlock
-    }
-  )
+  const [getHistoricalBalancesQuery, historicalBalanceQueryNetworkStatus] =
+    useGetHistoricalBalancesExactQuery(
+      {
+        recordIds: []
+      },
+      {
+        skip: !pool?.id || !pool?.startBlock
+      }
+    )
 
   const accumulating = useMemo(() => {
     return assetIds.assetIn === pool?.assetInId
@@ -164,9 +162,8 @@ export const EnhancedTradeChart = ({
   //   FirstHistoricalBlock
   // >()
 
-  const [historicalBalancesData, setHistoricalBalanceData] = useState<
-    GetHistoricalBalancesQueryResponse
-  >()
+  const [historicalBalancesData, setHistoricalBalanceData] =
+    useState<GetHistoricalBalancesQueryResponse>()
 
   const [historicalBalancesLoading, setHistoricalBalancesLoading] = useState(
     historicalBalanceQueryNetworkStatus.loading

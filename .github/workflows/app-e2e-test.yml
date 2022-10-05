@@ -38,7 +38,7 @@ jobs:
     # Publish build and deployment statuses as pull request comment,
     # if any pull request is associated with triggered commit.
     name: 'Report in PR'
-    needs: [ build, app-e2e-tests ]
+    needs: [build, app-e2e-tests]
     if: ${{ always() && needs.build.result != 'cancelled' && needs.app-e2e-tests.result != 'cancelled' }}
     uses: ./.github/workflows/_called_report-status-in-pr.yml
     with:

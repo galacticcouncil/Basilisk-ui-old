@@ -27,7 +27,8 @@ export const useSubscribeNewBlock = () => {
         apiInstance.query.timestamp.now
       ],
       ([number, validationData, time]) => {
-        const data = (validationData.toJSON() as unknown) as PolkadotPrimitivesV1PersistedValidationData
+        const data =
+          validationData.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData
         const blockNumber = createType(
           apiInstance.registry,
           'BlockNumber',
@@ -55,6 +56,5 @@ export const useSubscribeNewBlock = () => {
   return lastBlock
 }
 
-export const [LastBlockProvider, useLastBlockContext] = constate(
-  useSubscribeNewBlock
-)
+export const [LastBlockProvider, useLastBlockContext] =
+  constate(useSubscribeNewBlock)

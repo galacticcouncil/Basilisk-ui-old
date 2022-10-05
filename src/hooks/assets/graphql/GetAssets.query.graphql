@@ -1,5 +1,5 @@
 query GetAssets {
-    assets @client {
-        id
-    }
+  assets @client {
+    id
+  }
 }

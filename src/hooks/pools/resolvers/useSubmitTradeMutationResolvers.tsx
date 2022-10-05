@@ -1,15 +1,15 @@
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import BigNumber from 'bignumber.js';
-import { useCallback } from 'react';
-import { PoolType } from '../../../components/Chart/shared';
-import { Maybe, TradeType } from '../../../generated/graphql';
-import { withErrorHandler } from '../../apollo/withErrorHandler';
-import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs';
-import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation';
-import { buy as buyLbp } from '../lbp/buy';
-import { sell as sellLbp } from '../lbp/sell';
-import { buy as buyXyk } from '../xyk/buy';
-import { sell as sellXyk } from '../xyk/sell';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import BigNumber from 'bignumber.js'
+import { useCallback } from 'react'
+import { PoolType } from '../../../components/Chart/shared'
+import { Maybe, TradeType } from '../../../generated/graphql'
+import { withErrorHandler } from '../../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs'
+import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation'
+import { buy as buyLbp } from '../lbp/buy'
+import { sell as sellLbp } from '../lbp/sell'
+import { buy as buyXyk } from '../xyk/buy'
+import { sell as sellXyk } from '../xyk/sell'
 
 // this is for buy, for sell we need to use minus, not plus
 export const applyAllowedSlippage = (
@@ -19,9 +19,9 @@ export const applyAllowedSlippage = (
 ) => {
   let slippageAmount = new BigNumber(amount).multipliedBy(
     new BigNumber(allowedSlippage).dividedBy(100)
-  );
+  )
 
-  const amountBN = new BigNumber(amount);
+  const amountBN = new BigNumber(amount)
 
   const amountWithSlippage =
     tradeType === TradeType.Buy
@@ -30,10 +30,10 @@ export const applyAllowedSlippage = (
         amountBN.plus(slippageAmount)
       : // if you're selling an exact amount,
         // you should be willing to receive less
-        amountBN.minus(slippageAmount);
+        amountBN.minus(slippageAmount)
 
-  return amountWithSlippage.toFixed(0);
-};
+  return amountWithSlippage.toFixed(0)
+}
 
 export const applyTradeFee = (
   amount: string,
@@ -41,18 +41,18 @@ export const applyTradeFee = (
   tradeFee: string = '0.003', // 0.3% default
   tradeType: TradeType
 ) => {
-  let fee = new BigNumber(amount).multipliedBy(new BigNumber(tradeFee));
+  let fee = new BigNumber(amount).multipliedBy(new BigNumber(tradeFee))
 
-  const amountBN = new BigNumber(amount);
+  const amountBN = new BigNumber(amount)
 
   const amountWithFee =
-    tradeType === TradeType.Buy ? amountBN.plus(fee) : amountBN.minus(fee);
+    tradeType === TradeType.Buy ? amountBN.plus(fee) : amountBN.minus(fee)
 
-  return amountWithFee.toFixed(0);
-};
+  return amountWithFee.toFixed(0)
+}
 
 export const useSubmitTradeMutationResolver = () => {
-  const { apiInstance } = usePolkadotJsContext();
+  const { apiInstance } = usePolkadotJsContext()
 
   // return withErrorHandler(
   return useCallback(
@@ -61,7 +61,7 @@ export const useSubmitTradeMutationResolver = () => {
       args: Maybe<SubmitTradeMutationVariables>,
       { cache }: { cache: ApolloCache<NormalizedCacheObject> }
     ) => {
-      if (!args || !apiInstance) return;
+      if (!args || !apiInstance) return
       if (
         args?.poolType === PoolType.XYK &&
         args?.tradeType === TradeType.Buy
@@ -73,7 +73,7 @@ export const useSubmitTradeMutationResolver = () => {
           args.assetInId,
           args.assetOutAmount,
           args.amountWithSlippage
-        );
+        )
       }
 
       if (
@@ -87,7 +87,7 @@ export const useSubmitTradeMutationResolver = () => {
           args.assetOutId,
           args.assetInAmount,
           args.amountWithSlippage
-        );
+        )
       }
 
       if (
@@ -101,7 +101,7 @@ export const useSubmitTradeMutationResolver = () => {
           args.assetInId,
           args.assetOutAmount,
           args.amountWithSlippage
-        );
+        )
       }
 
       if (
@@ -115,12 +115,12 @@ export const useSubmitTradeMutationResolver = () => {
           args.assetOutId,
           args.assetInAmount,
           args.amountWithSlippage
-        );
+        )
       }
 
-      throw new Error('We dont support this trade type yet');
+      throw new Error('We dont support this trade type yet')
     },
     [apiInstance]
-  );
+  )
   // );
-};
+}

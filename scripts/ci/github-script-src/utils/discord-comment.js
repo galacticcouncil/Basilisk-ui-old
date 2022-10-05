@@ -1,14 +1,14 @@
 function getAppStorybookBuildMarkdownBody({
   APP_STORYBOOK_BUILD_STATUS,
-  context,
+  context
 }) {
-  const workingBranch = context.ref.replace('refs/heads/', '');
-  const repoUrl = context.payload.repository.html_url;
+  const workingBranch = context.ref.replace('refs/heads/', '')
+  const repoUrl = context.payload.repository.html_url
   const noticeText =
     context.eventName === 'pull_request' ||
     context.eventName === 'pull_request_target'
       ? `Build in [PR#${context.payload.number}](${repoUrl}/pull/${context.payload.number}) from commit [${context.sha}](${repoUrl}/commit/${context.sha})`
-      : `Build of codebase in branch [${workingBranch}](${repoUrl}/tree/${workingBranch}) from commit [${context.sha}](${repoUrl}/commit/${context.sha})`;
+      : `Build of codebase in branch [${workingBranch}](${repoUrl}/tree/${workingBranch}) from commit [${context.sha}](${repoUrl}/commit/${context.sha})`
 
   const appSbBuildData = [
     {
@@ -18,15 +18,15 @@ function getAppStorybookBuildMarkdownBody({
           ? ':white_check_mark: Built.'
           : ':no_entry_sign: Failed'
       }\n ${noticeText}`,
-      inline: false,
-    },
-  ];
-  return appSbBuildData;
+      inline: false
+    }
+  ]
+  return appSbBuildData
 }
 
 function getAppStorybookDeploymentMarkdownBody({
   APP_STORYBOOK_DEPLOYMENT_STATUS,
-  context,
+  context
 }) {
   const appSbDeploymentData = [
     {
@@ -36,10 +36,10 @@ function getAppStorybookDeploymentMarkdownBody({
           ? ':white_check_mark:  Deployed.'
           : ':no_entry_sign:  Failed'
       }`,
-      inline: false,
-    },
-  ];
-  return appSbDeploymentData;
+      inline: false
+    }
+  ]
+  return appSbDeploymentData
 }
 
 function getAppUnitTestsMarkdownBody({
@@ -47,7 +47,7 @@ function getAppUnitTestsMarkdownBody({
   APP_UNIT_TEST_DIFF,
   APP_UNIT_TEST_REF_BRANCH,
   APP_UNIT_TEST_STATUS,
-  context,
+  context
 }) {
   const appUnitTestsData = [
     {
@@ -56,16 +56,16 @@ function getAppUnitTestsMarkdownBody({
         APP_UNIT_TEST_STATUS === 'true'
           ? ':white_check_mark: Passed'
           : ':no_entry_sign: Failed',
-      inline: false,
-    },
-  ];
+      inline: false
+    }
+  ]
 
   if (APP_UNIT_TEST_STATUS === 'true') {
     appUnitTestsData.push({
       name: 'Tests code-coverage total percentage',
       value: APP_UNIT_TEST_PERCENTAGE,
-      inline: true,
-    });
+      inline: true
+    })
   }
   if (
     APP_UNIT_TEST_STATUS === 'true' &&
@@ -75,15 +75,15 @@ function getAppUnitTestsMarkdownBody({
     appUnitTestsData.push({
       name: `Tests code-coverage diff with target branch - ${APP_UNIT_TEST_REF_BRANCH}`,
       value: APP_UNIT_TEST_DIFF,
-      inline: true,
-    });
+      inline: true
+    })
   }
 
-  return appUnitTestsData;
+  return appUnitTestsData
 }
 
 module.exports = {
   getAppStorybookBuildMarkdownBody,
   getAppStorybookDeploymentMarkdownBody,
-  getAppUnitTestsMarkdownBody,
-};
+  getAppUnitTestsMarkdownBody
+}

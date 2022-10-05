@@ -12,10 +12,10 @@ query GetActiveAccount {
     balances {
       assetId
       balance
-    },
+    }
     vesting {
-      claimableAmount,
-      originalLockBalance,
+      claimableAmount
+      originalLockBalance
       lockedVestingBalance
     }
   }

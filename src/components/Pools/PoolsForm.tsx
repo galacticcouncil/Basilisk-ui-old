@@ -61,14 +61,13 @@ export const PoolsFormSettings = ({
   onAllowedSlippageChange,
   closeModal
 }: PoolsFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    PoolsFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true
-    }
-  })
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<PoolsFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true
+      }
+    })
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -290,10 +289,10 @@ export const PoolsForm = ({
   const assetOutAmountInput = useListenForInput(assetOutAmountInputRef)
   const shareAssetAmountInput = useListenForInput(shareAmountInputRef)
 
-  useEffect(() => setValue('provisioningType', provisioningType), [
-    setValue,
-    provisioningType
-  ])
+  useEffect(
+    () => setValue('provisioningType', provisioningType),
+    [setValue, provisioningType]
+  )
 
   const [lastAssetInteractedWith, setLastAssetInteractedWith] = useState<
     string | null

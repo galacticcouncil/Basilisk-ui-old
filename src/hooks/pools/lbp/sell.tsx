@@ -1,22 +1,22 @@
-import { ApolloCache } from '@apollo/client';
-import { ApiPromise } from '@polkadot/api';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { readActiveAccount } from '../../accounts/lib/readActiveAccount';
+import { ApolloCache } from '@apollo/client'
+import { ApiPromise } from '@polkadot/api'
+import { web3FromAddress } from '@polkadot/extension-dapp'
+import { readActiveAccount } from '../../accounts/lib/readActiveAccount'
 import {
   gracefulExtensionCancelationErrorHandler,
   reject,
   resolve,
   vestingClaimHandler,
-  withGracefulErrors,
-} from '../../vesting/useVestingMutationResolvers';
+  withGracefulErrors
+} from '../../vesting/useVestingMutationResolvers'
 
 export const sellHandler = (
   resolve: resolve,
   reject: reject,
   apiInstance: ApiPromise
 ) => {
-  return vestingClaimHandler(resolve, reject, apiInstance);
-};
+  return vestingClaimHandler(resolve, reject, apiInstance)
+}
 
 export const estimateSell = async (
   cache: ApolloCache<object>,
@@ -26,15 +26,15 @@ export const estimateSell = async (
   amountSell: string,
   minBought: string
 ) => {
-  const activeAccount = readActiveAccount(cache);
-  const address = activeAccount?.id;
+  const activeAccount = readActiveAccount(cache)
+  const address = activeAccount?.id
 
-  if (!address) return;
+  if (!address) return
 
   return apiInstance.tx.lbp
     .sell(assetSell, assetBuy, amountSell, minBought)
-    .paymentInfo(address);
-};
+    .paymentInfo(address)
+}
 
 export const sell = async (
   cache: ApolloCache<object>,
@@ -47,14 +47,14 @@ export const sell = async (
   // await withGracefulErrors(
   await new Promise(
     async (resolve, reject) => {
-      console.log('LBP Sell:', assetBuy, assetSell, amountSell, minBought);
-      const activeAccount = readActiveAccount(cache);
-      const address = activeAccount?.id;
+      console.log('LBP Sell:', assetBuy, assetSell, amountSell, minBought)
+      const activeAccount = readActiveAccount(cache)
+      const address = activeAccount?.id
 
       try {
-        if (!address) return reject(new Error('No active account found'));
+        if (!address) return reject(new Error('No active account found'))
 
-        const { signer } = await web3FromAddress(address);
+        const { signer } = await web3FromAddress(address)
 
         await apiInstance.tx.lbp
           .sell(assetSell, assetBuy, amountSell, minBought)
@@ -62,11 +62,11 @@ export const sell = async (
             address,
             { signer },
             sellHandler(resolve, reject, apiInstance)
-          );
+          )
       } catch (e) {
-        reject(e);
+        reject(e)
       }
     }
     // [gracefulExtensionCancelationErrorHandler]
-  );
-};
+  )
+}

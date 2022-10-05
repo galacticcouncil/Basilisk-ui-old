@@ -1,45 +1,46 @@
-import { Balance } from '../../../generated/graphql';
-import { useEffect, useMemo } from 'react';
-import log from 'loglevel';
-import './FormattedBalance.scss';
-import { UnitStyle } from '../metricUnit';
-import { useFormatSI } from './hooks/useFormatSI';
-import { idToAsset } from '../../../misc/idToAsset';
-import ReactTooltip from 'react-tooltip';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
-import BigNumber from 'bignumber.js';
+import { Balance } from '../../../generated/graphql'
+import { useEffect, useMemo } from 'react'
+import log from 'loglevel'
+import './FormattedBalance.scss'
+import { UnitStyle } from '../metricUnit'
+import { useFormatSI } from './hooks/useFormatSI'
+import { idToAsset } from '../../../misc/idToAsset'
+import ReactTooltip from 'react-tooltip'
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import BigNumber from 'bignumber.js'
 
 export interface FormattedBalanceProps {
-  balance: Balance;
-  showDisplayValue?: boolean;
-  precision?: number;
-  unitStyle?: UnitStyle;
+  balance: Balance
+  showDisplayValue?: boolean
+  precision?: number
+  unitStyle?: UnitStyle
 }
 
 export const FormattedBalance = ({
   balance,
   showDisplayValue = false,
   precision = 3,
-  unitStyle = UnitStyle.LONG,
+  unitStyle = UnitStyle.LONG
 }: FormattedBalanceProps) => {
-  const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
-    balance.assetId,
-  ]);
+  const assetSymbol = useMemo(
+    () => idToAsset(balance.assetId)?.symbol,
+    [balance.assetId]
+  )
   // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
-  let formattedBalance = fromPrecision12(balance.balance);
+  let formattedBalance = fromPrecision12(balance.balance)
 
-  const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0;
+  const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0
   //log.log('formattedBalance', decimalPlacesCount, formattedBalance);
 
   if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
     formattedBalance = new BigNumber(formattedBalance).toFixed(
       decimalPlacesCount > 4 ? 4 : decimalPlacesCount
-    );
+    )
   } else if (formattedBalance) {
     formattedBalance = new BigNumber(formattedBalance).toFixed(
       decimalPlacesCount <= 4 ? 4 : decimalPlacesCount
-    );
+    )
   }
 
   const tooltipText = useMemo(() => {
@@ -47,12 +48,12 @@ export const FormattedBalance = ({
     return ` 
       <span class='balance'>${fromPrecision12(balance.balance)}</span>
       <span class='symbol'>${assetSymbol}</span>
-    `;
-  }, [balance, assetSymbol]);
+    `
+  }, [balance, assetSymbol])
 
   useEffect(() => {
-    ReactTooltip.rebuild();
-  }, [tooltipText]);
+    ReactTooltip.rebuild()
+  }, [tooltipText])
 
   // log.debug(
   //   'FormattedBalance',
@@ -85,5 +86,5 @@ export const FormattedBalance = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

@@ -64,7 +64,6 @@
       padding: 30px 0 0 0;
       flex-shrink: 1;
       flex-basis: 100px;
-  
     }
   }
 
@@ -74,14 +73,14 @@
   }
 
   &__tooltip {
-    $tooltipColor: #DAFFEE;
+    $tooltipColor: #daffee;
 
     height: 100%;
     width: 1px;
     border-right: 1px $tooltipColor dashed;
     position: absolute;
     z-index: 0;
-    top:0;
+    top: 0;
     opacity: 1;
     pointer-events: none;
     transition: opacity ease-in 100ms;

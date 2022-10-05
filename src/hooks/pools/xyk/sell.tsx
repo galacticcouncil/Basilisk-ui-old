@@ -1,24 +1,24 @@
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import { ApiPromise } from '@polkadot/api';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { readActiveAccount } from '../../accounts/lib/readActiveAccount';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { ApiPromise } from '@polkadot/api'
+import { web3FromAddress } from '@polkadot/extension-dapp'
+import { readActiveAccount } from '../../accounts/lib/readActiveAccount'
 import {
   gracefulExtensionCancelationErrorHandler,
   reject,
   resolve,
   vestingClaimHandler,
-  withGracefulErrors,
-} from '../../vesting/useVestingMutationResolvers';
+  withGracefulErrors
+} from '../../vesting/useVestingMutationResolvers'
 
 export const xykBuyHandler = (
   resolve: resolve,
   reject: reject,
   apiInstance: ApiPromise
 ) => {
-  return vestingClaimHandler(resolve, reject, apiInstance);
-};
+  return vestingClaimHandler(resolve, reject, apiInstance)
+}
 
-export const discount = false;
+export const discount = false
 
 export const estimateSell = async (
   cache: ApolloCache<object>,
@@ -28,14 +28,14 @@ export const estimateSell = async (
   amountSell: string,
   minBought: string
 ) => {
-  const activeAccount = readActiveAccount(cache);
-  const address = activeAccount?.id;
+  const activeAccount = readActiveAccount(cache)
+  const address = activeAccount?.id
 
-  if (!address) return;
-  
+  if (!address) return
+
   return apiInstance.tx.xyk
     .sell(assetSell, assetBuy, amountSell, minBought, discount)
-    .paymentInfo(address);
+    .paymentInfo(address)
 }
 
 export const sell = async (
@@ -47,26 +47,26 @@ export const sell = async (
   minBought: string
 ) => {
   // await withGracefulErrors(
-    await new Promise(async (resolve, reject) => {
-      const activeAccount = readActiveAccount(cache);
-      const address = activeAccount?.id;
+  await new Promise(async (resolve, reject) => {
+    const activeAccount = readActiveAccount(cache)
+    const address = activeAccount?.id
 
-      try {
-        if (!address) return reject(new Error('No active account found!'));
+    try {
+      if (!address) return reject(new Error('No active account found!'))
 
-        const { signer } = await web3FromAddress(address);
+      const { signer } = await web3FromAddress(address)
 
-        await apiInstance.tx.xyk
-          .sell(assetSell, assetBuy, amountSell, minBought, discount)
-          .signAndSend(
-            address,
-            { signer },
-            xykBuyHandler(resolve, reject, apiInstance)
-          );
-      } catch (e) {
-        reject(e);
-      }
-    })
-    // [gracefulExtensionCancelationErrorHandler]
+      await apiInstance.tx.xyk
+        .sell(assetSell, assetBuy, amountSell, minBought, discount)
+        .signAndSend(
+          address,
+          { signer },
+          xykBuyHandler(resolve, reject, apiInstance)
+        )
+    } catch (e) {
+      reject(e)
+    }
+  })
+  // [gracefulExtensionCancelationErrorHandler]
   // );
-};
+}

@@ -1,17 +1,17 @@
-import { useCallback } from 'react';
-import { withErrorHandler } from '../apollo/withErrorHandler';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { ExtrinsicStatus } from '@polkadot/types/interfaces/author';
-import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system';
-import log from 'loglevel';
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
+import { useCallback } from 'react'
+import { withErrorHandler } from '../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { web3FromAddress } from '@polkadot/extension-dapp'
+import { ExtrinsicStatus } from '@polkadot/types/interfaces/author'
+import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system'
+import log from 'loglevel'
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
 import {
   GetActiveAccountQueryResponse,
-  GET_ACTIVE_ACCOUNT,
-} from '../accounts/queries/useGetActiveAccountQuery';
-import { ApiPromise } from '@polkadot/api';
-import { reject } from 'lodash';
+  GET_ACTIVE_ACCOUNT
+} from '../accounts/queries/useGetActiveAccountQuery'
+import { ApiPromise } from '@polkadot/api'
+import { reject } from 'lodash'
 
 /**
  * Run an async function and handle the thrown errors
@@ -21,26 +21,26 @@ import { reject } from 'lodash';
  * @param errorHandlers
  * @returns
  */
-export type resolve = (result?: any) => void;
-export type reject = (error?: any) => void;
+export type resolve = (result?: any) => void
+export type reject = (error?: any) => void
 export const withGracefulErrors = async (
   fn: (resolve: resolve, reject: reject) => Promise<any>,
   errorHandlers: ((error: any) => void)[]
 ) => {
   return new Promise<any>(async (resolve, reject) => {
     try {
-      resolve(await fn(resolve, reject));
+      resolve(await fn(resolve, reject))
     } catch (e: any) {
       // eslint-disable-next-line no-ex-assign
-      e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e);
+      e = errorHandlers.reduce((e, errorHandler) => errorHandler(e), e)
       // rejecting this promise with an error instead of throwing an error
       // is necessary to reflect the apollo resolver loading state correctly
-      e ? reject(e) : resolve(null);
+      e ? reject(e) : resolve(null)
     }
-  });
-};
+  })
+}
 
-export const cancelledErrorMessage = 'Cancelled';
+export const cancelledErrorMessage = 'Cancelled'
 
 /**
  * This is an example graceful error handler,
@@ -55,24 +55,24 @@ export const gracefulExtensionCancelationErrorHandler = (e: any) => {
   if ((e as Error)?.message === cancelledErrorMessage) {
     log.error(
       'Operation presumably cancelled by the user in the Polkadot.js extension'
-    );
-    return;
+    )
+    return
   }
-  return e;
-};
+  return e
+}
 
 export const vestingClaimHandler =
   (resolve: resolve, reject: reject, apiInstance?: ApiPromise) =>
   ({
     status,
     events = [],
-    dispatchError,
+    dispatchError
   }: {
-    status: ExtrinsicStatus;
-    events: EventRecord[];
-    dispatchError?: DispatchError;
+    status: ExtrinsicStatus
+    events: EventRecord[]
+    dispatchError?: DispatchError
   }) => {
-    if (status.isFinalized) log.info('transaction operation finalized');
+    if (status.isFinalized) log.info('transaction operation finalized')
 
     // TODO: extract intention registred for exchange buy/sell
     events.forEach(({ event: { data, method, section }, phase }) => {
@@ -81,43 +81,43 @@ export const vestingClaimHandler =
         phase.toString(),
         `: ${section}.${method}`,
         data.toString()
-      );
-    });
+      )
+    })
 
     // TODO: handle status via the action log / notification stack
     if (status.isInBlock) {
-      console.log('transaction is in block', status.createdAtHash?.toString());
+      console.log('transaction is in block', status.createdAtHash?.toString())
       if (dispatchError?.isModule) {
-        reject();
+        reject()
         return log.info(
           'transaction unsuccessful',
           !apiInstance
             ? dispatchError
             : apiInstance.registry.findMetaError(dispatchError.asModule)
-        );
+        )
       }
 
-      resolve();
+      resolve()
 
-      return log.info('transaction successful');
+      return log.info('transaction successful')
     }
 
     // if the operation has been broadcast, finish the mutation
     if (status.isBroadcast) {
-      log.info('transaction has been broadcast', status.hash.toHuman());
+      log.info('transaction has been broadcast', status.hash.toHuman())
       // return resolve();
     }
     if (dispatchError) {
-      log.error('transaction There was a dispatch error', dispatchError);
-      return reject('Dispatch error');
+      log.error('transaction There was a dispatch error', dispatchError)
+      return reject('Dispatch error')
     }
-  };
+  }
 
-export const noAccountSelectedError = 'No Account selected';
-export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet';
+export const noAccountSelectedError = 'No Account selected'
+export const polkadotJsNotReadyYetError = 'Polkadot.js is not ready yet'
 
 const claimVestingExtrinsic = (apiInstance: ApiPromise) =>
-  apiInstance.tx.vesting.claim;
+  apiInstance.tx.vesting.claim
 
 // TODO: this should be generated with graphql
 export interface ClaimVestedAmountMutationVariables {
@@ -131,25 +131,24 @@ const getAddress = (
   return args?.address
     ? args.address
     : cache.readQuery<GetActiveAccountQueryResponse>({
-        query: GET_ACTIVE_ACCOUNT,
-      })?.activeAccount?.id;
-};
+        query: GET_ACTIVE_ACCOUNT
+      })?.activeAccount?.id
+}
 
 export const estimateClaimVesting = async (
   cache: ApolloCache<NormalizedCacheObject>,
   apiInstance: ApiPromise,
   args: ClaimVestedAmountMutationVariables
 ) => {
-  const address = getAddress(cache, args);
+  const address = getAddress(cache, args)
 
-  if (!address)
-    throw new Error(`Can't retrieve vesting address for estimation`);
+  if (!address) throw new Error(`Can't retrieve vesting address for estimation`)
 
-  return claimVestingExtrinsic(apiInstance)().paymentInfo(address);
-};
+  return claimVestingExtrinsic(apiInstance)().paymentInfo(address)
+}
 
 export const useVestingMutationResolvers = () => {
-  const { apiInstance, loading } = usePolkadotJsContext();
+  const { apiInstance, loading } = usePolkadotJsContext()
 
   const claimVestedAmount = withErrorHandler(
     useCallback(
@@ -158,12 +157,11 @@ export const useVestingMutationResolvers = () => {
         args: ClaimVestedAmountMutationVariables,
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
-        const address = getAddress(cache, args);
+        const address = getAddress(cache, args)
 
         // TODO: error handling?
-        if (!address) throw new Error(noAccountSelectedError);
-        if (loading || !apiInstance)
-          throw new Error(polkadotJsNotReadyYetError);
+        if (!address) throw new Error(noAccountSelectedError)
+        if (loading || !apiInstance) throw new Error(polkadotJsNotReadyYetError)
 
         // // TODO: why does this not return a tx hash?
         // return await withGracefulErrors(
@@ -181,26 +179,24 @@ export const useVestingMutationResolvers = () => {
         // );
 
         await new Promise(async (resolve, reject) => {
-          const { signer } = await web3FromAddress(address);
+          const { signer } = await web3FromAddress(address)
           try {
             await claimVestingExtrinsic(apiInstance)().signAndSend(
               address,
               { signer },
               vestingClaimHandler(resolve, reject)
-            );
-          } catch(e) {
+            )
+          } catch (e) {
             reject(e)
           }
-        });
-
-        
+        })
       },
       [loading, apiInstance]
     ),
     'claimVestedAmount'
-  );
+  )
 
   return {
-    claimVestedAmount,
-  };
-};
+    claimVestedAmount
+  }
+}

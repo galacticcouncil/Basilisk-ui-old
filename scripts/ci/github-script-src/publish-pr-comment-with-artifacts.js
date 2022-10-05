@@ -1,13 +1,13 @@
-const commentUtils = require('./utils/github-api');
-const issueCommentComponents = require('./utils/issue-comment');
+const commentUtils = require('./utils/github-api')
+const issueCommentComponents = require('./utils/issue-comment')
 
 module.exports = async ({ github, context, core }) => {
-  const { ISSUE_COMMENT_DATA = '{}' } = process.env;
+  const { ISSUE_COMMENT_DATA = '{}' } = process.env
 
-  console.log('[LOG]:: context 2 - ', context);
-  console.log(JSON.parse(ISSUE_COMMENT_DATA));
+  console.log('[LOG]:: context 2 - ', context)
+  console.log(JSON.parse(ISSUE_COMMENT_DATA))
 
-  const { commentMeta, commentSections } = JSON.parse(ISSUE_COMMENT_DATA);
+  const { commentMeta, commentSections } = JSON.parse(ISSUE_COMMENT_DATA)
 
   if (
     !commentMeta.owner ||
@@ -15,12 +15,12 @@ module.exports = async ({ github, context, core }) => {
     !commentMeta.runsList ||
     commentMeta.runsList.length === 0
   )
-    return;
+    return
 
   const availableArtifacts = await issueCommentComponents.getRunArtifactsList({
     github,
-    commentMeta,
-  });
+    commentMeta
+  })
 
   const commentMarkdownBody = issueCommentComponents.getCommentMarkdownBody({
     github,
@@ -28,9 +28,9 @@ module.exports = async ({ github, context, core }) => {
     commentData: {
       commentMeta,
       commentSections,
-      availableArtifacts,
-    },
-  });
+      availableArtifacts
+    }
+  })
 
   await commentUtils.publishIssueComment({
     github,
@@ -40,6 +40,6 @@ module.exports = async ({ github, context, core }) => {
       ? commentMeta.existingIssueComment.id
       : null,
     commentBody: commentMarkdownBody,
-    issueNumber: commentMeta.issueNumber,
-  });
-};
+    issueNumber: commentMeta.issueNumber
+  })
+}

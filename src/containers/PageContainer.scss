@@ -15,7 +15,7 @@
   margin: auto;
 
   @media screen and(max-width: 850px) {
-    gap: 12px
+    gap: 12px;
   }
 
   .page-content-wrapper {
@@ -98,19 +98,18 @@
             display: none;
           }
         }
-  
+
         &__small {
           svg {
             height: 32px;
             width: 32px;
           }
-  
+
           @media screen and (min-width: 1000px) {
             display: none;
           }
         }
       }
-
 
       &__menu-item {
         a {

@@ -2,32 +2,26 @@ import { useMemo } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 
 export interface TokenInputProps {
-    assetIdInputProps: object,
-    assetAmountInputProps: object,
-    disabled?: boolean
+  assetIdInputProps: object
+  assetAmountInputProps: object
+  disabled?: boolean
 }
 
 export const TokenInput = ({
-    assetIdInputProps,
-    assetAmountInputProps,
-    disabled
+  assetIdInputProps,
+  assetAmountInputProps,
+  disabled
 }: TokenInputProps) => {
-    return <div>
-        <div>
-            <b>AssetId:</b> <br/>
-            <input
-                disabled={disabled}
-                type='text' 
-                {...assetIdInputProps} 
-            />
-        </div>
-        <div>
-            <b>Asset amount:</b> <br/>
-            <input
-                disabled={disabled}
-                type='text' 
-                {...assetAmountInputProps}
-            />
-        </div>
+  return (
+    <div>
+      <div>
+        <b>AssetId:</b> <br />
+        <input disabled={disabled} type="text" {...assetIdInputProps} />
+      </div>
+      <div>
+        <b>Asset amount:</b> <br />
+        <input disabled={disabled} type="text" {...assetAmountInputProps} />
+      </div>
     </div>
+  )
 }

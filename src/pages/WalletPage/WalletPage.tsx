@@ -18,31 +18,26 @@ export const WalletPage = () => {
     'standby' | 'pending' | 'success' | 'failed'
   >('standby')
 
-  const {
-    data: extensionData,
-    loading: extensionLoading
-  } = useGetExtensionQueryContext()
+  const { data: extensionData, loading: extensionLoading } =
+    useGetExtensionQueryContext()
 
   const depsLoading = useLoading()
-  const {
-    data: activeAccountData,
-    networkStatus: activeAccountNetworkStatus
-  } = useGetActiveAccountQueryContext()
+  const { data: activeAccountData, networkStatus: activeAccountNetworkStatus } =
+    useGetActiveAccountQueryContext()
 
-  const activeAccount = useMemo(() => activeAccountData?.activeAccount, [
-    activeAccountData
-  ])
+  const activeAccount = useMemo(
+    () => activeAccountData?.activeAccount,
+    [activeAccountData]
+  )
   const activeAccountLoading = useMemo(
     () => depsLoading || activeAccountNetworkStatus === NetworkStatus.loading,
     [depsLoading, activeAccountNetworkStatus]
   )
 
-  const {
-    data: configData,
-    networkStatus: configNetworkStatus
-  } = useGetConfigQuery({
-    skip: activeAccountLoading
-  })
+  const { data: configData, networkStatus: configNetworkStatus } =
+    useGetConfigQuery({
+      skip: activeAccountLoading
+    })
 
   const configLoading = useMemo(() => {
     return depsLoading || configNetworkStatus == NetworkStatus.loading
@@ -79,10 +74,8 @@ export const WalletPage = () => {
     [openTransferFormModalPortal]
   )
 
-  const [
-    setConfigMutation,
-    { loading: setConfigLoading }
-  ] = useSetConfigMutation()
+  const [setConfigMutation, { loading: setConfigLoading }] =
+    useSetConfigMutation()
   const clearNotificationIntervalRef = useRef<any>()
 
   useEffect(() => {

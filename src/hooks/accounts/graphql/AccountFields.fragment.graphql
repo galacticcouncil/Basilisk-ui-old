@@ -1,7 +1,7 @@
 fragment AccountFields on Account {
-    __typename,
-    id,
-    name,
-    isActive,
-    balances
+  __typename
+  id
+  name
+  isActive
+  balances
 }

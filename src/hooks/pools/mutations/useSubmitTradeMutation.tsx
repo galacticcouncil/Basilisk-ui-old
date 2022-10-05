@@ -1,18 +1,18 @@
-import { MutationHookOptions, useMutation } from '@apollo/client';
-import { loader } from 'graphql.macro';
-import { PoolType } from '../../../components/Chart/shared';
-import { TradeType } from '../../../generated/graphql';
+import { MutationHookOptions, useMutation } from '@apollo/client'
+import { loader } from 'graphql.macro'
+import { PoolType } from '../../../components/Chart/shared'
+import { TradeType } from '../../../generated/graphql'
 
-const SUBMIT_TRADE = loader('./../graphql/SubmitTrade.mutation.graphql');
+const SUBMIT_TRADE = loader('./../graphql/SubmitTrade.mutation.graphql')
 
 export interface SubmitTradeMutationVariables {
-  assetInId: string;
-  assetOutId: string;
-  assetInAmount: string;
-  assetOutAmount: string;
-  poolType: PoolType;
-  tradeType: TradeType;
-  amountWithSlippage: string;
+  assetInId: string
+  assetOutId: string
+  assetInAmount: string
+  assetOutAmount: string
+  poolType: PoolType
+  tradeType: TradeType
+  amountWithSlippage: string
 }
 
 export const useSubmitTradeMutation = (
@@ -20,8 +20,8 @@ export const useSubmitTradeMutation = (
 ) =>
   useMutation<void, SubmitTradeMutationVariables>(SUBMIT_TRADE, {
     notifyOnNetworkStatusChange: true,
-    ...options,
-  });
+    ...options
+  })
 
 /**
  * lbp.buy(assetOut, assetIn, amount, maxLimit)

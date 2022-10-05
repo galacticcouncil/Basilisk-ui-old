@@ -1,30 +1,30 @@
-import { chromium, ChromiumBrowserContext, Page } from 'playwright';
-import { join } from 'path';
+import { chromium, ChromiumBrowserContext, Page } from 'playwright'
+import { join } from 'path'
 
 export type PolkadotDappAccCredentials = {
-  seed: string;
-  name: string;
-  password: string;
-};
+  seed: string
+  name: string
+  password: string
+}
 
-export const EXTENSION_PATH = join(__dirname, process.env.EXTENSSION_SRC || '');
+export const EXTENSION_PATH = join(__dirname, process.env.EXTENSSION_SRC || '')
 
 export const isExtensionURL = (url: string) =>
-  url.startsWith('chrome-extension://');
+  url.startsWith('chrome-extension://')
 
 export const CLOSE_PAGES = async (browserContext: ChromiumBrowserContext) => {
-  const pages = (await browserContext?.pages()) || [];
+  const pages = (await browserContext?.pages()) || []
   for (const page of pages) {
-    const url = await page.url();
+    const url = await page.url()
     if (!isExtensionURL(url)) {
-      await page.close();
+      await page.close()
     }
   }
-};
+}
 
 export const initBrowserWithExtension = async () => {
-  const userDataDir = `/tmp/test-user-data-${Math.random()}`;
-  let extensionURL: string = '';
+  const userDataDir = `/tmp/test-user-data-${Math.random()}`
+  let extensionURL: string = ''
   const browserContext = (await chromium.launchPersistentContext(userDataDir, {
     headless: false,
     args: [
@@ -32,10 +32,10 @@ export const initBrowserWithExtension = async () => {
       '--disable-dev-shm-usage',
       '--ipc=host',
       `--disable-extensions-except=${EXTENSION_PATH}`,
-      `--load-extension=${EXTENSION_PATH}`,
+      `--load-extension=${EXTENSION_PATH}`
     ],
-    locale: 'en-GB',
-  })) as ChromiumBrowserContext;
+    locale: 'en-GB'
+  })) as ChromiumBrowserContext
 
   /**
    * The background page is useful to retrieve the extension id so that we
@@ -49,64 +49,64 @@ export const initBrowserWithExtension = async () => {
    * with the existing background page.
    */
   const setExtensionURL = (backgroundPage: Page) => {
-    const url = backgroundPage.url();
-    const [, , extensionId] = url.split('/');
+    const url = backgroundPage.url()
+    const [, , extensionId] = url.split('/')
     // extensionURL = `chrome-extension://${extensionId}/popup.html?not_popup=1`
-    extensionURL = `chrome-extension://${extensionId}/index.html#/`;
-  };
+    extensionURL = `chrome-extension://${extensionId}/index.html#/`
+  }
 
-  const page = await browserContext.newPage();
-  await page.bringToFront();
-  await page.goto('chrome://inspect/#extensions');
+  const page = await browserContext.newPage()
+  await page.bringToFront()
+  await page.goto('chrome://inspect/#extensions')
 
-  browserContext.on('backgroundpage', setExtensionURL);
-  const backgroundPages = browserContext.backgroundPages();
+  browserContext.on('backgroundpage', setExtensionURL)
+  const backgroundPages = browserContext.backgroundPages()
   if (backgroundPages.length) {
-    setExtensionURL(backgroundPages[0]);
+    setExtensionURL(backgroundPages[0])
   }
   for (const x in [...Array(100)]) {
     if (extensionURL || !x) {
-      break;
+      break
     }
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1000)
   }
-  return { browserContext, extensionURL };
-};
+  return { browserContext, extensionURL }
+}
 
 export const importPolkadotDappAccount = async ({
   browserContext,
   extensionURL,
-  accountCredentials,
+  accountCredentials
 }: {
-  browserContext: ChromiumBrowserContext;
-  extensionURL: string;
-  accountCredentials: PolkadotDappAccCredentials;
+  browserContext: ChromiumBrowserContext
+  extensionURL: string
+  accountCredentials: PolkadotDappAccCredentials
 }) => {
-  const page = browserContext.pages()[0];
+  const page = browserContext.pages()[0]
   // await browserContext.tracing.start({ screenshots: true, snapshots: true });
-  await page.goto(extensionURL);
-  await page.bringToFront();
+  await page.goto(extensionURL)
+  await page.bringToFront()
 
-  await page.click('.Button-sc-1gyneog-0');
-  await page.click('.popupMenus .popupToggle');
-  await page.click('.menuItem a[href="#/account/import-seed"]');
+  await page.click('.Button-sc-1gyneog-0')
+  await page.click('.popupMenus .popupToggle')
+  await page.click('.menuItem a[href="#/account/import-seed"]')
   await page.fill(
     'textarea[class*="TextInputs__TextArea-sc"]',
     accountCredentials.seed
-  );
-  await page.click('button[class*=Button-]');
-  await page.fill('input[type=text]', accountCredentials.name);
-  await page.fill('input[type=password]', accountCredentials.password);
+  )
+  await page.click('button[class*=Button-]')
+  await page.fill('input[type=text]', accountCredentials.name)
+  await page.fill('input[type=password]', accountCredentials.password)
   await page.fill(
     '//label[(text()="Repeat password for verification")]/following-sibling::input',
     accountCredentials.password
-  );
+  )
   await page.click(
     '//div[(text()="Add the account with the supplied seed")]/..'
-  );
+  )
 
-  return page;
-};
+  return page
+}
 
 export const openPages = async (
   browserContext: ChromiumBrowserContext,
@@ -114,9 +114,9 @@ export const openPages = async (
 ) => {
   return await Promise.all(
     urls.map(async (url) => {
-      const newPage = await browserContext.newPage();
-      await newPage.goto(url);
-      await newPage.waitForLoadState('load');
+      const newPage = await browserContext.newPage()
+      await newPage.goto(url)
+      await newPage.waitForLoadState('load')
     })
-  );
-};
+  )
+}

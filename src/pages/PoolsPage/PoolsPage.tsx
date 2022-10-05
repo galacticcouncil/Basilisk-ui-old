@@ -67,12 +67,10 @@ export const PoolsPage = () => {
     depsLoading
   )
 
-  const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus
-  } = useGetPoolsQuery({
-    skip: depsLoading
-  })
+  const { data: poolsData, networkStatus: poolsNetworkStatus } =
+    useGetPoolsQuery({
+      skip: depsLoading
+    })
 
   const { assets, poolAssetMap } = useMemo(() => {
     return getAssetMapsFromPools(poolsData?.pools || [])

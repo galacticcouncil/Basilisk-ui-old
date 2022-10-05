@@ -1,8 +1,8 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react';
-import { useRef } from 'react';
-import { StorybookWrapper } from '../../misc/StorybookWrapper';
-import { Wallet } from './Wallet';
-import { toPrecision12 } from '../../hooks/math/useToPrecision';
+import { ComponentMeta, ComponentStory } from '@storybook/react'
+import { useRef } from 'react'
+import { StorybookWrapper } from '../../misc/StorybookWrapper'
+import { Wallet } from './Wallet'
+import { toPrecision12 } from '../../hooks/math/useToPrecision'
 
 // export default {
 //   title: 'components/Wallet',

@@ -1,23 +1,23 @@
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import { useCallback } from 'react';
-import { withErrorHandler } from '../apollo/withErrorHandler';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { useCallback } from 'react'
+import { withErrorHandler } from '../apollo/withErrorHandler'
 import {
   GetActiveAccountQueryResponse,
-  GET_ACTIVE_ACCOUNT,
-} from '../accounts/queries/useGetActiveAccountQuery';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
-import { usePersistentConfig } from './usePersistentConfig';
+  GET_ACTIVE_ACCOUNT
+} from '../accounts/queries/useGetActiveAccountQuery'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { usePersistentConfig } from './usePersistentConfig'
 
-export const accountCurrencyMapDataType = 'Option<u32>';
+export const accountCurrencyMapDataType = 'Option<u32>'
 
-export const __typename = 'Config';
-export const id = __typename;
+export const __typename = 'Config'
+export const id = __typename
 
-export const nativeAssetId = '0';
+export const nativeAssetId = '0'
 
 export const useConfigQueryResolvers = () => {
-  const { persistedConfig } = usePersistentConfig();
-  const { apiInstance, loading } = usePolkadotJsContext();
+  const { persistedConfig } = usePersistentConfig()
+  const { apiInstance, loading } = usePolkadotJsContext()
 
   const config = withErrorHandler(
     useCallback(
@@ -27,14 +27,14 @@ export const useConfigQueryResolvers = () => {
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
         console.log('config query resolver')
-        if (!apiInstance || loading) return;
+        if (!apiInstance || loading) return
 
         // TODO: evict config from the cache after active account changes
         const address = cache.readQuery<GetActiveAccountQueryResponse>({
-          query: GET_ACTIVE_ACCOUNT,
-        })?.activeAccount?.id;
+          query: GET_ACTIVE_ACCOUNT
+        })?.activeAccount?.id
 
-        if (!address) return;
+        if (!address) return
 
         let feePaymentAsset = address
           ? apiInstance
@@ -45,24 +45,24 @@ export const useConfigQueryResolvers = () => {
                 )
               )
               ?.toHuman()
-          : null;
+          : null
 
-        console.log('found fee payment asset', feePaymentAsset);
+        console.log('found fee payment asset', feePaymentAsset)
 
-        feePaymentAsset = feePaymentAsset ? feePaymentAsset : nativeAssetId;
+        feePaymentAsset = feePaymentAsset ? feePaymentAsset : nativeAssetId
 
         return {
           __typename,
           id,
           ...persistedConfig,
-          feePaymentAsset,
-        };
+          feePaymentAsset
+        }
       },
       [apiInstance, loading, persistedConfig]
     )
-  );
+  )
 
   return {
-    config,
-  };
-};
+    config
+  }
+}

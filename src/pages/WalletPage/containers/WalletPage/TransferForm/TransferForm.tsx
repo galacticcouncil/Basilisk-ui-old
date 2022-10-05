@@ -49,15 +49,8 @@ export const TransferForm = ({
     }
   })
 
-  const {
-    register,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-    control,
-    formState
-  } = form
+  const { register, watch, getValues, setValue, trigger, control, formState } =
+    form
 
   const { isValid, isDirty, errors } = formState
 
@@ -100,10 +93,8 @@ export const TransferForm = ({
   const [txFee, setTxFee] = useState<string>()
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
   const client = useApolloClient()
-  const {
-    convertToFeePaymentAsset,
-    feePaymentAsset
-  } = useMultiFeePaymentConversionContext()
+  const { convertToFeePaymentAsset, feePaymentAsset } =
+    useMultiFeePaymentConversionContext()
 
   useEffect(() => {
     if (!apiInstance || apiInstanceLoading) return

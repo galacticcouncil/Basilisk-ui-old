@@ -40,11 +40,8 @@ const repayFee: Fee = {
  * @param client
  * @returns Function to format the given codec into an LBPPool
  */
-export const mapToPool = (
-  math: HydraDxMath,
-  client: ApolloClient<object>,
-  apiInstance: ApiPromise
-) =>
+export const mapToPool =
+  (math: HydraDxMath, client: ApolloClient<object>, apiInstance: ApiPromise) =>
   /**
    * @param [id, codec]
    * @returns LBPPool parsed from the coded provided as an argument
@@ -57,7 +54,7 @@ export const mapToPool = (
     //   codec
     // ).unwrap()
 
-    const poolData = (codec.toJSON() as unknown) as PoolData
+    const poolData = codec.toJSON() as unknown as PoolData
 
     const lastBlockData = readLastBlock(client)
     const relaychainBlockNumber =

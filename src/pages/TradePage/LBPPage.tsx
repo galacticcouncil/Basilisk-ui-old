@@ -1,32 +1,29 @@
-import { NetworkStatus } from '@apollo/client'
-import { find } from 'lodash'
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
-import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm'
-import { Balance } from '../../generated/graphql'
-import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
-import { useMath } from '../../hooks/math/useMath'
-import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
-import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
-import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
-import './TradePage.scss'
 import './LBPPage.scss'
-import { PoolType } from '../../components/Chart/shared'
-import { useLoading } from '../../hooks/misc/useLoading'
-import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
-import { PolkadotApiPoolService, TradeRouter } from '@galacticcouncil/sdk'
-import { idToAsset } from '../../misc/idToAsset'
-
-import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
-// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
-
-import Icon from '../../components/Icon/Icon'
-// import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
-
-import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
-
+import './TradePage.scss'
+import { Balance } from '../../generated/graphql'
 import { EnhancedTradeChart } from './EnhancedTradeChart'
-import { usePolkadotJsContext } from '../../hooks/polkadotJs/usePolkadotJs'
+import { find } from 'lodash'
+import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
+import { idToAsset } from '../../misc/idToAsset'
+import { NetworkStatus } from '@apollo/client'
+import { PolkadotApiPoolService, TradeRouter } from '@galacticcouncil/sdk'
+import { PoolType } from '../../components/Chart/shared'
+import { TradeForm } from '../../components/Trade/TradeForm/LBPTradeForm'
+import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
+import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
+import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
+import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
+import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
+import { useLoading } from '../../hooks/misc/useLoading'
+import { useMath } from '../../hooks/math/useMath'
 import { usePersistentConfig } from '../../hooks/config/usePersistentConfig'
+import { usePolkadotJsContext } from '../../hooks/polkadotJs/usePolkadotJs'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
+import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
+import Icon from '../../components/Icon/Icon'
+
+// import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
+// import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
 
 export enum LbpStatus {
   NOT_EXISTS,
@@ -137,23 +134,21 @@ export const LBPPage = () => {
 
   const clearNotificationIntervalRef = useRef<any>()
 
-  const [
-    submitTrade,
-    { loading: tradeLoading, error: tradeError }
-  ] = useSubmitTradeMutation({
-    onCompleted: () => {
-      setNotification('success')
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby')
-      }, 4000)
-    },
-    onError: () => {
-      setNotification('failed')
-      clearNotificationIntervalRef.current = setTimeout(() => {
-        setNotification('standby')
-      }, 4000)
-    }
-  })
+  const [submitTrade, { loading: tradeLoading, error: tradeError }] =
+    useSubmitTradeMutation({
+      onCompleted: () => {
+        setNotification('success')
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby')
+        }, 4000)
+      },
+      onError: () => {
+        setNotification('failed')
+        clearNotificationIntervalRef.current = setTimeout(() => {
+          setNotification('standby')
+        }, 4000)
+      }
+    })
 
   useEffect(() => {
     if (tradeLoading) setNotification('pending')
@@ -316,7 +311,7 @@ export const LBPPage = () => {
           }
           onClick={() => setChartVisible(false)}
         >
-          Swap
+          <Icon name="SwapIcon"></Icon> Swap Tokens
         </div>
         <div
           className={
@@ -324,7 +319,7 @@ export const LBPPage = () => {
           }
           onClick={() => setChartVisible(true)}
         >
-          Chart
+          <Icon name="ChartIcon"></Icon> Chart view
         </div>
       </div>
 

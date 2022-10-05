@@ -63,14 +63,13 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true
-    }
-  })
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<TradeFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true
+      }
+    })
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -492,10 +491,8 @@ export const TradeForm = ({
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
   const { cache } = useApolloClient()
   const [paymentInfo, setPaymentInfo] = useState<string>()
-  const {
-    convertToFeePaymentAsset,
-    feePaymentAsset
-  } = useMultiFeePaymentConversionContext()
+  const { convertToFeePaymentAsset, feePaymentAsset } =
+    useMultiFeePaymentConversionContext()
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([

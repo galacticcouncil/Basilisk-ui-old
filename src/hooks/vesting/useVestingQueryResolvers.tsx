@@ -1,11 +1,11 @@
-import {  ApolloClient } from '@apollo/client';
-import { useCallback } from 'react';
-import { Account } from '../../generated/graphql';
-import { withErrorHandler } from '../apollo/withErrorHandler';
-import { useGetVestingByAddress } from './useGetVestingByAddress';
+import { ApolloClient } from '@apollo/client'
+import { useCallback } from 'react'
+import { Account } from '../../generated/graphql'
+import { withErrorHandler } from '../apollo/withErrorHandler'
+import { useGetVestingByAddress } from './useGetVestingByAddress'
 
 export const useVestingQueryResolvers = () => {
-  const getVestingByAddress = useGetVestingByAddress();
+  const getVestingByAddress = useGetVestingByAddress()
   const vesting = withErrorHandler(
     useCallback(
       async (
@@ -16,9 +16,9 @@ export const useVestingQueryResolvers = () => {
       [getVestingByAddress]
     ),
     'vesting'
-  );
+  )
 
   return {
-    vesting,
-  };
-};
+    vesting
+  }
+}

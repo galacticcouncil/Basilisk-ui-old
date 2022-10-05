@@ -7,8 +7,8 @@ enum ChromeExtension {
 # We also use this to generate an Extension type to be used within the implementation
 type Extension {
   id: String!
-  isAvailable: Boolean!,
-  extension: ChromeExtension,
+  isAvailable: Boolean!
+  extension: ChromeExtension
 }
 
 # Specify what entity is returned under the `extension` field when queried

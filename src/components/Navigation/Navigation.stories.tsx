@@ -1,19 +1,24 @@
-import { Navigation } from './Navigation';
+import { Navigation } from './Navigation'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { MemoryRouter } from 'react-router-dom';
-import { StorybookWrapper } from '../../misc/StorybookWrapper';
+import { MemoryRouter } from 'react-router-dom'
+import { StorybookWrapper } from '../../misc/StorybookWrapper'
 
 export default {
-    title: 'components/Navigation',
-    component: Navigation,
-    decorators: [(Story) => (<MemoryRouter><Story/></MemoryRouter>)]
+  title: 'components/Navigation',
+  component: Navigation,
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
 } as ComponentMeta<typeof Navigation>
 
-const Template: ComponentStory<typeof Navigation> = (props) =>  (
-    <StorybookWrapper>
-        <Navigation />
-    </StorybookWrapper>
+const Template: ComponentStory<typeof Navigation> = (props) => (
+  <StorybookWrapper>
+    <Navigation />
+  </StorybookWrapper>
 )
 
-
-export const Default = Template.bind({});
+export const Default = Template.bind({})
