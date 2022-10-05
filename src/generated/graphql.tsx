@@ -66,6 +66,7 @@ export type Config = {
   feePaymentAsset?: Maybe<Scalars['String']>;
   nodeUrl: Scalars['String'];
   processorUrl: Scalars['String'];
+  valueDisplayAsset: Scalars['String'];
 };
 
 export type Extension = {
