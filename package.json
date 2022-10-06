@@ -170,7 +170,8 @@
             "warn",
             "single",
             {
-              "avoidEscape": true
+              "avoidEscape": true,
+              "allowTemplateLiterals": true
             }
           ],
           "react/style-prop-object": [

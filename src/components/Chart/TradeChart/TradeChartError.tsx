@@ -18,9 +18,9 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
               <div className="row">
                 <div className="large">
                   This pool doesn't exist <br />
-                  please select different one
+                  please select a different one
                 </div>
-                <div className="small">Sssory</div>
+                <div className="small">Sssorry</div>
               </div>
             )
           case TradeChartErrorType.InvalidPair:
@@ -30,15 +30,16 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
                   Historical data is not available <br />
                   for this pair
                 </div>
-                <div className="small">Sssory</div>
+                <div className="small">Sssorry</div>
               </div>
             )
           case TradeChartErrorType.NotStarted:
             return (
               <div className="row">
-                <div className="large">Prepare</div>
+                <div className="large">Prepare the bags</div>
                 <div className="small">
-                  Bootstrapping event will start shortly
+                  Bootstrapping event will start shortly <br />
+                  Ape responsibly
                 </div>
               </div>
             )
@@ -55,8 +56,8 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
             return (
               <div className="row">
                 <div className="large">
-                  Loading chart data,
-                  <br /> this shouldn't take too long
+                  Loading chart data
+                  <br /> This shouldn't take 3 weeks...
                 </div>
 
                 <div className="small">Thanks for being a patient snek</div>
@@ -71,8 +72,8 @@ export const TradeChartError = ({ type }: { type: TradeChartErrorType }) => {
                   Please try again.
                 </div>
                 <div className="small">
-                  If this problem persists, please report an issue or talk to
-                  our support team.
+                  If this problem persists, please report an issue <br />
+                  or talk to our support team.
                 </div>
               </div>
             )
