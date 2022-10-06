@@ -351,9 +351,7 @@ export const LineChart = ({
           max: yAxisBounds.yAxisMax ? yAxisBounds.yAxisMax : undefined
         }
       },
-      animations: {
-        colors: false
-      },
+      animations: {},
       hover: {
         intersect: true
       },
