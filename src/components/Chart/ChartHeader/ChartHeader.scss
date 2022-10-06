@@ -30,7 +30,7 @@ $disabledOpacity: 0.3;
 
   &__data {
     display: flex;
-    align-items: end;
+    align-items: flex-end;
     flex-direction: column;
 
     &__in-asset {

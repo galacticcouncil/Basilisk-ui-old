@@ -1,6 +1,6 @@
 import classNames from 'classnames'
-import './Button.scss'
 import { ReactNode } from 'react'
+import './Button.scss'
 
 export enum ButtonKind {
   Primary = 'Primary',

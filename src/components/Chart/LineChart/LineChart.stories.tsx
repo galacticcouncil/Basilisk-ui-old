@@ -1,9 +1,8 @@
-import { StorybookWrapper } from '../../../misc/StorybookWrapper'
-import { LineChart, LineChartProps } from './LineChart'
-import cssColors from './../../../misc/colors.module.scss'
-import { createDataset, createLBPDataset } from '../mockDataset'
-import { assetPair } from '../mockDataset'
 import { Story } from '@storybook/react'
+import { StorybookWrapper } from '../../../misc/StorybookWrapper'
+import { assetPair, createDataset, createLBPDataset } from '../mockDataset'
+import cssColors from './../../../misc/colors.module.scss'
+import { LineChart, LineChartProps } from './LineChart'
 
 const primaryDataset = createDataset(assetPair, 60)
 

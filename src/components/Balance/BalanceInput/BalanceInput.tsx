@@ -1,24 +1,15 @@
+import classNames from 'classnames'
 import log from 'loglevel'
-import React, {
-  forwardRef,
-  MutableRefObject,
-  Ref,
-  useMemo,
-  useRef,
-  useState
-} from 'react'
+import React, { MutableRefObject, Ref, useMemo } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
 import MaskedInput, { MaskedInputProps } from 'react-text-mask'
 import createNumberMask from 'text-mask-addons/dist/createNumberMask'
-import { useFormContext, Controller } from 'react-hook-form'
-import { formatToSIWithPrecision12, MetricUnit } from '../metricUnit'
-import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector'
+import { MetricUnit } from '../metricUnit'
 import { useDefaultUnit } from './hooks/useDefaultUnit'
 import { useHandleOnChange } from './hooks/useHandleOnChange'
-import classNames from 'classnames'
+import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector'
 
 import './BalanceInput.scss'
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
-import BigNumber from 'bignumber.js'
 
 log.setDefaultLevel('debug')
 // TODO Make default unit non-required?

@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
-import { PRECISION_12 } from './useFromPrecision'
 
 export const PRECISION_0 = 0
 export const precision12 = new BigNumber(10).pow(12)

@@ -1,10 +1,10 @@
-import { ApiPromise } from '@polkadot/api'
-import { signAndSend } from './signAndSend'
-import { web3FromAddress } from '@polkadot/extension-dapp'
 import { InMemoryCache } from '@apollo/client'
+import { ApiPromise } from '@polkadot/api'
 import { SubmittableExtrinsic } from '@polkadot/api/types'
+import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ISubmittableResult } from '@polkadot/types/types'
 import { readActiveAccount } from '../accounts/lib/readActiveAccount'
+import { signAndSend } from './signAndSend'
 
 const web3FromAddressMocked = web3FromAddress as jest.Mock
 const readActiveAccountMocked = readActiveAccount as jest.Mock

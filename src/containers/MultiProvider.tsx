@@ -1,19 +1,19 @@
 import { ApolloProvider } from '@apollo/client'
-import React, { useCallback, useMemo, useRef } from 'react'
-import { useConfigureApolloClient } from '../hooks/apollo/useApollo'
-import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber'
-import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs'
-import { MathProvider, useMath } from '../hooks/math/useMath'
+import BigNumber from 'bignumber.js'
 import constate from 'constate'
+import React, { useCallback, useMemo, useRef } from 'react'
 import {
   GetActiveAccountQueryProvider,
   useGetActiveAccountQueryContext
 } from '../hooks/accounts/queries/useGetActiveAccountQuery'
-import { GetExtensionQueryProvider } from '../hooks/extension/queries/useGetExtensionQuery'
+import { useConfigureApolloClient } from '../hooks/apollo/useApollo'
 import { useGetConfigQuery } from '../hooks/config/useGetConfigQuery'
+import { GetExtensionQueryProvider } from '../hooks/extension/queries/useGetExtensionQuery'
+import { LastBlockProvider } from '../hooks/lastBlock/useSubscribeNewBlockNumber'
+import { MathProvider, useMath } from '../hooks/math/useMath'
 import { useLoading } from '../hooks/misc/useLoading'
+import { PolkadotJsProvider } from '../hooks/polkadotJs/usePolkadotJs'
 import { useGetPoolByAssetsQuery } from '../hooks/pools/queries/useGetPoolByAssetsQuery'
-import BigNumber from 'bignumber.js'
 import { GetPoolsQueryProvider } from '../hooks/pools/queries/useGetPoolsQuery'
 
 export const ConfiguredApolloProvider = ({

@@ -1,6 +1,10 @@
+import classNames from 'classnames'
 import { useMemo } from 'react'
 import { FormattedMessage, FormattedNumber } from 'react-intl'
-import { DataPoint, Trend } from '../LineChart/LineChart'
+import { percentageChange } from '../../../hooks/math/usePercentageChange'
+import { toPrecision12 } from '../../../hooks/math/useToPrecision'
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
+import { Trend } from '../LineChart/LineChart'
 import {
   AssetPair,
   ChartGranularity,
@@ -9,10 +13,6 @@ import {
   PoolType
 } from '../shared'
 import './ChartHeader.scss'
-import classNames from 'classnames'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { percentageChange } from '../../../hooks/math/usePercentageChange'
 
 export const horizontalBar = '―'
 

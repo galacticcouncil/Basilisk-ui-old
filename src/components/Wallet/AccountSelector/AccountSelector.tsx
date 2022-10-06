@@ -1,10 +1,10 @@
 import { MutableRefObject, useMemo } from 'react'
-import { Account, Maybe } from '../../../generated/graphql'
-import { AccountItem } from './AccountItem/AccountItem'
-import { Button, ButtonKind } from '../../Button/Button'
-import './AccountSelector.scss'
 import { FormattedMessage } from 'react-intl'
+import { Account, Maybe } from '../../../generated/graphql'
+import { Button, ButtonKind } from '../../Button/Button'
 import Icon from '../../Icon/Icon'
+import { AccountItem } from './AccountItem/AccountItem'
+import './AccountSelector.scss'
 
 export interface AccountSelectorProps {
   accounts?: Account[]

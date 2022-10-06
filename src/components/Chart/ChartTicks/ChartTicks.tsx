@@ -1,9 +1,9 @@
-import { first, last, orderBy, times } from 'lodash'
+import { first, last, times } from 'lodash'
 import { useMemo } from 'react'
 import { FormattedDate, FormattedTime } from 'react-intl'
 import { Dataset } from './../LineChart/LineChart'
-import './ChartTicks.scss'
 import { ChartGranularity } from './../shared'
+import './ChartTicks.scss'
 
 const middleTicksHour = 6
 const middleTicksDay = 1

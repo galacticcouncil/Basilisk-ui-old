@@ -27,7 +27,7 @@ export type ModalPortalElementFactory<T = undefined> = (
   args: ModalPortalElementFactoryArgs<T>
 ) => ReactNode
 
-export const useModalPortal = <T,>(
+export const useModalPortal = <T = undefined>(
   elementFactory: ModalPortalElementFactory<T>,
   container: MutableRefObject<HTMLDivElement | null>,
   closeOnClickOutside: boolean = true

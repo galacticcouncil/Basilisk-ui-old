@@ -1,14 +1,12 @@
-import { Balance } from '../../../generated/graphql'
-import { useEffect, useMemo } from 'react'
-import log from 'loglevel'
-import './FormattedBalance.scss'
-import { UnitStyle } from '../metricUnit'
-import { useFormatSI } from './hooks/useFormatSI'
-import { idToAsset } from '../../../misc/idToAsset'
-import ReactTooltip from 'react-tooltip'
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import BigNumber from 'bignumber.js'
+import { useEffect, useMemo } from 'react'
+import ReactTooltip from 'react-tooltip'
+import { Balance } from '../../../generated/graphql'
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
+import { idToAsset } from '../../../misc/idToAsset'
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import { UnitStyle } from '../metricUnit'
+import './FormattedBalance.scss'
 
 export interface FormattedBalanceProps {
   balance: Balance

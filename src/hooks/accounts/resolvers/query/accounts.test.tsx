@@ -1,12 +1,12 @@
 import { Resolvers } from '@apollo/client'
 import { MockedProvider } from '@apollo/client/testing'
 import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
 import {
   GetAccountsQueryResponse,
   useGetAccountsQuery
 } from '../../queries/useGetAccountsQuery'
 import { useAccountsQueryResolver } from './accounts'
-import waitForExpect from 'wait-for-expect'
 
 const mockGetAccounts = jest.fn()
 jest.mock('../../lib/getAccounts.tsx', () => ({

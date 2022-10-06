@@ -1,12 +1,12 @@
-import { ComponentMeta, ComponentStory } from '@storybook/react'
-import { useCallback, useEffect } from 'react'
+import { ComponentMeta } from '@storybook/react'
+import { useCallback } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
 import { MetricUnit } from '../metricUnit'
 import { BalanceInput, BalanceInputProps } from './BalanceInput'
 
-import cssColors from './../../../misc/colors.module.scss'
 import { StorybookWrapper } from '../../../misc/StorybookWrapper'
+import cssColors from './../../../misc/colors.module.scss'
 
 const args: { props: BalanceInputProps[] } = {
   props: [

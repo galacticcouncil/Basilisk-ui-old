@@ -1,10 +1,8 @@
-import { useCallback, useRef } from 'react'
+import { useCallback } from 'react'
 import {
   ModalPortalElementFactory,
   useModalPortal
 } from '../../../../../../components/Balance/AssetBalanceInput/hooks/useModalPortal'
-import { Asset } from '../../../../../../generated/graphql'
-import { AssetList } from '../../../../../../misc/utils/getAssetMap'
 import { Notification } from '../../../../WalletPage'
 import { TransferForm } from '../TransferForm'
 

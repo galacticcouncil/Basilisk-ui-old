@@ -1,7 +1,7 @@
-import { FormattedBalance, FormattedBalanceProps } from './FormattedBalance'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision'
 import { UnitStyle } from '../metricUnit'
+import { FormattedBalance, FormattedBalanceProps } from './FormattedBalance'
 
 import { StorybookWrapper } from '../../../misc/StorybookWrapper'
 

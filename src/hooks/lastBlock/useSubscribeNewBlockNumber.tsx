@@ -3,8 +3,6 @@ import constate from 'constate'
 import { useCallback, useEffect, useState } from 'react'
 import { LastBlock } from '../../generated/graphql'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import { U32 } from '@polkadot/types/primitive'
-import { Codec } from '@polkadot/types-codec/types'
 
 export const validationDataDataType =
   'Option<PolkadotPrimitivesV1PersistedValidationData>'

@@ -1,5 +1,5 @@
-import './ActionBar.scss'
 import { Link } from 'react-router-dom'
+import './ActionBar.scss'
 
 export interface ActionBarProps {
   isExtensionAvailable: boolean

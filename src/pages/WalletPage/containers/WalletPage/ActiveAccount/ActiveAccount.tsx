@@ -1,6 +1,7 @@
 import Identicon from '@polkadot/react-identicon'
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto'
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
 import { useCallback } from 'react'
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table'
 import {
   genesisHashToChain,
   sourceToHuman
@@ -11,7 +12,6 @@ import { Notification } from '../../../WalletPage'
 import { BalanceList } from '../BalanceList/BalanceList'
 import { VestingClaim } from '../VestingClaim/VestingClaim'
 import './ActiveAccount.scss'
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 
 export const ActiveAccount = ({
   account,

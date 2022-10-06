@@ -1,4 +1,4 @@
-import { debounce, last, throttle } from 'lodash'
+import { debounce } from 'lodash'
 import log from 'loglevel'
 import {
   ChangeEvent,

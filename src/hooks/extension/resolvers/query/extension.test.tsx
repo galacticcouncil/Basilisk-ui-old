@@ -1,16 +1,16 @@
-import { MockedProvider } from '@apollo/client/testing'
-import { useExtensionQueryResolver } from './extension'
-import TestRenderer, { act } from 'react-test-renderer'
 import { Resolvers } from '@apollo/client'
+import { MockedProvider } from '@apollo/client/testing'
+import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
+import {
+  clearMockInjectedWeb3,
+  mockInjectedWeb3
+} from '../../lib/getExtension.test'
 import {
   GetExtensionQueryResponse,
   useGetExtensionQuery
 } from '../../queries/useGetExtensionQuery'
-import {
-  mockInjectedWeb3,
-  clearMockInjectedWeb3
-} from '../../lib/getExtension.test'
-import waitForExpect from 'wait-for-expect'
+import { useExtensionQueryResolver } from './extension'
 
 // test component that returns the query result(s)
 const Test = () => {
@@ -59,7 +59,6 @@ describe('extension', () => {
     beforeEach(() => {
       // mock the extension resolver internals in order to change the query result
       mockInjectedWeb3(false)
-      // eslint-disable-next-line testing-library/no-render-in-setup
       render()
     })
 
@@ -75,7 +74,6 @@ describe('extension', () => {
   describe('truthy case', () => {
     beforeEach(() => {
       mockInjectedWeb3(true)
-      // eslint-disable-next-line testing-library/no-render-in-setup
       render()
     })
 

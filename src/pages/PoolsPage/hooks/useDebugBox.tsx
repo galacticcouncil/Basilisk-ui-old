@@ -1,9 +1,9 @@
+import classNames from 'classnames'
 import constate from 'constate'
 import log from 'loglevel'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import ReactJson from 'react-json-view'
-import classNames from 'classnames'
+import { useSearchParams } from 'react-router-dom'
 
 export const useDebugBox = () => {
   const [searchParams] = useSearchParams()

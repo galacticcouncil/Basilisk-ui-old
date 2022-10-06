@@ -1,10 +1,10 @@
+import { ApiPromise } from '@polkadot/api'
 import { useMemo } from 'react'
+import errors from '../../../../errors'
 import { AssetIds, Balance, Scalars } from '../../../../generated/graphql'
 import { withErrorHandler } from '../../../apollo/withErrorHandler'
-import { getBalancesByAddress } from '../../lib/getBalancesByAddress'
-import { ApiPromise } from '@polkadot/api'
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
-import errors from '../../../../errors'
+import { getBalancesByAddress } from '../../lib/getBalancesByAddress'
 
 export const __typename: Balance['__typename'] = 'Balance'
 

@@ -1,4 +1,4 @@
-import { LbpAssetWeights, LbpPool, Pool } from '../../../generated/graphql'
+import { LbpAssetWeights, LbpPool } from '../../../generated/graphql'
 import { HydraDxMath } from '../../math/useMath'
 
 /**

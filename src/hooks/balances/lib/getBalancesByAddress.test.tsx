@@ -1,15 +1,15 @@
 import { ApiPromise } from '@polkadot/api'
-import { Balance } from '../../../generated/graphql'
-import constants from '../../../constants'
-import {
-  getBalancesByAddress,
-  fetchNativeAssetBalance,
-  fetchNonNativeAssetBalancesByAssetIds,
-  fetchNonNativeAssetBalances
-} from './getBalancesByAddress'
 import BigNumber from 'bignumber.js'
 import { max } from 'lodash'
+import constants from '../../../constants'
 import errors from '../../../errors'
+import { Balance } from '../../../generated/graphql'
+import {
+  fetchNativeAssetBalance,
+  fetchNonNativeAssetBalances,
+  fetchNonNativeAssetBalancesByAssetIds,
+  getBalancesByAddress
+} from './getBalancesByAddress'
 
 const nativeAssetBalance = '10'
 const nonNativeAssetBalance = '20'

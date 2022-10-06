@@ -1,7 +1,6 @@
 import { find } from 'lodash'
-import { useMemo } from 'react'
 import { LbpPool } from '../../../generated/graphql'
-import { HydraDxMath, useMathContext } from '../../math/useMath'
+import { HydraDxMath } from '../../math/useMath'
 
 export const oneWithPrecision = '1000000000000' // 10^12 doesnt work, use 10^9 instead
 

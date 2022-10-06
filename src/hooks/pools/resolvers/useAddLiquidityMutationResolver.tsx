@@ -5,8 +5,6 @@ import { useCallback } from 'react'
 import { readActiveAccount } from '../../accounts/lib/readActiveAccount'
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs'
 import { AddLiquidityMutationVariables } from '../mutations/useAddLiquidityMutation'
-import { RemoveLiquidityMutationVariables } from '../mutations/useRemoveLiquidityMutation'
-import { SubmitTradeMutationVariables } from '../mutations/useSubmitTradeMutation'
 import { xykBuyHandler } from '../xyk/buy'
 
 export const useAddLiquidityMutationResolver = () => {

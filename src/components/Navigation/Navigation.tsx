@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import './Navigation.scss'
 import { Link } from 'react-router-dom'
+import './Navigation.scss'
 
 export const Modal = ({ children }: { children: React.ReactNode }) => {
   return (

@@ -1,17 +1,17 @@
-import { useMemo } from 'react'
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import { Vec } from '@polkadot/types'
+import { ApolloClient } from '@apollo/client'
 import { VestingScheduleOf } from '@open-web3/orml-types/interfaces'
 import { ApiPromise } from '@polkadot/api'
+import { Vec } from '@polkadot/types'
+import BigNumber from 'bignumber.js'
+import { useMemo } from 'react'
+import { Query, Vesting, VestingSchedule } from '../../generated/graphql'
+import { readLastBlock } from '../lastBlock/readLastBlock'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import {
   calculateTotalLocks,
   getLockedBalanceByAddressAndLockId,
   vestingBalanceLockId
 } from './calculateClaimableAmount'
-import { readLastBlock } from '../lastBlock/readLastBlock'
-import { ApolloClient } from '@apollo/client'
-import BigNumber from 'bignumber.js'
-import { Query, Vesting, VestingSchedule } from '../../generated/graphql'
 
 export const vestingScheduleDataType = 'Vec<VestingScheduleOf>'
 

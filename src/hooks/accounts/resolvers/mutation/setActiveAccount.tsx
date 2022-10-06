@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
+import { withErrorHandler } from '../../../apollo/withErrorHandler'
 import { useSetActiveAccount } from '../../lib/useSetActiveAccount'
 import { SetActiveAccountMutationVariables } from '../../mutations/useSetActiveAccountMutation'
-import { withErrorHandler } from '../../../apollo/withErrorHandler'
 
 export const useSetActiveAccountMutationResolver = () => {
   const setActiveAccount = useSetActiveAccount()

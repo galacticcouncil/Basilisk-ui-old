@@ -1,11 +1,11 @@
-import { ApiPromise } from '@polkadot/api'
-import { includes, max } from 'lodash'
-import { Balance } from '../../../generated/graphql'
-import constants from '../../../constants'
 import { OrmlAccountData } from '@open-web3/orml-types/interfaces'
+import { ApiPromise } from '@polkadot/api'
 import '@polkadot/api-augment'
 import BigNumber from 'bignumber.js'
+import { includes, max } from 'lodash'
+import constants from '../../../constants'
 import errors from '../../../errors'
+import { Balance } from '../../../generated/graphql'
 
 /**
  * This function fetches asset balances for a given set of assetIds.

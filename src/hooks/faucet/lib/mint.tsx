@@ -1,4 +1,4 @@
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { ApolloCache } from '@apollo/client'
 import { ApiPromise } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { readActiveAccount } from '../../accounts/lib/readActiveAccount'

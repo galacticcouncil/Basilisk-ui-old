@@ -1,10 +1,10 @@
-import { ApiPromise } from '@polkadot/api'
-import constants from '../../../constants'
-import { StorageKey, Vec } from '@polkadot/types'
 import { OrmlBalanceLock } from '@open-web3/orml-types/interfaces'
-import { lockedBalanceStorageKey } from '../types'
-import { LockedBalance } from '../../../generated/graphql'
+import { ApiPromise } from '@polkadot/api'
 import '@polkadot/api-augment'
+import { StorageKey, Vec } from '@polkadot/types'
+import constants from '../../../constants'
+import { LockedBalance } from '../../../generated/graphql'
+import { lockedBalanceStorageKey } from '../types'
 
 /**
  * This function returns the assetId and balance for a given lockId.

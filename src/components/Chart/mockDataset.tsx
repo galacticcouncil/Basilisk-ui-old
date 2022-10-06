@@ -1,7 +1,7 @@
-import { AssetPair } from './shared'
-import { times, random } from 'lodash'
 import { addMinutes, subMinutes } from 'date-fns'
+import { random, times } from 'lodash'
 import { dataset } from './dataset'
+import { AssetPair } from './shared'
 
 export const assetPair: AssetPair = {
   assetA: {

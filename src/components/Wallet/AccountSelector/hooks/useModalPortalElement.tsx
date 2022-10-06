@@ -1,11 +1,10 @@
 import { useCallback } from 'react'
 import { Account, Maybe } from '../../../../generated/graphql'
-import { AccountSelector } from './../AccountSelector'
 import {
   ModalPortalElementFactory,
   ModalPortalElementFactoryArgs
 } from './../../../Balance/AssetBalanceInput/hooks/useModalPortal'
-import { WalletProps } from '../../Wallet'
+import { AccountSelector } from './../AccountSelector'
 
 export type ModalPortalElement = ({
   accounts,

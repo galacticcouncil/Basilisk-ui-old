@@ -1,51 +1,48 @@
+import { useApolloClient } from '@apollo/client'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { every, find, times } from 'lodash'
+import { find } from 'lodash'
 import {
   MutableRefObject,
   useCallback,
-  useDebugValue,
   useEffect,
   useMemo,
   useRef,
   useState
 } from 'react'
-import { Control, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
 import {
   Account,
   Balance,
   Fee,
   LbpPool,
   Maybe,
-  Pool,
   TradeType
 } from '../../../generated/graphql'
 import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
 import { useMath } from '../../../hooks/math/useMath'
 import { percentageChange } from '../../../hooks/math/usePercentageChange'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
-import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
-import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
-import { PoolType } from '../../Chart/shared'
-import { TradeInfo, Warning } from './TradeInfo/TradeInfo'
-import './TradeForm.scss'
-import Icon from '../../Icon/Icon'
-import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox'
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs'
-import { useApolloClient } from '@apollo/client'
 import { estimateBuy } from '../../../hooks/pools/lbp/buy'
 import { estimateSell } from '../../../hooks/pools/lbp/sell'
-import { payment } from '@polkadot/types/interfaces/definitions'
-import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
+import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
 import {
   AssetList,
   AssetMap,
   getSecondaryAssets
 } from '../../../misc/utils/getAssetMap'
+import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox'
+import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
+import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
+import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import { PoolType } from '../../Chart/shared'
+import Icon from '../../Icon/Icon'
+import './TradeForm.scss'
+import { TradeInfo, Warning } from './TradeInfo/TradeInfo'
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null

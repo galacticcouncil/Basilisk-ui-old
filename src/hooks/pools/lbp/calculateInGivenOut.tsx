@@ -1,6 +1,5 @@
 import { find } from 'lodash'
 // import { LbpPool, Pool } from '../../../generated/graphql';
-import { HydraDxMath } from '../../math/useMath'
 import { Pool } from '../../../generated/graphql'
 
 // /**

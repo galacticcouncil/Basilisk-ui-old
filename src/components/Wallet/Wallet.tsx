@@ -1,22 +1,10 @@
-import {
-  Dispatch,
-  MutableRefObject,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState
-} from 'react'
-import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance'
-import { Account, Maybe } from '../../generated/graphql'
-import Icon from '../Icon/Icon'
 import Identicon from '@polkadot/react-identicon'
-import './Wallet.scss'
-import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPortal'
-import { useModalPortalElement } from './AccountSelector/hooks/useModalPortalElement'
+import { MutableRefObject, useMemo } from 'react'
 import { FormattedMessage } from 'react-intl'
+import { Account, Maybe } from '../../generated/graphql'
 import getBsxBalance from '../../misc/utils/getBsxBalance'
-import classNames from 'classnames'
+import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance'
+import './Wallet.scss'
 
 export const trimAddress = (address: string, length: number) => {
   const end = length / 2

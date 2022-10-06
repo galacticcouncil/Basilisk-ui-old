@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { loader } from 'graphql.macro'
-import { LastBlock, Query } from '../../generated/graphql'
+import { Query } from '../../generated/graphql'
 
 export const GET_LAST_BLOCK = loader('./graphql/GetLastBlock.query.graphql')
 export interface GetLastBlockQueryResponse {

@@ -1,4 +1,4 @@
-import { QueryHookOptions, useQuery } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import constate from 'constate'
 import { loader } from 'graphql.macro'
 import { Extension } from '../../../generated/graphql'

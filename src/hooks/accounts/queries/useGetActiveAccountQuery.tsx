@@ -1,11 +1,8 @@
 import { QueryHookOptions, useQuery } from '@apollo/client'
 import constate from 'constate'
 import { loader } from 'graphql.macro'
-import { Query, Vesting } from '../../../generated/graphql'
-import {
-  useGetExtensionQuery,
-  useGetExtensionQueryContext
-} from '../../extension/queries/useGetExtensionQuery'
+import { Query } from '../../../generated/graphql'
+import { useGetExtensionQueryContext } from '../../extension/queries/useGetExtensionQuery'
 import { useLoading } from '../../misc/useLoading'
 
 // graphql query

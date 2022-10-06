@@ -1,8 +1,7 @@
 import { useCallback } from 'react'
-import { getAccounts } from '../../lib/getAccounts'
 import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { getAccounts } from '../../lib/getAccounts'
 import { withTypename } from '../../types'
-import log from 'loglevel'
 
 export const useAccountsQueryResolver = () => {
   return {

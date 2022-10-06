@@ -1,7 +1,7 @@
-import { ActionBar } from './ActionBar'
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { MemoryRouter } from 'react-router-dom'
 import { StorybookWrapper } from '../../misc/StorybookWrapper'
+import { ActionBar } from './ActionBar'
 
 export default {
   title: 'components/ActionBar',

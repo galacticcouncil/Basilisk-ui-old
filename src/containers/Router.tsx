@@ -1,9 +1,7 @@
-import React from 'react'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { PoolsPage } from '../pages/PoolsPage/PoolsPage'
-import { DebugBoxProvider } from '../pages/TradePage/hooks/useDebugBox'
-import { TradePage } from '../pages/TradePage/TradePage'
 import { LBPPage } from '../pages/TradePage/LBPPage'
+import { TradePage } from '../pages/TradePage/TradePage'
 import { WalletPage } from '../pages/WalletPage/WalletPage'
 
 export const Router = () => {

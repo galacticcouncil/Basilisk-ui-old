@@ -1,13 +1,10 @@
-import BigNumber from 'bignumber.js'
-import { debounce, delay, throttle } from 'lodash'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldErrors } from 'react-hook-form'
 import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
-import { Balance, Fee } from '../../../generated/graphql'
+import { Balance } from '../../../generated/graphql'
 import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import { PoolsFormFields, ProvisioningType } from '../PoolsForm'
-import constants from '../../../constants'
 import './PoolsInfo.scss'
 
 export interface PoolsInfoProps {

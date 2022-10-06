@@ -1,6 +1,11 @@
+import classNames from 'classnames'
 import { useMemo } from 'react'
-import { FormattedMessage, FormattedNumber } from 'react-intl'
-import { DataPoint, Trend } from '../LineChart/LineChart'
+import { FormattedMessage } from 'react-intl'
+import { percentageChange } from '../../../hooks/math/usePercentageChange'
+import { toPrecision12 } from '../../../hooks/math/useToPrecision'
+import { LbpStatus } from '../../../pages/TradePage/LBPPage'
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
+import { Trend } from '../LineChart/LineChart'
 import {
   AssetPair,
   ChartGranularity,
@@ -8,14 +13,8 @@ import {
   DisplayData,
   PoolType
 } from '../shared'
-import './ChartHeader.scss'
-import classNames from 'classnames'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { percentageChange } from '../../../hooks/math/usePercentageChange'
-import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 import { LbpChartProps } from '../TradeChart/TradeChart'
-import BigNumber from 'bignumber.js'
+import './ChartHeader.scss'
 
 export const horizontalBar = '―'
 

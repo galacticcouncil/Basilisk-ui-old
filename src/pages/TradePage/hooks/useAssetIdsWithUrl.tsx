@@ -1,11 +1,11 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
-  useSearchParams,
+  createSearchParams,
   useNavigate,
-  createSearchParams
+  useSearchParams
 } from 'react-router-dom'
-import { TradeAssetIds } from '../TradePage'
 import { idToAsset } from '../../../misc/idToAsset'
+import { TradeAssetIds } from '../TradePage'
 import { useDebugBoxContext } from './useDebugBox'
 
 export const useAssetIdsWithUrl = (): [

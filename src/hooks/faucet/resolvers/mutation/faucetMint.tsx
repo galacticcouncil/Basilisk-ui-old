@@ -1,9 +1,5 @@
-import {
-  ApolloCache,
-  NormalizedCacheObject,
-  useApolloClient
-} from '@apollo/client'
-import { useCallback, useMemo } from 'react'
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { useCallback } from 'react'
 import errors from '../../../../errors'
 import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
 import { mint } from '../../lib/mint'

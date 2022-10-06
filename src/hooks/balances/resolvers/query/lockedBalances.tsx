@@ -1,15 +1,15 @@
+import { ApiPromise } from '@polkadot/api'
 import { useMemo } from 'react'
+import errors from '../../../../errors'
 import {
-  Scalars,
   LockedBalance,
   Query,
-  QueryLockedBalancesArgs
+  QueryLockedBalancesArgs,
+  Scalars
 } from '../../../../generated/graphql'
-import { getLockedBalancesByLockId } from '../../lib/getLockedBalancesByLockId'
-import { ApiPromise } from '@polkadot/api'
-import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
-import errors from '../../../../errors'
 import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
+import { getLockedBalancesByLockId } from '../../lib/getLockedBalancesByLockId'
 
 const __typename: LockedBalance['__typename'] = 'LockedBalance'
 

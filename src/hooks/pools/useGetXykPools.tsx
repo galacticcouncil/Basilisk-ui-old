@@ -1,9 +1,9 @@
+import { ApiPromise } from '@polkadot/api'
+import type { StorageKey } from '@polkadot/types'
+import type { AnyTuple, Codec } from '@polkadot/types/types'
 import { useCallback } from 'react'
 import { XykPool } from '../../generated/graphql'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import type { StorageKey } from '@polkadot/types'
-import type { AnyTuple, Codec } from '@polkadot/types/types'
-import { ApiPromise } from '@polkadot/api'
 
 export type PoolAssets = string[]
 export const poolAssetsDataType = '(u32, u32)'

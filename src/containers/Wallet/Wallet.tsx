@@ -1,19 +1,11 @@
-import { Wallet as WalletComponent } from '../../components/Wallet/Wallet'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useGetAccountsQuery } from '../../hooks/accounts/queries/useGetAccountsQuery'
-import {
-  useGetExtensionQuery,
-  useGetExtensionQueryContext
-} from '../../hooks/extension/queries/useGetExtensionQuery'
-import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation'
-import {
-  useGetActiveAccountQuery,
-  useGetActiveAccountQueryContext
-} from '../../hooks/accounts/queries/useGetActiveAccountQuery'
-import { Account } from '../../generated/graphql'
 import { NetworkStatus } from '@apollo/client'
-import { useLoading } from '../../hooks/misc/useLoading'
+import { useRef } from 'react'
+import { Wallet as WalletComponent } from '../../components/Wallet/Wallet'
+import { useSetActiveAccountMutation } from '../../hooks/accounts/mutations/useSetActiveAccountMutation'
+import { useGetActiveAccountQueryContext } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
+import { useGetExtensionQueryContext } from '../../hooks/extension/queries/useGetExtensionQuery'
 import { useFaucetMintMutation } from '../../hooks/faucet/mutations/useFaucetMintMutation'
+import { useLoading } from '../../hooks/misc/useLoading'
 import { useAccountSelectorModal } from './hooks/useAccountSelectorModal'
 
 export const Wallet = () => {

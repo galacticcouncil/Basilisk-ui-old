@@ -8,9 +8,9 @@ import { withErrorHandler } from '../../apollo/withErrorHandler'
 import { usePolkadotJsContext } from '../../polkadotJs/usePolkadotJs'
 import {
   gracefulExtensionCancelationErrorHandler as gracefulExtensionCancellationErrorHandler,
-  withGracefulErrors,
+  reject,
   resolve,
-  reject
+  withGracefulErrors
 } from '../../vesting/useVestingMutationResolvers'
 
 export const transferBalanceHandler =

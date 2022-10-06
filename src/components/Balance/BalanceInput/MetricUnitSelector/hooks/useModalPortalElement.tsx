@@ -1,5 +1,4 @@
 import { useCallback, useMemo } from 'react'
-import { AssetBalanceInputProps } from '../../../AssetBalanceInput/AssetBalanceInput'
 import { ModalPortalElementFactory } from '../../../AssetBalanceInput/hooks/useModalPortal'
 import { CloseModal } from '../../../AssetBalanceInput/hooks/useModalPortalElement'
 import { MetricUnit } from '../../../metricUnit'

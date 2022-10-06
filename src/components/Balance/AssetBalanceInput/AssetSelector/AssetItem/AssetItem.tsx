@@ -1,8 +1,6 @@
-import { Asset } from '../../../../../generated/graphql'
 import classNames from 'classnames'
-import { idToAsset } from '../../../../../misc/idToAsset'
-import { horizontalBar } from '../../../../Chart/ChartHeader/ChartHeader'
 import Unknown from '../../../../../misc/icons/assets/Unknown.svg'
+import { idToAsset } from '../../../../../misc/idToAsset'
 export interface AssetItemProps {
   asset: string
   onClick: () => void

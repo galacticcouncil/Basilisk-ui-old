@@ -1,13 +1,12 @@
 import {
   web3Accounts,
   web3Enable,
-  web3FromAddress,
-  web3FromSource
+  web3FromAddress
 } from '@polkadot/extension-dapp'
 
-import { Account } from '../../../generated/graphql'
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
 import constants from '../../../constants'
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto'
+import { Account } from '../../../generated/graphql'
 
 /**
  * Used to fetch all accounts

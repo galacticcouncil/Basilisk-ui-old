@@ -1,11 +1,11 @@
-import { blockToTime, timeToBlock } from '../../misc/utils/blockTime'
-import { HistoricalBalance } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
-import { HydraDxMath } from '../../hooks/math/useMath'
+import BigNumber from 'bignumber.js'
 import { LbpPool } from '../../generated/graphql'
+import { HistoricalBalance } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
+import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
+import { HydraDxMath } from '../../hooks/math/useMath'
 import { calculateCurrentAssetWeight } from '../../hooks/pools/lbp/calculateCurrentAssetWeight'
 import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
-import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
-import BigNumber from 'bignumber.js'
+import { blockToTime } from '../../misc/utils/blockTime'
 
 export const keepRecords = 50
 

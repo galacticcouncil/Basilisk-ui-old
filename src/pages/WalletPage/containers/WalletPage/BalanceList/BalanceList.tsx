@@ -1,8 +1,7 @@
-import { Balance, Maybe } from '../../../../../generated/graphql'
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table'
 import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance'
+import { Balance, Maybe } from '../../../../../generated/graphql'
 import { idToAsset } from '../../../../../misc/idToAsset'
-import { horizontalBar } from '../../../../../components/Chart/ChartHeader/ChartHeader'
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table'
 import './BalanceList.scss'
 
 export const availableFeePaymentAssetIds = ['0', '4', '5']

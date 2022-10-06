@@ -1,8 +1,8 @@
-import { StorybookWrapper } from '../../../misc/StorybookWrapper'
-import { TradeChart, TradeChartProps } from './TradeChart'
-import { AssetPair, ChartGranularity, ChartType, PoolType } from '../shared'
-import { createDataset, assetPair } from '../mockDataset'
 import { Story } from '@storybook/react'
+import { StorybookWrapper } from '../../../misc/StorybookWrapper'
+import { assetPair, createDataset } from '../mockDataset'
+import { ChartGranularity, ChartType, PoolType } from '../shared'
+import { TradeChart, TradeChartProps } from './TradeChart'
 
 const primaryDataset = createDataset(assetPair, 60)
 

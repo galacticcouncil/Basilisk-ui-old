@@ -1,6 +1,6 @@
 import { useLazyQuery, useQuery } from '@apollo/client'
-import { Query } from '../../../generated/graphql'
 import { loader } from 'graphql.macro'
+import { Query } from '../../../generated/graphql'
 
 export const GET_ACCOUNTS = loader('./../graphql/GetAccounts.query.graphql')
 export interface GetAccountsQueryResponse {

@@ -1,8 +1,8 @@
-import { useCallback } from 'react'
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import { Vec } from '@polkadot/types'
 import { VestingScheduleOf } from '@open-web3/orml-types/interfaces'
 import { ApiPromise } from '@polkadot/api'
+import { Vec } from '@polkadot/types'
+import { useCallback } from 'react'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 
 export const vestingScheduleDataType = 'Vec<VestingScheduleOf>'
 

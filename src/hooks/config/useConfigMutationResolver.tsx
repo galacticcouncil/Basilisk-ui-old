@@ -1,22 +1,20 @@
 import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { useCallback } from 'react'
-import { withErrorHandler } from '../apollo/withErrorHandler'
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT
 } from '../accounts/queries/useGetActiveAccountQuery'
+import { withErrorHandler } from '../apollo/withErrorHandler'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { xykBuyHandler } from '../pools/xyk/buy'
 import {
-  gracefulExtensionCancelationErrorHandler,
   reject,
   resolve,
-  vestingClaimHandler,
-  withGracefulErrors
+  vestingClaimHandler
 } from '../vesting/useVestingMutationResolvers'
-import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig'
+import { usePersistentConfig } from './usePersistentConfig'
 import { SetConfigMutationVariables } from './useSetConfigMutation'
-import { xykBuyHandler } from '../pools/xyk/buy'
 
 export const defaultAssetId = '0'
 

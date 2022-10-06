@@ -1,20 +1,20 @@
+import { Resolvers, useQuery } from '@apollo/client'
+import { MockedProvider } from '@apollo/client/testing'
+import { ApiPromise } from '@polkadot/api'
+import { gql } from 'graphql.macro'
+import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
+import constants from '../../../../constants'
+import errors from '../../../../errors'
+import {
+  LockedBalance,
+  QueryLockedBalancesArgs
+} from '../../../../generated/graphql'
 import {
   Entity,
   lockedBalancesByLockIdQueryResolverFactory,
   useLockedBalanceQueryResolvers
 } from './lockedBalances'
-import {
-  LockedBalance,
-  QueryLockedBalancesArgs
-} from '../../../../generated/graphql'
-import { Resolvers, useQuery } from '@apollo/client'
-import { MockedProvider } from '@apollo/client/testing'
-import TestRenderer, { act } from 'react-test-renderer'
-import { gql } from 'graphql.macro'
-import { ApiPromise } from '@polkadot/api'
-import errors from '../../../../errors'
-import waitForExpect from 'wait-for-expect'
-import constants from '../../../../constants'
 
 const mockedLockedNativeBalances = jest.fn()
 const getMockApiPromise = () =>

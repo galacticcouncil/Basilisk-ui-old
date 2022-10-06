@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { useMemo } from 'react'
-import { toPrecision12 } from './useToPrecision'
 
 export const percentageChange = (
   a?: string | BigNumber,

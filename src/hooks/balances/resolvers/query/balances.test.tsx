@@ -1,3 +1,11 @@
+import { Resolvers, useQuery } from '@apollo/client'
+import { MockedProvider } from '@apollo/client/testing'
+import { ApiPromise } from '@polkadot/api'
+import { gql } from 'graphql.macro'
+import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
+import errors from '../../../../errors'
+import { Balance } from '../../../../generated/graphql'
 import {
   balancesByAddressQueryResolverFactory,
   BalancesByAddressResolverArgs,
@@ -5,14 +13,6 @@ import {
   objectToArrayWithFilter,
   useBalanceQueryResolvers
 } from './balances'
-import { Balance } from '../../../../generated/graphql'
-import { Resolvers, useQuery } from '@apollo/client'
-import { MockedProvider } from '@apollo/client/testing'
-import TestRenderer, { act } from 'react-test-renderer'
-import { gql } from 'graphql.macro'
-import { ApiPromise } from '@polkadot/api'
-import errors from '../../../../errors'
-import waitForExpect from 'wait-for-expect'
 
 const nativeAssetBalance = '10'
 const nonNativeAssetBalance = '20'
@@ -148,7 +148,6 @@ describe('balances', () => {
         args: BalancesByAddressResolverArgs,
         expected: any
       ) => {
-        // eslint-disable-next-line jest/valid-title
         test(description, async () => {
           const balancesByAddressQueryResolver =
             await balancesByAddressQueryResolverFactory(mockApiInstance)

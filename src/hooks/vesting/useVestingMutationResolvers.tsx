@@ -1,17 +1,16 @@
-import { useCallback } from 'react'
-import { withErrorHandler } from '../apollo/withErrorHandler'
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { ApiPromise } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
 import { ExtrinsicStatus } from '@polkadot/types/interfaces/author'
 import { DispatchError, EventRecord } from '@polkadot/types/interfaces/system'
 import log from 'loglevel'
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { useCallback } from 'react'
 import {
   GetActiveAccountQueryResponse,
   GET_ACTIVE_ACCOUNT
 } from '../accounts/queries/useGetActiveAccountQuery'
-import { ApiPromise } from '@polkadot/api'
-import { reject } from 'lodash'
+import { withErrorHandler } from '../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 
 /**
  * Run an async function and handle the thrown errors

@@ -1,18 +1,17 @@
 import classNames from 'classnames'
-import { MutableRefObject, useCallback, useEffect } from 'react'
-import { Asset, Maybe } from '../../../generated/graphql'
+import { MutableRefObject, useCallback } from 'react'
 import { BalanceInput, BalanceInputProps } from '../BalanceInput/BalanceInput'
 import { useModalPortal } from './hooks/useModalPortal'
 import { useModalPortalElement } from './hooks/useModalPortalElement'
 
-import './AssetBalanceInput.scss'
-import { MetricUnit } from '../metricUnit'
-import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUnitSelector'
-import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit'
 import { useFormContext } from 'react-hook-form'
-import Icon from '../../Icon/Icon'
 import { idToAsset } from '../../../misc/idToAsset'
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import Icon from '../../Icon/Icon'
+import { useDefaultUnit } from '../BalanceInput/hooks/useDefaultUnit'
+import { MetricUnitSelector } from '../BalanceInput/MetricUnitSelector/MetricUnitSelector'
+import { MetricUnit } from '../metricUnit'
+import './AssetBalanceInput.scss'
 
 export interface AssetBalanceInputProps {
   modalContainerRef: MutableRefObject<HTMLDivElement | null>

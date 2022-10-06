@@ -1,44 +1,16 @@
-import { NetworkStatus, useApolloClient } from '@apollo/client'
-import classNames from 'classnames'
-import { find, uniq, last } from 'lodash'
-import moment from 'moment'
-import { usePageVisibility } from 'react-page-visibility'
-import {
-  Dispatch,
-  SetStateAction,
-  useState,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef
-} from 'react'
-import { Control, useForm, UseFormReturn } from 'react-hook-form'
-import { useSearchParams } from 'react-router-dom'
+import { NetworkStatus } from '@apollo/client'
+import { find } from 'lodash'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { TradeForm } from '../../components/Trade/TradeForm/TradeForm'
-import { AssetIds, Balance, XykPool, TradeType } from '../../generated/graphql'
-import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount'
+import { Balance, XykPool } from '../../generated/graphql'
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
-import { useGetHistoricalBalancesQuery } from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
 import { useMath } from '../../hooks/math/useMath'
+import { useLoading } from '../../hooks/misc/useLoading'
 import { useSubmitTradeMutation } from '../../hooks/pools/mutations/useSubmitTradeMutation'
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
+import { useGetPoolsQueryProvider } from '../../hooks/pools/queries/useGetPoolsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
-import { Line } from 'react-chartjs-2'
-import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
-import { TradeChart as TradeChartComponent } from '../../components/Chart/TradeChart/TradeChart'
 import './TradePage.scss'
-import {
-  ChartGranularity,
-  ChartType,
-  PoolType
-} from '../../components/Chart/shared'
-import BigNumber from 'bignumber.js'
-import { useLoading } from '../../hooks/misc/useLoading'
-import {
-  useGetPoolsQuery,
-  useGetPoolsQueryProvider
-} from '../../hooks/pools/queries/useGetPoolsQuery'
-import { idToAsset } from '../../misc/idToAsset'
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';

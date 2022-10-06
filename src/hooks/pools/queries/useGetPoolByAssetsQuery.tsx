@@ -1,8 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { loader } from 'graphql.macro'
-import { PoolType } from '../../../components/Chart/shared'
 import { Pool } from '../../../generated/graphql'
-import { GetPoolsQueryResponse } from './useGetPoolsQuery'
 
 export const GET_POOL_BY_ASSETS = loader(
   './../graphql/GetPoolByAssets.query.graphql'

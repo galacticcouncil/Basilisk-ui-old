@@ -1,12 +1,12 @@
 import { Resolvers } from '@apollo/client'
 import { MockedProvider } from '@apollo/client/testing'
+import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
 import {
   GetActiveAccountQueryResponse,
   useGetActiveAccountQuery
 } from '../../queries/useGetActiveAccountQuery'
-import TestRenderer, { act } from 'react-test-renderer'
 import { useActiveAccountQueryResolver } from './activeAccount'
-import waitForExpect from 'wait-for-expect'
 
 const mockUsePersistActiveAccount = jest.fn()
 jest.mock('../../lib/usePersistActiveAccount', () => ({

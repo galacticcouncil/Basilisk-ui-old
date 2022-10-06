@@ -1,21 +1,12 @@
 import { NetworkStatus } from '@apollo/client'
-import { MutableRefObject, useCallback, useEffect, useState } from 'react'
+import { MutableRefObject, useCallback, useEffect } from 'react'
 import { useModalPortal } from '../../../components/Balance/AssetBalanceInput/hooks/useModalPortal'
 import { useModalPortalElement } from '../../../components/Wallet/AccountSelector/hooks/useModalPortalElement'
 import { Account } from '../../../generated/graphql'
 import { useSetActiveAccountMutation } from '../../../hooks/accounts/mutations/useSetActiveAccountMutation'
-import {
-  useGetAccountsLazyQuery,
-  useGetAccountsQuery
-} from '../../../hooks/accounts/queries/useGetAccountsQuery'
-import {
-  useGetActiveAccountQuery,
-  useGetActiveAccountQueryContext
-} from '../../../hooks/accounts/queries/useGetActiveAccountQuery'
-import {
-  useGetExtensionQuery,
-  useGetExtensionQueryContext
-} from '../../../hooks/extension/queries/useGetExtensionQuery'
+import { useGetAccountsLazyQuery } from '../../../hooks/accounts/queries/useGetAccountsQuery'
+import { useGetActiveAccountQueryContext } from '../../../hooks/accounts/queries/useGetActiveAccountQuery'
+import { useGetExtensionQueryContext } from '../../../hooks/extension/queries/useGetExtensionQuery'
 import { useLoading } from '../../../hooks/misc/useLoading'
 
 export const useAccountSelectorModal = ({

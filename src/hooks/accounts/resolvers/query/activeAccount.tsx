@@ -1,14 +1,14 @@
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { find } from 'lodash'
 import { useMemo } from 'react'
-import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery'
+import { Account } from '../../../../generated/graphql'
+import { withErrorHandler } from '../../../apollo/withErrorHandler'
 import {
   Account as PersistedAccount,
   usePersistActiveAccount
 } from '../../lib/usePersistActiveAccount'
-import { find } from 'lodash'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery'
 import { withTypename } from '../../types'
-import { Account } from '../../../../generated/graphql'
 
 // TODO: turn the active account into a cache ref to Account
 export const activeAccountQueryResolverFactory =

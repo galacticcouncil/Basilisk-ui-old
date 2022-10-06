@@ -1,8 +1,8 @@
-import { useCallback } from 'react'
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import type { Codec } from '@polkadot/types/types'
 import { ApiPromise } from '@polkadot/api'
+import type { Codec } from '@polkadot/types/types'
+import { useCallback } from 'react'
 import { Asset } from '../../generated/graphql'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 
 export const assetDataType = 'Option<u32>'
 

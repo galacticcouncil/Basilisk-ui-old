@@ -1,5 +1,5 @@
 import { MutationTuple } from '@apollo/client'
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useState } from 'react'
 import {
   ModalPortalElementFactoryArgs,
   useModalPortal

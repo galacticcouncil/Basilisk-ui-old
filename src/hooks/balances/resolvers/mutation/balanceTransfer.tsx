@@ -1,21 +1,14 @@
-import { ApiPromise } from '@polkadot/api'
-import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
-import errors from '../../../../errors'
 import { ApolloCache, useMutation } from '@apollo/client'
-import { loader } from 'graphql.macro'
-import {
-  withGracefulErrors,
-  gracefulExtensionCancelationErrorHandler as gracefulExtensionCancellationErrorHandler,
-  vestingClaimHandler
-} from '../../../vesting/useVestingMutationResolvers'
+import { ApiPromise } from '@polkadot/api'
 import { web3FromAddress } from '@polkadot/extension-dapp'
-import { DispatchError, ExtrinsicStatus } from '@polkadot/types/interfaces'
-import log from 'loglevel'
-import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { loader } from 'graphql.macro'
 import { useMemo } from 'react'
+import errors from '../../../../errors'
 import { readActiveAccount } from '../../../accounts/lib/readActiveAccount'
-import { add } from 'lodash'
+import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../../../polkadotJs/usePolkadotJs'
 import { xykBuyHandler } from '../../../pools/xyk/buy'
+import { vestingClaimHandler } from '../../../vesting/useVestingMutationResolvers'
 
 export const TRANSFER_BALANCE = loader(
   './../../graphql/TransferBalance.mutation.graphql'
