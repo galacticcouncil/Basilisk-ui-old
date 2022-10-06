@@ -49,10 +49,8 @@ export const VestingClaim = ({
 
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
   const client = useApolloClient()
-  const {
-    feePaymentAsset,
-    convertToFeePaymentAsset
-  } = useMultiFeePaymentConversionContext()
+  const { feePaymentAsset, convertToFeePaymentAsset } =
+    useMultiFeePaymentConversionContext()
 
   const [txFee, setTxFee] = useState<string>()
   useEffect(() => {

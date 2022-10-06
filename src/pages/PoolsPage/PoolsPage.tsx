@@ -1,10 +1,9 @@
 import { NetworkStatus } from '@apollo/client'
 
-import { find, uniq } from 'lodash'
+import { find } from 'lodash'
 
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
-import { AssetIds, Balance, Pool } from '../../generated/graphql'
-import { readActiveAccount } from '../../hooks/accounts/lib/readActiveAccount'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Balance } from '../../generated/graphql'
 import { useGetActiveAccountQuery } from '../../hooks/accounts/queries/useGetActiveAccountQuery'
 
 import { useMath } from '../../hooks/math/useMath'
@@ -19,16 +18,14 @@ import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery'
 
 import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountTradeBalances'
 
+import Icon from '../../components/Icon/Icon'
 import {
   PoolsForm,
   PoolsFormFields,
   ProvisioningType
 } from '../../components/Pools/PoolsForm'
-import { idToAsset } from '../../misc/idToAsset'
-import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation'
 import { useAddLiquidityMutation } from '../../hooks/pools/mutations/useAddLiquidityMutation'
-import Icon from '../../components/Icon/Icon'
-import { PoolType } from '../../components/Chart/shared'
+import { useRemoveLiquidityMutation } from '../../hooks/pools/mutations/useRemoveLiquidityMutation'
 import { getAssetMapsFromPools } from '../../misc/utils/getAssetMap'
 
 export interface TradeAssetIds {
@@ -67,12 +64,10 @@ export const PoolsPage = () => {
     depsLoading
   )
 
-  const {
-    data: poolsData,
-    networkStatus: poolsNetworkStatus
-  } = useGetPoolsQuery({
-    skip: depsLoading
-  })
+  const { data: poolsData, networkStatus: poolsNetworkStatus } =
+    useGetPoolsQuery({
+      skip: depsLoading
+    })
 
   const { assets, poolAssetMap } = useMemo(() => {
     return getAssetMapsFromPools(poolsData?.pools || [])

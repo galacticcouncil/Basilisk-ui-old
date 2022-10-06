@@ -8,7 +8,7 @@ on:
       - 'fix/**'
       - 'feat/**'
       - develop
-       - 'release/**'
+        - 'release/**'
   pull_request:
     types:
       - opened

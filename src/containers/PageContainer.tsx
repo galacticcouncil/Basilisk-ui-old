@@ -1,14 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery'
-import { Wallet } from './Wallet/Wallet'
-import Icon from '../components/Icon/Icon'
-import './PageContainer.scss'
-import moment from 'moment'
 import classNames from 'classnames'
-import { NetworkStatus } from '@apollo/client'
-import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader'
-import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox'
+import moment from 'moment'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader'
+import Icon from '../components/Icon/Icon'
+import { useLastBlockQuery } from '../hooks/lastBlock/useLastBlockQuery'
+import { useDebugBoxContext } from '../pages/TradePage/hooks/useDebugBox'
+import './PageContainer.scss'
+import { Wallet } from './Wallet/Wallet'
 
 export const PageContainer = ({ children }: { children: React.ReactNode }) => {
   const { data: lastBlockData } = useLastBlockQuery()

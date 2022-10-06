@@ -1,28 +1,28 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
-  useSearchParams,
-  useNavigate,
   createSearchParams,
-} from 'react-router-dom';
-import { TradeAssetIds } from '../PoolsPage';
-import { useDebugBoxContext } from './useDebugBox';
-import { idToAsset } from '../../../misc/idToAsset';
+  useNavigate,
+  useSearchParams
+} from 'react-router-dom'
+import { idToAsset } from '../../../misc/idToAsset'
+import { TradeAssetIds } from '../PoolsPage'
+import { useDebugBoxContext } from './useDebugBox'
 
 export const useAssetIdsWithUrl = (): [
   TradeAssetIds,
   Dispatch<SetStateAction<TradeAssetIds>>
 ] => {
-  const [searchParams] = useSearchParams();
-  const assetOut = idToAsset(searchParams.get('assetOut'));
-  const assetIn = idToAsset(searchParams.get('assetIn'));
+  const [searchParams] = useSearchParams()
+  const assetOut = idToAsset(searchParams.get('assetOut'))
+  const assetIn = idToAsset(searchParams.get('assetIn'))
   const [assetIds, setAssetIds] = useState<TradeAssetIds>({
     // with default values if the router params are empty
     assetIn: assetIn?.id,
-    assetOut: assetOut?.id || '0',
-  });
+    assetOut: assetOut?.id || '0'
+  })
 
-  const navigate = useNavigate();
-  const { debugBoxEnabled } = useDebugBoxContext();
+  const navigate = useNavigate()
+  const { debugBoxEnabled } = useDebugBoxContext()
 
   useEffect(() => {
     assetIds.assetIn &&
@@ -31,10 +31,10 @@ export const useAssetIdsWithUrl = (): [
         search: `?${createSearchParams({
           assetIn: assetIds.assetIn,
           assetOut: assetIds.assetOut,
-          ...(debugBoxEnabled ? { debug: 'true' } : null),
-        })}`,
-      });
-  }, [assetIds, searchParams, debugBoxEnabled]);
+          ...(debugBoxEnabled ? { debug: 'true' } : null)
+        })}`
+      })
+  }, [assetIds, searchParams, debugBoxEnabled])
 
-  return [assetIds, setAssetIds];
-};
+  return [assetIds, setAssetIds]
+}

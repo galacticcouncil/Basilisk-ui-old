@@ -1,22 +1,22 @@
-import './ActionBar.scss';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-dom'
+import './ActionBar.scss'
 
 export interface ActionBarProps {
-  isExtensionAvailable: boolean;
-  extensionLoading: boolean;
-  activeAccountLoading: boolean;
+  isExtensionAvailable: boolean
+  extensionLoading: boolean
+  activeAccountLoading: boolean
   accountData?: {
-    name?: string;
-    address?: string;
-    nativeAssetBalance?: string;
-  };
+    name?: string
+    address?: string
+    nativeAssetBalance?: string
+  }
 }
 
 export const ActionBar = ({
   extensionLoading,
   activeAccountLoading,
   accountData,
-  isExtensionAvailable,
+  isExtensionAvailable
 }: ActionBarProps) => {
   return (
     <div className="action-bar">
@@ -56,5 +56,5 @@ export const ActionBar = ({
       </div>
       <div className="action-bar-settings action-bar-item">v</div>
     </div>
-  );
-};
+  )
+}

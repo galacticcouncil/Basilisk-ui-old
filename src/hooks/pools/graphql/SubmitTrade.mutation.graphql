@@ -1,19 +1,19 @@
 mutation SubmitTrade(
-    $assetInId: String!, 
-    $assetOutId: String!,
-    $assetInAmount: String!,
-    $assetOutAmount: String!,
-    $amountWithSlippage: String!,
-    $poolType: PoolType,
-    $tradeType: TradeType
+  $assetInId: String!
+  $assetOutId: String!
+  $assetInAmount: String!
+  $assetOutAmount: String!
+  $amountWithSlippage: String!
+  $poolType: PoolType
+  $tradeType: TradeType
 ) {
-    submitTrade(
-        assetInId: $assetInId
-        assetOutId: $assetOutId,
-        tradeType: $tradeType,
-        poolType: $poolType,
-        assetInAmount: $assetInAmount,
-        assetOutAmount: $assetOutAmount,
-        amountWithSlippage: $amountWithSlippage
-    ) @client
+  submitTrade(
+    assetInId: $assetInId
+    assetOutId: $assetOutId
+    tradeType: $tradeType
+    poolType: $poolType
+    assetInAmount: $assetInAmount
+    assetOutAmount: $assetOutAmount
+    amountWithSlippage: $amountWithSlippage
+  ) @client
 }

@@ -1,31 +1,22 @@
-import log from 'loglevel';
-import React, {
-  forwardRef,
-  MutableRefObject,
-  Ref,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-import MaskedInput, { MaskedInputProps } from 'react-text-mask';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask';
-import { useFormContext, Controller } from 'react-hook-form';
-import { formatToSIWithPrecision12, MetricUnit } from '../metricUnit';
-import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector';
-import { useDefaultUnit } from './hooks/useDefaultUnit';
-import { useHandleOnChange } from './hooks/useHandleOnChange';
-import classNames from 'classnames';
+import classNames from 'classnames'
+import log from 'loglevel'
+import React, { MutableRefObject, Ref, useMemo } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import MaskedInput, { MaskedInputProps } from 'react-text-mask'
+import createNumberMask from 'text-mask-addons/dist/createNumberMask'
+import { MetricUnit } from '../metricUnit'
+import { useDefaultUnit } from './hooks/useDefaultUnit'
+import { useHandleOnChange } from './hooks/useHandleOnChange'
+import { MetricUnitSelector } from './MetricUnitSelector/MetricUnitSelector'
 
-import './BalanceInput.scss';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import BigNumber from 'bignumber.js';
+import './BalanceInput.scss'
 
-log.setDefaultLevel('debug');
+log.setDefaultLevel('debug')
 // TODO Make default unit non-required?
 export interface BalanceInputProps {
-  defaultUnit?: MetricUnit;
-  name: string;
-  showMetricUnitSelector?: boolean;
+  defaultUnit?: MetricUnit
+  name: string
+  showMetricUnitSelector?: boolean
   /**
    * This whole property exists due to my inability to figure out
    * how to pass an actual input ref through react-hook-form controller's field.ref
@@ -33,8 +24,8 @@ export interface BalanceInputProps {
    * field.ref ends up being a wrapper for validationa and input focusing, without the ability to
    * retrieve the actual input element from the form state
    */
-  inputRef?: MutableRefObject<HTMLInputElement | null>;
-  required?: boolean;
+  inputRef?: MutableRefObject<HTMLInputElement | null>
+  required?: boolean
   disabled?: boolean
 }
 
@@ -47,9 +38,9 @@ const MaskedInputWithRef = React.forwardRef(
             {...props}
             ref={(node) => {
               if (node) {
-                textMaskRef(node);
+                textMaskRef(node)
                 if (ref) {
-                  (ref as MutableRefObject<HTMLInputElement>).current = node;
+                  ;(ref as MutableRefObject<HTMLInputElement>).current = node
                 }
               }
             }}
@@ -57,11 +48,11 @@ const MaskedInputWithRef = React.forwardRef(
         )}
         {...topLevelProps}
       />
-    );
+    )
   }
-);
+)
 
-export const thousandsSeparatorSymbol = ' ';
+export const thousandsSeparatorSymbol = ' '
 export const currencyMaskOptions = {
   prefix: '',
   suffix: '',
@@ -73,8 +64,8 @@ export const currencyMaskOptions = {
   decimalLimit: 12,
   // integerLimit: 7,
   allowNegative: false,
-  allowLeadingZeroes: false,
-};
+  allowLeadingZeroes: false
+}
 
 export const BalanceInput = ({
   name,
@@ -84,25 +75,32 @@ export const BalanceInput = ({
   required,
   disabled
 }: BalanceInputProps) => {
-  const { control, register, setValue, getValues, watch } = useFormContext();
-  const { unit, setUnit } = useDefaultUnit(defaultUnit);
+  const { control, register, setValue, getValues, watch } = useFormContext()
+  const { unit, setUnit } = useDefaultUnit(defaultUnit)
 
   const currencyMask = useMemo(
     () =>
       createNumberMask({
-        ...currencyMaskOptions,
+        ...currencyMaskOptions
       }),
     [unit]
-  );
+  )
 
-  const { handleOnChange, rawValue } = useHandleOnChange({ setValue, unit, name, inputRef, getValues, value: watch(name) });
+  const { handleOnChange, rawValue } = useHandleOnChange({
+    setValue,
+    unit,
+    name,
+    inputRef,
+    getValues,
+    value: watch(name)
+  })
 
   return (
     <div
       className={
         'balance-input ' +
         classNames({
-          'no-selector': !showMetricUnitSelector,
+          'no-selector': !showMetricUnitSelector
         })
       }
     >
@@ -139,5 +137,5 @@ export const BalanceInput = ({
         <></>
       )}
     </div>
-  );
-};
+  )
+}

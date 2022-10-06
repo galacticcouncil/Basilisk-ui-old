@@ -1,11 +1,10 @@
-import { useCallback } from 'react';
-import { Account, Maybe } from '../../../../generated/graphql';
-import { AccountSelector } from './../AccountSelector';
+import { useCallback } from 'react'
+import { Account, Maybe } from '../../../../generated/graphql'
 import {
   ModalPortalElementFactory,
-  ModalPortalElementFactoryArgs,
-} from './../../../Balance/AssetBalanceInput/hooks/useModalPortal';
-import { WalletProps } from '../../Wallet';
+  ModalPortalElementFactoryArgs
+} from './../../../Balance/AssetBalanceInput/hooks/useModalPortal'
+import { AccountSelector } from './../AccountSelector'
 
 export type ModalPortalElement = ({
   accounts,
@@ -13,16 +12,16 @@ export type ModalPortalElement = ({
   onAccountSelected,
   onAccountCleared,
   account,
-  isExtensionAvailable,
+  isExtensionAvailable
 }: {
-  accounts?: Account[],
-  accountsLoading: boolean,
-  account?: Maybe<Account>,
-  isExtensionAvailable: boolean,
-  onAccountSelected: (account: Account) => void,
+  accounts?: Account[]
+  accountsLoading: boolean
+  account?: Maybe<Account>
+  isExtensionAvailable: boolean
+  onAccountSelected: (account: Account) => void
   onAccountCleared: () => void
-}) => ModalPortalElementFactory;
-export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal'];
+}) => ModalPortalElementFactory
+export type CloseModal = ModalPortalElementFactoryArgs<void>['closeModal']
 
 export const useModalPortalElement: ModalPortalElement = ({
   accounts,
@@ -30,23 +29,23 @@ export const useModalPortalElement: ModalPortalElement = ({
   onAccountSelected,
   onAccountCleared,
   account,
-  isExtensionAvailable,
+  isExtensionAvailable
 }) => {
   const handleAccountSelected = useCallback(
     (closeModal: CloseModal) => (account: Account) => {
-      closeModal();
-      onAccountSelected(account);
+      closeModal()
+      onAccountSelected(account)
     },
     [onAccountSelected]
-  );
+  )
 
   const handleAccountCleared = useCallback(
     (closeModal: CloseModal) => () => {
-      closeModal();
-      onAccountCleared();
+      closeModal()
+      onAccountCleared()
     },
     [onAccountCleared]
-  );
+  )
 
   return useCallback(
     ({ closeModal, elementRef, isModalOpen }) => {
@@ -63,7 +62,7 @@ export const useModalPortalElement: ModalPortalElement = ({
         />
       ) : (
         <></>
-      );
+      )
     },
     [
       accounts,
@@ -71,7 +70,7 @@ export const useModalPortalElement: ModalPortalElement = ({
       account,
       handleAccountSelected,
       isExtensionAvailable,
-      handleAccountCleared,
+      handleAccountCleared
     ]
-  );
-};
+  )
+}

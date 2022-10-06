@@ -3,8 +3,6 @@ import constate from 'constate'
 import { useCallback, useEffect, useState } from 'react'
 import { LastBlock } from '../../generated/graphql'
 import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import { U32 } from '@polkadot/types/primitive'
-import { Codec } from '@polkadot/types-codec/types'
 
 export const validationDataDataType =
   'Option<PolkadotPrimitivesV1PersistedValidationData>'
@@ -27,7 +25,8 @@ export const useSubscribeNewBlock = () => {
         apiInstance.query.timestamp.now
       ],
       ([number, validationData, time]) => {
-        const data = (validationData.toJSON() as unknown) as PolkadotPrimitivesV1PersistedValidationData
+        const data =
+          validationData.toJSON() as unknown as PolkadotPrimitivesV1PersistedValidationData
         const blockNumber = createType(
           apiInstance.registry,
           'BlockNumber',
@@ -55,6 +54,5 @@ export const useSubscribeNewBlock = () => {
   return lastBlock
 }
 
-export const [LastBlockProvider, useLastBlockContext] = constate(
-  useSubscribeNewBlock
-)
+export const [LastBlockProvider, useLastBlockContext] =
+  constate(useSubscribeNewBlock)

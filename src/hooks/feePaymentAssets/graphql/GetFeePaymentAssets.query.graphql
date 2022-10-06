@@ -1,6 +1,6 @@
 query GetFeePaymentAssets {
-    feePaymentAssets @client {
-        assetId,
-        fallbackPrice
-    }
+  feePaymentAssets @client {
+    assetId
+    fallbackPrice
+  }
 }

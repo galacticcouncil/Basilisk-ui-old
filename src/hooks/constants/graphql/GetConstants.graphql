@@ -1,7 +1,7 @@
 query GetConstants {
-    constants @client {
-        lbp {
-            repayFee
-        }
+  constants @client {
+    lbp {
+      repayFee
     }
+  }
 }

@@ -5,14 +5,9 @@
   "name": "polkadot{.js} extension",
   "short_name": "polkadot{.js}",
   "manifest_version": 2,
-  "permissions": [
-    "storage",
-    "tabs"
-  ],
+  "permissions": ["storage", "tabs"],
   "background": {
-    "scripts": [
-      "background.js"
-    ],
+    "scripts": ["background.js"],
     "persistent": true
   },
   "browser_action": {
@@ -21,13 +16,8 @@
   },
   "content_scripts": [
     {
-      "js": [
-        "content.js"
-      ],
-      "matches": [
-        "http://*/*",
-        "https://*/*"
-      ],
+      "js": ["content.js"],
+      "matches": ["http://*/*", "https://*/*"],
       "run_at": "document_start"
     }
   ],
@@ -38,9 +28,7 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "web_accessible_resources": [
-    "page.js"
-  ],
+  "web_accessible_resources": ["page.js"],
   "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'",
   "version": "0.42.8"
 }

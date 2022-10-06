@@ -1,8 +1,6 @@
-query GetHistoricalBalancesExact($recordIds: [String!]!)  {
+query GetHistoricalBalancesExact($recordIds: [String!]!) {
   historicalBalances: historicalPoolPriceData(
-    where: {
-      id_in: $recordIds,
-    },
+    where: { id_in: $recordIds }
     orderBy: relayChainBlockHeight_ASC
   ) {
     assetABalance
@@ -10,5 +8,3 @@ query GetHistoricalBalancesExact($recordIds: [String!]!)  {
     relayChainBlockHeight
   }
 }
-
- 

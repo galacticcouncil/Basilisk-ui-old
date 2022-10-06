@@ -1,17 +1,17 @@
-import Identicon from '@polkadot/react-identicon';
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
-import { useCallback } from 'react';
+import Identicon from '@polkadot/react-identicon'
+import { decodeAddress, encodeAddress } from '@polkadot/util-crypto'
+import { useCallback } from 'react'
+import { Table, Tbody, Td, Th, Thead, Tr } from 'react-super-responsive-table'
 import {
   genesisHashToChain,
-  sourceToHuman,
-} from '../../../../../components/Wallet/AccountSelector/AccountItem/AccountItem';
-import { Account, Maybe } from '../../../../../generated/graphql';
-import { useSetActiveAccountMutation } from '../../../../../hooks/accounts/mutations/useSetActiveAccountMutation';
-import { Notification } from '../../../WalletPage';
-import { BalanceList } from '../BalanceList/BalanceList';
-import { VestingClaim } from '../VestingClaim/VestingClaim';
-import './ActiveAccount.scss';
-import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
+  sourceToHuman
+} from '../../../../../components/Wallet/AccountSelector/AccountItem/AccountItem'
+import { Account, Maybe } from '../../../../../generated/graphql'
+import { useSetActiveAccountMutation } from '../../../../../hooks/accounts/mutations/useSetActiveAccountMutation'
+import { Notification } from '../../../WalletPage'
+import { BalanceList } from '../BalanceList/BalanceList'
+import { VestingClaim } from '../VestingClaim/VestingClaim'
+import './ActiveAccount.scss'
 
 export const ActiveAccount = ({
   account,
@@ -20,21 +20,21 @@ export const ActiveAccount = ({
   onOpenTransferForm,
   onSetAsFeePaymentAsset,
   feePaymentAssetId,
-  setNotification,
+  setNotification
 }: {
-  account?: Maybe<Account>;
-  loading: boolean;
-  feePaymentAssetId?: Maybe<string>;
-  onOpenAccountSelector: () => void;
-  onOpenTransferForm: (assetId: string, balance: string) => void;
-  onSetAsFeePaymentAsset: (assetId: string) => void;
-  setNotification: (notification: Notification) => void;
+  account?: Maybe<Account>
+  loading: boolean
+  feePaymentAssetId?: Maybe<string>
+  onOpenAccountSelector: () => void
+  onOpenTransferForm: (assetId: string, balance: string) => void
+  onSetAsFeePaymentAsset: (assetId: string) => void
+  setNotification: (notification: Notification) => void
 }) => {
-  const [setActiveAccount] = useSetActiveAccountMutation();
+  const [setActiveAccount] = useSetActiveAccountMutation()
 
   const handleClearAccount = useCallback(() => {
-    setActiveAccount({ variables: { id: undefined } });
-  }, [setActiveAccount]);
+    setActiveAccount({ variables: { id: undefined } })
+  }, [setActiveAccount])
 
   return (
     <>
@@ -154,5 +154,5 @@ export const ActiveAccount = ({
         <div>Please connect a wallet first</div>
       )}
     </>
-  );
-};
+  )
+}

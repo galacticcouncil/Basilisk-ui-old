@@ -1,12 +1,11 @@
 import BigNumber from 'bignumber.js'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FieldErrors } from 'react-hook-form'
 import { useMultiFeePaymentConversionContext } from '../../../../containers/MultiProvider'
-import { Balance, Fee, TradeType } from '../../../../generated/graphql'
+import { Balance, TradeType } from '../../../../generated/graphql'
 import { FormattedBalance } from '../../../Balance/FormattedBalance/FormattedBalance'
 import { horizontalBar } from '../../../Chart/ChartHeader/ChartHeader'
 import { TradeFormFields } from '../TradeForm'
-import constants from './../../../../constants'
 import './TradeInfo.scss'
 
 export enum Warning {

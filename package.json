@@ -30,11 +30,12 @@
     "@types/text-mask-addons": "^3.8.1",
     "@types/use-persisted-state": "^0.3.0",
     "@types/uuid": "^8.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "add-days": "^2.0.1",
     "babel-loader": "8.1.0",
     "bootstrap": "^5.1.1",
     "bootstrap-icons": "^1.6.0",
-    "caniuse-lite": "^1.0.30001287",
     "chart.js": "^3.9.1",
     "chartjs-adapter-moment": "^1.0.0",
     "chartjs-plugin-annotation": "^1.0.2",
@@ -44,7 +45,10 @@
     "date-fns": "^2.25.0",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-markdownlint": "^0.4.0",
     "gql": "^1.1.2",
     "graphql": "^16.3.0",
     "graphql.macro": "^1.4.2",
@@ -72,11 +76,12 @@
     "react-multi-provider": "^0.1.5",
     "react-page-visibility": "^6.4.0",
     "react-router-dom": "^6.0.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.1",
     "react-super-responsive-table": "^5.2.1",
     "react-text-mask": "^5.4.3",
     "react-tooltip": "^4.2.21",
     "react-use": "^17.3.1",
+    "remark": "^14.0.2",
     "save": "^2.4.0",
     "stream-browserify": "^3.0.0",
     "text-mask-addons": "^3.8.0",
@@ -126,19 +131,28 @@
   },
   "prettier": {
     "filepath": ".prettierrc",
+    "tabWidth": 2,
+    "useTabs": false,
     "singleQuote": true,
     "trailingComma": "none",
-    "semi": false,
-    "parser": "typescript"
+    "semi": false
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest",
       "eslint-config-prettier"
     ],
     "ignorePatterns": "src/generated/**/*.tsx",
     "overrides": [
+      {
+        "files": [
+          "*.md"
+        ],
+        "parser": "eslint-plugin-markdownlint/parser",
+        "extends": [
+          "plugin:markdownlint/recommended"
+        ]
+      },
       {
         "files": [
           "**/*.stories.*"
@@ -152,6 +166,13 @@
           "*"
         ],
         "rules": {
+          "quotes": [
+            "warn",
+            "single",
+            {
+              "avoidEscape": true
+            }
+          ],
           "react/style-prop-object": [
             1,
             {

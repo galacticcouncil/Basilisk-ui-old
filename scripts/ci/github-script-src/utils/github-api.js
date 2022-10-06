@@ -6,7 +6,7 @@ function findCommentPredicate(inputs, comment) {
     (inputs.bodyIncludes && comment.body
       ? comment.body.includes(inputs.bodyIncludes)
       : true)
-  );
+  )
 }
 
 async function publishIssueComment({
@@ -16,7 +16,7 @@ async function publishIssueComment({
   owner,
   repo,
   commentBody,
-  existingIssueCommentId,
+  existingIssueCommentId
 }) {
   try {
     if (
@@ -28,19 +28,19 @@ async function publishIssueComment({
         issue_number: issueNumber,
         owner,
         repo,
-        body: commentBody,
-      });
+        body: commentBody
+      })
     } else {
       return await github.rest.issues.updateComment({
         owner,
         repo,
         comment_id: existingIssueCommentId,
-        body: commentBody,
-      });
+        body: commentBody
+      })
     }
   } catch (e) {
-    console.log(e);
-    return 1;
+    console.log(e)
+    return 1
   }
 }
 
@@ -50,27 +50,27 @@ async function findIssueComment({
   bodyIncludes,
   issueNumber,
   commentId = null,
-  commentAuthor = null,
+  commentAuthor = null
 }) {
-  const [owner, repo] = context.payload.repository.full_name.split('/');
-  let comment = null;
+  const [owner, repo] = context.payload.repository.full_name.split('/')
+  let comment = null
 
-  if (!issueNumber || !owner || !repo) return null;
+  if (!issueNumber || !owner || !repo) return null
 
   const parameters = {
     owner: owner,
     repo: repo,
-    issue_number: issueNumber,
-  };
+    issue_number: issueNumber
+  }
 
   if (commentId) {
     comment = await github.rest.issues.getComment({
       owner,
       repo,
-      comment_id: commentId,
-    });
+      comment_id: commentId
+    })
 
-    if (comment) return comment;
+    if (comment) return comment
   }
 
   for await (const { data: comments } of github.paginate.iterator(
@@ -80,14 +80,14 @@ async function findIssueComment({
     // Search each page for the comment
     comment = comments.find((comment) =>
       findCommentPredicate({ commentAuthor, bodyIncludes }, comment)
-    );
-    if (comment) return comment;
+    )
+    if (comment) return comment
   }
 
-  return null;
+  return null
 }
 
 module.exports = {
   publishIssueComment,
-  findIssueComment,
-};
+  findIssueComment
+}

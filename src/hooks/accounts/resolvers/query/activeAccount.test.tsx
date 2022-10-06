@@ -1,23 +1,23 @@
-import { Resolvers } from '@apollo/client';
-import { MockedProvider } from '@apollo/client/testing';
+import { Resolvers } from '@apollo/client'
+import { MockedProvider } from '@apollo/client/testing'
+import TestRenderer, { act } from 'react-test-renderer'
+import waitForExpect from 'wait-for-expect'
 import {
   GetActiveAccountQueryResponse,
-  useGetActiveAccountQuery,
-} from '../../queries/useGetActiveAccountQuery';
-import TestRenderer, { act } from 'react-test-renderer';
-import { useActiveAccountQueryResolver } from './activeAccount';
-import waitForExpect from 'wait-for-expect';
+  useGetActiveAccountQuery
+} from '../../queries/useGetActiveAccountQuery'
+import { useActiveAccountQueryResolver } from './activeAccount'
 
-const mockUsePersistActiveAccount = jest.fn();
+const mockUsePersistActiveAccount = jest.fn()
 jest.mock('../../lib/usePersistActiveAccount', () => ({
-  usePersistActiveAccount: () => mockUsePersistActiveAccount(),
-}));
+  usePersistActiveAccount: () => mockUsePersistActiveAccount()
+}))
 
 // test component that returns the query result(s)
 const Test = () => {
-  const { data } = useGetActiveAccountQuery();
-  return <>{JSON.stringify(data)}</>;
-};
+  const { data } = useGetActiveAccountQuery()
+  return <>{JSON.stringify(data)}</>
+}
 
 const useResolvers = () => {
   return {
@@ -29,13 +29,13 @@ const useResolvers = () => {
             id: 'mockId',
             name: 'Mocked Account',
             source: 'polkadot-js',
-            balances: [],
-          },
-        ];
-      },
-    },
-  };
-};
+            balances: []
+          }
+        ]
+      }
+    }
+  }
+}
 
 // testing helper to wrap a testing component into a provider with configured resolvers
 export const resolverProviderFactory =
@@ -43,49 +43,49 @@ export const resolverProviderFactory =
   ({ children }: { children: React.ReactNode }) => {
     return (
       <MockedProvider resolvers={useResolvers()}>{children}</MockedProvider>
-    );
-  };
+    )
+  }
 
 describe('useActiveAccountQueryResolver', () => {
   // rendered 'Test' component wrapped in a 'MockedProvider'
-  let component: TestRenderer.ReactTestRenderer;
+  let component: TestRenderer.ReactTestRenderer
   // function to parse / cast the rendering result of 'Test' into the required testing data
   let data: () => GetActiveAccountQueryResponse | undefined = () =>
-    JSON.parse(component.toJSON() as unknown as string);
+    JSON.parse(component.toJSON() as unknown as string)
 
   // combine resolvers and the 'Test' component and render them
   const render = () => {
-    const ResolverProvider = resolverProviderFactory(useResolvers);
+    const ResolverProvider = resolverProviderFactory(useResolvers)
     component = TestRenderer.create(
       <ResolverProvider>
         <Test />
       </ResolverProvider>
-    );
-  };
+    )
+  }
 
   afterEach(() => {
-    jest.resetModules();
-  });
+    jest.resetModules()
+  })
 
   describe('falsy case', () => {
     it('should resolve the activeAccount as null when no persistedActiveAccountId if found', async () => {
-      mockUsePersistActiveAccount.mockImplementation(() => [null]);
+      mockUsePersistActiveAccount.mockImplementation(() => [null])
 
-      render();
+      render()
 
       await act(async () => {
         await waitForExpect(() => {
-          expect(data()?.activeAccount).toBe(null);
-        });
-      });
-    });
-  });
+          expect(data()?.activeAccount).toBe(null)
+        })
+      })
+    })
+  })
 
   describe('truthy case', () => {
     it('should resolve the activeAccount as account object when persistedActiveAccountId is found and account with given Id is returned from Polkadot.js', async () => {
-      mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }]);
+      mockUsePersistActiveAccount.mockImplementation(() => [{ id: 'mockId' }])
 
-      render();
+      render()
 
       await act(async () => {
         await waitForExpect(() => {
@@ -94,24 +94,24 @@ describe('useActiveAccountQueryResolver', () => {
             name: 'Mocked Account',
             source: 'polkadot-js',
             balances: [],
-            __typename: 'Account',
-          });
-        });
-      });
-    });
+            __typename: 'Account'
+          })
+        })
+      })
+    })
 
     it('should resolve the activeAccount as null when persistedActiveAccountId is found but no account with given Id is returned from Polkadot.js', async () => {
       mockUsePersistActiveAccount.mockImplementation(() => [
-        { id: 'nonExistingMockId' },
-      ]);
+        { id: 'nonExistingMockId' }
+      ])
 
-      render();
+      render()
 
       await act(async () => {
         await waitForExpect(() => {
-          expect(data()?.activeAccount).toStrictEqual(null);
-        });
-      });
-    });
-  });
-});
+          expect(data()?.activeAccount).toStrictEqual(null)
+        })
+      })
+    })
+  })
+})

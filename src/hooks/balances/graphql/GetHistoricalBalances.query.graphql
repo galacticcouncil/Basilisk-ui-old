@@ -1,10 +1,10 @@
-query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!)  {
+query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!) {
   historicalBalances: historicalPoolPriceData(
     where: {
-      id_contains:  $poolId,
-      relayChainBlockHeight_gte: $from,
+      id_contains: $poolId
+      relayChainBlockHeight_gte: $from
       relayChainBlockHeight_lte: $to
-    },
+    }
     orderBy: relayChainBlockHeight_ASC
   ) {
     assetABalance
@@ -12,6 +12,3 @@ query GetHistoricalBalances($from: Int!, $to: Int!, $poolId: String!)  {
     relayChainBlockHeight
   }
 }
-
- 
- 

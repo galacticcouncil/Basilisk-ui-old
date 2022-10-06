@@ -1,35 +1,35 @@
+import BigNumber from 'bignumber.js'
 import moment from 'moment'
-import { useState, useCallback, useEffect, useMemo } from 'react'
-import { LbpPool } from '../../generated/graphql'
-import {
-  GetHistoricalBalancesQueryResponse,
-  HistoricalBalance,
-  useGetFirstHistoricalBlockQuery,
-  useGetLastHistoricalBlockQuery,
-  useGetHistoricalBalancesExactQuery
-} from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
-import { useMath } from '../../hooks/math/useMath'
-import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
-import {
-  LbpChartProps,
-  TradeChart as LBPTradeChartComponent
-} from '../../components/Chart/TradeChart/TradeChart'
-import './TradePage.scss'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { DataPoint, Dataset } from '../../components/Chart/LineChart/LineChart'
 import {
   ChartGranularity,
   ChartType,
   PoolType
 } from '../../components/Chart/shared'
-import BigNumber from 'bignumber.js'
-import { idToAsset } from '../../misc/idToAsset'
+import {
+  LbpChartProps,
+  TradeChart as LBPTradeChartComponent
+} from '../../components/Chart/TradeChart/TradeChart'
+import { LbpPool } from '../../generated/graphql'
+import {
+  GetHistoricalBalancesQueryResponse,
+  HistoricalBalance,
+  useGetFirstHistoricalBlockQuery,
+  useGetHistoricalBalancesExactQuery,
+  useGetLastHistoricalBlockQuery
+} from '../../hooks/balances/queries/useGetHistoricalBalancesQuery'
 import { useLastBlockContext } from '../../hooks/lastBlock/useSubscribeNewBlockNumber'
+import { fromPrecision12 } from '../../hooks/math/useFromPrecision'
+import { useMath } from '../../hooks/math/useMath'
+import { idToAsset } from '../../misc/idToAsset'
 import { blockToTime } from '../../misc/utils/blockTime'
-import { DataPoint, Dataset } from '../../components/Chart/LineChart/LineChart'
 import {
   getMissingBlocks,
-  getPriceForBlocks,
-  getMissingIndexes
+  getMissingIndexes,
+  getPriceForBlocks
 } from './helpers'
+import './TradePage.scss'
 
 export interface TradeAssetIds {
   assetIn: string | null
@@ -144,17 +144,15 @@ export const EnhancedTradeChart = ({
     { skip: !pool?.id || !pool?.endBlock }
   )
 
-  const [
-    getHistoricalBalancesQuery,
-    historicalBalanceQueryNetworkStatus
-  ] = useGetHistoricalBalancesExactQuery(
-    {
-      recordIds: []
-    },
-    {
-      skip: !pool?.id || !pool?.startBlock
-    }
-  )
+  const [getHistoricalBalancesQuery, historicalBalanceQueryNetworkStatus] =
+    useGetHistoricalBalancesExactQuery(
+      {
+        recordIds: []
+      },
+      {
+        skip: !pool?.id || !pool?.startBlock
+      }
+    )
 
   const accumulating = useMemo(() => {
     return assetIds.assetIn === pool?.assetInId
@@ -164,9 +162,8 @@ export const EnhancedTradeChart = ({
   //   FirstHistoricalBlock
   // >()
 
-  const [historicalBalancesData, setHistoricalBalanceData] = useState<
-    GetHistoricalBalancesQueryResponse
-  >()
+  const [historicalBalancesData, setHistoricalBalanceData] =
+    useState<GetHistoricalBalancesQueryResponse>()
 
   const [historicalBalancesLoading, setHistoricalBalancesLoading] = useState(
     historicalBalanceQueryNetworkStatus.loading

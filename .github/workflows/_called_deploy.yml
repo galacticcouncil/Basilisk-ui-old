@@ -48,7 +48,7 @@ jobs:
 
       # Upload "./scripts" folder with shell scripts to artifacts for further usage in next steps where context will
       # be changed to another branch ("gh_pages_full_branch").
-      - name: "Upload scripts"
+      - name: 'Upload scripts'
         uses: actions/upload-artifact@v2
         with:
           name: gh-actions-scripts

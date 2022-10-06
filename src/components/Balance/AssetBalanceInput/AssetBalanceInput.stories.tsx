@@ -1,11 +1,11 @@
 import { ComponentMeta, ComponentStory } from '@storybook/react'
 import { useEffect, useRef } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { MetricUnit } from '../metricUnit'
 import { AssetBalanceInput } from './AssetBalanceInput'
 
-import cssColors from './../../../misc/colors.module.scss'
 import { StorybookWrapper } from '../../../misc/StorybookWrapper'
+import cssColors from './../../../misc/colors.module.scss'
 
 export default {
   title: 'components/Balance/AssetBalanceInput',

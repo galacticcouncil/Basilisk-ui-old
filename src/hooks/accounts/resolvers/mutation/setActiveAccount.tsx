@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
-import { useSetActiveAccount } from '../../lib/useSetActiveAccount';
-import { SetActiveAccountMutationVariables } from '../../mutations/useSetActiveAccountMutation';
-import { withErrorHandler } from '../../../apollo/withErrorHandler';
+import { useCallback } from 'react'
+import { withErrorHandler } from '../../../apollo/withErrorHandler'
+import { useSetActiveAccount } from '../../lib/useSetActiveAccount'
+import { SetActiveAccountMutationVariables } from '../../mutations/useSetActiveAccountMutation'
 
 export const useSetActiveAccountMutationResolver = () => {
-  const setActiveAccount = useSetActiveAccount();
+  const setActiveAccount = useSetActiveAccount()
 
   return {
     setActiveAccount: withErrorHandler(
@@ -14,6 +14,6 @@ export const useSetActiveAccountMutationResolver = () => {
         [setActiveAccount]
       ),
       'setActiveAccount'
-    ),
-  };
-};
+    )
+  }
+}

@@ -1,13 +1,12 @@
-import { ApiPromise, WsProvider } from '@polkadot/api'
-import { useMemo, useState, useEffect, useCallback } from 'react'
-import constate from 'constate'
-import typesConfig from './typesConfig'
 import {
   types as ormlTypes,
   typesAlias as ormlTypesAlias
 } from '@open-web3/orml-type-definitions'
-import { useUnmount } from 'react-use'
+import { ApiPromise, WsProvider } from '@polkadot/api'
+import constate from 'constate'
 import log from 'loglevel'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useUnmount } from 'react-use'
 import { usePrevious } from 'use-hooks'
 import { usePersistentConfig } from '../config/usePersistentConfig'
 

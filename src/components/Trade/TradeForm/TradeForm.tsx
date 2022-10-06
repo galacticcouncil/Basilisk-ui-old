@@ -1,22 +1,21 @@
+import { useApolloClient } from '@apollo/client'
 import BigNumber from 'bignumber.js'
 import classNames from 'classnames'
-import { every, find, times } from 'lodash'
+import { find } from 'lodash'
 import {
   MutableRefObject,
   useCallback,
-  useDebugValue,
   useEffect,
   useMemo,
   useRef,
   useState
 } from 'react'
-import { Control, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
 import {
   Account,
   Balance,
-  Fee,
   Maybe,
-  Pool,
   TradeType,
   XykPool
 } from '../../../generated/graphql'
@@ -24,28 +23,25 @@ import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
 import { useMath } from '../../../hooks/math/useMath'
 import { percentageChange } from '../../../hooks/math/usePercentageChange'
 import { toPrecision12 } from '../../../hooks/math/useToPrecision'
-import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
-import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
-import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
-import { PoolType } from '../../Chart/shared'
-import { TradeInfo } from './TradeInfo/TradeInfo'
-import './TradeForm.scss'
-import Icon from '../../Icon/Icon'
-import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
-import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
-import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox'
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import { usePolkadotJsContext } from '../../../hooks/polkadotJs/usePolkadotJs'
-import { useApolloClient } from '@apollo/client'
+import { SubmitTradeMutationVariables } from '../../../hooks/pools/mutations/useSubmitTradeMutation'
 import { estimateBuy } from '../../../hooks/pools/xyk/buy'
 import { estimateSell } from '../../../hooks/pools/xyk/sell'
-import { payment } from '@polkadot/types/interfaces/definitions'
-import { useMultiFeePaymentConversionContext } from '../../../containers/MultiProvider'
 import {
   AssetList,
   AssetMap,
   getSecondaryAssets
 } from '../../../misc/utils/getAssetMap'
+import { useDebugBoxContext } from '../../../pages/TradePage/hooks/useDebugBox'
+import { TradeAssetIds } from '../../../pages/TradePage/TradePage'
+import { AssetBalanceInput } from '../../Balance/AssetBalanceInput/AssetBalanceInput'
+import { useModalPortal } from '../../Balance/AssetBalanceInput/hooks/useModalPortal'
+import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalance'
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import { PoolType } from '../../Chart/shared'
+import Icon from '../../Icon/Icon'
+import './TradeForm.scss'
+import { TradeInfo } from './TradeInfo/TradeInfo'
 
 export interface TradeFormSettingsProps {
   allowedSlippage: string | null
@@ -63,14 +59,13 @@ export const TradeFormSettings = ({
   onAllowedSlippageChange,
   closeModal
 }: TradeFormSettingsProps) => {
-  const { register, watch, getValues, setValue, handleSubmit } = useForm<
-    TradeFormSettingsFormFields
-  >({
-    defaultValues: {
-      allowedSlippage,
-      autoSlippage: true
-    }
-  })
+  const { register, watch, getValues, setValue, handleSubmit } =
+    useForm<TradeFormSettingsFormFields>({
+      defaultValues: {
+        allowedSlippage,
+        autoSlippage: true
+      }
+    })
 
   // propagate allowed slippage to the parent
   useEffect(() => {
@@ -492,10 +487,8 @@ export const TradeForm = ({
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
   const { cache } = useApolloClient()
   const [paymentInfo, setPaymentInfo] = useState<string>()
-  const {
-    convertToFeePaymentAsset,
-    feePaymentAsset
-  } = useMultiFeePaymentConversionContext()
+  const { convertToFeePaymentAsset, feePaymentAsset } =
+    useMultiFeePaymentConversionContext()
   const calculatePaymentInfo = useCallback(async () => {
     if (!apiInstance) return
     let [assetIn, assetOut, assetInAmount, assetOutAmount] = getValues([

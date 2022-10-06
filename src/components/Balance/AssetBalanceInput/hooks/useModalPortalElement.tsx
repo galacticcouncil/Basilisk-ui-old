@@ -1,6 +1,5 @@
 import { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { Asset } from '../../../../generated/graphql'
 import { AssetBalanceInputProps } from '../AssetBalanceInput'
 import { AssetSelector } from '../AssetSelector/AssetSelector'
 import {

@@ -1,8 +1,8 @@
 const {
   getAppStorybookBuildMarkdownBody,
   getAppStorybookDeploymentMarkdownBody,
-  getAppUnitTestsMarkdownBody,
-} = require('./utils/discord-comment');
+  getAppUnitTestsMarkdownBody
+} = require('./utils/discord-comment')
 
 module.exports = async ({ github, context, core }) => {
   const {
@@ -23,11 +23,11 @@ module.exports = async ({ github, context, core }) => {
 
     GITHUB_HEAD_REF,
     GITHUB_REF,
-    GITHUB_REF_NAME,
-  } = process.env;
+    GITHUB_REF_NAME
+  } = process.env
 
-  console.log('context - ', context);
-  console.log('process.env - ', process.env);
+  console.log('context - ', context)
+  console.log('process.env - ', process.env)
 
   const embedBody = {
     title: REPORT_MSG_TITLE,
@@ -38,16 +38,16 @@ module.exports = async ({ github, context, core }) => {
       APP_STORYBOOK_DEPLOYMENT_STATUS === 'true'
         ? '65280'
         : '16711680',
-    fields: [],
-  };
+    fields: []
+  }
 
   if (IS_APP_STORYBOOK_BUILD_REPORT === 'true') {
     embedBody.fields.push(
       ...getAppStorybookBuildMarkdownBody({
         APP_STORYBOOK_BUILD_STATUS,
-        context,
+        context
       })
-    );
+    )
   }
 
   if (IS_APP_UNIT_TEST_REPORT === 'true') {
@@ -57,19 +57,19 @@ module.exports = async ({ github, context, core }) => {
         APP_UNIT_TEST_DIFF,
         APP_UNIT_TEST_REF_BRANCH,
         APP_UNIT_TEST_STATUS,
-        context,
+        context
       })
-    );
+    )
   }
 
   if (IS_APP_STORYBOOK_DEPLOYMENT_REPORT === 'true') {
     embedBody.fields.push(
       ...getAppStorybookDeploymentMarkdownBody({
         APP_STORYBOOK_DEPLOYMENT_STATUS,
-        context,
+        context
       })
-    );
+    )
   }
 
-  return JSON.stringify([embedBody]);
-};
+  return JSON.stringify([embedBody])
+}

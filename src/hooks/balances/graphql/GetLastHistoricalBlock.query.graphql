@@ -1,7 +1,9 @@
 query GetLastHistoricalBlock($blockHeight: Int!, $poolId: String!) {
-  lastHistoricalParachainBlock :historicalPoolPriceData(where: {
-    relayChainBlockHeight_lte: $blockHeight, id_contains:$poolId
-  }, orderBy: relayChainBlockHeight_DESC, limit: 1) {
+  lastHistoricalParachainBlock: historicalPoolPriceData(
+    where: { relayChainBlockHeight_lte: $blockHeight, id_contains: $poolId }
+    orderBy: relayChainBlockHeight_DESC
+    limit: 1
+  ) {
     relayChainBlockHeight
     paraChainBlockHeight
   }

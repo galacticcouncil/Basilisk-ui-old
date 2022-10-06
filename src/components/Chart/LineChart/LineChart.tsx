@@ -6,13 +6,13 @@ import {
   ChartOptions,
   TooltipModel
 } from 'chart.js'
+import 'chart.js/auto'
+import 'chartjs-adapter-moment'
+import { first, last, orderBy } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Chart } from 'react-chartjs-2'
-import 'chartjs-adapter-moment'
 import cssColors from './../../../misc/colors.module.scss'
 import './LineChart.scss'
-import { first, orderBy, last } from 'lodash'
-import 'chart.js/auto'
 
 export type DataPoint = {
   x: number

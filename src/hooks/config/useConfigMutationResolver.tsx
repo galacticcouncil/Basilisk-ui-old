@@ -1,32 +1,30 @@
-import { ApolloCache, NormalizedCacheObject } from '@apollo/client';
-import { web3FromAddress } from '@polkadot/extension-dapp';
-import { useCallback } from 'react';
-import { withErrorHandler } from '../apollo/withErrorHandler';
+import { ApolloCache, NormalizedCacheObject } from '@apollo/client'
+import { web3FromAddress } from '@polkadot/extension-dapp'
+import { useCallback } from 'react'
 import {
   GetActiveAccountQueryResponse,
-  GET_ACTIVE_ACCOUNT,
-} from '../accounts/queries/useGetActiveAccountQuery';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
+  GET_ACTIVE_ACCOUNT
+} from '../accounts/queries/useGetActiveAccountQuery'
+import { withErrorHandler } from '../apollo/withErrorHandler'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
+import { xykBuyHandler } from '../pools/xyk/buy'
 import {
-  gracefulExtensionCancelationErrorHandler,
   reject,
   resolve,
-  vestingClaimHandler,
-  withGracefulErrors,
-} from '../vesting/useVestingMutationResolvers';
-import { defaultConfigValue, usePersistentConfig } from './usePersistentConfig';
-import { SetConfigMutationVariables } from './useSetConfigMutation';
-import { xykBuyHandler } from '../pools/xyk/buy';
+  vestingClaimHandler
+} from '../vesting/useVestingMutationResolvers'
+import { usePersistentConfig } from './usePersistentConfig'
+import { SetConfigMutationVariables } from './useSetConfigMutation'
 
-export const defaultAssetId = '0';
+export const defaultAssetId = '0'
 
 export const setCurrencyHandler = (resolve: resolve, reject: reject) => {
-  return vestingClaimHandler(resolve, reject);
-};
+  return vestingClaimHandler(resolve, reject)
+}
 
 export const useConfigMutationResolvers = () => {
-  const { apiInstance, loading } = usePolkadotJsContext();
-  const { setPersistedConfig } = usePersistentConfig();
+  const { apiInstance, loading } = usePolkadotJsContext()
+  const { setPersistedConfig } = usePersistentConfig()
 
   const setConfig = withErrorHandler(
     useCallback(
@@ -36,19 +34,19 @@ export const useConfigMutationResolvers = () => {
         { cache }: { cache: ApolloCache<NormalizedCacheObject> }
       ) => {
         // TODO: error handling?
-        if (!apiInstance || loading) return;
+        if (!apiInstance || loading) return
 
         // TODO: return an optimistic update to the cache with the new config
         // await withGracefulErrors(
         await new Promise(async (resolve, reject) => {
           const address = cache.readQuery<GetActiveAccountQueryResponse>({
-            query: GET_ACTIVE_ACCOUNT,
-          })?.activeAccount?.id;
+            query: GET_ACTIVE_ACCOUNT
+          })?.activeAccount?.id
 
           try {
-            if (!address) return reject();
+            if (!address) return reject()
 
-            const { signer } = await web3FromAddress(address);
+            const { signer } = await web3FromAddress(address)
 
             await apiInstance.tx.multiTransactionPayment
               .setCurrency(args.config?.feePaymentAsset || defaultAssetId)
@@ -56,27 +54,27 @@ export const useConfigMutationResolvers = () => {
                 address,
                 { signer },
                 xykBuyHandler(resolve, reject, apiInstance)
-              );
+              )
           } catch (e) {
             reject(e)
           }
         })
-          // [gracefulExtensionCancelationErrorHandler]
-          // []
+        // [gracefulExtensionCancelationErrorHandler]
+        // []
         // );
 
-        const persistableConfig = args.config;
+        const persistableConfig = args.config
         // there's no point in persisting the feePaymentAsset since it will
         // be refetched from the node anyways
-        delete persistableConfig?.feePaymentAsset;
+        delete persistableConfig?.feePaymentAsset
 
         // setPersistedConfig(persistableConfig || defaultConfigValue);
       },
       [apiInstance, loading, setPersistedConfig]
     )
-  );
+  )
 
   return {
-    setConfig,
-  };
-};
+    setConfig
+  }
+}

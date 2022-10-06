@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig } from '@playwright/test';
+import { PlaywrightTestConfig } from '@playwright/test'
 
 const config: PlaywrightTestConfig = {
   globalTeardown: require.resolve('../global-teardown.ts'),
@@ -14,15 +14,15 @@ const config: PlaywrightTestConfig = {
     channel: 'chromium',
     headless: true,
     ignoreHTTPSErrors: true,
-    screenshot: 'only-on-failure',
+    screenshot: 'only-on-failure'
   },
   reporter: [
     [process.env.NODE_ENV === 'CI' ? 'github' : 'list'],
     [
       'junit',
-      { outputFile: 'storybook-testing/results/storybook-testing-results.xml' },
-    ],
-  ],
-};
+      { outputFile: 'storybook-testing/results/storybook-testing-results.xml' }
+    ]
+  ]
+}
 
-export default config;
+export default config

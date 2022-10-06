@@ -1,33 +1,29 @@
-import { Dispatch, MutableRefObject, SetStateAction, useCallback, useEffect, useMemo, useState } from 'react';
-import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance';
-import { Account, Maybe } from '../../generated/graphql';
-import Icon from '../Icon/Icon';
-import Identicon from '@polkadot/react-identicon';
-import './Wallet.scss';
-import { useModalPortal } from '../Balance/AssetBalanceInput/hooks/useModalPortal';
-import { useModalPortalElement } from './AccountSelector/hooks/useModalPortalElement';
-import { FormattedMessage } from 'react-intl';
-import getBsxBalance from '../../misc/utils/getBsxBalance';
-import classNames from 'classnames';
+import Identicon from '@polkadot/react-identicon'
+import { MutableRefObject, useMemo } from 'react'
+import { FormattedMessage } from 'react-intl'
+import { Account, Maybe } from '../../generated/graphql'
+import getBsxBalance from '../../misc/utils/getBsxBalance'
+import { FormattedBalance } from '../Balance/FormattedBalance/FormattedBalance'
+import './Wallet.scss'
 
 export const trimAddress = (address: string, length: number) => {
-  const end = length / 2;
+  const end = length / 2
   if (address) {
     return `${address.substring(0, end)}...${address.substring(
       address.length - end
-    )}`;
-  } else return ' ';
-};
+    )}`
+  } else return ' '
+}
 
 export interface WalletProps {
-  modalContainerRef: MutableRefObject<HTMLDivElement | null>;
-  account?: Maybe<Account>;
-  extensionLoading: boolean;
-  isExtensionAvailable: boolean;
-  onToggleAccountSelector: () => void,
-  activeAccountLoading: boolean;
-  faucetMint: () => void;
-  faucetMintLoading?: boolean;
+  modalContainerRef: MutableRefObject<HTMLDivElement | null>
+  account?: Maybe<Account>
+  extensionLoading: boolean
+  isExtensionAvailable: boolean
+  onToggleAccountSelector: () => void
+  activeAccountLoading: boolean
+  faucetMint: () => void
+  faucetMintLoading?: boolean
 }
 
 export const Wallet = ({
@@ -38,15 +34,15 @@ export const Wallet = ({
   onToggleAccountSelector,
   activeAccountLoading,
   faucetMint,
-  faucetMintLoading,
+  faucetMintLoading
 }: WalletProps) => {
-  const handleAccountSelectorClick = useMemo(() => (
-    onToggleAccountSelector
-  ),[onToggleAccountSelector]);
+  const handleAccountSelectorClick = useMemo(
+    () => onToggleAccountSelector,
+    [onToggleAccountSelector]
+  )
 
   return (
     <div className="wallet">
-
       {/* <div className="wallet__icons-wrapper">
         {account ? (
           <div
@@ -102,5 +98,5 @@ export const Wallet = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

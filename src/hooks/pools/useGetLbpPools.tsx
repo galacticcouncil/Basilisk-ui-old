@@ -1,16 +1,16 @@
+import { ApolloClient } from '@apollo/client'
 import { ApiPromise } from '@polkadot/api'
+import type { Codec } from '@polkadot/types/types'
+import { BigNumber } from 'bignumber.js'
 import { useCallback } from 'react'
 import { Fee, LbpAssetWeights, LbpPool } from '../../generated/graphql'
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
-import type { Codec } from '@polkadot/types/types'
-import { mapToPoolId } from './useGetXykPools'
-import { calculateOppositeAssetWeight } from './lbp/calculateOppositeAssetWeight'
-import { HydraDxMath, useMathContext } from '../math/useMath'
-import { calculateCurrentAssetWeight } from './lbp/calculateCurrentAssetWeight'
-import { ApolloClient } from '@apollo/client'
 import { readLastBlock } from '../lastBlock/readLastBlock'
-import { BigNumber } from 'bignumber.js'
+import { HydraDxMath, useMathContext } from '../math/useMath'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 import { getLockedBalanceByAddressAndLockId } from '../vesting/calculateClaimableAmount'
+import { calculateCurrentAssetWeight } from './lbp/calculateCurrentAssetWeight'
+import { calculateOppositeAssetWeight } from './lbp/calculateOppositeAssetWeight'
+import { mapToPoolId } from './useGetXykPools'
 
 export type AssetPair = number[]
 export interface PoolData {
@@ -40,11 +40,8 @@ const repayFee: Fee = {
  * @param client
  * @returns Function to format the given codec into an LBPPool
  */
-export const mapToPool = (
-  math: HydraDxMath,
-  client: ApolloClient<object>,
-  apiInstance: ApiPromise
-) =>
+export const mapToPool =
+  (math: HydraDxMath, client: ApolloClient<object>, apiInstance: ApiPromise) =>
   /**
    * @param [id, codec]
    * @returns LBPPool parsed from the coded provided as an argument
@@ -57,7 +54,7 @@ export const mapToPool = (
     //   codec
     // ).unwrap()
 
-    const poolData = (codec.toJSON() as unknown) as PoolData
+    const poolData = codec.toJSON() as unknown as PoolData
 
     const lastBlockData = readLastBlock(client)
     const relaychainBlockNumber =

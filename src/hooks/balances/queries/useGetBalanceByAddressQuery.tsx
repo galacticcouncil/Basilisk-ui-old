@@ -1,15 +1,15 @@
 // implement query that triggers the local balance resolver (as subfield?)
-import { useQuery } from '@apollo/client';
-import { loader } from 'graphql.macro';
-import { Balance } from '../../../generated/graphql';
+import { useQuery } from '@apollo/client'
+import { loader } from 'graphql.macro'
+import { Balance } from '../../../generated/graphql'
 
 // graphql query
-export const GET_BALANCES = loader('./../graphql/GetBalances.query.graphql');
+export const GET_BALANCES = loader('./../graphql/GetBalances.query.graphql')
 
 // data shape returned from the query
 export interface GetBalancesQueryResponse {
-  assetId: Balance['assetId'];
-  balance: Balance['balance'];
+  assetId: Balance['assetId']
+  balance: Balance['balance']
 }
 
 /**
@@ -23,5 +23,5 @@ export interface GetBalancesQueryResponse {
 // hook wrapping the built-in apollo useQuery hook with proper types & configuration
 export const useGetBalancesQuery = () =>
   useQuery<GetBalancesQueryResponse>(GET_BALANCES, {
-    notifyOnNetworkStatusChange: true,
-  });
+    notifyOnNetworkStatusChange: true
+  })

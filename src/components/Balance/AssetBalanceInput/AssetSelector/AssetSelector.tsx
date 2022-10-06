@@ -1,5 +1,4 @@
 import { MutableRefObject, useMemo } from 'react'
-import { Asset } from '../../../../generated/graphql'
 import Icon from '../../../Icon/Icon'
 import { AssetItem } from './AssetItem/AssetItem'
 import './AssetSelector.scss'

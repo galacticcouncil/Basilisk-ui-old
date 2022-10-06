@@ -1,7 +1,7 @@
-import { XykPool, TradeType } from '../../../generated/graphql';
-import { useMathContext } from '../../math/useMath';
-import { applyTradeFee } from '../resolvers/useSubmitTradeMutationResolvers';
-import { getAssetBalance } from './useSpotPrice';
+import { XykPool, TradeType } from '../../../generated/graphql'
+import { useMathContext } from '../../math/useMath'
+import { applyTradeFee } from '../resolvers/useSubmitTradeMutationResolvers'
+import { getAssetBalance } from './useSpotPrice'
 
 export const useCalculateOutGivenIn = (
   pool?: XykPool,
@@ -10,9 +10,9 @@ export const useCalculateOutGivenIn = (
   assetABalanceInput?: string,
   tradeType?: TradeType
 ) => {
-  const { math } = useMathContext();
-  const assetABalance = getAssetBalance(pool, assetInId);
-  const assetBBalance = getAssetBalance(pool, assetOutId);
+  const { math } = useMathContext()
+  const assetABalance = getAssetBalance(pool, assetInId)
+  const assetBBalance = getAssetBalance(pool, assetOutId)
 
   if (
     !assetABalance ||
@@ -21,18 +21,18 @@ export const useCalculateOutGivenIn = (
     !assetABalanceInput ||
     !tradeType
   )
-    return;
+    return
 
   const outGivenIn = math?.xyk.calculate_out_given_in(
     assetABalance, // in_reserve
     assetBBalance, // out_reserve
     assetABalanceInput // amount_in
-  );
+  )
 
-  if (!outGivenIn) return;
+  if (!outGivenIn) return
 
   return {
     outGivenIn,
-    outGivenInWithFee: applyTradeFee(outGivenIn, '0.003', tradeType),
-  };
-};
+    outGivenInWithFee: applyTradeFee(outGivenIn, '0.003', tradeType)
+  }
+}

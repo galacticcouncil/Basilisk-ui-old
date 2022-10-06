@@ -17,9 +17,8 @@ export const usePersistentConfig = (): {
   persistedConfig: Config
   setPersistedConfig: Dispatch<Config>
 } => {
-  const [persistedConfig, setPersistedConfig] = createPersistedConfig(
-    defaultConfigValue
-  )
+  const [persistedConfig, setPersistedConfig] =
+    createPersistedConfig(defaultConfigValue)
 
   return { persistedConfig: persistedConfig as Config, setPersistedConfig }
 }

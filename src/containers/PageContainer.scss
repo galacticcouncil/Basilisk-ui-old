@@ -15,7 +15,7 @@
   margin: auto;
 
   @media screen and(max-width: 850px) {
-    gap: 12px
+    gap: 12px;
   }
 
   .page-content-wrapper {
@@ -46,7 +46,7 @@
     &__wallet-wrapper {
       display: flex;
       align-items: center;
-      justify-content: end;
+      justify-content: flex-end;
       gap: 10px;
       flex-grow: 1;
 
@@ -98,19 +98,18 @@
             display: none;
           }
         }
-  
+
         &__small {
           svg {
             height: 32px;
             width: 32px;
           }
-  
+
           @media screen and (min-width: 1000px) {
             display: none;
           }
         }
       }
-
 
       &__menu-item {
         a {

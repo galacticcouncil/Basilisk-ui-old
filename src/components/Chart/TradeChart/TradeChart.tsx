@@ -1,26 +1,25 @@
+import { find, first, last } from 'lodash'
+import moment from 'moment'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 import { ChartTicks } from '../ChartTicks/ChartTicks'
 import {
-  LineChart,
-  Trend,
   Dataset,
-  primaryDatasetLabel,
+  LineChart,
   TooltipData,
-  TradeChartType
+  TradeChartType,
+  Trend
 } from '../LineChart/LineChart'
 import {
   AssetPair,
   ChartGranularity,
-  PoolType,
   ChartType,
-  DisplayData
+  DisplayData,
+  PoolType
 } from '../shared'
 import { ChartHeader } from './../ChartHeader/ChartHeader'
 import './TradeChart.scss'
-import moment from 'moment'
 import { TradeChartError, TradeChartErrorType } from './TradeChartError'
-import { find, first, last, random, times } from 'lodash'
-import { LbpStatus } from '../../../pages/TradePage/LBPPage'
 
 // this function is absolutely hacky
 export const _getTooltipPositionCss = (tooltipPosition: number) => {
