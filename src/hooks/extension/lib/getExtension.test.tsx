@@ -13,7 +13,6 @@ export const mockInjectedWeb3 = (injected: boolean) => {
     : {}
 
   clearMockInjectedWeb3()
-
   ;(window as any).injectedWeb3 = injectedWeb3
 }
 

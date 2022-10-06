@@ -15,51 +15,51 @@ YAML, but may perform a large number of tasks when it's run. When you reuse a wo
 workflow is used, just as if it was part of the caller workflow.
 </details>
 
----
+***
 
 ### Used actions/libraries
 
-- [GitHub Script](https://github.com/actions/github-script) - run JavaScript logic in GitHub Actions.
-- [Discord for GitHub Actions](https://github.com/Ilshidur/action-discord) - publication messages to Discord channels.
-- [code-coverage-action](https://github.com/barecheck/code-coverage-action) - generate/publish testing code coverage reports to PR.
+*   [GitHub Script](https://github.com/actions/github-script) - run JavaScript logic in GitHub Actions.
+*   [Discord for GitHub Actions](https://github.com/Ilshidur/action-discord) - publication messages to Discord channels.
+*   [code-coverage-action](https://github.com/barecheck/code-coverage-action) - generate/publish testing code coverage reports to PR.
 
 ### Files naming/structure convention
 
-- **caller workflow file** - (`.github/workflows/*.yml`) does not have any prefix. Consists of reusable
-  workflow calls in different combinations regarding purposes. Should not contain any functionality for
-  building, testing, deployment, etc., only calls of called workflows.
-- **dispatched workflow** - (`.github/workflows/_dispatch_*.yml`) has prefix `_dispatch_`. Workflow which is triggering after dispatch event,
-  which is created manually or from another workflow via GitHub API. More details [here](https://docs.github.com/en/rest/reference/actions#create-a-workflow-dispatch-event).
-  _**IMPORTANT** - All updates in such workflow file and related github-script files will be applied only if they pushed
-  into default repository branch (`main | develop`)._
-- **called workflow file** - (`.github/workflows/_called_*.yml`) has prefix `_called_`. Contains
-  functionality for specific purpose (application build, unit testing, etc.). Should contain independent piece of full
-  workflow, generate artifacts for next steps, publish reports, etc.
-- **github-scripts sources** - (`./scripts/ci/github-script-src/**/*.js`) contains JavaScript logic for GitHub Script action.
+*   **caller workflow file** - (`.github/workflows/*.yml`) does not have any prefix. Consists of reusable
+    workflow calls in different combinations regarding purposes. Should not contain any functionality for
+    building, testing, deployment, etc., only calls of called workflows.
+*   **dispatched workflow** - (`.github/workflows/_dispatch_*.yml`) has prefix `_dispatch_`. Workflow which is triggering after dispatch event,
+    which is created manually or from another workflow via GitHub API. More details [here](https://docs.github.com/en/rest/reference/actions#create-a-workflow-dispatch-event).
+    **\*IMPORTANT** - All updates in such workflow file and related github-script files will be applied only if they pushed
+    into default repository branch (`main | develop`).\*
+*   **called workflow file** - (`.github/workflows/_called_*.yml`) has prefix `_called_`. Contains
+    functionality for specific purpose (application build, unit testing, etc.). Should contain independent piece of full
+    workflow, generate artifacts for next steps, publish reports, etc.
+*   **github-scripts sources** - (`./scripts/ci/github-script-src/**/*.js`) contains JavaScript logic for GitHub Script action.
 
----
+***
 
 ## Existing reusable (`called`) workflows
 
-#### :repeat: Reusable :: Build ([.github/workflows/\_called_build.yml](/.github/workflows/_called_build.yml))
+#### :repeat: Reusable :: Build ([.github/workflows/\_called\_build.yml](/.github/workflows/_called_build.yml))
 
 Build application and storybook. Results are saved as artifacts with passed names.
 
-:inbox_tray: **_Inputs_**:
+:inbox*tray: \*\*\_Inputs*\*\*:
 
-- `app-build-artifact-name`: _String, required_
-- `storybook-build-artifact-name`: _String, required_
-- `app-node-modules-cache-key`: _String, required_
+*   `app-build-artifact-name`: *String, required*
+*   `storybook-build-artifact-name`: *String, required*
+*   `app-node-modules-cache-key`: *String, required*
 
-:outbox_tray: **_Outputs_**: `null`
+:outbox*tray: \*\*\_Outputs*\*\*: `null`
 
-:bricks: **_Artifacts_**: Application and Storybook builds with names `app-build-artifact-name` and `storybook-build-artifact-name`
+:bricks: ***Artifacts***: Application and Storybook builds with names `app-build-artifact-name` and `storybook-build-artifact-name`
 
-:lock: **_Secrets_**: `null`
+:lock: ***Secrets***: `null`
 
 <hr />
 
-#### :repeat: Reusable :: Deploy ([.github/workflows/\_called_deploy.yml](/.github/workflows/_called_deploy.yml))
+#### :repeat: Reusable :: Deploy ([.github/workflows/\_called\_deploy.yml](/.github/workflows/_called_deploy.yml))
 
 Deploy application and storybook to GitHub pages.
 
@@ -72,70 +72,70 @@ App UI builds and Storybooks are hosted in GitHub Pages.
 
 For access to the builds you can use these paths:
 
-- **UI app** - `https://<custom_domain>/<folder_name>/<subfolder_name?>/app`
-- **Storybook build** - `https://<custom_domain>/<folder_name>/<subfolder_name?>/storybook`
-  Currently, `custom_domain` is `basilisk-testnet.hydration.cloud`
+*   **UI app** - `https://<custom_domain>/<folder_name>/<subfolder_name?>/app`
+*   **Storybook build** - `https://<custom_domain>/<folder_name>/<subfolder_name?>/storybook`
+    Currently, `custom_domain` is `basilisk-testnet.hydration.cloud`
 
-:inbox_tray: **_Inputs_**:
+:inbox*tray: \*\*\_Inputs*\*\*:
 
-- `app-build-artifact-name`: _String, required_
-- `storybook-build-artifact-name`: _String, required_
+*   `app-build-artifact-name`: *String, required*
+*   `storybook-build-artifact-name`: *String, required*
 
-:outbox_tray: **_Outputs_**: `null`
+:outbox*tray: \*\*\_Outputs*\*\*: `null`
 
-:bricks: **_Artifacts_**: `null`
+:bricks: ***Artifacts***: `null`
 
-:lock: **_Secrets_**:
+:lock: ***Secrets***:
 
-- `gh_token`: _required_
-- `gh_pages_full_branch`: _required_ - name of branch for saving deployed builds.
+*   `gh_token`: *required*
+*   `gh_pages_full_branch`: *required* - name of branch for saving deployed builds.
 
 <hr />
 
-#### :repeat: Reusable :: Unit tests :: App ([.github/workflows/\_called_run-unit-tests-app.yml](/.github/workflows/_called_run-unit-tests-app.yml))
+#### :repeat: Reusable :: Unit tests :: App ([.github/workflows/\_called\_run-unit-tests-app.yml](/.github/workflows/_called_run-unit-tests-app.yml))
 
 Run unit tests in UI application. If trigger event is `pull_request`, workflow builds/tests target branch as well.
 Reports can be used in `Publish reports in PR and Discord` workflow for generating code coverage difference value.
 
-:inbox_tray: **_Inputs_**:
+:inbox*tray: \*\*\_Inputs*\*\*:
 
-- `base-branch-codecov-artifact-name`: _String, required_
-- `working-branch-codecov-artifact-name`: _String, required_
-- `app-node-modules-cache-key`: _String, required_
+*   `base-branch-codecov-artifact-name`: *String, required*
+*   `working-branch-codecov-artifact-name`: *String, required*
+*   `app-node-modules-cache-key`: *String, required*
 
-:outbox_tray: **_Outputs_**: `null`
+:outbox*tray: \*\*\_Outputs*\*\*: `null`
 
-:bricks: **_Artifacts_**: Tests code coverage reports (`lcov.info`)with names  
+:bricks: ***Artifacts***: Tests code coverage reports (`lcov.info`)with names\
 `base-branch-codecov-artifact-name` and `working-branch-codecov-artifact-name`
 
-:lock: **_Secrets_**: `null`
+:lock: ***Secrets***: `null`
 
 <hr />
 
-#### :repeat: Reusable :: Generate unit tests code coverage overall report ([.github/workflows/\_called_generate-unit-tests-code-cov-report.yml](/.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
+#### :repeat: Reusable :: Generate unit tests code coverage overall report ([.github/workflows/\_called\_generate-unit-tests-code-cov-report.yml](/.github/workflows/_called_generate-unit-tests-code-cov-report.yml))
 
 Generate unit tests code coverage report from report files, which must be provided as artifacts and names of artifacts as
 workflow inputs.
 
-:inbox_tray: **_Inputs_**:
+:inbox*tray: \*\*\_Inputs*\*\*:
 
-- `base-branch-codecov-artifact-name`: **String, required** - _artifact name with code-coverage report from PR target branch_
-- `working-branch-codecov-artifact-name`: **String, required** - _artifact name with code-coverage report from working target branch_
+*   `base-branch-codecov-artifact-name`: **String, required** - *artifact name with code-coverage report from PR target branch*
+*   `working-branch-codecov-artifact-name`: **String, required** - *artifact name with code-coverage report from working target branch*
 
-:outbox_tray: **_Outputs_**:
+:outbox*tray: \*\*\_Outputs*\*\*:
 
-- `codecov_unit_percentage`: _Total Percentage coverage_
-- `codecov_unit_diff`: _Percentage difference between head branch_
+*   `codecov_unit_percentage`: *Total Percentage coverage*
+*   `codecov_unit_diff`: *Percentage difference between head branch*
 
-:bricks: **_Artifacts_**: `null`
+:bricks: ***Artifacts***: `null`
 
-:lock: **_Secrets_**:
+:lock: ***Secrets***:
 
-- `barecheck_github_app_token`: _required_
+*   `barecheck_github_app_token`: *required*
 
 <hr />
 
-### :repeat: Reusable :: Report in PR ([.github/workflows/\_called_report-status-in-pr.yml](/.github/workflows/_called_report-status-in-pr.yml))
+### :repeat: Reusable :: Report in PR ([.github/workflows/\_called\_report-status-in-pr.yml](/.github/workflows/_called_report-status-in-pr.yml))
 
 Publish statuses and reports from different steps of caller workflow as comment in related PR. Workflow is based on libraries
 `GitHub Script`.
@@ -155,8 +155,8 @@ As result `Report status in PR` workflow has logic, explained in diagram below:
 
 Report status workflow can collect statuses from different workflows and publish them in one single comment.
 This is possible through the usage of actions caching feature (`actions/cache@v2`). Each `push` or `pull_request` events can
-trigger multiple workflows, which contains `Report status in PR` job (_called workflow_). If trigger commit is related
-with some open pull request or trigger event is [pull_rerquest:opened](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request),
+trigger multiple workflows, which contains `Report status in PR` job (*called workflow*). If trigger commit is related
+with some open pull request or trigger event is [pull\_rerquest:opened](https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#pull_request),
 each run will publish it's statuses/artifacts as comment in appropriate Pull Request post. If comment is already existing,
 reporter from each caller workflow will update existing comment by it's own status and republish statuses from other
 workflow runs. It's possible though cached comment data (stringified JSON saved in the file) from each reporter, which
@@ -172,7 +172,7 @@ It means that comment data file with the most recent creation date for trigger e
 will be ignored in search (more details [here](https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows#matching-a-cache-key)).
 
 Illustrations below show flow with 3 workflows, which has been triggered in parallel by the same event.
-(_workflow names are provided only for example purposes and can be different in real case_):
+(*workflow names are provided only for example purposes and can be different in real case*):
 
 <img src="./cached-comment-data-flows.png" alt="Cached comment data flows" width="900px">
 
@@ -180,29 +180,29 @@ Crucial point of this example (**improvement is required in this place**) is tha
 parallel workflow must be started after completion of reporter job from another parallel workflow. If we get overlapping
 of reporter jobs A and B, comment data (statuses) from reporter A or B will be lost.
 
-:inbox_tray: **_Inputs_**:
+:inbox*tray: \*\*\_Inputs*\*\*:
 
-- `publish-artifacts-list`: **Boolean, required** - _publish available artifacts list. Needs automatic run of dispatched workflow_
-- `app-storybook-build-pub-report`: **Boolean, required** - _publish application build status_
-- `app-storybook-build-status`: **Boolean** - _is application build successful_
-- `app-storybook-deploy-pub-report`: **Boolean, required** - _publish application and Storybook_
-- `app-storybook-deploy-status`: **Boolean** - _is application and storybook deployment successful_
-- `app-unit-test-pub-report`: **Boolean** - _publish application unit tests report in related PR_
-- `app-unit-test-status`: **Boolean** - _is application unit testing successful_
-- `app-unit-test-codecov-percentage`: **String** - _Total Percentage coverage_
-- `app-unit-test-codecov-diff`: **String** - _Percentage difference between head branch_
-- `app-e2e-test-pub-report`: **String** - _publish application E2E tests report in related PR_
-- `app-e2e-test-status`: **String** - _is application E2E testing successful_
+*   `publish-artifacts-list`: **Boolean, required** - *publish available artifacts list. Needs automatic run of dispatched workflow*
+*   `app-storybook-build-pub-report`: **Boolean, required** - *publish application build status*
+*   `app-storybook-build-status`: **Boolean** - *is application build successful*
+*   `app-storybook-deploy-pub-report`: **Boolean, required** - *publish application and Storybook*
+*   `app-storybook-deploy-status`: **Boolean** - *is application and storybook deployment successful*
+*   `app-unit-test-pub-report`: **Boolean** - *publish application unit tests report in related PR*
+*   `app-unit-test-status`: **Boolean** - *is application unit testing successful*
+*   `app-unit-test-codecov-percentage`: **String** - *Total Percentage coverage*
+*   `app-unit-test-codecov-diff`: **String** - *Percentage difference between head branch*
+*   `app-e2e-test-pub-report`: **String** - *publish application E2E tests report in related PR*
+*   `app-e2e-test-status`: **String** - *is application E2E testing successful*
 
-:outbox_tray: **_Outputs_**: `null`
+:outbox*tray: \*\*\_Outputs*\*\*: `null`
 
-:bricks: **_Artifacts_**: `null`
+:bricks: ***Artifacts***: `null`
 
-:lock: **_Secrets_**:
+:lock: ***Secrets***:
 
-- `gh_token`: _required_
-- `gh_pages_full_branch`: _required_ - branch name which is configured as a root branch for GitHub Pages
-- `gh_pages_custom_domain`: _required_ - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data
+*   `gh_token`: *required*
+*   `gh_pages_full_branch`: *required* - branch name which is configured as a root branch for GitHub Pages
+*   `gh_pages_custom_domain`: *required* - we need save custom GH Pages domain as [this](https://octokit.github.io/rest.js/v18#repos-get-pages) API doesn't provide such data
 
 <hr />
 
@@ -212,13 +212,13 @@ of reporter jobs A and B, comment data (statuses) from reporter A or B will be l
 
 We cannot use `env` variables in workflow level because of [this](https://github.com/actions/runner/issues/480) issue.
 
----
+***
 
 #### :question: `RequestError [HttpError]: Bad credentials` in GitHub API calls
 
 Probably access token is expired or wrong. Check `GH_TOKEN` token which is saved in Actions secrets.
 
----
+***
 
 #### :question: `*.sh: Permission denied`
 
