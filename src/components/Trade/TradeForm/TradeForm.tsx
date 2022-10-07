@@ -275,6 +275,16 @@ export const TradeForm = ({
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
     const { assetIn, assetOut } = getValues()
+
+    if (assetIn === assetOut && pool?.assetInId !== pool?.assetOutId) {
+      const poolAssets =
+        assetIn === pool?.assetInId
+          ? { assetIn: pool?.assetOutId || null, assetOut }
+          : { assetIn, assetOut: pool?.assetInId || null }
+
+      return onAssetIdsChange(poolAssets)
+    }
+
     onAssetIdsChange({ assetIn, assetOut })
   }, watch(['assetIn', 'assetOut']))
 

@@ -322,14 +322,6 @@ export const TradeForm = ({
           ? { assetIn: pool?.assetOutId || null, assetOut }
           : { assetIn, assetOut: pool?.assetInId || null }
 
-      console.log(
-        'ASSET SELECTED',
-        assetIn,
-        assetOut,
-        pool?.assetInId,
-        pool?.assetOutId,
-        poolAssets
-      )
       return onAssetIdsChange(poolAssets)
     }
 
