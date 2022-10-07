@@ -10,6 +10,47 @@
   margin: 0px auto;
   color: white;
 
+  .active-account-button__label,
+  .balance-list-button__label {
+    padding: 8px 16px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 600;
+    word-break: normal;
+  }
+
+  .account-item__chain-address {
+    font-size: 12px;
+  }
+
+  .active-account-wrapper {
+    font-size: 14px;
+    gap: 10px;
+    padding: 0 32px 12px 32px;
+  }
+
+  .active-account__title {
+    margin: 16px 32px;
+  }
+
+  .balance-list-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .item {
+    flex-wrap: wrap;
+  }
+
+  .account-item__heading__left {
+    flex-wrap: wrap;
+  }
+
   .modal-button-container {
     width: 100%;
     display: flex;
@@ -87,27 +128,50 @@
 
   .responsiveTable td.pivoted {
     /* Behave like a "row" */
-    border: none !important;
+
     position: relative;
-    text-align: left !important;
+
     white-space: pre-wrap;
     overflow-wrap: break-word;
-    &:not(:last-child) {
-      padding: 20px 10px 20px calc(39% + 10px) !important;
-    }
+  }
+
+  .active-account-wrapper .item:last-child,
+  .balance-list-wrapper .item:last-child {
+    padding: 0;
+    border-radius: 0px 0px 16px 16px;
+    flex-wrap: wrap;
+  }
+
+  .active-account-wrapper .item:nth-child(even) {
+    padding: 0 12px 30px 12px;
+  }
+
+  .balance-list-wrapper .item:first-child {
+    padding: 20px 0px;
+    border-top: 0px;
+    flex-basis: 160px;
+    border-radius: 16px 16px 0px 0px;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+
+  .active-account-wrapper .item:first-child {
+    padding: 20px 10px;
+    border-top: 0px;
+    border-radius: 16px 16px 0px 0px;
+  }
+
+  .active-account-wrapper .item:nth-child(even),
+  .balance-list-wrapper .item:nth-child(even) {
+    background: rgba(255, 255, 255, 0);
+    justify-content: left;
   }
 
   .responsiveTable td .tdBefore {
     /* Now like a table header */
-    position: absolute;
-    display: block;
+
+    display: none;
 
     /* Top/left values mimic padding */
-    left: 1rem;
-    width: calc(100% - 20px);
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    text-align: left !important;
-    font-weight: 600;
   }
 }

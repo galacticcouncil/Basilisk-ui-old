@@ -12,7 +12,10 @@
   &-wrapper {
     @extend .active-account-wrapper;
 
+    font-size: 12px;
+
     .item {
+      flex-wrap: wrap;
       width: 22.5%;
       &:last-child {
         width: 10%;
@@ -53,6 +56,7 @@
       .item {
         padding: 10px;
         width: 100% !important;
+        flex-wrap: wrap;
 
         &:first-child {
           padding: 20px 32px;

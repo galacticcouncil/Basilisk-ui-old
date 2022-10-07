@@ -34,10 +34,16 @@ export const BalanceList = ({
           <Tbody>
             <Tr className="balance-list-wrapper">
               <Td className="item">
-                {idToAsset(balance.assetId || null)?.fullName ||
-                  `Unknown asset (ID: ${balance.assetId})`}
+                <div>
+                  {idToAsset(balance.assetId || null)?.fullName ||
+                    `Unknown asset (ID: ${balance.assetId})`}
+                </div>
 
-                {feePaymentAssetId === balance.assetId ? ' - fee asset' : ''}
+                {feePaymentAssetId === balance.assetId ? (
+                  <div>fee asset</div>
+                ) : (
+                  ''
+                )}
               </Td>
 
               <Td className="item">
