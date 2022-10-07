@@ -387,7 +387,7 @@ export const LBPPage = () => {
           <div className="lbp-info-wrapper__lbp-info-item">
             <div className="lbp-info-wrapper__lbp-info-item__group">
               <div className="label">Last Price</div>
-              <div className="value">${usdPrice.accumulatedAsString}</div>
+              <div className="value">$ {usdPrice.accumulatedAsString}</div>
             </div>
           </div>
           {/* <div className="lbp-info-wrapper__lbp-info-item">

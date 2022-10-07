@@ -15,6 +15,12 @@ export interface FormattedBalanceProps {
   unitStyle?: UnitStyle
 }
 
+export const format = {
+  groupSeparator: ' ',
+  groupSize: 3,
+  decimalSeparator: '.'
+}
+
 export const FormattedBalance = ({
   balance,
   showDisplayValue = false,
@@ -32,13 +38,13 @@ export const FormattedBalance = ({
   //log.log('formattedBalance', decimalPlacesCount, formattedBalance);
 
   if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
-    formattedBalance = new BigNumber(formattedBalance).toFixed(
-      decimalPlacesCount > 4 ? 4 : decimalPlacesCount
-    )
+    formattedBalance = new BigNumber(formattedBalance)
+      .decimalPlaces(decimalPlacesCount > 4 ? 4 : decimalPlacesCount)
+      .toFormat(format)
   } else if (formattedBalance) {
-    formattedBalance = new BigNumber(formattedBalance).toFixed(
-      decimalPlacesCount <= 4 ? 4 : decimalPlacesCount
-    )
+    formattedBalance = new BigNumber(formattedBalance)
+      .decimalPlaces(decimalPlacesCount <= 4 ? 4 : decimalPlacesCount)
+      .toFormat(format)
   }
 
   const tooltipText = useMemo(() => {
