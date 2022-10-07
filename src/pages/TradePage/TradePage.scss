@@ -8,6 +8,10 @@
   flex-grow: 1;
   flex-direction: column;
   padding: 16px;
+
+  @media screen and (max-width: 500px) {
+    padding: 0;
+  }
 }
 
 .trade-page-toggles {

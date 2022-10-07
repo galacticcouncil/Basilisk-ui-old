@@ -15,6 +15,7 @@
     justify-content: flex-end;
     gap: 12px;
     min-width: 100px;
+    flex-wrap: wrap;
 
     &__account {
       display: flex;

@@ -6,16 +6,16 @@
   flex-direction: column;
   flex-grow: 100;
   flex-shrink: 1;
-  min-width: 375px;
+  min-width: 370px;
   max-width: 700px;
-  flex-basis: 375px;
+  flex-basis: 370px;
+  width: 1000px;
 
   border-radius: 16px;
   background: #121416;
   padding: 16px 16px 12px 16px;
+  max-height: 560px;
   height: 100%;
-  width: 700px;
-  max-height: 100%;
 
   color: $l-gray3;
 
