@@ -9,6 +9,8 @@
   min-width: 375px;
   max-width: 700px;
   flex-basis: 375px;
+
+  border-radius: 16px;
   background: #121416;
   padding: 16px 16px 12px 16px;
   height: 100%;
@@ -44,6 +46,33 @@
 
       .prediction {
         border-top: 2px dashed $green1;
+      }
+
+      &__prediction-toggle {
+        color: $l-gray3;
+        padding: 2px 12px;
+        border-radius: 16px;
+        box-shadow: 0 0 0 1px rgba($green1, 0.2) inset;
+
+        &:hover {
+          box-shadow: 0 0 0 1px $green1 inset;
+        }
+
+        &.active {
+          background-color: $green1;
+          color: $d-gray6;
+
+          svg {
+            path {
+              fill: $d-gray6;
+            }
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          color: $green2;
+        }
       }
     }
   }

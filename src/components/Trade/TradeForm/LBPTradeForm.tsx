@@ -412,7 +412,7 @@ export const TradeForm = ({
       setValue('assetInAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
-    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
+    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
 
     setValue('assetInAmount', amountWithFee || null)
   }, [
@@ -455,7 +455,7 @@ export const TradeForm = ({
       return setValue('assetOutAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
-    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
+    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
 
     setValue('assetOutAmount', amountWithFee || null)
   }, [
@@ -529,7 +529,7 @@ export const TradeForm = ({
       case TradeType.Sell:
         return {
           balance: new BigNumber(assetInAmount)
-            .multipliedBy(spotPrice?.inOut)
+            .multipliedBy(spotPrice.inOut)
             .multipliedBy(new BigNumber(1).plus(feeFractional))
             .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
@@ -539,7 +539,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(feeFractional))
             .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn
@@ -570,20 +570,22 @@ export const TradeForm = ({
     const feeFractional = new BigNumber(tradeFee).dividedBy(100)
 
     switch (tradeType) {
-      case TradeType.Sell:
+      case TradeType.Sell: {
         return percentageChange(
           new BigNumber(assetInAmount)
-            .multipliedBy(fromPrecision12(spotPrice.inOut) || '1')
+            .multipliedBy(fromPrecision12(spotPrice.inOut || '0') || '1')
             .multipliedBy(new BigNumber(1).plus(feeFractional)),
           assetOutAmount
         )?.abs()
-      case TradeType.Buy:
+      }
+      case TradeType.Buy: {
         return percentageChange(
           new BigNumber(assetOutAmount)
-            .multipliedBy(fromPrecision12(spotPrice.outIn) || '1')
-            .multipliedBy(new BigNumber(1).plus(feeFractional)),
+            .multipliedBy(fromPrecision12(spotPrice.outIn || '0') || '1')
+            .multipliedBy(new BigNumber(1).minus(feeFractional)),
           assetInAmount
         )?.abs()
+      }
     }
   }, [
     tradeType,

@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import { find, first, last } from 'lodash'
 import moment from 'moment'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -240,10 +241,8 @@ export const TradeChart = ({
         poolType={poolType}
         granularity={granularity}
         chartType={chartType}
-        predictionToggled={predictionToggled}
         lbpStatus={lbpStatus}
         lbpChartProps={lbpChartProps}
-        onChartPredictionChange={setPrediction}
         onChartTypeChange={onChartTypeChange}
         onGranularityChange={onGranularityChange}
         displayData={displayData}
@@ -316,6 +315,15 @@ export const TradeChart = ({
             <div className="legend__item ">
               <div className="line prediction"></div>
               <div className="label">Future price without trades</div>
+              <div
+                className={classNames({
+                  'legend__item__prediction-toggle': true,
+                  hidden: poolType !== PoolType.LBP
+                })}
+                onClick={(_) => setPrediction(!predictionToggled)}
+              >
+                {predictionToggled ? <>Hide</> : <>Show</>}
+              </div>
             </div>
           </div>
         </div>

@@ -4,32 +4,15 @@
   }
 
   @media screen and(min-width: 870px) {
-    .trade-form-wrapper,
-    .trade-settings {
-      border-top-right-radius: 16px;
-      border-bottom-right-radius: 16px;
-      border-top-left-radius: 0px;
-      border-bottom-left-radius: 0px;
-    }
-
-    .trade-chart {
-      border-top-left-radius: 16px;
-      border-bottom-left-radius: 16px;
-    }
-
     .trade-page-toggles {
       display: none;
     }
   }
 
   @media screen and(max-width: 870px) {
-    .trade-form-wrapper {
-      border-radius: 16px;
-    }
-
     .trade-chart {
       overflow: hidden;
-      border-radius: 16px;
+
       flex-basis: 450px;
       max-width: 450px;
       max-height: 700px;

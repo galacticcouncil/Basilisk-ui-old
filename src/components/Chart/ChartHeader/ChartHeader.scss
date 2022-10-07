@@ -42,19 +42,6 @@ $disabledOpacity: 0.3;
       height: 24px;
     }
 
-    &__prediction-toggle {
-      color: $l-gray3;
-      margin-top: 12px;
-      font-size: 12px;
-      border-bottom: 2px dashed $green1;
-      font-weight: 500;
-
-      &:hover {
-        cursor: pointer;
-        color: $green2;
-      }
-    }
-
     &__breakdown {
       font-weight: 400;
       color: $green1;
