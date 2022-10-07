@@ -58,6 +58,12 @@ export const LBPPage = () => {
     [tradeRouter]
   )
 
+  const [repayTargetDetails, setRepayTargetDetails] = useState({
+    repayTargetReached: undefined,
+    collectorAccount: undefined,
+    repayTarget: undefined
+  })
+
   const [spotPrice, setSpotPrice] = useState({ outIn: 0, inOut: 0 })
   const [usdPrice, setUsdPrice] = useState({
     assetIn: 0,
@@ -213,6 +219,8 @@ export const LBPPage = () => {
   const repayTargetReached = useMemo(() => {
     return pool ? (pool.repayTargetReached as boolean) : undefined
   }, [pool])
+
+  console.log('BbB', pool, lbpPool, poolData, poolsData)
 
   const tradeBalances = useMemo(() => {
     const balances = activeAccountTradeBalancesData?.activeAccount?.balances

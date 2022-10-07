@@ -27,7 +27,7 @@ type LBPPool {
   assetInId: String!
   assetOutId: String!
   balances: [Balance!]
-  fee: Fee!
+  fee: Fee
   repayTarget: String
   repayTargetReached: Boolean
   feeCollectorBalance: String

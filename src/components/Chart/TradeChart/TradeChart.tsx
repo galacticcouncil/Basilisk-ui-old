@@ -311,11 +311,11 @@ export const TradeChart = ({
           <div className="legend">
             <div className="legend__item ">
               <div className="line history"></div>
-              <div className="label">Price History</div>
+              <div className="label">Price history</div>
             </div>
             <div className="legend__item ">
               <div className="line prediction"></div>
-              <div className="label">Future Price Without Trades</div>
+              <div className="label">Future price without trades</div>
             </div>
           </div>
         </div>
