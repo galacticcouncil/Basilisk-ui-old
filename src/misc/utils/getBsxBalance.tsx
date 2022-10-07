@@ -12,11 +12,11 @@ const getBsxBalance = (account: Account) => {
     balance: '0'
   }
 
-  const basiliskBalances = account?.balances.filter(
+  const basiliskBalances = account?.balances?.filter(
     (balance) => balance.assetId === '0'
   )
 
-  if (basiliskBalances.length) {
+  if (basiliskBalances?.length) {
     return basiliskBalances[0]
   } else return balance
 }
