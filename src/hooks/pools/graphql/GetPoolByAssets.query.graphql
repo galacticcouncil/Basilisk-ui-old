@@ -13,6 +13,8 @@ query GetLBPPoolByAssets($assetInId: String!, $assetOutId: String!) {
       balance
     }
     repayTarget
+    repayTargetReached
+    feeCollector
     assetAWeights
     assetBWeights
     startBlock

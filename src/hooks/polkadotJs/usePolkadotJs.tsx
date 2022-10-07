@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useUnmount } from 'react-use'
 import { usePrevious } from 'use-hooks'
 import { usePersistentConfig } from '../config/usePersistentConfig'
+import typesConfig from './typesConfig'
 
 const getPoolAccount = {
   description: 'Get pool account id by asset IDs',
@@ -31,16 +32,6 @@ export const rpc = {
   lbp: {
     getPoolAccount
   }
-}
-
-export const types = {
-  //...typesConfig.types[0],
-  ...ormlTypes
-}
-
-export const typesAlias = {
-  //...typesConfig.alias,
-  ...ormlTypesAlias
 }
 
 /**
@@ -70,8 +61,6 @@ export const useConfigurePolkadotJs = () => {
     ;(async () => {
       const apiInstance = new ApiPromise({
         provider,
-        types,
-        typesAlias,
         rpc
       })
       setApiInstance(apiInstance)

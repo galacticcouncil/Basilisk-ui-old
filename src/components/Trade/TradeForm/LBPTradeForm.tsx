@@ -285,9 +285,12 @@ export const TradeForm = ({
         typeof repayTargetReached !== 'undefined'
       )
         setWarning(Warning.RepayFee)
+
+      console.log('WARNING:', repayTargetReached)
+
       return feeToPercentage(pool?.fee)
     }
-  }, [pool, tradeType, assetIds, tradeLoading])
+  }, [pool, tradeType, assetIds, tradeLoading, repayTargetReached])
 
   // trigger form field validation right away
   useEffect(() => {
@@ -312,6 +315,24 @@ export const TradeForm = ({
   // when the assetIds change, propagate the change to the parent
   useEffect(() => {
     const { assetIn, assetOut } = getValues()
+
+    if (assetIn === assetOut && pool?.assetInId !== pool?.assetOutId) {
+      const poolAssets =
+        assetIn === pool?.assetInId
+          ? { assetIn: pool?.assetOutId || null, assetOut }
+          : { assetIn, assetOut: pool?.assetInId || null }
+
+      console.log(
+        'ASSET SELECTED',
+        assetIn,
+        assetOut,
+        pool?.assetInId,
+        pool?.assetOutId,
+        poolAssets
+      )
+      return onAssetIdsChange(poolAssets)
+    }
+
     onAssetIdsChange({ assetIn, assetOut })
   }, watch(['assetIn', 'assetOut']))
 
