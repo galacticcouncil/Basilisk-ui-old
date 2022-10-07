@@ -34,6 +34,16 @@ export const rpc = {
   }
 }
 
+export const types = {
+  ...typesConfig.types[0],
+  ...ormlTypes
+}
+
+export const typesAlias = {
+  ...typesConfig.alias,
+  ...ormlTypesAlias
+}
+
 /**
  * Setup an instance of PolkadotJs, and watch
  * for config updates. In case the nodeUrl changes,
@@ -60,6 +70,8 @@ export const useConfigurePolkadotJs = () => {
     )
     ;(async () => {
       const apiInstance = new ApiPromise({
+        types,
+        typesAlias,
         provider,
         rpc
       })
