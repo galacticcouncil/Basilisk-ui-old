@@ -24,7 +24,7 @@ body {
   background-attachment: fixed;
   padding: 0;
 
-  min-width: 360px;
+  min-width: 370px;
   min-height: 400px;
   height: 100%;
 }
@@ -45,4 +45,12 @@ input {
     color: $l-gray4;
     background-color: transparent;
   }
+}
+
+.primary-text {
+  background: $snek-gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
 }

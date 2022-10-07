@@ -14,20 +14,39 @@
   right: 0;
   margin: auto;
 
-  .page-header {
+  @media screen and(max-width: 850px) {
+    gap: 12px;
+  }
+
+  .page-content-wrapper {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .page-header {
+    @media screen and(max-width: 900px) {
+      justify-content: space-evenly;
+    }
+
+    display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 
-    gap: 10px;
+    column-gap: 10px;
+    row-gap: 0;
 
     background: rgba(28, 26, 31, 0.2);
     padding: 0 36px;
-    width: 100%;
+    width: 100vw;
 
     &__wallet-wrapper {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
       gap: 10px;
 
       a {
@@ -49,8 +68,8 @@
 
       &__help {
         svg {
-          height: 20px;
-          width: 20px;
+          height: 28px;
+          width: 28px;
         }
 
         &:hover {
@@ -67,18 +86,41 @@
 
     &__menu-wrapper {
       display: flex;
-      flex-grow: 1;
       gap: 20px;
-      padding-left: 24px;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+
+      .page-header__logo {
+        &__full {
+          @media screen and (max-width: 1000px) {
+            display: none;
+          }
+        }
+
+        &__small {
+          svg {
+            height: 32px;
+            width: 32px;
+          }
+
+          @media screen and (min-width: 1000px) {
+            display: none;
+          }
+        }
+      }
+
       &__menu-item {
         a {
           cursor: pointer;
           font-weight: 700;
           color: $l-gray2;
           text-decoration: none;
+
           &:visited {
             color: $l-gray2;
           }
+
           &:hover {
             color: $green1;
           }
@@ -105,20 +147,24 @@
       align-items: center;
 
       .liveliness {
-        width: 12px;
-        height: 12px;
+        width: 16px;
+        height: 16px;
         border-radius: 100%;
         margin-right: 6px;
         transition: background-color ease 200ms;
+
         &.green {
           background-color: $green2;
         }
+
         &.orange {
           background-color: $orange1;
         }
+
         &.red {
           background-color: $red1;
         }
+
         &.gray {
           background-color: $gray1;
         }

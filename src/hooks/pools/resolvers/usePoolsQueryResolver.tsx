@@ -1,17 +1,17 @@
-import { useBalanceQueryResolvers } from '../../balances/resolvers/query/balances';
-import { useGetPoolsQueryResolver } from './useGetPoolsQueryResolver';
+import { useBalanceQueryResolvers } from '../../balances/resolvers/query/balances'
+import { useGetPoolsQueryResolver } from './useGetPoolsQueryResolver'
 
 export const usePoolsQueryResolver = () => {
-  const getPoolsQueryResolver = useGetPoolsQueryResolver();
+  const getPoolsQueryResolver = useGetPoolsQueryResolver()
   const poolFieldsQueryResolvers = {
-    ...useBalanceQueryResolvers(),
-  };
+    ...useBalanceQueryResolvers()
+  }
 
   return {
     Query: {
-      pools: getPoolsQueryResolver,
+      pools: getPoolsQueryResolver
     },
     XYKPool: poolFieldsQueryResolvers,
-    LBPPool: poolFieldsQueryResolvers,
-  };
-};
+    LBPPool: poolFieldsQueryResolvers
+  }
+}

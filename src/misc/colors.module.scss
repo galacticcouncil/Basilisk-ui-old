@@ -46,18 +46,30 @@ $colors: (
     $gray1,
     $gray2,
     $gray3,
-    $gray4,
+    $gray4
   ),
   'green': $green1,
   'orange': $orange1,
   'white': $white1,
   'pink': $pink1,
-  'red': $red1,
+  'red': $red1
 );
 
 $colorsList: [];
 
 $page-background: linear-gradient(107.54deg, #373741 47.92%, #424250 100%);
+$snek-gradient: linear-gradient(
+    90deg,
+    #4fffb0 1.27%,
+    #b3ff8f 48.96%,
+    #ff984e 104.14%
+  ),
+  linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
+  linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%);
+
+$snek-gradient-reverse: linear-gradient(90deg, #ffce4f 1.27%, #4fffb0 104.14%),
+  linear-gradient(90deg, #4fffb0 1.27%, #a2ff76 53.24%, #ff984e 104.14%),
+  linear-gradient(90deg, #4fffb0 1.27%, #b3ff8f 48.96%, #ff984e 104.14%);
 
 @each $color, $values in $colors {
   @each $value in $values {

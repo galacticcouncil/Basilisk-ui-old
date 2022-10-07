@@ -1,9 +1,9 @@
-const commentUtils = require('./github-api');
+const commentUtils = require('./github-api')
 const {
   commentDataKeys,
   reportMsgDefaultTitle,
-  artifactsFilters,
-} = require('./variables');
+  artifactsFilters
+} = require('./variables')
 
 /**
  * Prepare metadata for PR comment, which will be used in current
@@ -33,7 +33,7 @@ async function getCommentDataMetadata({
   github,
   context,
   env,
-  cachedCommentMeta,
+  cachedCommentMeta
 }) {
   const {
     GITHUB_HEAD_REF,
@@ -42,12 +42,12 @@ async function getCommentDataMetadata({
     GITHUB_SHA,
     GH_PAGES_CUSTOM_DOMAIN,
     PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE,
-    PUBLISH_ARTIFACTS_LIST,
-  } = env;
-  const [owner, repo] = context.payload.repository.full_name.split('/');
+    PUBLISH_ARTIFACTS_LIST
+  } = env
+  const [owner, repo] = context.payload.repository.full_name.split('/')
   const branchName =
-    context.eventName === 'pull_request' ? GITHUB_HEAD_REF : GITHUB_REF_NAME;
-  let commentMetaData = {};
+    context.eventName === 'pull_request' ? GITHUB_HEAD_REF : GITHUB_REF_NAME
+  let commentMetaData = {}
 
   commentMetaData = {
     owner,
@@ -70,8 +70,8 @@ async function getCommentDataMetadata({
         : REPORT_MSG_TITLE,
     publishArtifactsList: PUBLISH_ARTIFACTS_LIST === 'true',
     publishArtifactsWorkflowDispatchFile:
-      PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE,
-  };
+      PUBLISH_ARTIFACTS_WORKFLOW_DISPATCH_FILE
+  }
 
   /**
    * Migrate runsList from previous runs.
@@ -81,7 +81,7 @@ async function getCommentDataMetadata({
     cachedCommentMeta.runsList &&
     Array.isArray(cachedCommentMeta.runsList)
   ) {
-    commentMetaData.runsList = cachedCommentMeta.runsList;
+    commentMetaData.runsList = cachedCommentMeta.runsList
   }
 
   /**
@@ -92,11 +92,11 @@ async function getCommentDataMetadata({
       const triggerCommitResp = await github.rest.git.getCommit({
         owner,
         repo,
-        commit_sha: context.payload.after,
-      });
-      commentMetaData.triggerCommit = triggerCommitResp.data;
+        commit_sha: context.payload.after
+      })
+      commentMetaData.triggerCommit = triggerCommitResp.data
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   }
 
@@ -110,69 +110,69 @@ async function getCommentDataMetadata({
           github,
           context,
           issueNumber: context.payload.number,
-          bodyIncludes: REPORT_MSG_TITLE,
-        });
+          bodyIncludes: REPORT_MSG_TITLE
+        })
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
 
-    commentMetaData.issueNumber = context.payload.number;
+    commentMetaData.issueNumber = context.payload.number
   } else if (context.eventName === 'push') {
     const pullRequestsList = await github.request(
       `GET /repos/${owner}/${repo}/commits/${context.sha}/pulls`,
       {
         owner,
         repo,
-        commit_sha: context.sha,
+        commit_sha: context.sha
       }
-    );
-    console.log('[LOG]:: prList - ', pullRequestsList);
+    )
+    console.log('[LOG]:: prList - ', pullRequestsList)
     const relatedPr = pullRequestsList.data.filter(
       (prItem) => prItem.state === 'open'
-    );
+    )
 
     commentMetaData.issueNumber =
-      relatedPr.length > 0 ? relatedPr[0].number : null;
+      relatedPr.length > 0 ? relatedPr[0].number : null
 
     commentMetaData.existingIssueComment = commentMetaData.issueNumber
       ? await commentUtils.findIssueComment({
           github,
           context,
           issueNumber: commentMetaData.issueNumber,
-          bodyIncludes: REPORT_MSG_TITLE,
+          bodyIncludes: REPORT_MSG_TITLE
         })
-      : null;
+      : null
   }
 
-  if (!commentMetaData.issueNumber) return commentMetaData;
+  if (!commentMetaData.issueNumber) return commentMetaData
 
   /**
    * Get Suit ID
    */
 
-  let currentSuitId = null;
+  let currentSuitId = null
   const suitesList = await github.request(
     `GET /repos/${owner}/${repo}/commits/${GITHUB_SHA}/check-suites`,
     {
       owner,
       repo,
-      ref: GITHUB_SHA,
+      ref: GITHUB_SHA
     }
-  );
+  )
 
   for (let suiteItem of suitesList.data.check_suites.filter(
     (item) => item.status === 'in_progress' && item.head_branch === branchName
   )) {
-    console.log('[LOG]:: suiteItem - ', suiteItem);
-    currentSuitId = suiteItem.id;
+    console.log('[LOG]:: suiteItem - ', suiteItem)
+    currentSuitId = suiteItem.id
   }
 
   commentMetaData.runsList.push({
     runId: context.runId,
-    suiteId: currentSuitId,
-  });
+    suiteId: currentSuitId
+  })
 
-  return commentMetaData;
+  return commentMetaData
 }
 
 /**
@@ -207,18 +207,18 @@ async function processCommentData({ github, context, env }) {
     IS_APP_UNIT_TEST_REPORT,
     APP_UNIT_TEST_STATUS,
     APP_UNIT_TEST_PERCENTAGE,
-    APP_UNIT_TEST_DIFF,
-  } = env;
-  let commentData = {};
+    APP_UNIT_TEST_DIFF
+  } = env
+  let commentData = {}
 
   if (COMMENT_CACHED_CONTENT !== 'false') {
     try {
       commentData =
         typeof COMMENT_CACHED_CONTENT === 'string'
           ? JSON.parse(COMMENT_CACHED_CONTENT)
-          : COMMENT_CACHED_CONTENT;
+          : COMMENT_CACHED_CONTENT
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   }
 
@@ -226,10 +226,10 @@ async function processCommentData({ github, context, env }) {
     github,
     context,
     env,
-    cachedCommentMeta: commentData.commentMeta,
-  });
+    cachedCommentMeta: commentData.commentMeta
+  })
 
-  if (!commentData.commentSections) commentData.commentSections = {};
+  if (!commentData.commentSections) commentData.commentSections = {}
 
   /**
    * IS_APP_STORYBOOK_BUILD_REPORT
@@ -239,15 +239,15 @@ async function processCommentData({ github, context, env }) {
       COMMENT_CACHED_CONTENT.hasOwnProperty(commentDataKeys.appStorybookBuild)
     ) {
       commentData.commentSections[commentDataKeys.appStorybookBuild] = {
-        ...commentData.commentSections[commentDataKeys.appStorybookBuild],
-      };
+        ...commentData.commentSections[commentDataKeys.appStorybookBuild]
+      }
     }
 
     if (!commentData.commentSections[commentDataKeys.appStorybookBuild])
-      commentData.commentSections[commentDataKeys.appStorybookBuild] = {};
+      commentData.commentSections[commentDataKeys.appStorybookBuild] = {}
 
     commentData.commentSections[commentDataKeys.appStorybookBuild].status =
-      APP_STORYBOOK_BUILD_STATUS === 'true';
+      APP_STORYBOOK_BUILD_STATUS === 'true'
   }
 
   /**
@@ -262,17 +262,17 @@ async function processCommentData({ github, context, env }) {
       commentData.commentSections[commentDataKeys.appStorybookDeployGhPages] = {
         ...commentData.commentSections[
           commentDataKeys.appStorybookDeployGhPages
-        ],
-      };
+        ]
+      }
     }
 
     if (!commentData.commentSections[commentDataKeys.appStorybookDeployGhPages])
       commentData.commentSections[commentDataKeys.appStorybookDeployGhPages] =
-        {};
+        {}
 
     commentData.commentSections[
       commentDataKeys.appStorybookDeployGhPages
-    ].status = APP_STORYBOOK_DEPLOYMENT_STATUS === 'true';
+    ].status = APP_STORYBOOK_DEPLOYMENT_STATUS === 'true'
   }
 
   /**
@@ -283,15 +283,15 @@ async function processCommentData({ github, context, env }) {
       COMMENT_CACHED_CONTENT.hasOwnProperty(commentDataKeys.appEndToEndTests)
     ) {
       commentData.commentSections[commentDataKeys.appEndToEndTests] = {
-        ...commentData.commentSections[commentDataKeys.appEndToEndTests],
-      };
+        ...commentData.commentSections[commentDataKeys.appEndToEndTests]
+      }
     }
 
     if (!commentData.commentSections[commentDataKeys.appEndToEndTests])
-      commentData.commentSections[commentDataKeys.appEndToEndTests] = {};
+      commentData.commentSections[commentDataKeys.appEndToEndTests] = {}
 
     commentData.commentSections[commentDataKeys.appEndToEndTests].status =
-      APP_E2E_TEST_STATUS === 'true';
+      APP_E2E_TEST_STATUS === 'true'
   }
 
   /**
@@ -300,22 +300,22 @@ async function processCommentData({ github, context, env }) {
   if (IS_APP_UNIT_TEST_REPORT === 'true') {
     if (COMMENT_CACHED_CONTENT.hasOwnProperty(commentDataKeys.appUnitTests)) {
       commentData.commentSections[commentDataKeys.appUnitTests] = {
-        ...commentData.commentSections[commentDataKeys.appUnitTests],
-      };
+        ...commentData.commentSections[commentDataKeys.appUnitTests]
+      }
     }
 
     if (!commentData.commentSections[commentDataKeys.appUnitTests])
-      commentData.commentSections[commentDataKeys.appUnitTests] = {};
+      commentData.commentSections[commentDataKeys.appUnitTests] = {}
 
     commentData.commentSections[commentDataKeys.appUnitTests].status =
-      APP_UNIT_TEST_STATUS === 'true';
+      APP_UNIT_TEST_STATUS === 'true'
     commentData.commentSections[commentDataKeys.appUnitTests].percentage =
-      APP_UNIT_TEST_PERCENTAGE;
+      APP_UNIT_TEST_PERCENTAGE
     commentData.commentSections[commentDataKeys.appUnitTests].diff =
-      APP_UNIT_TEST_DIFF;
+      APP_UNIT_TEST_DIFF
   }
 
-  return commentData;
+  return commentData
 }
 
 /**
@@ -330,28 +330,28 @@ function getCommentMarkdownBody({ github, context, commentData = {} }) {
   const {
     commentMeta = {},
     commentSections = {},
-    availableArtifacts = [],
-  } = commentData;
-  let commentMarkdownBody = '';
-  const commentSectionsList = Object.keys(commentSections);
+    availableArtifacts = []
+  } = commentData
+  let commentMarkdownBody = ''
+  const commentSectionsList = Object.keys(commentSections)
 
-  commentMarkdownBody = `:page_with_curl: **${commentMeta.reportMessageTitle}** <br />`;
+  commentMarkdownBody = `:page_with_curl: **${commentMeta.reportMessageTitle}** <br />`
 
   if (commentMeta.triggerCommit) {
-    commentMarkdownBody += ` _Report has been triggered by commit [${commentMeta.triggerCommit.message} (${commentMeta.triggerCommit.sha})](${commentMeta.triggerCommit.html_url})_ `;
+    commentMarkdownBody += ` _Report has been triggered by commit [${commentMeta.triggerCommit.message} (${commentMeta.triggerCommit.sha})](${commentMeta.triggerCommit.html_url})_ `
   }
 
   /**
    * App Storybook Build
    */
   if (commentSectionsList.includes(commentDataKeys.appStorybookBuild)) {
-    commentMarkdownBody += `<hr />`;
+    commentMarkdownBody += `<hr />`
     commentMarkdownBody += `:small_blue_diamond: **App/Storybook build:** <br />
     - Status: ${
       commentSections[commentDataKeys.appStorybookBuild].status
         ? ':white_check_mark: _Built_ '
         : ':no_entry_sign: _Failed_ '
-    }`;
+    }`
   }
 
   /**
@@ -359,13 +359,13 @@ function getCommentMarkdownBody({ github, context, commentData = {} }) {
    */
 
   if (commentSectionsList.includes(commentDataKeys.appStorybookDeployGhPages)) {
-    commentMarkdownBody += `<hr />`;
+    commentMarkdownBody += `<hr />`
     commentMarkdownBody += `:small_blue_diamond: **App/Storybook deployment:** <br />
     - Status: ${
       commentSections[commentDataKeys.appStorybookDeployGhPages].status
         ? ':white_check_mark: _Deployed_ '
         : ':no_entry_sign: _Failed_ '
-    }`;
+    }`
   }
 
   if (
@@ -376,35 +376,37 @@ function getCommentMarkdownBody({ github, context, commentData = {} }) {
     <br />
     - [Application build page](https://${commentMeta.ghPagesCustomDomain}/${commentMeta.branchName}/app) <br />
     - [Storybook build page](https://${commentMeta.ghPagesCustomDomain}/${commentMeta.branchName}/storybook)
-    `;
+    `
   }
 
   /**
    * App E2E Tests
    */
   if (commentSectionsList.includes(commentDataKeys.appEndToEndTests)) {
-    commentMarkdownBody += `<hr />`;
+    commentMarkdownBody += `<hr />`
     commentMarkdownBody += `:small_blue_diamond: **App E2E tests:** <br />
     - Status: ${
       commentSections[commentDataKeys.appEndToEndTests].status
         ? ':white_check_mark: _Passed_ '
         : ':no_entry_sign: _Failed_ '
-    }`;
+    }`
   }
 
   /**
    * App Unit Tests
    */
   if (commentSectionsList.includes(commentDataKeys.appUnitTests)) {
-    commentMarkdownBody += `<hr />`;
+    commentMarkdownBody += `<hr />`
     commentMarkdownBody += `:small_blue_diamond: **App Unit tests:** <br />
     - Status: ${
       commentSections[commentDataKeys.appUnitTests].status
         ? ':white_check_mark: _Passed_ '
         : ':no_entry_sign: _Failed_ '
     }<br />
-    - Tests coverage: ${commentSections[commentDataKeys.appUnitTests].percentage}%
-    `;
+    - Tests coverage: ${
+      commentSections[commentDataKeys.appUnitTests].percentage
+    }%
+    `
   }
 
   /**
@@ -415,37 +417,37 @@ function getCommentMarkdownBody({ github, context, commentData = {} }) {
     const filteredArtifactsList = availableArtifacts.filter(
       (artifactItem) =>
         !artifactItem.name.startsWith(artifactsFilters.excludeFromListingPrefix)
-    );
+    )
 
     if (filteredArtifactsList.length > 0) {
-      commentMarkdownBody += `<hr />`;
-      commentMarkdownBody += `:small_blue_diamond: **Available artifacts:** <br />`;
+      commentMarkdownBody += `<hr />`
+      commentMarkdownBody += `:small_blue_diamond: **Available artifacts:** <br />`
 
       const showArtifactsNotice = !!filteredArtifactsList.find(
         (item) => !item.suiteId
-      );
+      )
 
       if (showArtifactsNotice) {
         commentMarkdownBody +=
           "<br /><details><summary>**_Artifacts list notice!_**</summary>_This list doesn't contain links at the moment " +
           'because it has been generated on `pull_request:open` event where ' +
           '`suite_id` (required part of artifact download link) is not available. ' +
-          'After the next commit into this Pull Request artifacts list will contain links._</details>';
+          'After the next commit into this Pull Request artifacts list will contain links._</details>'
       }
 
       for (const artifactItem of filteredArtifactsList) {
         if (artifactItem.suiteId) {
-          commentMarkdownBody += `- [${artifactItem.name}](${artifactItem.download_url}) <br />`;
+          commentMarkdownBody += `- [${artifactItem.name}](${artifactItem.download_url}) <br />`
         } else {
-          commentMarkdownBody += `- ${artifactItem.name} <br />`;
+          commentMarkdownBody += `- ${artifactItem.name} <br />`
         }
       }
     }
   }
 
-  commentMarkdownBody = commentMarkdownBody.replace(/(\r\n|\n|\r)/gm, '');
+  commentMarkdownBody = commentMarkdownBody.replace(/(\r\n|\n|\r)/gm, '')
 
-  return commentMarkdownBody;
+  return commentMarkdownBody
 }
 
 /**
@@ -457,16 +459,16 @@ function getCommentMarkdownBody({ github, context, commentData = {} }) {
  * @returns {Promise<number>}
  */
 async function runPublishArtifactsWorkflow({ github, commentData }) {
-  const { commentMeta } = commentData;
-  const preparedInputs = JSON.stringify(commentData);
+  const { commentMeta } = commentData
+  const preparedInputs = JSON.stringify(commentData)
 
   const workflowsList = await github.request(
     `GET /repos/${commentMeta.owner}/${commentMeta.repo}/actions/workflows`,
     {
       owner: commentMeta.owner,
-      repo: commentMeta.repo,
+      repo: commentMeta.repo
     }
-  );
+  )
 
   const publishArtifactsWf =
     workflowsList.data && workflowsList.data.total_count > 0
@@ -475,11 +477,11 @@ async function runPublishArtifactsWorkflow({ github, commentData }) {
             item.path ===
             `.github/workflows/${commentMeta.publishArtifactsWorkflowDispatchFile}`
         )
-      : null;
+      : null
 
-  console.log('[LOG]:: publishArtifactsWf - ', publishArtifactsWf);
+  console.log('[LOG]:: publishArtifactsWf - ', publishArtifactsWf)
 
-  if (!publishArtifactsWf) return 1;
+  if (!publishArtifactsWf) return 1
 
   const dispatchResp = await github.rest.actions.createWorkflowDispatch({
     owner: commentMeta.owner,
@@ -487,13 +489,13 @@ async function runPublishArtifactsWorkflow({ github, commentData }) {
     workflow_id: publishArtifactsWf.id,
     ref: commentMeta.defaultBranch,
     inputs: {
-      pr_comment_data: preparedInputs,
-    },
-  });
+      pr_comment_data: preparedInputs
+    }
+  })
 
-  console.log('[LOG]:: dispatchResp - ', dispatchResp);
+  console.log('[LOG]:: dispatchResp - ', dispatchResp)
 
-  return 0;
+  return 0
 }
 
 /**
@@ -505,7 +507,7 @@ async function runPublishArtifactsWorkflow({ github, commentData }) {
  * @returns {string}
  */
 function getArtifactUrl(repoHtmlUrl, checkSuiteNumber, artifactId) {
-  return `${repoHtmlUrl}/suites/${checkSuiteNumber}/artifacts/${artifactId.toString()}`;
+  return `${repoHtmlUrl}/suites/${checkSuiteNumber}/artifacts/${artifactId.toString()}`
 }
 
 /**
@@ -516,11 +518,11 @@ function getArtifactUrl(repoHtmlUrl, checkSuiteNumber, artifactId) {
  * @returns {Promise<*[]>}
  */
 async function getRunArtifactsList({ github, commentMeta }) {
-  const { owner, repo, runsList, repoUrl } = commentMeta;
+  const { owner, repo, runsList, repoUrl } = commentMeta
 
   const artifactsScope = await Promise.all(
     runsList.map(async (runItem) => {
-      const runArtifactsList = [];
+      const runArtifactsList = []
 
       const iterator = github.paginate.iterator(
         github.rest.actions.listWorkflowRunArtifacts,
@@ -528,32 +530,32 @@ async function getRunArtifactsList({ github, commentMeta }) {
           owner,
           repo,
           run_id: runItem.runId,
-          per_page: 100,
+          per_page: 100
         }
-      );
+      )
 
       for await (const { data: artifacts } of iterator) {
-        console.log('[LOG]:: Artifacts - ', artifacts);
+        console.log('[LOG]:: Artifacts - ', artifacts)
         for (const artifact of artifacts) {
           runArtifactsList.push({
             ...artifact,
             download_url: getArtifactUrl(repoUrl, runItem.suiteId, artifact.id),
             suiteId: runItem.suiteId,
-            runId: runItem.runId,
-          });
+            runId: runItem.runId
+          })
         }
       }
 
-      return runArtifactsList;
+      return runArtifactsList
     })
-  );
+  )
 
-  return artifactsScope.filter((item) => !!item).flat();
+  return artifactsScope.filter((item) => !!item).flat()
 }
 
 module.exports = {
   getCommentMarkdownBody,
   processCommentData,
   runPublishArtifactsWorkflow,
-  getRunArtifactsList,
-};
+  getRunArtifactsList
+}

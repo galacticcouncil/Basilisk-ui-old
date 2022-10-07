@@ -5,13 +5,13 @@
 
 // /**
 //  * Wrapper for `math.lbp.calculate_out_given_in`
-//  * @param math 
-//  * @param inReserve 
-//  * @param outReserve 
-//  * @param inWeight 
-//  * @param outWeight 
-//  * @param amount 
-//  * @returns 
+//  * @param math
+//  * @param inReserve
+//  * @param outReserve
+//  * @param inWeight
+//  * @param outWeight
+//  * @param amount
+//  * @returns
 //  */
 // export const calculateOutGivenIn = (
 //     math: HydraDxMath,
@@ -42,8 +42,8 @@
 //     const { assetInWeight, assetOutWeight } = getInAndOutWeights(pool, assetInId, assetOutId);
 
 //     return calculateOutGivenIn(
-//         math, 
-//         assetInBalance, 
+//         math,
+//         assetInBalance,
 //         assetOutBalance,
 //         assetInWeight,
 //         assetOutWeight,
@@ -51,4 +51,4 @@
 //     );
 // }
 
-export default {};
+export default {}

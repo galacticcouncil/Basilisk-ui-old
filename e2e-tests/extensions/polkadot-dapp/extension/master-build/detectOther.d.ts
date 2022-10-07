@@ -1,2 +1,2 @@
-declare const _default: never[];
-export default _default;
+declare const _default: never[]
+export default _default

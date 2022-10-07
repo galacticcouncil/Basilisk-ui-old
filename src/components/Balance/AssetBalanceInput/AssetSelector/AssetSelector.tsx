@@ -1,15 +1,15 @@
-import { MutableRefObject, useMemo } from 'react';
-import { Asset } from '../../../../generated/graphql';
-import Icon from '../../../Icon/Icon';
-import { AssetItem } from './AssetItem/AssetItem';
-import './AssetSelector.scss';
+import { MutableRefObject, useMemo } from 'react'
+import Icon from '../../../Icon/Icon'
+import { AssetItem } from './AssetItem/AssetItem'
+import './AssetSelector.scss'
 
 export interface AssetSelectorProps {
-  assets?: Asset[];
-  asset?: Asset;
-  onAssetSelected: (asset: Asset) => void;
-  closeModal: () => void;
-  innerRef: MutableRefObject<HTMLDivElement | null>;
+  primaryAssets?: string[]
+  secondaryAssets?: string[]
+  asset?: string
+  onAssetSelected: (asset: string) => void
+  closeModal: () => void
+  innerRef: MutableRefObject<HTMLDivElement | null>
 }
 
 /**
@@ -18,13 +18,14 @@ export interface AssetSelectorProps {
  * @returns
  */
 export const AssetSelector = ({
-  assets,
-  onAssetSelected,
   asset,
+  onAssetSelected,
+  primaryAssets,
+  secondaryAssets,
   closeModal,
-  innerRef,
+  innerRef
 }: AssetSelectorProps) => {
-  const activeAsset = useMemo(() => asset, [asset]);
+  const activeAsset = useMemo(() => asset, [asset])
 
   // TODO: SEARCH
   return (
@@ -38,20 +39,33 @@ export const AssetSelector = ({
         </div>
 
         <div className="modal-component-content">
-          {assets?.length ? (
-            assets?.map((asset, i) => (
+          <div className="asset-selector__primary-assets asset-selector__asset-list">
+            {primaryAssets?.map((asset, i) => (
               <AssetItem
                 key={i}
                 onClick={() => onAssetSelected(asset)}
-                active={asset.id === activeAsset?.id}
+                active={asset === activeAsset}
                 asset={asset}
               />
-            ))
+            ))}
+          </div>
+          <div className="asset-selector__secondary-assets asset-selector__asset-list">
+            {secondaryAssets?.map((asset, i) => (
+              <AssetItem
+                key={i}
+                onClick={() => onAssetSelected(asset)}
+                active={asset === activeAsset}
+                asset={asset}
+              />
+            ))}
+          </div>
+          {!primaryAssets?.length && !secondaryAssets?.length && !asset ? (
+            <p>Nothing to see here...</p>
           ) : (
-            <p>No other assets available</p>
+            <></>
           )}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

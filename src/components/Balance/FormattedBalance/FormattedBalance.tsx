@@ -1,96 +1,63 @@
-import { Balance } from '../../../generated/graphql';
-import { useEffect, useMemo } from 'react';
-import log from 'loglevel';
-import './FormattedBalance.scss';
-import { UnitStyle } from '../metricUnit';
-import { useFormatSI } from './hooks/useFormatSI';
-import { idToAsset } from '../../../pages/TradePage/TradePage';
-import ReactTooltip from 'react-tooltip';
-import { fromPrecision12 } from '../../../hooks/math/useFromPrecision';
-import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader';
-import BigNumber from 'bignumber.js';
-import { useGetPoolsQueryProvider } from '../../../hooks/pools/queries/useGetPoolsQuery';
-import { computeAllPaths } from '../../../misc/router/computeAllPaths';
-import { getSpotPriceFromPath } from '../../../misc/router/getSpotPriceFromPath';
-import { useMath } from '../../../hooks/math/useMath';
-import { toPrecision12 } from '../../../hooks/math/useToPrecision';
+import BigNumber from 'bignumber.js'
+import { useEffect, useMemo } from 'react'
+import ReactTooltip from 'react-tooltip'
+import { Balance } from '../../../generated/graphql'
+import { fromPrecision12 } from '../../../hooks/math/useFromPrecision'
+import { idToAsset } from '../../../misc/idToAsset'
+import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
+import { UnitStyle } from '../metricUnit'
+import './FormattedBalance.scss'
 
 export interface FormattedBalanceProps {
-  balance: Balance;
-  showDisplayValue?: boolean,
-  precision?: number;
-  unitStyle?: UnitStyle;
+  balance: Balance
+  showDisplayValue?: boolean
+  precision?: number
+  unitStyle?: UnitStyle
+}
+
+export const format = {
+  groupSeparator: ' ',
+  groupSize: 3,
+  decimalSeparator: '.'
 }
 
 export const FormattedBalance = ({
   balance,
   showDisplayValue = false,
   precision = 3,
-  unitStyle = UnitStyle.LONG,
+  unitStyle = UnitStyle.LONG
 }: FormattedBalanceProps) => {
-  const assetSymbol = useMemo(() => idToAsset(balance.assetId)?.symbol, [
-    balance.assetId,
-  ]);
+  const assetSymbol = useMemo(
+    () => idToAsset(balance.assetId)?.symbol,
+    [balance.assetId]
+  )
   // const formattedBalance = useFormatSI(precision, unitStyle, balance.balance);
-  let formattedBalance = fromPrecision12(balance.balance);
+  let formattedBalance = fromPrecision12(balance.balance)
 
-  const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0;
-  console.log('formattedBalance', decimalPlacesCount, formattedBalance )
+  const decimalPlacesCount = formattedBalance?.split('.')[1]?.length || 0
+  //log.log('formattedBalance', decimalPlacesCount, formattedBalance);
 
   if (formattedBalance && new BigNumber(formattedBalance).gte(1)) {
-    formattedBalance = new BigNumber(formattedBalance).toFixed(
-      decimalPlacesCount > 4 ? 4 : decimalPlacesCount
-    );
+    formattedBalance = new BigNumber(formattedBalance)
+      .decimalPlaces(decimalPlacesCount > 4 ? 4 : decimalPlacesCount)
+      .toFormat(format)
   } else if (formattedBalance) {
-    formattedBalance = new BigNumber(formattedBalance).toFixed(
-      decimalPlacesCount <= 4 ? 4 : decimalPlacesCount
-    );
-  } 
-
+    formattedBalance = new BigNumber(formattedBalance)
+      .decimalPlaces(decimalPlacesCount <= 4 ? 4 : decimalPlacesCount)
+      .toFormat(format)
+  }
 
   const tooltipText = useMemo(() => {
     // TODO: get rid of raw html
     return ` 
       <span class='balance'>${fromPrecision12(balance.balance)}</span>
       <span class='symbol'>${assetSymbol}</span>
-    `;
-  }, [balance, assetSymbol]);
+    `
+  }, [balance, assetSymbol])
 
   useEffect(() => {
-    ReactTooltip.rebuild();
-  }, [tooltipText]);
-
-  const { data: poolsData } = useGetPoolsQueryProvider();
-  const { math } = useMath();
-  const displayValue = useMemo(() => {
-    console.log('display value', { poolsData, displayId: process.env })
-    if (!poolsData?.pools || !process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID || !math) return;
-    let spotPrice: string | undefined = toPrecision12('1')!;
-    // dont look for a spot price through the router
-    if (process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID != balance.assetId) {
-      const paths = computeAllPaths(
-        { id: balance.assetId }, 
-        { id: process.env.REACT_APP_DISPLAY_VALUE_ASSET_ID }, 
-        poolsData.pools, 
-        5
-      );
-
-  
-      spotPrice = paths.length ? getSpotPriceFromPath(paths[1], math) : undefined;
-    }
-
-    if (spotPrice) {
-      const formattedDisplayValue = new BigNumber(balance.balance || '0')
-        .dividedBy(spotPrice)
-
-      if (formattedDisplayValue && new BigNumber(formattedDisplayValue).lt(0.01)) {
-        return '< 0.01'
-      } else {
-        return formattedDisplayValue && new BigNumber(formattedDisplayValue).toFixed(2)
-      }
-    }
-
-  }, [poolsData, math, balance])
+    ReactTooltip.rebuild()
+  }, [tooltipText])
 
   // log.debug(
   //   'FormattedBalance',
@@ -110,9 +77,11 @@ export const FormattedBalance = ({
       data-html={true}
       data-delay-show={20}
     >
-      <div className='formatted-balance__native'>
+      <div className="formatted-balance__native">
         {/* <div className="formatted-balance__value">{formattedBalance.value}</div> */}
-        <div className="formatted-balance__native__value">{formattedBalance}</div>
+        <div className="formatted-balance__native__value">
+          {formattedBalance}
+        </div>
         {/* <div className={`formatted-balance__suffix ${unitStyle.toLowerCase()}`}>
           {formattedBalance.suffix}
         </div> */}
@@ -120,17 +89,6 @@ export const FormattedBalance = ({
           {assetSymbol || horizontalBar}
         </div>
       </div>
-     {showDisplayValue && displayValue
-      ? (
-        <div className='formatted-balance__display-value'>
-          <div className="formatted-balance__display-value__value">{displayValue}</div>
-          <div className="formatted-balance__display-value-symbol">
-            $
-          </div>
-        </div>
-      )
-      : <></>
-     }
     </div>
-  );
-};
+  )
+}

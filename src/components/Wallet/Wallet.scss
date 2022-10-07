@@ -4,10 +4,9 @@
 .wallet {
   width: auto;
   max-width: 550px;
-  min-width: 350px;
   gap: 12px;
   border-radius: 8px;
-  padding: 16px;
+  padding: 8px 0;
   color: white;
 
   &__info {
@@ -16,6 +15,7 @@
     justify-content: flex-end;
     gap: 12px;
     min-width: 100px;
+    flex-wrap: wrap;
 
     &__account {
       display: flex;
@@ -65,9 +65,5 @@
       color: $green1;
       cursor: pointer;
     }
-  }
-
-  @media only screen and (max-width: 500px) {
-    display: none;
   }
 }

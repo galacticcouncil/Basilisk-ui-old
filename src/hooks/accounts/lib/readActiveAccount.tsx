@@ -1,8 +1,8 @@
-import { ApolloCache } from '@apollo/client';
+import { ApolloCache } from '@apollo/client'
 import {
   GetActiveAccountQueryResponse,
-  GET_ACTIVE_ACCOUNT,
-} from '../queries/useGetActiveAccountQuery';
+  GET_ACTIVE_ACCOUNT
+} from '../queries/useGetActiveAccountQuery'
 
 export const readActiveAccount = (cache: ApolloCache<object>) => {
   return cache.readQuery<GetActiveAccountQueryResponse>({
@@ -13,7 +13,6 @@ export const readActiveAccount = (cache: ApolloCache<object>) => {
      * Then the cache is incomplete and would return null/undefined, thats why we need to
      * accept only partial data below.
      */
-    returnPartialData: true,
-    
-  })?.activeAccount;
-};
+    returnPartialData: true
+  })?.activeAccount
+}

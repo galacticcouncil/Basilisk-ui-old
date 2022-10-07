@@ -1,12 +1,10 @@
-import { Asset } from '../../../../../generated/graphql';
-import classNames from 'classnames';
-import { idToAsset } from '../../../../../pages/TradePage/TradePage';
-import { horizontalBar } from '../../../../Chart/ChartHeader/ChartHeader';
-import Unknown from '../../../../../misc/icons/assets/Unknown.svg';
+import classNames from 'classnames'
+import Unknown from '../../../../../misc/icons/assets/Unknown.svg'
+import { idToAsset } from '../../../../../misc/idToAsset'
 export interface AssetItemProps {
-  asset: Asset;
-  onClick: () => void;
-  active: boolean;
+  asset: string
+  onClick: () => void
+  active: boolean
 }
 
 export const AssetItem = ({ asset, onClick, active }: AssetItemProps) => (
@@ -14,7 +12,7 @@ export const AssetItem = ({ asset, onClick, active }: AssetItemProps) => (
     className={
       'asset-selector__asset-item ' +
       classNames({
-        active: active,
+        active: active
       })
     }
     onClick={onClick}
@@ -23,17 +21,17 @@ export const AssetItem = ({ asset, onClick, active }: AssetItemProps) => (
       <div
         className="asset-icon"
         style={{
-          backgroundImage: `url('${idToAsset(asset.id)?.icon || Unknown}')`,
+          backgroundImage: `url('${idToAsset(asset)?.icon || Unknown}')`
         }}
       />
       <div className="asset-balance-input__asset-info__names">
         <div className="asset-balance-input__asset-info__names__full-name">
-          {idToAsset(asset.id)?.fullName}
+          {idToAsset(asset)?.fullName}
         </div>
         <div className="asset-balance-input__asset-info__names__ticker">
-          {idToAsset(asset.id)?.symbol}
+          {idToAsset(asset)?.symbol}
         </div>
       </div>
     </div>
   </div>
-);
+)

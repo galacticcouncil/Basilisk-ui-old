@@ -1,5 +1,5 @@
-import { ApiPromise } from '@polkadot/api';
-import { LbpPool } from '../../../generated/graphql';
+import { ApiPromise } from '@polkadot/api'
+import { LbpPool } from '../../../generated/graphql'
 
 /**
  * Fee applied when the repay target has not yet been met
@@ -8,8 +8,8 @@ import { LbpPool } from '../../../generated/graphql';
  */
 export const repayFee = {
   numerator: 2,
-  denominator: 10,
-};
+  denominator: 10
+}
 
 /**
  * Determines which fee should be applied depending
@@ -23,4 +23,4 @@ export const calculateFee = async (apiInstance: ApiPromise, pool: LbpPool) => {
   // const accumulatedAssetBalance = find(balances, {
   //     assetId: pool.assetInId
   // });
-};
+}

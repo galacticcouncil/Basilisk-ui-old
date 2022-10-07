@@ -1,92 +1,76 @@
 @import './../../misc/colors.module.scss';
 @import './../../misc/misc.module.scss';
 @import '../Button/Button.scss';
+@import './../Trade/TradeForm/TradeForm.scss';
 
 .pools-form-wrapper {
-  position: relative;
-  flex-basis: 350px;
-  flex-grow: 1;
+  @extend .trade-form-wrapper;
 
-  padding: 22px;
-  min-width: 350px;
-  max-width: 610px;
-  margin: 0 auto;
-
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
-  background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
-  overflow: hidden;
-  border-radius: 10px;
-
-  position: relative;
-
-  color: white;
-
-  .settings-button-wrapper {
-    position: absolute;
+  .pools-form-heading-wrapper {
     display: flex;
-    flex-direction: row;
-    justify-content: left;
-    right: 10px;
-    top: 10px;
-    gap: 10px;
-    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 
-    .pool-settings-button {
+    .settings-button-wrapper {
       display: flex;
-      padding: 10px 8px;
-      width: fit-content;
-      height: fit-content;
-      border-radius: 50%;
-      background-color: rgba(162, 176, 187, 0.1);
+      flex-direction: row;
+      justify-content: left;
+      right: 10px;
+      top: 10px;
+      gap: 10px;
 
-      svg {
-        width: 24px;
-      }
-
-      &:hover {
-        cursor: pointer;
+      .pool-settings-button {
+        display: flex;
+        padding: 10px 10px;
+        width: fit-content;
+        height: fit-content;
+        border-radius: 50%;
+        background-color: rgba(162, 176, 187, 0.1);
 
         svg {
-          path {
-            fill: $green1;
+          width: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+
+          svg {
+            path {
+              fill: $green1;
+            }
           }
         }
       }
-    }
 
-    .pool-page-tabs {
-      display: flex;
-      flex-direction: row;
-      justify-content: right;
-      width: 90%;
+      .pool-page-tabs {
+        display: flex;
+        font-size: 12px;
+        color: #1b1b1e;
+        align-items: center;
+        font-weight: 500;
+        justify-content: center;
+        color: #4fffb0;
+        gap: 12px;
 
-      .tab {
-        @extend .button--primary;
-        width: 100px;
-        border-radius: $border-radius 0px 0px $border-radius;
-        color: $gray4;
-        background-color: rgba(162, 176, 187, 0.1);
+        .tab {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          gap: 4px;
+          cursor: pointer;
+          padding: 4px 12px;
+          border-radius: 16px;
+          box-shadow: 0 0 0 1px rgb(79 255 176 / 20%) inset;
 
-        &:hover {
-          color: rgba(79, 255, 176, 1);
-          background-color: rgba(162, 176, 187, 0.15);
-        }
+          &:hover {
+            box-shadow: 0 0 0 1px #4fffb0 inset;
+          }
 
-        &:disabled {
-          color: rgba(79, 255, 176, 1);
-          background-color: rgba(162, 176, 187, 0.2);
-        }
-
-        &:first-child {
-          border-radius: $border-radius 0px 0px $border-radius;
-        }
-
-        &:last-child {
-          border-radius: 0px $border-radius $border-radius 0px;
-        }
-
-        &:not(:last-child) {
-          border-right: 1px solid rgba(162, 176, 187, 0.1);
+          &.active {
+            background-color: #4fffb0;
+            color: #1b1b1e;
+          }
         }
       }
     }
@@ -102,7 +86,7 @@
 
     .pools-form-heading {
       width: fit-content;
-      padding-top: 4px;
+      padding: 4px 0;
       color: $l-gray3;
       font-size: 22px;
       font-weight: 500;
@@ -140,13 +124,17 @@
     .balance-wrapper {
       display: flex;
       flex-direction: column-reverse;
-      align-items: end;
+      align-items: flex-end;
       background: rgba(162, 176, 187, 0.1);
-      padding: 12px;
-      padding-top: 24px;
-      border-radius: 10px;
-      gap: 6px;
-      padding-bottom: 16px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      gap: 10px;
+    }
+
+    @media only screen and (max-width: 500px) {
+      .balance-wrapper {
+        padding-bottom: 45px;
+      }
     }
 
     .balance-wrapper-share-tokens {
@@ -171,32 +159,6 @@
         background-color: $l-gray5;
       }
     }
-  }
-}
-
-// SHOULD BE EXTRACTED TO COMPONENTS
-
-.balance-info {
-  display: flex;
-  align-items: center;
-  justify-content: right;
-  width: 100%;
-  gap: 4px;
-
-  height: 16px;
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 12px;
-  position: relative;
-
-  .balance-info-type {
-    position: absolute;
-    left: 0;
-    top: -7px;
-    font-weight: 600;
-    font-size: 16px;
-    color: $green1;
-    padding: 6px;
   }
 }
 

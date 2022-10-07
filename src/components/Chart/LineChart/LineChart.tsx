@@ -1,146 +1,180 @@
-import { ChartData, ChartDataset, ChartOptions, TooltipModel } from 'chart.js';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Line } from 'react-chartjs-2';
-import 'chartjs-adapter-moment';
-import cssColors from './../../../misc/colors.module.scss';
-import './LineChart.scss';
-import { first, orderBy, last, difference } from 'lodash';
-import 'chart.js/auto';
+import {
+  Chart as ChartJS,
+  ChartArea,
+  ChartData,
+  ChartDataset,
+  ChartOptions,
+  TooltipModel
+} from 'chart.js'
+import 'chart.js/auto'
+import 'chartjs-adapter-moment'
+import { first, last, orderBy } from 'lodash'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Chart } from 'react-chartjs-2'
+import cssColors from './../../../misc/colors.module.scss'
+import './LineChart.scss'
 
 export type DataPoint = {
-  x: number;
-  y: number;
+  x: number
+  y: number
   yAsString?: string
-};
+}
 
-export type Dataset = DataPoint[];
+export type Dataset = DataPoint[]
+
 export enum Trend {
   Positive = 'Positive',
   Negative = 'Negative',
-  Neutral = 'Neutral',
+  Neutral = 'Neutral'
 }
 
 export type TooltipData = {
-  data: DataPoint;
-  positionX: number;
-  visible: boolean;
-};
+  data: DataPoint
+  positionX: number
+  visible: boolean
+}
 
 export type OnHandleTooltip = (
   tooltipData: TooltipData | undefined
-) => void | undefined;
+) => void | undefined
 export type TooltipHandler = ({
-  tooltip,
+  tooltip
 }: {
-  tooltip: TooltipModel<'line'>;
-}) => void;
+  tooltip: TooltipModel<'line'>
+}) => void
 
 export interface LineChartProps {
-  primaryDataset: Dataset;
-  secondaryDataset?: Dataset;
-  from?: number;
-  to?: number;
-  fill?: boolean;
-  trend: Trend;
-  onHandleTooltip: OnHandleTooltip;
+  primaryDataset: Dataset
+  secondaryDataset?: Dataset
+  trend: Trend
+  tradeChartType: TradeChartType
+  onHandleTooltip: OnHandleTooltip
+}
+
+export enum TradeChartType {
+  LBP,
+  XYK
 }
 
 // determine if the given dataset is primary, based on its label
-export const primaryDatasetLabel = 'primary';
-export const secondaryDatasetLabel = 'secondary';
-export const isPrimaryDataset = (label: string) =>
-  label === primaryDatasetLabel;
-
-// keep track of the chart/canvas drawing context to be able to render gradients
-export const useChartCtx = () => {
-  // extract chart context for advanced drawing (e.g. gradient)
-  const chartContainer = useRef(null);
-  const [chartCtx, setChartCtx] = useState<CanvasRenderingContext2D | null>(
-    null
-  );
-
-  useEffect(() => {
-    // TODO: extract the 2d context from `chartContainer` instead
-    var ctx = document.getElementsByTagName('canvas')[0]?.getContext('2d');
-    setChartCtx(ctx);
-  }, [chartContainer]);
-
-  return { chartContainer, chartCtx };
-};
+export const primaryDatasetLabel = 'primary'
+export const secondaryDatasetLabel = 'secondary'
+export const isPrimaryDataset = (label: string) => label === primaryDatasetLabel
 
 // used when a positive trend is observed in the data
-export const greenBackgroundGradient = (
-  chartCtx: CanvasRenderingContext2D | null
-) => {
-  var gradient = chartCtx?.createLinearGradient(0, 0, 0, 270);
-  gradient?.addColorStop(0, cssColors.green1Opacity33);
-  gradient?.addColorStop(1, cssColors.gray2Opacity0);
-  return gradient;
-};
+export const greenBackgroundGradient = (chart: ChartJS) => {
+  var gradient = chart.ctx.createLinearGradient(0, 0, 0, 270)
+  gradient?.addColorStop(0, cssColors.green1Opacity33)
+  gradient?.addColorStop(1, cssColors.gray2Opacity0)
+  return gradient
+}
 
 // used when a negative trend is observed in the data
-export const redBackgroundGradient = (
-  chartCtx: CanvasRenderingContext2D | null
+export const redBackgroundGradient = (chart: ChartJS) => {
+  var gradient = chart.ctx.createLinearGradient(0, 0, 0, 270)
+  gradient?.addColorStop(0, cssColors.red1Opacity70)
+  gradient?.addColorStop(1, cssColors.gray2Opacity0)
+  return gradient
+}
+
+// Store these so we don't repaint always
+let width: number
+let height: number
+let gradient: CanvasGradient
+export const lbpLineGradient = (
+  chartCtx: CanvasRenderingContext2D,
+  chartArea: ChartArea
 ) => {
-  var gradient = chartCtx?.createLinearGradient(0, 0, 0, 270);
-  gradient?.addColorStop(0, cssColors.red1Opacity70);
-  gradient?.addColorStop(1, cssColors.gray2Opacity0);
-  return gradient;
-};
+  const chartWidth = chartArea.right - chartArea.left
+  const chartHeight = chartArea.bottom - chartArea.top
+  if (!gradient || width !== chartWidth || height !== chartHeight) {
+    width = chartWidth
+    height = chartHeight
+    gradient = chartCtx.createLinearGradient(
+      chartArea.left,
+      0,
+      chartArea.right,
+      0
+    )
+    gradient.addColorStop(0, '#FF984E')
+    gradient.addColorStop(0.5, '#B3FF8F')
+    gradient.addColorStop(1, '#4FFFB0')
+  }
+
+  return gradient
+}
 
 // heleper function grouping the available gradients
-export const backgroundGradients = (
-  chartCtx: CanvasRenderingContext2D | null
-) => {
+export const backgroundGradients = (chart: ChartJS) => {
   return {
-    redGradient: redBackgroundGradient(chartCtx),
-    greenGradient: greenBackgroundGradient(chartCtx),
-  };
-};
+    redGradient: redBackgroundGradient(chart),
+    greenGradient: greenBackgroundGradient(chart)
+  }
+}
 
 // transforms the given simple dataset into a format accepted by chartjs
 export const useFormatDataset = ({
-  fill,
   trend,
-  chartCtx,
+  chart,
+  tradeChartType
 }: {
-  fill: boolean;
-  trend: Trend;
-  chartCtx: CanvasRenderingContext2D | null;
+  trend: Trend
+  chart: ChartJS | null
+  tradeChartType: TradeChartType
 }) =>
   useCallback(
     ({ dataset, label }): ChartDataset<'line', DataPoint[]> => {
+      if (!chart) return { data: dataset }
       return {
         label,
-        fill,
         data: dataset,
         pointRadius: 0,
         borderWidth: 2,
+
+        borderDash: () => {
+          if (!isPrimaryDataset(label)) return [3, 4]
+          else return []
+        },
         borderColor: (() => {
           // secondary dataset is always orange
-          if (!isPrimaryDataset(label)) return cssColors.orange1;
+          if (!isPrimaryDataset(label)) return cssColors.green1
 
-          // border color of the primary dataset depends on the data trend
-          switch (trend) {
-            case Trend.Negative:
-              return cssColors.red1;
-            default:
-              return cssColors.green1;
+          if (tradeChartType === TradeChartType.XYK) {
+            // border color of the primary dataset depends on the data trend
+            switch (trend) {
+              case Trend.Negative:
+                return cssColors.red1
+              default:
+                return cssColors.green1
+            }
+          } else {
+            const { ctx, chartArea } = chart
+
+            if (!chartArea) {
+              // This case happens on initial chart load
+              return
+            }
+
+            return lbpLineGradient(ctx, chartArea)
           }
         })(),
         backgroundColor: (() => {
-          const { redGradient, greenGradient } = backgroundGradients(chartCtx);
-          switch (trend) {
-            case Trend.Negative:
-              return redGradient;
-            default:
-              return greenGradient;
+          if (tradeChartType === TradeChartType.XYK) {
+            const { redGradient, greenGradient } = backgroundGradients(chart)
+            switch (trend) {
+              case Trend.Negative:
+                return redGradient
+              default:
+                return greenGradient
+            }
+          } else {
+            return 'transparent'
           }
-        })(),
-      };
+        })()
+      }
     },
-    [fill, trend, chartCtx]
-  );
+    [trend, chart, tradeChartType]
+  )
 
 export const useTooltipHandler = (
   tooltipData: TooltipData | undefined,
@@ -148,143 +182,204 @@ export const useTooltipHandler = (
 ) =>
   useCallback<TooltipHandler>(
     ({ tooltip }) => {
-      const visible = tooltip.opacity ? true : false;
-      const { x, y } = tooltip?.dataPoints[0].parsed;
-      const positionX = tooltip.caretX;
+      const visible = tooltip.opacity ? true : false
+      const { x, y } = tooltip?.dataPoints[0].parsed
+      const positionX = tooltip.caretX
 
-      if (x === tooltipData?.data.x && visible === tooltipData.visible) return;
+      if (x === tooltipData?.data.x && visible === tooltipData.visible) return
 
       setTooltipData({
         data: { x, y },
         positionX,
-        visible,
-      });
+        visible
+      })
     },
     [tooltipData, setTooltipData]
-  );
+  )
 
 export const LineChart = ({
   primaryDataset,
   secondaryDataset = [],
-  fill = false,
-  from,
-  to,
+  tradeChartType,
   trend,
-  onHandleTooltip,
+  onHandleTooltip
 }: LineChartProps) => {
-  const { chartContainer, chartCtx } = useChartCtx();
   const [tooltipData, setTooltipData] = useState<TooltipData | undefined>(
     undefined
-  );
-  const tooltipHandler = useTooltipHandler(tooltipData, setTooltipData);
+  )
+  const tooltipHandler = useTooltipHandler(tooltipData, setTooltipData)
 
-  useEffect(() => onHandleTooltip(tooltipData), [tooltipData]);
+  useEffect(() => onHandleTooltip(tooltipData), [tooltipData])
 
-  const formatDataset = useFormatDataset({ fill, trend, chartCtx });
+  const chartContainer = useRef<ChartJS>(null)
 
-  const formattedPrimaryDataset = formatDataset({
-    dataset: primaryDataset,
-    label: primaryDatasetLabel,
-  });
+  const chart = chartContainer.current
 
-  const formattedSecondaryDataset = formatDataset({
-    dataset: secondaryDataset,
-    label: secondaryDatasetLabel,
-  });
+  const formatDataset = useFormatDataset({
+    trend,
+    chart,
+    tradeChartType
+  })
+
+  const formattedPrimaryDataset = useMemo(
+    () =>
+      formatDataset({
+        dataset: primaryDataset,
+        label: primaryDatasetLabel
+      }),
+    [primaryDataset]
+  )
+
+  const formattedSecondaryDataset = useMemo(
+    () =>
+      formatDataset({
+        dataset: secondaryDataset,
+        label: secondaryDatasetLabel
+      }),
+    [secondaryDataset]
+  )
 
   const chartData = useMemo<ChartData<'line', DataPoint[]>>(() => {
     const datasets = formattedSecondaryDataset
       ? [formattedPrimaryDataset, formattedSecondaryDataset]
-      : [formattedPrimaryDataset];
+      : [formattedPrimaryDataset]
 
+    console.log(
+      'updating chartData',
+      formattedPrimaryDataset,
+      formattedSecondaryDataset
+    )
     return {
       labels: [],
-      datasets,
-    };
-  }, [formattedPrimaryDataset, formattedSecondaryDataset]);
+      datasets
+    }
+  }, [formattedPrimaryDataset, formattedSecondaryDataset])
 
   // find the smallest data point, scale it down and use it as the chart xAxisMin
   // this is necessary otherwise the gradient wont render correctly (?)
   const yAxisBounds = useMemo(() => {
-    const datasets = [primaryDataset, secondaryDataset];
+    const datasets = [primaryDataset, secondaryDataset]
     // compose all datasets into one
     let allData = datasets.reduce(
       (allData, dataset) => allData.concat(dataset),
       []
-    );
-    allData = orderBy(allData, ['y'], ['asc']);
+    )
+    allData = orderBy(allData, ['y'], ['asc'])
 
-    const smallestDatapoint = first(allData)?.y || 0;
-    const largestDatapoint = last(allData)?.y || 0;
-    const dataScale = largestDatapoint - smallestDatapoint;
+    const smallestDatapoint = first(allData)?.y || 0
+    const largestDatapoint = last(allData)?.y || 0
+    const dataScale = largestDatapoint - smallestDatapoint
     type YAxisBounds = {
-      yAxisMin: number | undefined;
-      yAxisMax: number | undefined;
-    };
+      yAxisMin: number | undefined
+      yAxisMax: number | undefined
+    }
     const yAxisBounds: YAxisBounds = {
       yAxisMin: undefined,
-      yAxisMax: undefined,
-    };
-    if (dataScale) {
-      yAxisBounds.yAxisMin = smallestDatapoint - dataScale * 0.1;
-      yAxisBounds.yAxisMax = largestDatapoint + dataScale * 0.05;
+      yAxisMax: undefined
     }
-    return yAxisBounds;
-  }, [primaryDataset, secondaryDataset]);
-
-  const xAxisBounds = useMemo(() => {
-    const xAxisMin = from;
-    const xAxisMax = to;
-    return { xAxisMin, xAxisMax };
-  }, [from, to]);
+    if (dataScale) {
+      yAxisBounds.yAxisMax = largestDatapoint + dataScale * 0.01
+    }
+    return yAxisBounds
+  }, [formattedPrimaryDataset, formattedSecondaryDataset])
 
   const chartOptions = useMemo<ChartOptions>(() => {
     return {
       responsive: true,
       maintainAspectRatio: false,
+      borderCapStyle: 'round',
+      cubicInterpolationMode: 'default',
+      spanGaps: true,
+      borderColor: function (context) {
+        const chart = context.chart
+        const { ctx, chartArea } = chart
+
+        if (!chartArea) {
+          // This case happens on initial chart load
+          return
+        }
+        return lbpLineGradient(ctx, chartArea)
+      },
+      //bezierCurve: true,
+      datasets: {
+        line: {
+          tension: 0.1,
+          fill: true,
+          cubicInterpolationMode: 'default',
+          pointRadius: 0
+        }
+      },
+
+      layout: {
+        padding: {
+          left: 12
+        }
+      },
+
+      backgroundColor: 'transparent',
+
       scales: {
         xAxis: {
           display: false,
+          stacked: false,
+          grid: { display: false },
+
           type: 'time',
-          min: xAxisBounds.xAxisMin,
-          to: xAxisBounds.xAxisMax,
+          time: {
+            tooltipFormat: 'YYYY-MM-DD HH:mm:ss',
+            displayFormats: { hour: 'HH:mm', day: 'HH:mm', minute: 'HH:mm' }
+          }
         },
         yAxis: {
-          display: false,
+          position: 'right',
+          display: true,
+          type: 'linear',
+          grid: { display: false },
+          offset: true,
+          ticks: {
+            color: 'white',
+            maxTicksLimit: 8,
+            align: 'end',
+            crossAlign: 'center',
+            font: {
+              family: 'Satoshi',
+              size: 12
+            }
+          },
           stacked: false,
           min: yAxisBounds.yAxisMin,
-          max: yAxisBounds.yAxisMax ? yAxisBounds.yAxisMax : undefined,
-        },
+          max: yAxisBounds.yAxisMax ? yAxisBounds.yAxisMax : undefined
+        }
       },
-      animations: {
-        colors: false,
-      },
+      animations: {},
       hover: {
-        intersect: true,
+        intersect: true
       },
       plugins: {
         legend: {
-          display: false,
+          display: false
         },
         tooltip: {
           enabled: false,
-          mode: 'index',
+          mode: 'nearest',
           intersect: false,
+          axis: 'x',
           position: 'nearest',
-          external: tooltipHandler as any,
-        },
-      },
-    };
-  }, [from, to, tooltipHandler, yAxisBounds]);
+          external: tooltipHandler as any
+        }
+      }
+    }
+  }, [tooltipHandler, yAxisBounds])
 
   return (
     <div className="line-chart">
-      <Line
+      <Chart
+        type="line"
         ref={chartContainer}
         data={chartData}
         // TODO: after updating the yarn.lock the types here are broken, fix it
         options={chartOptions as any}
       />
     </div>
-  );
-};
+  )
+}

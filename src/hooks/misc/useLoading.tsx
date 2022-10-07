@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useLastBlockContext } from '../lastBlock/useSubscribeNewBlockNumber';
-import { useMathContext } from '../math/useMath';
-import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs';
+import { useEffect, useState } from 'react'
+import { useLastBlockContext } from '../lastBlock/useSubscribeNewBlockNumber'
+import { useMathContext } from '../math/useMath'
+import { usePolkadotJsContext } from '../polkadotJs/usePolkadotJs'
 
 export const useLoading = () => {
-  const { loading: polkadotJsLoading } = usePolkadotJsContext();
-  const { math } = useMathContext();
+  const { loading: polkadotJsLoading } = usePolkadotJsContext()
+  const { math } = useMathContext()
   const lastBlock = useLastBlockContext()
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (!polkadotJsLoading && math && lastBlock) {
-      setLoading(false);
+      setLoading(false)
     }
-  }, [polkadotJsLoading, math, lastBlock]);
+  }, [polkadotJsLoading, math, lastBlock])
 
-  return loading;
-};
+  return loading
+}

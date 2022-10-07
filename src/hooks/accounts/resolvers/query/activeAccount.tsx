@@ -1,14 +1,14 @@
-import { useMemo } from 'react';
-import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery';
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { find } from 'lodash'
+import { useMemo } from 'react'
+import { Account } from '../../../../generated/graphql'
+import { withErrorHandler } from '../../../apollo/withErrorHandler'
 import {
   Account as PersistedAccount,
-  usePersistActiveAccount,
-} from '../../lib/usePersistActiveAccount';
-import { find } from 'lodash';
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
-import { withErrorHandler } from '../../../apollo/withErrorHandler';
-import { withTypename } from '../../types';
-import { Account } from '../../../../generated/graphql';
+  usePersistActiveAccount
+} from '../../lib/usePersistActiveAccount'
+import { GET_ACCOUNTS } from '../../queries/useGetAccountsQuery'
+import { withTypename } from '../../types'
 
 // TODO: turn the active account into a cache ref to Account
 export const activeAccountQueryResolverFactory =
@@ -31,17 +31,17 @@ export const activeAccountQueryResolverFactory =
     if (persistedActiveAccount?.id) {
       const { data: accountsData } = await client.query({
         query: GET_ACCOUNTS,
-        notifyOnNetworkStatusChange: true,
-      });
+        notifyOnNetworkStatusChange: true
+      })
       const activeAccount = find(accountsData?.accounts, {
-        id: persistedActiveAccount?.id,
-      });
+        id: persistedActiveAccount?.id
+      })
 
-      return activeAccount ? withTypename(activeAccount) : null;
+      return activeAccount ? withTypename(activeAccount) : null
     } else {
-      return null;
+      return null
     }
-  };
+  }
 
 /**
  * For standardization purposes, we expose the resolver as a hook.
@@ -49,7 +49,7 @@ export const activeAccountQueryResolverFactory =
  * and thus need to apply the useContext hook.
  */
 export const useActiveAccountQueryResolver = () => {
-  const { persistedActiveAccount } = usePersistActiveAccount();
+  const { persistedActiveAccount } = usePersistActiveAccount()
 
   return {
     activeAccount: withErrorHandler(
@@ -58,6 +58,6 @@ export const useActiveAccountQueryResolver = () => {
         [persistedActiveAccount]
       ),
       'activeAccount'
-    ),
-  };
-};
+    )
+  }
+}

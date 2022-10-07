@@ -1,10 +1,9 @@
 type FeePaymentAsset {
-    assetId: String,
-    # This price has 18 digit precision, instead of the usual 12
-    fallbackPrice: String
+  assetId: String
+  # This price has 18 digit precision, instead of the usual 12
+  fallbackPrice: String
 }
 
-
 extend type Query {
-    feePaymentAssets: [FeePaymentAsset!]
+  feePaymentAssets: [FeePaymentAsset!]
 }

@@ -5,20 +5,18 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.5.9",
-    "@craco/craco": "^6.4.3",
-    "@fortawesome/fontawesome-free": "^5.15.4",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
+    "@craco/craco": "^7.0.0-alpha.7",
+    "@galacticcouncil/sdk": "^0.0.1-beta.12",
     "@gapit/format-si": "^0.0.1",
-    "@open-web3/orml-type-definitions": "^1.0.1",
-    "@open-web3/orml-types": "^1.0.1",
-    "@polkadot/api": "^7.9.1",
-    "@polkadot/extension-dapp": "^0.42.7",
+    "@open-web3/orml-type-definitions": "^2.0.1",
+    "@open-web3/orml-types": "^2.0.1",
+    "@polkadot/api": "9.4.3",
+    "@polkadot/extension-dapp": "^0.44.6",
     "@polkadot/networks": "^8.5.1",
     "@polkadot/react-identicon": "^1.1.1",
-    "@polkadot/types": "^7.9.1",
+    "@polkadot/types": "9.4.3",
     "@substrate/ss58-registry": "^1.16.0",
+    "@talismn/connect-wallets": "^1.2.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -32,12 +30,13 @@
     "@types/text-mask-addons": "^3.8.1",
     "@types/use-persisted-state": "^0.3.0",
     "@types/uuid": "^8.3.3",
+    "@typescript-eslint/eslint-plugin": "^5.39.0",
+    "@typescript-eslint/parser": "^5.39.0",
     "add-days": "^2.0.1",
     "babel-loader": "8.1.0",
     "bootstrap": "^5.1.1",
     "bootstrap-icons": "^1.6.0",
-    "caniuse-lite": "^1.0.30001287",
-    "chart.js": "^3.5.1",
+    "chart.js": "^3.9.1",
     "chartjs-adapter-moment": "^1.0.0",
     "chartjs-plugin-annotation": "^1.0.2",
     "classnames": "^2.3.1",
@@ -46,7 +45,10 @@
     "date-fns": "^2.25.0",
     "dotenv": "^10.0.0",
     "env-cmd": "^10.1.0",
+    "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-markdownlint": "^0.4.0",
     "gql": "^1.1.2",
     "graphql": "^16.3.0",
     "graphql.macro": "^1.4.2",
@@ -64,7 +66,7 @@
     "promise-retry": "^2.0.1",
     "react": "^17.0.2",
     "react-apollo-network-status": "^5.1.0",
-    "react-chartjs-2": "^4.0.1",
+    "react-chartjs-2": "^4.3.1",
     "react-countup": "^6.0.0",
     "react-currency-input-field": "^3.6.0",
     "react-dom": "^17.0.2",
@@ -74,16 +76,18 @@
     "react-multi-provider": "^0.1.5",
     "react-page-visibility": "^6.4.0",
     "react-router-dom": "^6.0.2",
-    "react-scripts": "5.0.0",
+    "react-scripts": "^5.0.1",
+    "react-super-responsive-table": "^5.2.1",
     "react-text-mask": "^5.4.3",
     "react-tooltip": "^4.2.21",
     "react-use": "^17.3.1",
+    "remark": "^14.0.2",
     "save": "^2.4.0",
     "stream-browserify": "^3.0.0",
     "text-mask-addons": "^3.8.0",
     "ts-jest": "^27.1.2",
     "typeface-roboto": "^1.1.13",
-    "typescript": "^4.1.2",
+    "typescript": "^4.8.4",
     "use-count-up": "^3.0.1",
     "use-hooks": "^2.0.0-rc.5",
     "use-persisted-state": "^0.3.3",
@@ -126,16 +130,29 @@
     "node": ">=17"
   },
   "prettier": {
-    "singleQuote": true
+    "filepath": ".prettierrc",
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "trailingComma": "none",
+    "semi": false
   },
   "eslintConfig": {
     "extends": [
       "react-app",
-      "react-app/jest",
       "eslint-config-prettier"
     ],
     "ignorePatterns": "src/generated/**/*.tsx",
     "overrides": [
+      {
+        "files": [
+          "*.md"
+        ],
+        "parser": "eslint-plugin-markdownlint/parser",
+        "extends": [
+          "plugin:markdownlint/recommended"
+        ]
+      },
       {
         "files": [
           "**/*.stories.*"
@@ -149,6 +166,14 @@
           "*"
         ],
         "rules": {
+          "quotes": [
+            "warn",
+            "single",
+            {
+              "avoidEscape": true,
+              "allowTemplateLiterals": true
+            }
+          ],
           "react/style-prop-object": [
             1,
             {

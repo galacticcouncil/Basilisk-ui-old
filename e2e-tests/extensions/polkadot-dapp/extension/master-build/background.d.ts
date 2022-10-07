@@ -1,1 +1,1 @@
-import '@polkadot/extension-inject/crossenv';
+import '@polkadot/extension-inject/crossenv'

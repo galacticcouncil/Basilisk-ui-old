@@ -1,11 +1,11 @@
-import { useQuery } from '@apollo/client';
-import { loader } from 'graphql.macro';
-import { LastBlock, Query } from '../../generated/graphql';
+import { useQuery } from '@apollo/client'
+import { loader } from 'graphql.macro'
+import { Query } from '../../generated/graphql'
 
-
-export const GET_LAST_BLOCK = loader('./graphql/GetLastBlock.query.graphql');
+export const GET_LAST_BLOCK = loader('./graphql/GetLastBlock.query.graphql')
 export interface GetLastBlockQueryResponse {
-    lastBlock: Query['lastBlock']
+  lastBlock: Query['lastBlock']
 }
 
-export const useLastBlockQuery = () => useQuery<GetLastBlockQueryResponse>(GET_LAST_BLOCK);
+export const useLastBlockQuery = () =>
+  useQuery<GetLastBlockQueryResponse>(GET_LAST_BLOCK)

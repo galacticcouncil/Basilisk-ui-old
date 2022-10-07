@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import './Navigation.scss';
-import { Link} from 'react-router-dom';
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
+import './Navigation.scss'
 
 export const Modal = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -9,31 +9,35 @@ export const Modal = ({ children }: { children: React.ReactNode }) => {
       {children}
       <button>click me</button>
     </div>
-  );
-};
+  )
+}
 
-export const ConfigModal = () => <h1>Config</h1>;
+export const ConfigModal = () => <h1>Config</h1>
 
 export const useModal = (content: React.ReactNode) => {
-  const [show, setShow] = useState<boolean>(false);
+  const [show, setShow] = useState<boolean>(false)
 
   return {
     modal: show ? <Modal>{content}</Modal> : <></>,
-    toggleModal: () => setShow((show) => !show),
-  };
-};
+    toggleModal: () => setShow((show) => !show)
+  }
+}
 
 export const Navigation = () => (
   <div>
-    <Link className= 'basilisk-logo' to="https://bsx.fi">()</Link>
+    <Link className="basilisk-logo" to="https://bsx.fi">
+      ()
+    </Link>
+    <Link to="/">LBP</Link>
+    {' | '}
     <Link to="/">Trade</Link>
     {' | '}
     <Link to="/">Pools</Link>
     {' | '}
     <Link to="/wallet">Wallet</Link>
   </div>
-);
+)
 
 export const NavigationContainer = () => {
-  return <Navigation />;
-};
+  return <Navigation />
+}

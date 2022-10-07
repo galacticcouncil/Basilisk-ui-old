@@ -1,17 +1,16 @@
-import { find } from 'lodash';
+import { find } from 'lodash'
 // import { LbpPool, Pool } from '../../../generated/graphql';
-import { HydraDxMath } from '../../math/useMath';
-import { Pool } from '../../../generated/graphql';
+import { Pool } from '../../../generated/graphql'
 
 // /**
 //  * Wrapper for `math.lbp.calculate_in_given_out`
 //  * @param math
-//  * @param inReserve 
-//  * @param outReserve 
-//  * @param inWeight 
-//  * @param outWeight 
-//  * @param amount 
-//  * @returns 
+//  * @param inReserve
+//  * @param outReserve
+//  * @param inWeight
+//  * @param outWeight
+//  * @param amount
+//  * @returns
 //  */
 // export const calculateInGivenOut = (
 //     math: HydraDxMath,
@@ -24,11 +23,15 @@ import { Pool } from '../../../generated/graphql';
 //     return math.lbp.calculate_in_given_out(inReserve, outReserve, inWeight, outWeight, amount);
 // }
 
-export const getPoolBalances = (pool: Pool, assetInId: string, assetOutId: string) => {
-    const assetABalance = find(pool.balances, { assetId: assetInId })?.balance;
-    const assetBBalance = find(pool.balances, { assetId: assetOutId })?.balance
+export const getPoolBalances = (
+  pool: Pool,
+  assetInId: string,
+  assetOutId: string
+) => {
+  const assetABalance = find(pool.balances, { assetId: assetInId })?.balance
+  const assetBBalance = find(pool.balances, { assetId: assetOutId })?.balance
 
-    return { assetABalance, assetBBalance }
+  return { assetABalance, assetBBalance }
 }
 
 // export const getInAndOutWeights = (pool: LbpPool, assetInId: string, assetOutId: string) => {
@@ -61,8 +64,8 @@ export const getPoolBalances = (pool: Pool, assetInId: string, assetOutId: strin
 //     const { assetInWeight, assetOutWeight } = getInAndOutWeights(pool, assetInId, assetOutId);
 
 //     return calculateInGivenOut(
-//         math, 
-//         assetInBalance, 
+//         math,
+//         assetInBalance,
 //         assetOutBalance,
 //         assetInWeight,
 //         assetOutWeight,

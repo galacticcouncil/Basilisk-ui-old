@@ -8,7 +8,7 @@
 # Tests code coverage reports ("lcov.info" files) will be saved as artifacts and can be used in further steps for the
 # creation of overall tests code coverage report.
 
-name: "Reusable :: Unit tests :: App"
+name: 'Reusable :: Unit tests :: App'
 
 on:
   workflow_call:
@@ -24,83 +24,83 @@ on:
         type: string
     outputs:
       codecov_app_unit_percentage:
-        description: "Total Percentage coverage"
+        description: 'Total Percentage coverage'
         value: ${{ jobs.unit_testing.outputs.codecov_output_percentage }}
       codecov_app_unit_diff:
-        description: "Percentage difference between base branch, if PR is available"
+        description: 'Percentage difference between base branch, if PR is available'
         value: ${{ jobs.unit_testing.outputs.codecov_output_diff }}
 
 jobs:
   base_branch_coverage_check:
-    name: "Run base branch"
+    name: 'Run base branch'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.base_ref }}
 
-      - name: "Setup Node.js"
+      - name: 'Setup Node.js'
         uses: actions/setup-node@v1
         with:
           node-version: 17
 
-      - name: "Restore cached Node modules"
+      - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: "Install Node modules for ui-app"
+      - name: 'Install Node modules for ui-app'
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: "Run unit tests"
+      - name: 'Run unit tests'
         run: yarn test:ci
 
-      - name: "Upload code coverage for ref branch"
+      - name: 'Upload code coverage for ref branch'
         uses: actions/upload-artifact@v2
         with:
           name: ${{inputs.base-branch-codecov-artifact-name}}
           path: ./coverage/lcov.info
 
   unit_testing:
-    name: "Run working branch"
+    name: 'Run working branch'
     runs-on: ubuntu-latest
     if: ${{ always() && needs.base_branch_coverage_check.result != 'cancelled' }}
     outputs:
       codecov_output_percentage: ${{ steps.code-coverage.outputs.percentage }}
       codecov_output_diff: ${{ steps.code-coverage.outputs.diff }}
     steps:
-      - name: "Install Node.js"
+      - name: 'Install Node.js'
         uses: actions/setup-node@v1
         with:
           node-version: 17
 
       - uses: actions/checkout@v2
 
-      - name: "Restore cached Node modules"
+      - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: "Install Node modules for ui-app"
+      - name: 'Install Node modules for ui-app'
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: "Run unit tests"
+      - name: 'Run unit tests'
         run: yarn test:ci
 
-      - name: "Upload unit tests report file"
+      - name: 'Upload unit tests report file'
         if: always()
         uses: actions/upload-artifact@v2
         with:
           name: ci-app-unit-tests-results
           path: ./ui-app-unit-tests-results.html
 
-      - name: "Upload code coverage info"
+      - name: 'Upload code coverage info'
         uses: actions/upload-artifact@v2
         with:
           name: ${{inputs.working-branch-codecov-artifact-name}}

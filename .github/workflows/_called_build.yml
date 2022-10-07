@@ -1,11 +1,10 @@
 # This workflow can be invoked only from caller workflow.
 # More information about Reusing workflows - https://docs.github.com/en/actions/using-workflows/reusing-workflows
 
-
 # Build Application and Storybook production ready files. Build results will be saved as artifacts with names, passed
 # in "app-build-artifact-name" and "storybook-build-artifact-name" inputs.
 
-name: "Reusable :: Build"
+name: 'Reusable :: Build'
 
 on:
   workflow_call:
@@ -19,35 +18,35 @@ on:
 
 jobs:
   build:
-    name: "Build"
+    name: 'Build'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
 
-      - name: "Setup Node.js"
+      - name: 'Setup Node.js'
         uses: actions/setup-node@v2
         with:
           node-version: 17
 
-      - name: "Restore cached Node modules"
+      - name: 'Restore cached Node modules'
         id: cache-node-modules-ui-app
         uses: actions/cache@v2
         with:
           path: node_modules
           key: cache-node-modules-ui-app-${{ hashFiles('yarn.lock') }}
 
-      - name: "Install Node modules"
+      - name: 'Install Node modules'
         if: steps.cache-node-modules-ui-app.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
-      - name: "Extract branch name"
+      - name: 'Extract branch name'
         id: extract-branch-name
         shell: bash
         run: |
           sudo chmod +x ./scripts/ci/gh-actions-get-branch-name.sh
           echo "##[set-output name=name;]$(./scripts/ci/gh-actions-get-branch-name.sh "$GITHUB_EVENT_NAME" "$GITHUB_REF" "$GITHUB_BASE_REF")"
 
-      - name: "Sanitize branch name"
+      - name: 'Sanitize branch name'
         id: branch-name-sanitized
         env:
           BRANCH_NAME: ${{ steps.extract-branch-name.outputs.name }}
@@ -56,7 +55,7 @@ jobs:
           sudo chmod +x ./scripts/ci/gh-actions-branch-name-serialize.sh
           echo "##[set-output name=name;]$(./scripts/ci/gh-actions-branch-name-serialize.sh "$BRANCH_NAME")"
 
-      - name: "Build App and Storybook"
+      - name: 'Build App and Storybook'
         run: |
           yarn run build
           yarn run build-storybook -- -o sb-build-files
@@ -67,13 +66,13 @@ jobs:
           REACT_APP_GIT_BRANCH_SANITIZED: ${{ steps.branch-name-sanitized.outputs.name }}
           NODE_OPTIONS: --openssl-legacy-provider
 
-      - name: "Upload production-ready App build files"
+      - name: 'Upload production-ready App build files'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.app-build-artifact-name }}
           path: ./build
 
-      - name: "Upload production-ready Storybook build files"
+      - name: 'Upload production-ready Storybook build files'
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.storybook-build-artifact-name }}

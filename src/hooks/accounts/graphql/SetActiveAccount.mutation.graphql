@@ -1,3 +1,3 @@
 mutation SetActiveAccount($id: String) {
-    setActiveAccount(id: $id) @client
+  setActiveAccount(id: $id) @client
 }

@@ -1,6 +1,8 @@
 export const Header = () => {
-    return <div>
-        {/* ... Navigation */}
-        {/* ... AppBar */}
+  return (
+    <div>
+      {/* ... Navigation */}
+      {/* ... AppBar */}
     </div>
+  )
 }

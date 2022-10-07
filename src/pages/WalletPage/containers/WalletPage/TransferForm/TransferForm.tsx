@@ -1,43 +1,37 @@
-import { useApolloClient } from '@apollo/client';
-import { watch } from 'fs';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { AssetBalanceInput } from '../../../../../components/Balance/AssetBalanceInput/AssetBalanceInput';
-import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance';
-import Icon from '../../../../../components/Icon/Icon';
-import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider';
-import { Asset } from '../../../../../generated/graphql';
-import { estimateBalanceTransfer } from '../../../../../hooks/balances/resolvers/mutation/balanceTransfer';
-import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolvers/useTransferMutation';
-import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs';
-import { Notification } from '../../../WalletPage';
-import './TransferForm.scss';
-import { checkAddress } from '@polkadot/util-crypto';
-import constants from '../../../../../constants';
-import BigNumber from 'bignumber.js';
-import { toPrecision12 } from '../../../../../hooks/math/useToPrecision';
-import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision';
-import { encodeAddress, decodeAddress } from '@polkadot/util-crypto';
-
+import { useApolloClient } from '@apollo/client'
+import { decodeAddress } from '@polkadot/util-crypto'
+import BigNumber from 'bignumber.js'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { AssetBalanceInput } from '../../../../../components/Balance/AssetBalanceInput/AssetBalanceInput'
+import { FormattedBalance } from '../../../../../components/Balance/FormattedBalance/FormattedBalance'
+import Icon from '../../../../../components/Icon/Icon'
+import { useMultiFeePaymentConversionContext } from '../../../../../containers/MultiProvider'
+import { estimateBalanceTransfer } from '../../../../../hooks/balances/resolvers/mutation/balanceTransfer'
+import { useTransferBalanceMutation } from '../../../../../hooks/balances/resolvers/useTransferMutation'
+import { fromPrecision12 } from '../../../../../hooks/math/useFromPrecision'
+import { usePolkadotJsContext } from '../../../../../hooks/polkadotJs/usePolkadotJs'
+import { Notification } from '../../../WalletPage'
+import './TransferForm.scss'
 
 export const TransferForm = ({
   closeModal,
   assetId = '0',
   balance = '0',
   setNotification,
-  assets,
+  assets
 }: {
-  closeModal: () => void;
-  assetId?: string;
-  balance?: string;
-  setNotification: (notification: Notification) => void;
-  assets?: Asset[];
+  closeModal: () => void
+  assetId?: string
+  balance?: string
+  setNotification: (notification: Notification) => void
+  assets?: string[]
 }) => {
-  const modalContainerRef = useRef<HTMLDivElement | null>(null);
+  const modalContainerRef = useRef<HTMLDivElement | null>(null)
   const form = useForm<{
-    to?: string,
-    amount?: string,
-    asset?: string,
+    to?: string
+    amount?: string
+    asset?: string
     submit: any
   }>({
     // mode: 'all',
@@ -45,75 +39,68 @@ export const TransferForm = ({
       asset: assetId,
       to: undefined,
       amount: undefined,
-      submit: undefined,
-    },
-  });
+      submit: undefined
+    }
+  })
 
-  const {
-    register,
-    watch,
-    getValues,
-    setValue,
-    trigger,
-    control,
-    formState,
-  } = form;
+  const { register, watch, getValues, setValue, trigger, control, formState } =
+    form
 
-  const { isValid, isDirty, errors } = formState;
+  const { isValid, isDirty, errors } = formState
 
-  const [transferBalance] = useTransferBalanceMutation();
+  const [transferBalance] = useTransferBalanceMutation()
 
-  const clearNotificationIntervalRef = useRef<any>();
+  const clearNotificationIntervalRef = useRef<any>()
   const handleSubmit = useCallback(
     (data: any) => {
       // this is not ideal, but we want to show the pending status
       // which is hidden behind the modal currently
-      closeModal();
-      setNotification('pending');
+      closeModal()
+      setNotification('pending')
       transferBalance({
         variables: {
           currencyId: data.asset,
           amount: data.amount,
-          to: data.to,
+          to: data.to
         },
         onCompleted: () => {
-          setNotification('success');
+          setNotification('success')
           clearNotificationIntervalRef.current = setTimeout(() => {
-            setNotification('standby');
-          }, 4000);
+            setNotification('standby')
+          }, 4000)
         },
         onError: () => {
-          setNotification('failed');
+          setNotification('failed')
           clearNotificationIntervalRef.current = setTimeout(() => {
-            setNotification('standby');
-          }, 4000);
-        },
-      });
+            setNotification('standby')
+          }, 4000)
+        }
+      })
     },
     [closeModal, setNotification, transferBalance]
-  );
+  )
 
   useEffect(() => {
-    form.trigger('submit');
-  }, [...form.watch(['amount', 'to', 'asset'])]);
+    form.trigger('submit')
+  }, [...form.watch(['amount', 'to', 'asset'])])
 
-  const [txFee, setTxFee] = useState<string>();
-  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext();
-  const client = useApolloClient();
+  const [txFee, setTxFee] = useState<string>()
+  const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
+  const client = useApolloClient()
   const { convertToFeePaymentAsset, feePaymentAsset } =
-    useMultiFeePaymentConversionContext();
+    useMultiFeePaymentConversionContext()
 
   useEffect(() => {
-    if (!apiInstance || apiInstanceLoading) return;
-    (async () => {
+    if (!apiInstance || apiInstanceLoading) return
+    ;(async () => {
       console.log('reestimating', {
         from: '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
         to:
           form.getValues('to') ||
           '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
         currencyId: form.getValues('asset') || '0',
-        amount: form.getValues('amount') || '0',
-      });
+        amount: form.getValues('amount') || '0'
+      })
       const estimate = await estimateBalanceTransfer(
         client.cache,
         apiInstance,
@@ -123,22 +110,25 @@ export const TransferForm = ({
             form.getValues('to') ||
             '5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY',
           currencyId: form.getValues('asset') || '0',
-          amount: form.getValues('amount') || '0',
+          amount: form.getValues('amount') || '0'
         }
-      );
-      setTxFee(estimate.partialFee.toString());
-    })();
+      )
+      setTxFee(estimate.partialFee.toString())
+    })()
   }, [
     apiInstance,
     apiInstanceLoading,
     client,
-    ...form.watch(['amount', 'asset', 'to']),
-  ]);
+    ...form.watch(['amount', 'asset', 'to'])
+  ])
 
-  const [displayError, setDisplayError] = useState<string | undefined>();
-  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit]);
+  const [displayError, setDisplayError] = useState<string | undefined>()
+  const isError = useMemo(() => !!errors?.submit?.type, [errors?.submit])
   const formError = useMemo(() => {
-    console.log('form.formState.errors?.submit?.type', form.formState.errors?.submit?.type)
+    console.log(
+      'form.formState.errors?.submit?.type',
+      form.formState.errors?.submit?.type
+    )
     switch (form.formState.errors?.submit?.type) {
       case 'notEnoughBalance':
         return 'Insufficient balance'
@@ -147,17 +137,17 @@ export const TransferForm = ({
       case 'amount':
         return 'Amount must be more than zero'
     }
-    return;
-  }, [form.formState.errors.submit]);
+    return
+  }, [form.formState.errors.submit])
 
   useEffect(() => {
     if (formError) {
-      const timeoutId = setTimeout(() => setDisplayError(formError), 50);
-      return () => timeoutId && clearTimeout(timeoutId);
+      const timeoutId = setTimeout(() => setDisplayError(formError), 50)
+      return () => timeoutId && clearTimeout(timeoutId)
     }
-    const timeoutId = setTimeout(() => setDisplayError(formError), 300);
-    return () => timeoutId && clearTimeout(timeoutId);
-  }, [formError]);
+    const timeoutId = setTimeout(() => setDisplayError(formError), 300)
+    return () => timeoutId && clearTimeout(timeoutId)
+  }, [formError])
 
   return (
     <>
@@ -190,7 +180,7 @@ export const TransferForm = ({
                     modalContainerRef={modalContainerRef}
                     balanceInputName="amount"
                     assetInputName="asset"
-                    assets={assets}
+                    primaryAssets={assets}
                     isAssetSelectable={false}
                   />
                 </div>
@@ -201,7 +191,7 @@ export const TransferForm = ({
                     <FormattedBalance
                       balance={{
                         assetId: feePaymentAsset,
-                        balance: convertToFeePaymentAsset(txFee)!,
+                        balance: convertToFeePaymentAsset(txFee)!
                       }}
                     />
                   ) : (
@@ -210,7 +200,9 @@ export const TransferForm = ({
                 </div>
               </div>
               <div
-                className={'validation error ' + (isError && isDirty ? 'visible' : '')}
+                className={
+                  'validation error ' + (isError && isDirty ? 'visible' : '')
+                }
               >
                 {displayError}
               </div>
@@ -222,24 +214,24 @@ export const TransferForm = ({
                   {...form.register('submit', {
                     validate: {
                       address: () => {
-                        const recipientAddress = form.getValues('to');
+                        const recipientAddress = form.getValues('to')
 
                         try {
-                          decodeAddress(recipientAddress);
-                          return true;
+                          decodeAddress(recipientAddress)
+                          return true
                         } catch (e) {
-                          return false;
+                          return false
                         }
                       },
                       amount: () => form.getValues('amount') !== undefined,
                       notEnoughBalance: () => {
-                        const amount = form.getValues('amount');
+                        const amount = form.getValues('amount')
 
                         return new BigNumber(fromPrecision12(balance) || 0).gte(
                           fromPrecision12(amount || '0')!
-                        );
-                      },
-                    },
+                        )
+                      }
+                    }
                   })}
                 />
               </div>
@@ -248,5 +240,5 @@ export const TransferForm = ({
         </div>
       </div>
     </>
-  );
-};
+  )
+}

@@ -1,21 +1,21 @@
-import { useEffect, useMemo } from 'react';
-import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client';
-import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers';
-import { loader } from 'graphql.macro';
-import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock';
-import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers';
-import { useConfigMutationResolvers } from '../config/useConfigMutationResolver';
-import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers';
-import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver';
-import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances';
-import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers';
-import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers';
-import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers';
-import { usePersistentConfig } from '../config/usePersistentConfig';
-import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers';
-import { useVestingQueryResolvers } from '../vesting/useVestingQueryResolvers';
-import { useBalanceMutationsResolvers } from '../balances/resolvers/mutation/balanceTransfer';
-import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
+import { ApolloClient, InMemoryCache, Resolvers } from '@apollo/client'
+import { loader } from 'graphql.macro'
+import { useEffect, useMemo } from 'react'
+import { useAccountsResolvers } from '../accounts/resolvers/useAccountsResolvers'
+import { useAssetsQueryResolvers } from '../assets/resolvers/useAssetsQueryResolvers'
+import { useBalanceMutationsResolvers } from '../balances/resolvers/mutation/balanceTransfer'
+import { useBalanceQueryResolvers } from '../balances/resolvers/query/balances'
+import { useConfigMutationResolvers } from '../config/useConfigMutationResolver'
+import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers'
+import { usePersistentConfig } from '../config/usePersistentConfig'
+import { useExtensionResolvers } from '../extension/resolvers/useExtensionResolvers'
+import { useFaucetResolvers } from '../faucet/resolvers/useFaucetResolvers'
+import { useFeePaymentAssetsQueryResolvers } from '../feePaymentAssets/useFeePaymentAssetsQueryResolvers'
+import { useRefetchWithNewBlock } from '../lastBlock/useRefetchWithNewBlock'
+import { usePoolsMutationResolvers } from '../pools/resolvers/usePoolsMutationResolvers'
+import { usePoolsQueryResolver } from '../pools/resolvers/usePoolsQueryResolver'
+import { useVestingMutationResolvers } from '../vesting/useVestingMutationResolvers'
+import { useVestingQueryResolvers } from '../vesting/useVestingQueryResolvers'
 
 /**
  * Add all local gql resolvers here
@@ -23,13 +23,13 @@ import { useConfigQueryResolvers } from '../config/useConfigQueryResolvers';
  */
 export const useResolvers: () => Resolvers = () => {
   const { Query: AccountsQueryResolvers, Mutation: AccountsMutationResolvers } =
-    useAccountsResolvers();
+    useAccountsResolvers()
   const {
     Query: PoolsQueryResolver,
     XYKPool,
-    LBPPool,
-  } = usePoolsQueryResolver();
-  const { Query: ExtensionQueryResolver } = useExtensionResolvers();
+    LBPPool
+  } = usePoolsQueryResolver()
+  const { Query: ExtensionQueryResolver } = useExtensionResolvers()
   return {
     Query: {
       ...AccountsQueryResolvers,
@@ -38,7 +38,7 @@ export const useResolvers: () => Resolvers = () => {
       ...useBalanceQueryResolvers(),
       ...PoolsQueryResolver,
       ...useAssetsQueryResolvers(),
-      ...useConfigQueryResolvers(),
+      ...useConfigQueryResolvers()
     },
     Mutation: {
       ...AccountsMutationResolvers,
@@ -48,29 +48,29 @@ export const useResolvers: () => Resolvers = () => {
       ...useFaucetResolvers().Mutation,
       ...useBalanceMutationsResolvers()
     },
-    XYKPool,
     LBPPool,
+    XYKPool,
     Account: {
       ...useBalanceQueryResolvers(),
       ...useVestingQueryResolvers()
     }
-  };
-};
+  }
+}
 
-export const typeDefs = loader('./../../schema.graphql');
+export const typeDefs = loader('./../../schema.graphql')
 
 /**
  * Recreates the apollo client instance each time the config changes
  * @returns
  */
 export const useConfigureApolloClient = () => {
-  const resolvers = useResolvers();
-  const cache = useMemo(() => new InMemoryCache(), []);
+  const resolvers = useResolvers()
+  const cache = useMemo(() => new InMemoryCache(), [])
   // can't get the config from a query before we setup apollo
   // therefore we get it from the local storage instead
   const {
-    persistedConfig: { processorUrl },
-  } = usePersistentConfig();
+    persistedConfig: { processorUrl }
+  } = usePersistentConfig()
 
   // todo test if url change triggers query refetch
   const client = useMemo(() => {
@@ -81,20 +81,20 @@ export const useConfigureApolloClient = () => {
       connectToDevTools: true,
       queryDeduplication: true,
       resolvers,
-      typeDefs,
-    });
+      typeDefs
+    })
     // we don't want the client to re-instantiate when the resolvers change,
     // this is handled below in a separate effect
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [processorUrl, cache]);
+  }, [processorUrl, cache])
 
   useEffect(() => {
-    client?.setResolvers(resolvers);
-  }, [resolvers, client]);
+    client?.setResolvers(resolvers)
+  }, [resolvers, client])
 
-  useRefetchWithNewBlock(client);
+  useRefetchWithNewBlock(client)
 
-  return client;
-};
+  return client
+}
 
-export const useApollo = () => useConfigureApolloClient();
+export const useApollo = () => useConfigureApolloClient()
