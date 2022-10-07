@@ -254,6 +254,31 @@ export const TradeForm = ({
   const assetOutAmountInputRef = useRef<HTMLInputElement>(null)
   const assetInAmountInputRef = useRef<HTMLInputElement>(null)
 
+  const handleSwitchAssets = useCallback(
+    (event?: any) => {
+      // prevent form submit
+      if (event) event.preventDefault()
+
+      onAssetIdsChange({
+        assetIn: assetIds.assetOut,
+        assetOut: assetIds.assetIn
+      })
+
+      if (tradeType === TradeType.Buy) {
+        const assetOutAmount = getValues('assetOutAmount')
+        setValue('assetInAmount', assetOutAmount)
+        setTradeType(TradeType.Sell)
+        setValue('assetOutAmount', null)
+      } else {
+        const assetInAmount = getValues('assetInAmount')
+        setValue('assetOutAmount', assetInAmount)
+        setTradeType(TradeType.Buy)
+        setValue('assetInAmount', null)
+      }
+    },
+    [assetIds, tradeType, setValue, getValues, setTradeType]
+  )
+
   // trigger form field validation right away
   useEffect(() => {
     trigger('submit')
@@ -278,12 +303,7 @@ export const TradeForm = ({
     const { assetIn, assetOut } = getValues()
 
     if (assetIn === assetOut && pool?.assetInId !== pool?.assetOutId) {
-      const poolAssets =
-        assetIn === pool?.assetInId
-          ? { assetIn: pool?.assetOutId || null, assetOut }
-          : { assetIn, assetOut: pool?.assetInId || null }
-
-      return onAssetIdsChange(poolAssets)
+      return handleSwitchAssets()
     }
 
     onAssetIdsChange({ assetIn, assetOut })
@@ -508,30 +528,6 @@ export const TradeForm = ({
       })
     },
     [tradeType, tradeLimit]
-  )
-
-  const handleSwitchAssets = useCallback(
-    (event: any) => {
-      // prevent form submit
-      event.preventDefault()
-      onAssetIdsChange({
-        assetIn: assetIds.assetOut,
-        assetOut: assetIds.assetIn
-      })
-
-      if (tradeType === TradeType.Buy) {
-        const assetOutAmount = getValues('assetOutAmount')
-        setValue('assetInAmount', assetOutAmount)
-        setTradeType(TradeType.Sell)
-        setValue('assetOutAmount', null)
-      } else {
-        const assetInAmount = getValues('assetInAmount')
-        setValue('assetOutAmount', assetInAmount)
-        setTradeType(TradeType.Buy)
-        setValue('assetInAmount', null)
-      }
-    },
-    [assetIds, tradeType, setValue, getValues, setTradeType]
   )
 
   const { apiInstance, loading: apiInstanceLoading } = usePolkadotJsContext()
