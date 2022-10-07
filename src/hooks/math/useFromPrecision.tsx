@@ -6,10 +6,12 @@ export const PRECISION_18 = 18
 export const precision12 = new BigNumber(10).pow(PRECISION_12)
 export const precision18 = new BigNumber(10).pow(PRECISION_18)
 
+BigNumber.config({ EXPONENTIAL_AT: [-20, 20] })
+
 export const fromPrecision12 = (amount: string | BigNumber) =>
-  parseFloat(
-    new BigNumber(amount).dividedBy(precision12).toFixed(12)
-  ).toString()
+  parseFloat(new BigNumber(amount).dividedBy(precision12).toFixed(12)).toString(
+    10
+  )
 export const useFromPrecision12 = (amount: string | BigNumber) =>
   useMemo(() => fromPrecision12(amount), [amount])
 

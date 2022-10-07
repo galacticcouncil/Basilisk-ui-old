@@ -6,17 +6,16 @@
   flex-basis: 370px;
   flex-grow: 1;
   max-height: 1000px;
+  width: 450px;
 
   padding: 22px;
-  min-width: 375px;
+  min-width: 370px;
   max-width: 450px;
 
   border-radius: 16px;
 
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
   background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
-
-  position: relative;
 
   color: white;
 
@@ -293,7 +292,8 @@
   @media only screen and (max-width: 500px) {
     .balance-info-balance {
       position: absolute;
-      bottom: -90px;
+      bottom: -95px;
+      right: 0;
       display: flex;
       align-items: center;
       justify-content: right;

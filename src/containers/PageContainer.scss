@@ -27,17 +27,17 @@
   }
 
   .page-header {
-    gap: 24px;
-    //line-height: 48px;
-    row-gap: 0;
-    column-gap: 16px;
+    @media screen and(max-width: 900px) {
+      justify-content: space-evenly;
+    }
 
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 
-    gap: 10px;
+    column-gap: 10px;
+    row-gap: 0;
 
     background: rgba(28, 26, 31, 0.2);
     padding: 0 36px;
@@ -48,7 +48,6 @@
       align-items: center;
       justify-content: flex-end;
       gap: 10px;
-      flex-grow: 1;
 
       a {
         display: flex;

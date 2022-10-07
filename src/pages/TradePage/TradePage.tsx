@@ -397,7 +397,8 @@ export const TradePage = () => {
       </div>
       {/*NOTIF*/}
       <div className="trade-page">
-        {/* <TradeChart
+        <div className="trade-page__content">
+          {/* <TradeChart
           pool={pool}
           assetIds={assetIds}
           spotPrice={spotPrice}
@@ -407,37 +408,39 @@ export const TradePage = () => {
             depsLoading
           }
         /> */}
-        <TradeForm
-          assetIds={assetIds}
-          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-          isActiveAccountConnected={isActiveAccountConnected}
-          pool={pool}
-          // first load and each time the asset ids (variables) change
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-          assetInLiquidity={assetInLiquidity}
-          assetOutLiquidity={assetOutLiquidity}
-          spotPrice={spotPrice}
-          onSubmitTrade={handleSubmitTrade}
-          tradeLoading={tradeLoading}
-          assets={assets}
-          assetMap={poolAssetMap}
-          activeAccount={activeAccountData?.activeAccount}
-          activeAccountTradeBalances={tradeBalances}
-          activeAccountTradeBalancesLoading={
-            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus ===
-              NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
-        <div className="debug">
-          <h3>[Trade Page] Debug Box</h3>
-          <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
-          {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+          <TradeForm
+            assetIds={assetIds}
+            onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+            isActiveAccountConnected={isActiveAccountConnected}
+            pool={pool}
+            // first load and each time the asset ids (variables) change
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+            assetInLiquidity={assetInLiquidity}
+            assetOutLiquidity={assetOutLiquidity}
+            spotPrice={spotPrice}
+            onSubmitTrade={handleSubmitTrade}
+            tradeLoading={tradeLoading}
+            assets={assets}
+            assetMap={poolAssetMap}
+            activeAccount={activeAccountData?.activeAccount}
+            activeAccountTradeBalances={tradeBalances}
+            activeAccountTradeBalancesLoading={
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.loading ||
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+          <div className="debug">
+            <h3>[Trade Page] Debug Box</h3>
+            <p>Trade loading: {tradeLoading ? 'true' : 'false'}</p>
+            {/* <p>Trade error: {tradeError ? tradeError : '-'}</p> */}
+          </div>
         </div>
       </div>
     </div>

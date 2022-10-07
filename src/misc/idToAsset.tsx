@@ -172,7 +172,7 @@ export const idToAsset = (id: string | null): AssetMetadata => {
     return {
       id: id || '',
       symbol: horizontalBar,
-      fullName: `Unknown asset ${id}`,
+      fullName: id ? `Unknown asset ${id}` : '',
       icon: Unknown
     }
   }

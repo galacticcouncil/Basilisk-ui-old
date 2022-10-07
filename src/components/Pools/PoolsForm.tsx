@@ -962,41 +962,48 @@ export const PoolsForm = ({
 
       <FormProvider {...form}>
         <form className="pools-form" onSubmit={handleSubmit(_handleSubmit)}>
-          <div className="settings-button-wrapper">
-            <div className="pool-page-tabs">
-              <button
-                className="tab"
-                disabled={provisioningType === ProvisioningType.Add}
-                onClick={() => {
-                  setProvisioningType(ProvisioningType.Add)
+          <div className="pools-form-heading-wrapper">
+            <div className="pools-form-heading">
+              {provisioningType === ProvisioningType.Add ? 'Add' : 'Remove'}{' '}
+              Liquidity
+            </div>
+            <div className="settings-button-wrapper">
+              <div className="pool-page-tabs">
+                <div
+                  className={
+                    'tab ' +
+                    (provisioningType === ProvisioningType.Add ? 'active' : '')
+                  }
+                  onClick={() => {
+                    setProvisioningType(ProvisioningType.Add)
+                  }}
+                >
+                  <div className="label">Add</div>
+                </div>
+                <div
+                  className={
+                    'tab ' +
+                    (provisioningType === ProvisioningType.Remove
+                      ? 'active'
+                      : '')
+                  }
+                  onClick={() => {
+                    setProvisioningType(ProvisioningType.Remove)
+                  }}
+                >
+                  <div className="label">Remove</div>
+                </div>
+              </div>
+              <div
+                className="pool-settings-button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  toggleModal()
                 }}
               >
-                <div className="label">Add</div>
-              </button>
-              <button
-                className="tab"
-                disabled={provisioningType === ProvisioningType.Remove}
-                onClick={() => {
-                  setProvisioningType(ProvisioningType.Remove)
-                }}
-              >
-                <div className="label">Remove</div>
-              </button>
+                <Icon name="Settings" />
+              </div>
             </div>
-            <div
-              className="pool-settings-button"
-              onClick={(e) => {
-                e.preventDefault()
-                toggleModal()
-              }}
-            >
-              <Icon name="Settings" />
-            </div>
-          </div>
-
-          <div className="pools-form-heading">
-            {provisioningType === ProvisioningType.Add ? 'Add' : 'Remove'}{' '}
-            Liquidity
           </div>
           <div className="balance-wrapper">
             <AssetBalanceInput

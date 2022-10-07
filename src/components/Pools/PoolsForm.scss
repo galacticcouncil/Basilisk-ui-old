@@ -1,88 +1,76 @@
 @import './../../misc/colors.module.scss';
 @import './../../misc/misc.module.scss';
 @import '../Button/Button.scss';
+@import './../Trade/TradeForm/TradeForm.scss';
 
 .pools-form-wrapper {
-  position: relative;
-  flex-basis: 450px;
-  flex-grow: 1;
-  padding: 22px;
-  min-width: 375px;
-  width: 450px;
-  max-width: 450px;
-  margin: 0 auto;
-  box-shadow: 0 0 0 1px rgb(255 255 255 / 5%);
-  background: linear-gradient(180deg, #1c2527 0%, #14161a 80.73%, #121316 100%);
-  overflow: hidden;
-  border-radius: 10px;
-  color: white;
+  @extend .trade-form-wrapper;
 
-  .settings-button-wrapper {
-    position: absolute;
+  .pools-form-heading-wrapper {
     display: flex;
-    flex-direction: row;
-    justify-content: left;
-    right: 10px;
-    top: 10px;
-    gap: 10px;
-    padding: 10px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 
-    .pool-settings-button {
+    .settings-button-wrapper {
       display: flex;
-      padding: 10px 8px;
-      width: fit-content;
-      height: fit-content;
-      border-radius: 50%;
-      background-color: rgba(162, 176, 187, 0.1);
+      flex-direction: row;
+      justify-content: left;
+      right: 10px;
+      top: 10px;
+      gap: 10px;
 
-      svg {
-        width: 24px;
-      }
-
-      &:hover {
-        cursor: pointer;
+      .pool-settings-button {
+        display: flex;
+        padding: 10px 10px;
+        width: fit-content;
+        height: fit-content;
+        border-radius: 50%;
+        background-color: rgba(162, 176, 187, 0.1);
 
         svg {
-          path {
-            fill: $green1;
+          width: 20px;
+        }
+
+        &:hover {
+          cursor: pointer;
+
+          svg {
+            path {
+              fill: $green1;
+            }
           }
         }
       }
-    }
 
-    .pool-page-tabs {
-      display: flex;
-      flex-direction: row;
-      justify-content: right;
-      width: 90%;
+      .pool-page-tabs {
+        display: flex;
+        font-size: 12px;
+        color: #1b1b1e;
+        align-items: center;
+        font-weight: 500;
+        justify-content: center;
+        color: #4fffb0;
+        gap: 12px;
 
-      .tab {
-        @extend .button--primary;
-        width: 100px;
-        border-radius: $border-radius 0px 0px $border-radius;
-        color: $gray4;
-        background-color: rgba(162, 176, 187, 0.1);
+        .tab {
+          display: flex;
+          align-items: center;
+          justify-content: space-around;
+          gap: 4px;
+          cursor: pointer;
+          padding: 4px 12px;
+          border-radius: 16px;
+          box-shadow: 0 0 0 1px rgb(79 255 176 / 20%) inset;
 
-        &:hover {
-          color: rgba(79, 255, 176, 1);
-          background-color: rgba(162, 176, 187, 0.15);
-        }
+          &:hover {
+            box-shadow: 0 0 0 1px #4fffb0 inset;
+          }
 
-        &:disabled {
-          color: rgba(79, 255, 176, 1);
-          background-color: rgba(162, 176, 187, 0.2);
-        }
-
-        &:first-child {
-          border-radius: $border-radius 0px 0px $border-radius;
-        }
-
-        &:last-child {
-          border-radius: 0px $border-radius $border-radius 0px;
-        }
-
-        &:not(:last-child) {
-          border-right: 1px solid rgba(162, 176, 187, 0.1);
+          &.active {
+            background-color: #4fffb0;
+            color: #1b1b1e;
+          }
         }
       }
     }

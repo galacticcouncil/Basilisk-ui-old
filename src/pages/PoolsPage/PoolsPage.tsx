@@ -11,7 +11,7 @@ import { useMath } from '../../hooks/math/useMath'
 import { useGetPoolByAssetsQuery } from '../../hooks/pools/queries/useGetPoolByAssetsQuery'
 import { useAssetIdsWithUrl } from './hooks/useAssetIdsWithUrl'
 
-import './PoolsPage.scss'
+import '../TradePage/TradePage.scss'
 
 import { useLoading } from '../../hooks/misc/useLoading'
 import { useGetPoolsQuery } from '../../hooks/pools/queries/useGetPoolsQuery'
@@ -261,7 +261,7 @@ export const PoolsPage = () => {
   }, [activeAccountTradeBalancesData, assetIds, pool])
 
   return (
-    <div className="pools-page-wrapper">
+    <div className="trade-page-wrapper">
       {/* {confirmationScreen} */}
       {/*NOTIF*/}
       <div className={'notifications-bar transaction-' + notification}>
@@ -277,34 +277,37 @@ export const PoolsPage = () => {
         </div>
       </div>
       {/*NOTIF*/}
-      <div className="pools-page">
-        <PoolsForm
-          assetIds={assetIds}
-          onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
-          isActiveAccountConnected={isActiveAccountConnected}
-          pool={pool}
-          // first load and each time the asset ids (variables) change
-          isPoolLoading={
-            poolNetworkStatus === NetworkStatus.loading ||
-            poolNetworkStatus === NetworkStatus.setVariables ||
-            depsLoading
-          }
-          assetInLiquidity={assetInLiquidity}
-          assetOutLiquidity={assetOutLiquidity}
-          spotPrice={spotPrice}
-          onSubmit={handleSubmit}
-          tradeLoading={removeLiquidityLoading || addLiquidityLoading}
-          assets={assets}
-          assetMap={poolAssetMap}
-          activeAccount={activeAccountData?.activeAccount}
-          activeAccountTradeBalances={tradeBalances}
-          activeAccountTradeBalancesLoading={
-            activeAccountTradeBalancesNetworkStatus === NetworkStatus.loading ||
-            activeAccountTradeBalancesNetworkStatus ===
-              NetworkStatus.setVariables ||
-            depsLoading
-          }
-        />
+      <div className="trade-page">
+        <div className="trade-page__content">
+          <PoolsForm
+            assetIds={assetIds}
+            onAssetIdsChange={(assetIds) => setAssetIds(assetIds)}
+            isActiveAccountConnected={isActiveAccountConnected}
+            pool={pool}
+            // first load and each time the asset ids (variables) change
+            isPoolLoading={
+              poolNetworkStatus === NetworkStatus.loading ||
+              poolNetworkStatus === NetworkStatus.setVariables ||
+              depsLoading
+            }
+            assetInLiquidity={assetInLiquidity}
+            assetOutLiquidity={assetOutLiquidity}
+            spotPrice={spotPrice}
+            onSubmit={handleSubmit}
+            tradeLoading={removeLiquidityLoading || addLiquidityLoading}
+            assets={assets}
+            assetMap={poolAssetMap}
+            activeAccount={activeAccountData?.activeAccount}
+            activeAccountTradeBalances={tradeBalances}
+            activeAccountTradeBalancesLoading={
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.loading ||
+              activeAccountTradeBalancesNetworkStatus ===
+                NetworkStatus.setVariables ||
+              depsLoading
+            }
+          />
+        </div>
       </div>
     </div>
   )
