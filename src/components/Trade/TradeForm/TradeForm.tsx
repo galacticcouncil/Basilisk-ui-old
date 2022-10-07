@@ -40,6 +40,7 @@ import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalanc
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import { PoolType } from '../../Chart/shared'
 import Icon from '../../Icon/Icon'
+import { getFeeAmount } from './helpers'
 import './TradeForm.scss'
 import { TradeInfo } from './TradeInfo/TradeInfo'
 
@@ -301,6 +302,15 @@ export const TradeForm = ({
     setTradeType(TradeType.Buy)
   }, [assetOutAmountInput])
 
+  const tradeFee: string = useMemo(() => {
+    const fee = { numerator: '3', denominator: '1000' }
+    return new BigNumber(fee.numerator)
+      .dividedBy(fee.denominator)
+      .multipliedBy(100)
+      .toFixed(2)
+      .toString()
+  }, [])
+
   useEffect(() => {
     const assetOutAmount = getValues('assetOutAmount')
     if (!pool || !math || !assetInLiquidity || !assetOutLiquidity) return
@@ -309,16 +319,18 @@ export const TradeForm = ({
     if (!assetOutAmount) return setValue('assetInAmount', null)
 
     const amount = math.xyk.calculate_in_given_out(
-      // which combination is correct?
-      // assetOutLiquidity,
-      // assetInLiquidity,
       assetInLiquidity,
       assetOutLiquidity,
       assetOutAmount
     )
-    // do nothing deliberately, because the math library returns '0' as calculated value, as oppossed to calculate_out_given_in
+
     if (amount === '0' && assetOutAmount !== '0') return
     setValue('assetInAmount', amount || null)
+
+    const feeAmount = getFeeAmount(amount, tradeFee)
+    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
+
+    setValue('assetInAmount', amountWithFee || null)
   }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetOutAmount')])
 
   useEffect(() => {
@@ -333,10 +345,22 @@ export const TradeForm = ({
       assetOutLiquidity,
       assetInAmount
     )
+
     if (amount === '0' && assetInAmount !== '0')
-      return setValue('assetOutAmount', null)
-    setValue('assetOutAmount', amount || null)
-  }, [tradeType, assetOutLiquidity, assetInLiquidity, watch('assetInAmount')])
+      return setValue('assetOutAmount', amount || null)
+
+    const feeAmount = getFeeAmount(amount, tradeFee)
+    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
+
+    setValue('assetOutAmount', amountWithFee || null)
+  }, [
+    pool,
+    tradeType,
+    tradeFee,
+    assetOutLiquidity,
+    assetInLiquidity,
+    watch('assetInAmount')
+  ])
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading'
@@ -369,7 +393,6 @@ export const TradeForm = ({
     modalContainerRef,
     false
   )
-
   const tradeLimit = useMemo(() => {
     // convert from precision, otherwise the math doesnt work
     const assetInAmount = fromPrecision12(getValues('assetInAmount') || '0')
@@ -388,12 +411,15 @@ export const TradeForm = ({
     )
       return
 
+    const feeFractional = new BigNumber(tradeFee).dividedBy(100)
+
     switch (tradeType) {
       case TradeType.Sell:
         return {
           balance: new BigNumber(assetInAmount)
-            .multipliedBy(spotPrice?.inOut)
-            .multipliedBy(new BigNumber('1').minus(allowedSlippage))
+            .multipliedBy(spotPrice.inOut)
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut
         }
@@ -401,7 +427,8 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber('1').plus(allowedSlippage))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn
         }
@@ -411,6 +438,7 @@ export const TradeForm = ({
     tradeType,
     allowedSlippage,
     getValues,
+    tradeFee,
     ...watch(['assetInAmount', 'assetOutAmount'])
   ])
 
@@ -418,29 +446,41 @@ export const TradeForm = ({
     const assetInAmount = getValues('assetInAmount')
     const assetOutAmount = getValues('assetOutAmount')
 
-    if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
+    if (
+      !assetInAmount ||
+      !assetOutAmount ||
+      !spotPrice ||
+      !allowedSlippage ||
+      !tradeFee
+    )
       return
 
+    const feeFractional = new BigNumber(tradeFee).dividedBy(100)
+
     switch (tradeType) {
-      case TradeType.Sell:
+      case TradeType.Sell: {
         return percentageChange(
-          new BigNumber(assetInAmount).multipliedBy(
-            fromPrecision12(spotPrice.inOut || '0')
-          ),
+          new BigNumber(assetInAmount)
+            .multipliedBy(fromPrecision12(spotPrice.inOut || '0') || '1')
+            .multipliedBy(new BigNumber(1).plus(feeFractional)),
           assetOutAmount
         )?.abs()
-      case TradeType.Buy:
+      }
+      case TradeType.Buy: {
         return percentageChange(
-          new BigNumber(assetOutAmount).multipliedBy(
-            fromPrecision12(spotPrice.outIn || '0')
-          ),
+          new BigNumber(assetOutAmount)
+            .multipliedBy(fromPrecision12(spotPrice.outIn || '0') || '1')
+            .multipliedBy(new BigNumber(1).minus(feeFractional)),
           assetInAmount
         )?.abs()
+      }
     }
   }, [
     tradeType,
     getValues,
     spotPrice,
+    tradeFee,
+    allowedSlippage,
     ...watch(['assetInAmount', 'assetOutAmount'])
   ])
 
@@ -668,15 +708,6 @@ export const TradeForm = ({
     slippage,
     formState.isDirty
   ])
-
-  const tradeFee: string = useMemo(() => {
-    const fee = { numerator: '3', denominator: '1000' }
-    return new BigNumber(fee.numerator)
-      .dividedBy(fee.denominator)
-      .multipliedBy(100)
-      .toFixed(2)
-      .toString()
-  }, [])
 
   const minTradeLimitIn = useCallback(
     (assetInAmount?: Maybe<string>) => {
