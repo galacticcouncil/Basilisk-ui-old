@@ -34,7 +34,6 @@ export enum LbpStatus {
 }
 
 export const LBPPage = () => {
-  const { math } = useMath()
   const { apiInstance, loading: apiLoading } = usePolkadotJsContext()
 
   const {
@@ -91,17 +90,14 @@ export const LBPPage = () => {
 
   const depsLoading = useLoading()
 
-  const {
-    data: poolData,
-    loading: poolLoading,
-    networkStatus: poolNetworkStatus
-  } = useGetPoolByAssetsQuery(
-    {
-      assetInId: assetIds.assetIn || undefined,
-      assetOutId: assetIds.assetOut || undefined
-    },
-    depsLoading
-  )
+  const { data: poolData, networkStatus: poolNetworkStatus } =
+    useGetPoolByAssetsQuery(
+      {
+        assetInId: assetIds.assetIn || undefined,
+        assetOutId: assetIds.assetOut || undefined
+      },
+      depsLoading
+    )
 
   const {
     data: poolsData
@@ -131,7 +127,7 @@ export const LBPPage = () => {
   const pool = useMemo(() => lbpPool, [lbpPool])
 
   const assetInName = useMemo(() => {
-    return pool ? idToAsset(pool.assetOutId) : ''
+    return pool ? idToAsset(pool.assetOutId)?.symbol : ''
   }, [pool])
 
   const isActiveAccountConnected = useMemo(() => {
@@ -219,8 +215,6 @@ export const LBPPage = () => {
   const repayTargetReached = useMemo(() => {
     return pool ? (pool.repayTargetReached as boolean) : undefined
   }, [pool])
-
-  console.log('BbB', pool, lbpPool, poolData, poolsData)
 
   const tradeBalances = useMemo(() => {
     const balances = activeAccountTradeBalancesData?.activeAccount?.balances
@@ -386,7 +380,7 @@ export const LBPPage = () => {
         <div className="lbp-info-wrapper">
           <div className="lbp-info-wrapper__lbp-info-item">
             <div className="lbp-info-wrapper__lbp-info-item__group">
-              <div className="label">Last Price</div>
+              <div className="label">Last {assetInName} Price</div>
               <div className="value">$ {usdPrice.accumulatedAsString}</div>
             </div>
           </div>
