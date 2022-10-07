@@ -41,6 +41,7 @@ import { FormattedBalance } from '../../Balance/FormattedBalance/FormattedBalanc
 import { horizontalBar } from '../../Chart/ChartHeader/ChartHeader'
 import { PoolType } from '../../Chart/shared'
 import Icon from '../../Icon/Icon'
+import { getFeeAmount } from './helpers'
 import './TradeForm.scss'
 import { TradeInfo, Warning } from './TradeInfo/TradeInfo'
 
@@ -270,27 +271,22 @@ export const TradeForm = ({
     }
   }
 
-  const getFeeAmount = (amount: string, tradeFee: string) => {
-    console.log('TradeFee:', tradeFee)
-    return new BigNumber(amount).multipliedBy(tradeFee).dividedBy(100)
-  }
-
   const tradeFee: string = useMemo(() => {
     if (assetIds.assetIn === pool?.assetInId) {
       setWarning(null)
       return feeToPercentage()
     } else {
       if (
-        repayTargetReached === false &&
-        typeof repayTargetReached !== 'undefined'
+        (repayTargetReached === false &&
+          typeof repayTargetReached !== 'undefined') ||
+        //TODO: FIX
+        new BigNumber(feeToPercentage(pool?.fee)).toNumber() > 19
       )
         setWarning(Warning.RepayFee)
 
-      console.log('WARNING:', repayTargetReached)
-
       return feeToPercentage(pool?.fee)
     }
-  }, [pool, tradeType, assetIds, tradeLoading, repayTargetReached])
+  }, [pool?.assetInId, assetIds, tradeLoading, repayTargetReached, pool?.fee])
 
   // trigger form field validation right away
   useEffect(() => {
@@ -392,17 +388,11 @@ export const TradeForm = ({
       assetOutAmount
     )
 
-    if (amount === '0' && assetOutAmount !== '0') return
+    if (amount === '0' && assetOutAmount !== '0')
+      setValue('assetInAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
     const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
-
-    console.log(
-      'BUY: OUT|IN|FEE: ',
-      assetOutAmount,
-      amountWithFee,
-      feeAmount.toString()
-    )
 
     setValue('assetInAmount', amountWithFee || null)
   }, [
@@ -441,17 +431,11 @@ export const TradeForm = ({
       assetInAmount
     )
 
-    if (amount === '0' && assetInAmount !== '0') return
+    if (amount === '0' && assetInAmount !== '0')
+      return setValue('assetOutAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
     const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
-
-    console.log(
-      'SELL: IN|OUT|FEE: ',
-      assetInAmount,
-      amountWithFee,
-      feeAmount.toString()
-    )
 
     setValue('assetOutAmount', amountWithFee || null)
   }, [
@@ -512,16 +496,22 @@ export const TradeForm = ({
       !spotPrice?.outIn ||
       !assetIn ||
       !assetOut ||
-      !allowedSlippage
+      !allowedSlippage ||
+      !tradeFee
     )
       return
+
+    console.log(spotPrice.inOut, spotPrice.outIn, tradeFee, allowedSlippage)
+
+    const feeFractional = new BigNumber(tradeFee).dividedBy(100)
 
     switch (tradeType) {
       case TradeType.Sell:
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice?.inOut)
-            .multipliedBy(new BigNumber('1').minus(allowedSlippage))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut
         }
@@ -529,7 +519,8 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber('1').plus(allowedSlippage))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn
         }
@@ -537,6 +528,7 @@ export const TradeForm = ({
   }, [
     spotPrice,
     tradeType,
+    tradeFee,
     allowedSlippage,
     getValues,
     ...watch(['assetInAmount', 'assetOutAmount'])
@@ -546,22 +538,30 @@ export const TradeForm = ({
     const assetInAmount = getValues('assetInAmount')
     const assetOutAmount = getValues('assetOutAmount')
 
-    if (!assetInAmount || !assetOutAmount || !spotPrice || !allowedSlippage)
+    if (
+      !assetInAmount ||
+      !assetOutAmount ||
+      !spotPrice ||
+      !allowedSlippage ||
+      !tradeFee
+    )
       return
+
+    const feeFractional = new BigNumber(tradeFee).dividedBy(100)
 
     switch (tradeType) {
       case TradeType.Sell:
         return percentageChange(
-          new BigNumber(assetInAmount).multipliedBy(
-            fromPrecision12(spotPrice.inOut) || '1'
-          ),
+          new BigNumber(assetInAmount)
+            .multipliedBy(fromPrecision12(spotPrice.inOut) || '1')
+            .multipliedBy(new BigNumber(1).plus(feeFractional)),
           assetOutAmount
         )?.abs()
       case TradeType.Buy:
         return percentageChange(
-          new BigNumber(assetOutAmount).multipliedBy(
-            fromPrecision12(spotPrice.outIn) || '1'
-          ),
+          new BigNumber(assetOutAmount)
+            .multipliedBy(fromPrecision12(spotPrice.outIn) || '1')
+            .multipliedBy(new BigNumber(1).plus(feeFractional)),
           assetInAmount
         )?.abs()
     }
@@ -569,6 +569,7 @@ export const TradeForm = ({
     tradeType,
     getValues,
     spotPrice,
+    tradeFee,
     ...watch(['assetInAmount', 'assetOutAmount'])
   ])
 
@@ -584,6 +585,8 @@ export const TradeForm = ({
       ) {
         throw new Error('Unable to submit trade due to missing data')
       }
+
+      console.log('SUBMIT: ', data, tradeLimit)
 
       onSubmitTrade({
         assetInId: data.assetIn,
