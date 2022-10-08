@@ -8,6 +8,7 @@ const GET_ACTIVE_ACCOUNT_TRADE_BALANCES = loader(
 export interface GetActiveAccountTradeBalancesQueryVariables {
   assetInId?: string
   assetOutId?: string
+  shareTokenId?: string
 }
 
 export interface GetActiveAccountTradeBalancesQueryResponse {

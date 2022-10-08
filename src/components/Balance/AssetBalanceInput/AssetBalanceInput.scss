@@ -79,7 +79,10 @@
     }
   }
 
-  box-shadow: 1px 0 $d-gray4;
+  &.disabled &__input-wrapper {
+    box-shadow: none;
+    background-color: transparent;
+  }
 
   &__input-wrapper {
     flex-grow: 1;

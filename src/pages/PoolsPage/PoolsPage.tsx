@@ -236,7 +236,8 @@ export const PoolsPage = () => {
       assetOutId:
         (assetIds.assetIn! > assetIds.assetOut!
           ? assetIds.assetOut
-          : assetIds.assetIn) || undefined
+          : assetIds.assetIn) || undefined,
+      shareTokenId: pool?.shareTokenId || undefined
     }
   })
 
@@ -252,10 +253,10 @@ export const PoolsPage = () => {
     }) as Balance | undefined
 
     const shareBalance = find(balances, {
-      assetId: pool?.id
+      assetId: pool?.shareTokenId
     }) as Balance | undefined
 
-    console.log('share balance', balances, shareBalance)
+    console.log('share balance', balances, shareBalance, pool?.id)
 
     return { outBalance, inBalance, shareBalance }
   }, [activeAccountTradeBalancesData, assetIds, pool])

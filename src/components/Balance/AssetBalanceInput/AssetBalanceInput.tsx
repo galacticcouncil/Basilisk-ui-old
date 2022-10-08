@@ -25,6 +25,7 @@ export interface AssetBalanceInputProps {
   // onAssetSelected: (asset: Asset) => void,
   balanceInputRef?: MutableRefObject<HTMLInputElement | null>
   required?: boolean
+  format?: boolean
   disabled?: boolean
   maxBalanceLoading?: boolean
 }
@@ -41,6 +42,7 @@ export const AssetBalanceInput = ({
   // onAssetSelected,
   balanceInputRef,
   required,
+  format,
   disabled,
   maxBalanceLoading
 }: AssetBalanceInputProps) => {
@@ -66,7 +68,7 @@ export const AssetBalanceInput = ({
   return (
     <div
       className={classNames('asset-balance-input', {
-        disabled: maxBalanceLoading
+        disabled: disabled
       })}
     >
       {/* This portal will be rendered at it's container ref as defined above */}
@@ -130,6 +132,7 @@ export const AssetBalanceInput = ({
           showMetricUnitSelector={false}
           inputRef={balanceInputRef}
           required={required}
+          format={format}
           disabled={disabled}
         />
       </div>

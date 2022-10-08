@@ -47,9 +47,9 @@ export const PageContainer = ({ children }: { children: React.ReactNode }) => {
                 <Icon name="BasiliskLogoFull" />
               </div>
             </div>
-            {/* <div className="page-header__menu-wrapper__menu-item">
+            <div className="page-header__menu-wrapper__menu-item">
               <Link to="lbp">LBP</Link>
-            </div> */}
+            </div>
             <div className="page-header__menu-wrapper__menu-item">
               <Link to="trade">Trade</Link>
             </div>
