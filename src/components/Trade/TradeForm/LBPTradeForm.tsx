@@ -280,11 +280,11 @@ export const TradeForm = ({
         (repayTargetReached === false &&
           typeof repayTargetReached !== 'undefined') ||
         //TODO: FIX
-        new BigNumber(feeToPercentage(pool?.fee)).toNumber() > 19
+        (pool?.fee && new BigNumber(feeToPercentage(pool.fee)).toNumber() > 19)
       )
         setWarning(Warning.RepayFee)
 
-      return feeToPercentage(pool?.fee)
+      return (pool?.fee && feeToPercentage(pool?.fee)) || '0'
     }
   }, [pool?.assetInId, assetIds, tradeLoading, repayTargetReached, pool?.fee])
 

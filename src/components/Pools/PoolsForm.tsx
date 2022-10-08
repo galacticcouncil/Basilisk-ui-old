@@ -372,13 +372,17 @@ export const PoolsForm = ({
         setValue('assetInAmount', amount || null)
         calculateShares()
       } else {
+        console.log('OUT_IN 1')
         if (!shareAssetAmount) return
+        console.log('OUT_IN 2')
         const amountA = math.xyk.calculate_liquidity_out_asset_a(
           assetInLiquidity,
           assetOutLiquidity,
           shareAssetAmount,
           pool.totalLiquidity || '0'
         )
+
+        console.log('OUT_IN AMT', amountA)
 
         setValue('assetInAmount', amountA || null)
       }
@@ -392,6 +396,7 @@ export const PoolsForm = ({
     assetInLiquidity,
     assetOutLiquidity,
     provisioningType,
+    shareAssetAmountInput,
     activeAccountTradeBalances
   ])
 
@@ -458,6 +463,12 @@ export const PoolsForm = ({
     if (lastAssetInteractedWith === assetIds.assetOut) return
     calculateAssetOut()
   }, [calculateAssetOut, lastAssetInteractedWith, assetInAmountInput, assetIds])
+
+  useEffect(() => {
+    console.log('CALCULATING OUTPUT')
+    calculateAssetIn()
+    calculateAssetOut()
+  }, [assetOutAmountInput, calculateAssetIn, calculateAssetOut])
 
   const getSubmitText = useCallback(() => {
     if (isPoolLoading) return 'loading'
@@ -771,42 +782,6 @@ export const PoolsForm = ({
     paymentInfo
   ])
 
-  const { debugComponent } = useDebugBoxContext()
-
-  useEffect(() => {
-    debugComponent('PoolsForm', {
-      ...getValues(),
-      spotPrice,
-      tradeLimit,
-      assetInLiquidity,
-      assetOutLiquidity,
-      tradeBalances: {
-        ...tradeBalances,
-        inTradeChange: tradeBalances.inTradeChange?.toString(),
-        outTradeChange: tradeBalances.outTradeChange?.toString()
-      },
-      provisioningType,
-      slippage: slippage?.toString(),
-      errors: Object.keys(errors).reduce((reducedErrors, error) => {
-        return {
-          ...reducedErrors,
-          [error]: (errors as any)[error].type
-        }
-      }, {})
-    })
-  }, [
-    Object.values(getValues()).toString(),
-    spotPrice,
-    tradeBalances,
-    tradeBalances,
-    provisioningType,
-    errors,
-    assetInLiquidity,
-    assetOutLiquidity,
-    slippage,
-    formState.isDirty
-  ])
-
   const minTradeLimitIn = useCallback(
     (assetInAmount?: Maybe<string>) => {
       if (!assetInAmount || assetInAmount === '0') return false
@@ -1114,8 +1089,6 @@ export const PoolsForm = ({
                 ) : (
                   // : `${fromPrecision12(tradeBalances.outBeforeTrade)} -> ${fromPrecision12(tradeBalances.outAfterTrade)}`
                   <>
-                    Your balance:{' '}
-                    {activeAccountTradeBalances?.shareBalance?.balance}
                     {activeAccountTradeBalances?.shareBalance ? (
                       <FormattedBalance
                         balance={{
