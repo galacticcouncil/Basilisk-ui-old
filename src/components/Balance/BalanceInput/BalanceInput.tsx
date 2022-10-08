@@ -26,6 +26,7 @@ export interface BalanceInputProps {
    */
   inputRef?: MutableRefObject<HTMLInputElement | null>
   required?: boolean
+  format?: boolean
   disabled?: boolean
 }
 
@@ -73,6 +74,7 @@ export const BalanceInput = ({
   showMetricUnitSelector = true,
   inputRef,
   required,
+  format = true,
   disabled
 }: BalanceInputProps) => {
   const { control, register, setValue, getValues, watch } = useFormContext()
@@ -92,6 +94,7 @@ export const BalanceInput = ({
     name,
     inputRef,
     getValues,
+    format,
     value: watch(name)
   })
 

@@ -42,6 +42,22 @@
   .vesting-claim {
     @extend .active-account;
 
+    &__fee {
+      width: 100%;
+      padding: 20px 32px;
+      justify-content: left;
+
+      &.pivoted {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .tdBefore {
+          display: block;
+        }
+      }
+    }
+
     &-no-vesting {
       padding: 20px 32px;
     }
@@ -57,9 +73,15 @@
         padding: 10px;
         width: 100% !important;
         flex-wrap: wrap;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px 32px;
+
+        .tdBefore {
+          display: block;
+        }
 
         &:first-child {
-          padding: 20px 32px;
           border-top: 0px;
           border-radius: $border-radius $border-radius 0px 0px;
         }
@@ -69,7 +91,6 @@
         }
 
         &:last-child {
-          padding: 20px 32px;
           border-radius: 0px 0px $border-radius $border-radius;
         }
       }

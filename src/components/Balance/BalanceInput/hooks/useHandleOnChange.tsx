@@ -26,19 +26,23 @@ export const useHandleOnChange = ({
   unit,
   inputRef,
   getValues,
+  format,
   value
 }: {
   setValue: UseFormSetValue<any>
   getValues: UseFormGetValues<any>
   name: BalanceInputProps['name']
   unit: MetricUnit
+  format: boolean
   inputRef?: MutableRefObject<HTMLInputElement | null>
   value: UseFormWatch<any>
 }) => {
   const [rawValue, setRawValue] = useState<string | undefined>()
   // TODO: type the value
+
   const setValueAs = useCallback(
     (value) => {
+      if (!format) return rawValue
       value = value?.replaceAll(thousandsSeparatorSymbol, '')
       // this converts the given number to unit `NONE` and formats it with 12 digit precision
       const formattedValue = formatFromSIWithPrecision12(value, unit)
