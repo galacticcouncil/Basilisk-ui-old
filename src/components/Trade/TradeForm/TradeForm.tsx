@@ -438,7 +438,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice.inOut)
-            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(feeFractional))
             .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut
@@ -447,7 +447,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber(1).minus(feeFractional))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
             .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn
