@@ -114,8 +114,8 @@ export const TradeFormSettings = ({
         </label>
         <div className="disclaimer">
           The deviation of the final acceptable price from the spot price caused
-          by protocol fee, price impact (depends on trade & pool size) and
-          change in price between announcing the transaction and processing it.
+          price impact and change in price between announcing the transaction
+          and processing it.
         </div>
       </div>
     </form>
