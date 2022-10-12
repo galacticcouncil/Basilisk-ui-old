@@ -93,14 +93,24 @@ export const mapToPool =
       final: poolData.finalWeight
     }
 
+    const currentWeightBlock = poolData.start
+      ? relaychainBlockNumber < poolData.start
+        ? poolData.start
+        : relaychainBlockNumber > poolData.end
+        ? poolData.end
+        : relaychainBlockNumber
+      : null
+
     const assetAWeights: LbpAssetWeights = {
       ...partialAssetAWeights,
-      current: calculateCurrentAssetWeight(
-        math,
-        partialPool,
-        partialAssetAWeights,
-        relaychainBlockNumber.toString()
-      )
+      current: currentWeightBlock
+        ? calculateCurrentAssetWeight(
+            math,
+            partialPool,
+            partialAssetAWeights,
+            currentWeightBlock.toString()
+          )
+        : partialAssetAWeights.initial
     }
 
     // determine weights for asset B
