@@ -106,6 +106,12 @@ export const assetMetadataMap: AssetMetadataMap = {
       symbol: 'LP KSM/aUSD',
       fullName: 'KSM/aUSD Share token',
       icon: Unknown
+    },
+    '6': {
+      id: '6',
+      symbol: 'TNKR',
+      fullName: 'Tinkernet',
+      icon: TNKR
     }
   },
   develop: {
