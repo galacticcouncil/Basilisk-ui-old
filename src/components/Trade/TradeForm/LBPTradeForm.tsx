@@ -115,8 +115,8 @@ export const TradeFormSettings = ({
         </label>
         <div className="disclaimer">
           The deviation of the final acceptable price from the spot price caused
-          by protocol fee, price impact (depends on trade & pool size) and
-          change in price between announcing the transaction and processing it.
+          price impact and change in price between announcing the transaction
+          and processing it.
         </div>
       </div>
     </form>
@@ -412,7 +412,7 @@ export const TradeForm = ({
       setValue('assetInAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
-    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
+    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
 
     setValue('assetInAmount', amountWithFee || null)
   }, [
@@ -455,7 +455,7 @@ export const TradeForm = ({
       return setValue('assetOutAmount', amount || null)
 
     const feeAmount = getFeeAmount(amount, tradeFee)
-    const amountWithFee = new BigNumber(amount).plus(feeAmount).toString()
+    const amountWithFee = new BigNumber(amount).minus(feeAmount).toString()
 
     setValue('assetOutAmount', amountWithFee || null)
   }, [
@@ -530,7 +530,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice.inOut)
-            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(feeFractional))
             .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut
@@ -539,7 +539,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber(1).minus(feeFractional))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
             .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn
@@ -574,7 +574,7 @@ export const TradeForm = ({
         return percentageChange(
           new BigNumber(assetInAmount)
             .multipliedBy(fromPrecision12(spotPrice.inOut || '0') || '1')
-            .multipliedBy(new BigNumber(1).plus(feeFractional)),
+            .multipliedBy(new BigNumber(1).minus(feeFractional)),
           assetOutAmount
         )?.abs()
       }
@@ -582,7 +582,7 @@ export const TradeForm = ({
         return percentageChange(
           new BigNumber(assetOutAmount)
             .multipliedBy(fromPrecision12(spotPrice.outIn || '0') || '1')
-            .multipliedBy(new BigNumber(1).minus(feeFractional)),
+            .multipliedBy(new BigNumber(1).plus(feeFractional)),
           assetInAmount
         )?.abs()
       }

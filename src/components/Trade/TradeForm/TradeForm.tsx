@@ -114,8 +114,8 @@ export const TradeFormSettings = ({
         </label>
         <div className="disclaimer">
           The deviation of the final acceptable price from the spot price caused
-          by protocol fee, price impact (depends on trade & pool size) and
-          change in price between announcing the transaction and processing it.
+          price impact and change in price between announcing the transaction
+          and processing it.
         </div>
       </div>
     </form>
@@ -438,7 +438,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetInAmount)
             .multipliedBy(spotPrice.inOut)
-            .multipliedBy(new BigNumber(1).plus(feeFractional))
+            .multipliedBy(new BigNumber(1).minus(feeFractional))
             .multipliedBy(new BigNumber(1).minus(allowedSlippage))
             .toFixed(0),
           assetId: assetOut
@@ -447,7 +447,7 @@ export const TradeForm = ({
         return {
           balance: new BigNumber(assetOutAmount)
             .multipliedBy(spotPrice?.outIn)
-            .multipliedBy(new BigNumber(1).minus(feeFractional))
+            .multipliedBy(new BigNumber(1).plus(feeFractional))
             .multipliedBy(new BigNumber(1).plus(allowedSlippage))
             .toFixed(0),
           assetId: assetIn

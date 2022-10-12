@@ -44,8 +44,8 @@ export const buy = async (
   amountBuy: string,
   maxSold: string
 ) => {
-  console.log('LBP BUY:', assetBuy, assetSell, amountBuy, maxSold)
-  await withGracefulErrors(
+  //await withGracefulErrors(
+  await new Promise(
     async (resolve, reject) => {
       const activeAccount = readActiveAccount(cache)
       const address = activeAccount?.id
@@ -61,7 +61,7 @@ export const buy = async (
           { signer },
           buyHandler(resolve, reject, apiInstance)
         )
-    },
-    [gracefulExtensionCancelationErrorHandler]
+    }
+    //[gracefulExtensionCancelationErrorHandler]
   )
 }
