@@ -1,5 +1,6 @@
 import { NetworkStatus } from '@apollo/client'
 import { PolkadotApiPoolService, TradeRouter } from '@galacticcouncil/sdk'
+import BigNumber from 'bignumber.js'
 import { find } from 'lodash'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { PoolType } from '../../components/Chart/shared'
@@ -23,7 +24,10 @@ import { useGetActiveAccountTradeBalances } from './queries/useGetActiveAccountT
 import './TradePage.scss'
 
 // import { ConfirmationType, useWithConfirmation } from '../../hooks/actionLog/useWithConfirmation';
-// import { calculateSpotPrice } from '../../hooks/pools/lbp/calculateSpotPrice'
+import {
+  calculateSpotPrice,
+  calculateSpotPriceFromPool
+} from '../../hooks/pools/lbp/calculateSpotPrice'
 
 export enum LbpStatus {
   NOT_EXISTS,
@@ -40,6 +44,8 @@ export const LBPPage = () => {
     persistedConfig: { valueDisplayAsset }
   } = usePersistentConfig()
 
+  const { math } = useMath()
+
   const poolService = useMemo(() => {
     return apiInstance && !apiLoading
       ? new PolkadotApiPoolService(apiInstance)
@@ -47,7 +53,11 @@ export const LBPPage = () => {
   }, [apiInstance, apiLoading])
 
   const tradeRouter = useMemo(() => {
-    return poolService ? new TradeRouter(poolService) : undefined
+    return poolService
+      ? new TradeRouter(poolService, {
+          includeOnly: [PoolType.XYK]
+        })
+      : undefined
   }, [poolService])
 
   const getBestSpotPrice = useCallback(
@@ -236,50 +246,55 @@ export const LBPPage = () => {
       pool?.assetInId,
       pool?.assetAWeights)
     ) {
-      Promise.all([
-        getBestSpotPrice(assetIds.assetOut, assetIds.assetIn),
-        getBestSpotPrice(assetIds.assetIn, assetIds.assetOut),
-        getBestSpotPrice(assetIds.assetIn, valueDisplayAsset),
-        getBestSpotPrice(assetIds.assetOut, valueDisplayAsset),
-        getBestSpotPrice(pool?.assetOutId, valueDisplayAsset)
-      ]).then(
-        ([
-          outIn,
-          inOut,
-          assetInValue,
-          assetOutValue,
-          accumulatedAssetValue
-        ]) => {
-          if (outIn && inOut) {
-            setSpotPrice({
-              outIn: accumulating
-                ? outIn.amount.toNumber()
-                : inOut.amount.toNumber(),
-              inOut: accumulating
-                ? inOut.amount.toNumber()
-                : outIn.amount.toNumber()
-            })
-          }
-          if (assetInValue && assetOutValue && accumulatedAssetValue) {
+      Promise.all([getBestSpotPrice(pool?.assetInId, valueDisplayAsset)]).then(
+        ([distributedAssetValue]) => {
+          if (math && pool && distributedAssetValue) {
+            const spotPrice = {
+              outIn: parseFloat(
+                calculateSpotPriceFromPool(
+                  math,
+                  pool,
+                  pool.assetOutId,
+                  pool.assetInId
+                )
+              ),
+
+              inOut: parseFloat(
+                calculateSpotPriceFromPool(
+                  math,
+                  pool,
+                  pool.assetInId,
+                  pool.assetOutId
+                )
+              )
+            }
+            setSpotPrice(spotPrice)
+
             const weightRatio =
               (pool.assetAWeights.current ||
                 pool.assetAWeights.final - pool.assetAWeights.initial) /
               pool.assetAWeights.initial
 
             console.log(weightRatio, 'weightRatio')
+
+            const distributedAssetValueThroughSpotPrice =
+              distributedAssetValue.amount.dividedBy(spotPrice.inOut)
+
+            console.log(
+              'ACCUMULATED THROUGH SPOT',
+              distributedAssetValueThroughSpotPrice.toNumber(),
+              'outin',
+              distributedAssetValue
+            )
+
             setUsdPrice({
-              assetIn: assetInValue.amount.toNumber(),
-              assetInAsString: assetInValue.amount
-                .dividedBy(10 ** assetInValue.decimals)
-                .toFixed(3),
-              assetOut: assetOutValue.amount.toNumber(),
-              assetOutAsString: assetOutValue.amount
-                .dividedBy(10 ** assetOutValue.decimals)
-                .toFixed(3),
-              accumulated: accumulatedAssetValue.amount.toNumber(),
-              accumulatedAsString: accumulatedAssetValue.amount
-                .dividedBy(10 ** accumulatedAssetValue.decimals)
-                .toFixed(3),
+              assetIn: 0,
+              assetInAsString: '0',
+              assetOut: 0,
+              assetOutAsString: '0',
+              accumulated: distributedAssetValueThroughSpotPrice.toNumber(),
+              accumulatedAsString:
+                distributedAssetValueThroughSpotPrice.toFixed(3),
               accumulatedAtEnd: 0,
               accumulatedAtEndAsString: '-'
             })
@@ -380,7 +395,7 @@ export const LBPPage = () => {
         <div className="lbp-info-wrapper">
           <div className="lbp-info-wrapper__lbp-info-item">
             <div className="lbp-info-wrapper__lbp-info-item__group">
-              <div className="label">Last {assetInName} Price</div>
+              <div className="label">{assetInName} Price</div>
               <div className="value">$ {usdPrice.accumulatedAsString}</div>
             </div>
           </div>

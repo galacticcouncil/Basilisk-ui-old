@@ -6,7 +6,7 @@
   "dependencies": {
     "@apollo/client": "^3.5.9",
     "@craco/craco": "^7.0.0-alpha.7",
-    "@galacticcouncil/sdk": "^0.0.1-beta.12",
+    "@galacticcouncil/sdk": "^0.0.1-beta.13",
     "@gapit/format-si": "^0.0.1",
     "@open-web3/orml-type-definitions": "^2.0.1",
     "@open-web3/orml-types": "^2.0.1",
