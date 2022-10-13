@@ -343,6 +343,7 @@ export const LBPPage = () => {
       <div className="trade-page">
         <div className="trade-page__content">
           <EnhancedTradeChart
+            key={pool?.id}
             visible={chartVisible}
             pool={pool}
             assetIds={assetIds}
