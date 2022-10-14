@@ -4,7 +4,7 @@ import { Balance, Maybe } from '../../../../../generated/graphql'
 import { idToAsset } from '../../../../../misc/idToAsset'
 import './BalanceList.scss'
 
-export const availableFeePaymentAssetIds = ['0', '1', '2'];
+export const availableFeePaymentAssetIds = ['0', '1', '2', '6'];
 
 export const BalanceList = ({
   balances,
