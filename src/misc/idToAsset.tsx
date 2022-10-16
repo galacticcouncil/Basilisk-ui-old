@@ -112,7 +112,19 @@ export const assetMetadataMap: AssetMetadataMap = {
       symbol: 'TNKR',
       fullName: 'Tinkernet',
       icon: TNKR
-    }
+    },
+    '7': {
+      id: '7',
+      symbol: 'LP TNKR/BSX',
+      fullName: 'TNKR/BSX Share token',
+      icon: Unknown
+    },
+    '8': {
+      id: '8',
+      symbol: 'LP TNKR/KSM',
+      fullName: 'TNKR/KSM Share token',
+      icon: Unknown
+    },
   },
   develop: {
     '0': {
