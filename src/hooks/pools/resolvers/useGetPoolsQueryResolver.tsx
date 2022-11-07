@@ -26,15 +26,21 @@ export const getPoolIdsByAssetIds = async (
   apiInstance: ApiPromise,
   assetIds: string[]
 ) => {
-  let lbpPoolId: string | undefined = (
-    await (apiInstance.rpc as any).lbp.getPoolAccount(assetIds[0], assetIds[1])
-  ).toHex()
 
-  let xykPoolId: string | undefined = (
-    await (apiInstance.rpc as any).xyk.getPoolAccount(assetIds[0], assetIds[1])
-  ).toHex()
+  // TODO caching
+  const [xykAccounts, lbpAccounts] = await Promise.all([
+    apiInstance.query.xyk.poolAssets.entries(),
+    apiInstance.query.lbp.poolData.entries(), // TODO handle LBP
+  ]);
 
-  console.log('got pool ids', lbpPoolId, xykPoolId)
+  const assetIdsSorted = assetIds.sort().join();
+
+  const idsToAccounts: {[index: string]:any} = xykAccounts
+      .map(([key, assetIds]) => [(assetIds.toHuman() as []).sort().join(), key.args[0].toHex()])
+      .reduce((acc, [k, v]) => ({...acc, [k as string]: v}), {})
+
+  const xykPoolId = idsToAccounts[assetIdsSorted];
+  const lbpPoolId = undefined;
 
   return {
     lbpPoolId,
