@@ -2,6 +2,7 @@ import { ApolloProvider } from '@apollo/client'
 import BigNumber from 'bignumber.js'
 import constate from 'constate'
 import React, { useCallback, useMemo, useRef } from 'react'
+import { useToggle } from 'react-use'
 import {
   GetActiveAccountQueryProvider,
   useGetActiveAccountQueryContext
@@ -42,8 +43,24 @@ export const [BodyContainerRefProvider, useBodyContainerRefContext] =
 
 export const BodyContainer = ({ children }: { children: React.ReactNode }) => {
   const bodyContainerRef = useBodyContainerRefContext()
+  const [overlay, toggleOverlay] = useToggle(true)
   return (
     <div className="body-container" ref={bodyContainerRef}>
+      <div className="bricked" hidden={!overlay}>
+        <div className="text">
+          Basilisk chain is currently bricked.
+          <br />
+          We are working on a fix.
+        </div>
+        <a
+          href="https://jakpan.hashnode.dev/snek-stall-post-mortem"
+          target="_blank"
+          rel="noreferrer"
+        >
+          read more
+        </a>
+        <div onClick={toggleOverlay}>dismiss</div>
+      </div>
       {children}
     </div>
   )
