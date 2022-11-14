@@ -48,9 +48,9 @@ export const BodyContainer = ({ children }: { children: React.ReactNode }) => {
     <div className="body-container" ref={bodyContainerRef}>
       <div className="bricked" hidden={!overlay}>
         <div className="text">
-          Basilisk chain is currently bricked.
+          Basilisk is now in recovery mode.
           <br />
-          We are working on a fix.
+          The trading is currently paused.
         </div>
         <a
           href="https://jakpan.hashnode.dev/snek-stall-post-mortem"
