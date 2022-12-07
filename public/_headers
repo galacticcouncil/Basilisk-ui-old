@@ -1,4 +1,4 @@
 /*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
-  Content-Security-Policy: default-src 'self' *.basilisk.cloud/
+  Content-Security-Policy: default-src 'self' 'unsafe-eval' *.basilisk.cloud/
