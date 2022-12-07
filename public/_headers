@@ -1,4 +1,4 @@
 /*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
-  Content-Security-Policy: default-src 'self' 'https://*.bsx.fi/'
+  Content-Security-Policy: default-src 'self' 'https://*.basilisk.cloud/'
