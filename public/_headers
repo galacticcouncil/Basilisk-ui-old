@@ -1,4 +1,4 @@
 /*
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
-  Content-Security-Policy: default-src 'self' 'unsafe-eval' 'unsafe-inline' *.basilisk.cloud/; connect-src 'self' *.hydration.dev/
+  Content-Security-Policy: default-src 'self' 'unsafe-eval' 'unsafe-inline' *.basilisk.cloud/; frame-ancestors 'none'; connect-src 'self' *.hydration.dev/ wss://*.hydration.dev/
