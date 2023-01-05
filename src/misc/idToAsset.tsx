@@ -4,6 +4,7 @@ import AUSD from './icons/assets/AUSD.svg'
 import PHA from './icons/assets/PHA.svg'
 import TNKR from './icons/assets/TNKR.svg'
 import Unknown from './icons/assets/Unknown.svg'
+import USDT from './icons/assets/USDT.svg'
 import { horizontalBar } from '../components/Chart/ChartHeader/ChartHeader'
 
 export enum Environment {
@@ -125,6 +126,18 @@ export const assetMetadataMap: AssetMetadataMap = {
       fullName: 'TNKR/KSM Share token',
       icon: Unknown
     },
+    '14': {
+      id: '14',
+      symbol: 'USDT',
+      fullName: 'Tether USD',
+      icon: USDT
+    },
+    '15': {
+      id: '15',
+      symbol: 'LP BSX/USDT',
+      fullName: 'BSX/USDT Share token',
+      icon: Unknown
+    }
   },
   develop: {
     '0': {
